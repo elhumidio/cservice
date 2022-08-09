@@ -1,23 +1,25 @@
-
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31919.166
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{423BC4E8-86ED-4CF1-A727-78C75ADB82E9}"
 EndProject
-
-
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{12830F48-02E2-441D-8084-02728411C131}"
 EndProject
-
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TURI.Contractservice.Tests.Unit", "test/TURI.Contractservice.Tests.Unit/TURI.Contractservice.Tests.Unit.csproj", "{D4CD2E21-3E05-4BF8-941B-40D39767BD1E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TURI.Contractservice.Tests.Unit", "test\TURI.Contractservice.Tests.Unit\TURI.Contractservice.Tests.Unit.csproj", "{D4CD2E21-3E05-4BF8-941B-40D39767BD1E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TURI.Contractservice.Tests.Integration", "test/TURI.Contractservice.Tests.Integration/TURI.Contractservice.Tests.Integration.csproj", "{C3766FCA-ED98-4A46-AEFE-9DA2B406BE21}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TURI.Contractservice.Tests.Integration", "test\TURI.Contractservice.Tests.Integration\TURI.Contractservice.Tests.Integration.csproj", "{C3766FCA-ED98-4A46-AEFE-9DA2B406BE21}"
 EndProject
-
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TURI.Contractservice.Api", "src/TURI.Contractservice.Api/TURI.Contractservice.Api.csproj", "{D3BF09B2-2897-4B60-A6D4-ABACAB584791}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TURI.Contractservice.Api", "src\TURI.Contractservice.Api\TURI.Contractservice.Api.csproj", "{D3BF09B2-2897-4B60-A6D4-ABACAB584791}"
 EndProject
-
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Application", "src\Application\Application.csproj", "{12D7AED0-41F0-44B3-90FD-1C2C7D444C1E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain", "src\Domain\Domain.csproj", "{A40E1C32-A6B7-444C-B318-229A7A4DBB8D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infraestructure", "src\Infraestructure\Infraestructure.csproj", "{F2CB5B77-2FDC-4955-A518-41B3DA944559}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Persistence", "src\Persistence\Persistence.csproj", "{68663A3C-ADDA-4B93-B290-0B4E0528C6CB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,6 +38,22 @@ Global
 		{D3BF09B2-2897-4B60-A6D4-ABACAB584791}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D3BF09B2-2897-4B60-A6D4-ABACAB584791}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D3BF09B2-2897-4B60-A6D4-ABACAB584791}.Release|Any CPU.Build.0 = Release|Any CPU
+		{12D7AED0-41F0-44B3-90FD-1C2C7D444C1E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{12D7AED0-41F0-44B3-90FD-1C2C7D444C1E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{12D7AED0-41F0-44B3-90FD-1C2C7D444C1E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{12D7AED0-41F0-44B3-90FD-1C2C7D444C1E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A40E1C32-A6B7-444C-B318-229A7A4DBB8D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A40E1C32-A6B7-444C-B318-229A7A4DBB8D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A40E1C32-A6B7-444C-B318-229A7A4DBB8D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A40E1C32-A6B7-444C-B318-229A7A4DBB8D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F2CB5B77-2FDC-4955-A518-41B3DA944559}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F2CB5B77-2FDC-4955-A518-41B3DA944559}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F2CB5B77-2FDC-4955-A518-41B3DA944559}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F2CB5B77-2FDC-4955-A518-41B3DA944559}.Release|Any CPU.Build.0 = Release|Any CPU
+		{68663A3C-ADDA-4B93-B290-0B4E0528C6CB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{68663A3C-ADDA-4B93-B290-0B4E0528C6CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{68663A3C-ADDA-4B93-B290-0B4E0528C6CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{68663A3C-ADDA-4B93-B290-0B4E0528C6CB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -44,6 +62,10 @@ Global
 		{D4CD2E21-3E05-4BF8-941B-40D39767BD1E} = {12830F48-02E2-441D-8084-02728411C131}
 		{C3766FCA-ED98-4A46-AEFE-9DA2B406BE21} = {12830F48-02E2-441D-8084-02728411C131}
 		{D3BF09B2-2897-4B60-A6D4-ABACAB584791} = {423BC4E8-86ED-4CF1-A727-78C75ADB82E9}
+		{12D7AED0-41F0-44B3-90FD-1C2C7D444C1E} = {423BC4E8-86ED-4CF1-A727-78C75ADB82E9}
+		{A40E1C32-A6B7-444C-B318-229A7A4DBB8D} = {423BC4E8-86ED-4CF1-A727-78C75ADB82E9}
+		{F2CB5B77-2FDC-4955-A518-41B3DA944559} = {423BC4E8-86ED-4CF1-A727-78C75ADB82E9}
+		{68663A3C-ADDA-4B93-B290-0B4E0528C6CB} = {423BC4E8-86ED-4CF1-A727-78C75ADB82E9}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5F955DDE-D4E6-4A65-A203-4325B445D6B5}

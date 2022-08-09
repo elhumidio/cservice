@@ -25,4 +25,11 @@
 
 	</ItemGroup>
 
+	<ItemGroup>
+	  <ProjectReference Include="..\Application\Application.csproj" />
+	  <ProjectReference Include="..\Domain\Domain.csproj" />
+	  <ProjectReference Include="..\Infraestructure\Infraestructure.csproj" />
+	  <ProjectReference Include="..\Persistence\Persistence.csproj" />
+	</ItemGroup>
+
 </Project>

@@ -1,0 +1,38 @@
+﻿using Application.Contracts.DTO;
+using Application.Core;
+using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using Domain.Repositories;
+using MediatR;
+using Microsoft.EntityFrameworkCore;
+
+namespace Application.Contracts.Queries
+{
+    public class List
+    {
+
+        public class Query : IRequest<Result<List<ContractDTO>>>
+        {
+            public int CompanyId { get; set; }
+        }
+
+        public class Handler : IRequestHandler<Query, Result<List<ContractDTO>>>
+        {
+            private readonly IContractRepository _contractRepo;
+            private readonly IMapper _mapper;
+
+
+            public Handler(IMapper mapper, IContractRepository contractRepo)
+            {
+                _mapper = mapper;
+                _contractRepo = contractRepo;
+            }
+
+            public async Task<Result<List<ContractDTO>>> Handle(Query request, CancellationToken cancellationToken)
+            {
+                var query = _contractRepo.GetContracts(request.CompanyId).ProjectTo<ContractDTO>(_mapper.ConfigurationProvider).AsQueryable();
+                return Result<List<ContractDTO>>.Success(await query.ToListAsync());
+            }
+        }
+    }
+}

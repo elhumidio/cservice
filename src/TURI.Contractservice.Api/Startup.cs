@@ -1,11 +1,13 @@
+using API.Extensions;
+using API.Middleware;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using StepStone.AspNetCore.Authentication.ApiKeyHeader;
 using StepStone.Extensions.Diagnostics.HealthChecks;
 using StepStone.Extensions.Diagnostics.Ping;
+using StepStone.Extensions.Logging.Serilog;
 using StepStone.Extensions.Logging.Serilog.Options;
 using StepStone.Service.Core.Options;
 using TURI.Contractservice.Api.StartupExtensions;
-using StepStone.AspNetCore.Authentication.ApiKeyHeader;
-using StepStone.Extensions.Logging.Serilog;
 
 
 namespace TURI.Contractservice.Api
@@ -49,12 +51,13 @@ namespace TURI.Contractservice.Api
             services.AddSwaggerGen();
             services.ConfigureSwagger();
             services.ConfigureForwardedHeaders();
+            services.AddApplicationServices(config);
         }
 
         public static void Configure(WebApplication app)
         {
             // Configure the HTTP request pipeline.
-
+            app.UseMiddleware<ExceptionMiddleware>();
             if (app.Environment.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
