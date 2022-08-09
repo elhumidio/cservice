@@ -19,9 +19,7 @@ namespace Application.JobOffer.Validations
         private bool IsRegionAllowedByContract(CreateOfferCommand obj)
         {
             var regions = _regionsAllowedRepo.AllowedRegionsByContract(obj.Idcontract);
-
-            return (regions == null) || (regions.Any() && regions.Contains(obj.Idregion));
-
+            return (regions == null) || !regions.Any() || (regions.Any() && regions.Contains(obj.Idregion));
         }
     }
 
