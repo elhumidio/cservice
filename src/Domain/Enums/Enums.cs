@@ -1,4 +1,4 @@
-﻿namespace Persistence.Enums
+namespace Domain.Enums
 {
     public enum OfferStatus
     {

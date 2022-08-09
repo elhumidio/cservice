@@ -1,11 +1,11 @@
-﻿using Application.Contracts.DTO;
+using Application.Contracts.DTO;
 using Application.Core;
 using Application.JobOffer.DTO;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
+using Domain.Enums;
 using Domain.Repositories;
 using MediatR;
-using Persistence.Enums;
 
 namespace Application.Contracts.Queries
 {

@@ -1,7 +1,7 @@
-﻿using Application.Contracts.Queries;
+using Application.Contracts.Queries;
 using Application.EnterpriseContract.Queries;
+using Domain.Enums;
 using Microsoft.AspNetCore.Mvc;
-using Persistence.Enums;
 
 namespace API.Controllers
 {

@@ -1,4 +1,4 @@
-﻿using Persistence.Enums;
+using Domain.Enums;
 
 namespace Application.Contracts.DTO
 {

@@ -1,4 +1,4 @@
-﻿using Application.JobOffer.Commands;
+using Application.JobOffer.Commands;
 using Application.JobOffer.Queries;
 using Domain.Repositories;
 using FluentValidation;

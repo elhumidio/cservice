@@ -1,4 +1,4 @@
-﻿using Application.Contracts.DTO;
+using Application.Contracts.DTO;
 using Application.Core;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;

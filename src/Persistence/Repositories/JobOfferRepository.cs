@@ -1,4 +1,5 @@
 ﻿using Domain.Entities;
+using Domain.Enums;
 using Domain.Repositories;
 
 namespace Persistence.Repositories
@@ -17,13 +18,13 @@ namespace Persistence.Repositories
                 && !a.ChkDeleted
                 && !a.ChkFilled
                 && a.FinishDate >= DateTime.Today
-                && a.Idstatus == (int)Enums.OfferStatus.Active);
+                && a.Idstatus == (int)OfferStatus.Active);
             return query;
         }
 
         public IQueryable<JobVacancy> GetOffersByContract(int contractId)
         {
-            var query = _dataContext.JobVacancies.Where(a => a.Idcontract == contractId && a.Idstatus == (int)Enums.OfferStatus.Active);
+            var query = _dataContext.JobVacancies.Where(a => a.Idcontract == contractId && a.Idstatus == (int)OfferStatus.Active);
             return query;
         }
 
@@ -31,7 +32,7 @@ namespace Persistence.Repositories
         {
             var query = _dataContext.JobVacancies.Where(a => a.Idcontract == contractId && !a.ChkDeleted
                 && !a.ChkFilled
-                && a.FinishDate >= DateTime.Today && a.IdenterpriseUserG == managerId && a.Idstatus == (int)Enums.OfferStatus.Active);
+                && a.FinishDate >= DateTime.Today && a.IdenterpriseUserG == managerId && a.Idstatus == (int)OfferStatus.Active);
 
             return query;
 
@@ -48,7 +49,7 @@ namespace Persistence.Repositories
         public IQueryable<JobVacancy> GetActiveOffersByContractAndManagerNoPack(int contractId, int managerId)
         {
             var query = _dataContext.JobVacancies.Where(a => a.Idcontract == contractId
-                 && a.IdenterpriseUserG == managerId && a.Idstatus == (int)Enums.OfferStatus.Active);
+                 && a.IdenterpriseUserG == managerId && a.Idstatus == (int)OfferStatus.Active);
 
             return query;
 
@@ -60,7 +61,7 @@ namespace Persistence.Repositories
                 && !a.ChkDeleted
                 && !a.ChkFilled
                 && a.FinishDate > DateTime.Today.AddDays(-1)
-                && a.Idstatus == (int)Enums.OfferStatus.Active);
+                && a.Idstatus == (int)OfferStatus.Active);
 
             return query;
 
@@ -68,7 +69,7 @@ namespace Persistence.Repositories
         public IQueryable<JobVacancy> GetActiveOffersByContractNoPack(int contractId)
         {
             var query = _dataContext.JobVacancies.Where(a => a.Idcontract == contractId
-                 && a.Idstatus == (int)Enums.OfferStatus.Active);
+                 && a.Idstatus == (int)OfferStatus.Active);
             return query;
         }
 
@@ -80,7 +81,7 @@ namespace Persistence.Repositories
             && !a.ChkDeleted
             && !a.ChkFilled
             && a.FinishDate >= DateTime.Today
-            && a.Idstatus == (int)Enums.OfferStatus.Active);
+            && a.Idstatus == (int)OfferStatus.Active);
             return query;
         }
         public IQueryable<JobVacancy> GetActiveOffersByContractOwnerTypeNoPack(int contractId, int owner, int type)
@@ -88,7 +89,7 @@ namespace Persistence.Repositories
             var query = _dataContext.JobVacancies.Where(a => a.Idcontract == contractId
             && a.IdenterpriseUserG == owner
             && a.IdjobVacType == type
-            && a.Idstatus == (int)Enums.OfferStatus.Active);
+            && a.Idstatus == (int)OfferStatus.Active);
             return query;
         }
 

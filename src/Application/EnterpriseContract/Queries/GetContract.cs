@@ -1,9 +1,9 @@
-﻿using Application.Contracts.DTO;
+using Application.Contracts.DTO;
 using Application.Core;
 using AutoMapper;
+using Domain.Enums;
 using Domain.Repositories;
 using MediatR;
-using Persistence.Enums;
 
 namespace Application.EnterpriseContract.Queries
 {

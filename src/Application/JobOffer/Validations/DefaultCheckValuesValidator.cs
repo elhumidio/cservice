@@ -1,4 +1,4 @@
-﻿using Application.JobOffer.Commands;
+using Application.JobOffer.Commands;
 using Domain.Repositories;
 using FluentValidation;
 using MediatR;
@@ -7,12 +7,8 @@ namespace Application.JobOffer.Validations
 {
     public class DefaultCheckValuesValidator : AbstractValidator<CreateOfferCommand>
     {
-
-
-
         public DefaultCheckValuesValidator(IMediator mediator, IContractProductRepository contractProdRepo)
         {
-
 
             RuleFor(command => command)
                 .Must(HasDefaultValues)

@@ -1,4 +1,5 @@
-﻿using Application.JobOffer.Commands;
+using Application.JobOffer.Commands;
+using Domain.Enums;
 using Domain.Repositories;
 using FluentValidation;
 
@@ -20,9 +21,9 @@ namespace Application.JobOffer.Validations
 
         private bool IsRightResidenceType(CreateOfferCommand obj)
         {
-            if (!Enum.IsDefined(typeof(Persistence.Enums.ResidenceType), obj.IdresidenceType))
+            if (!Enum.IsDefined(typeof(ResidenceType), obj.IdresidenceType))
             {
-                obj.IdresidenceType = (int)Persistence.Enums.ResidenceType.Indiferent;
+                obj.IdresidenceType = (int)ResidenceType.Indiferent;
                 return true;
             }
 

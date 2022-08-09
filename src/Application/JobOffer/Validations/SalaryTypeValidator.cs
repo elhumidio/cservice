@@ -1,8 +1,8 @@
 ﻿using Application.JobOffer.Commands;
 using Application.Utils;
+using Domain.Enums;
 using Domain.Repositories;
 using FluentValidation;
-using Persistence.Enums;
 
 namespace Application.JobOffer.Validations
 {

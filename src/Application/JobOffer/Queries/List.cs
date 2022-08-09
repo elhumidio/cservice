@@ -1,4 +1,4 @@
-﻿using Application.Core;
+using Application.Core;
 using Application.JobOffer.DTO;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;

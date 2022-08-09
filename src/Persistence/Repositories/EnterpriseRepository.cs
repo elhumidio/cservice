@@ -1,5 +1,5 @@
-﻿using Domain.Repositories;
-using Persistence.Enums;
+﻿using Domain.Enums;
+using Domain.Repositories;
 
 namespace Persistence.Repositories
 {

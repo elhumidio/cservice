@@ -1,6 +1,6 @@
-﻿using Application.JobOffer.Commands;
+using Application.JobOffer.Commands;
+using Domain.Enums;
 using FluentValidation;
-using Persistence.Enums;
 namespace Application.JobOffer.Validations
 {
     public class RegistrationTypeValidator : AbstractValidator<CreateOfferCommand>
