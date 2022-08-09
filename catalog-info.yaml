@@ -1,0 +1,68 @@
+# STONEHENGE software catalog YAML FILE 
+# https://stonehenge.stepstone.tools/ 
+# ------------------------------------- 
+# yaml file format docs: 
+# https://eureka.stepstone.com/pages/viewpage.action?pageId=262242689 
+
+# for support ask here: #stonehenge_support 
+
+apiVersion: backstage.io/v1alpha1
+kind: Component
+spec:
+  # Backstage entity type - REQUIRED 
+  # choose one from: service / website / library 
+  type: service
+
+  # Team owning this entity - REQUIRED 
+  # insert team in format team-teamname ex. team-automation
+  owner: team-turijobs-dev
+
+  # Lifecycle of entity - REQUIRED 
+  # choose one from: production / experimental / deprecated 
+  lifecycle: production
+
+
+metadata:
+  name: turi-contractservice
+  # Basic information about component functionality
+  description: Contract
+  # Tags for technology, libraries used in project etc. 
+  # see tag policy for details https://eureka.stepstone.com/display/PAAS/Tags+policy
+  tags:
+    - dotnet  # Links relevant to the project 
+  # for example: base url, documentation, monitoring etc.  
+  # links: 
+    # - url: LINK_1
+    #   title: LINK_1_TITLE
+    # - url: LINK_2
+    #   title: LINK_2_TITLE
+  
+
+  # annotations are used for plugins enabled in stonehenge 
+
+
+  # annotations: 
+    # SonarQube plugin - displays SonarQube metrics 
+    # sonarqube.org/project-key: SONARQUBE_PROJECT_KEY
+
+    # Sentry plugin - diplays errors logged in Sentry 
+    # sentry.io/project-slug: SENTRY_PROJECT_SLUG  
+
+    # Grafana plugin - shows the dashboard corresponding to selected tag 
+    # grafana/tag-selector: GRAFANA_DASHBOARD_TAG 
+    
+
+    # Datadog plugin - displays Datadig dashboards
+    # See instructions: https://roadie.io/backstage/plugins/datadog/
+    # datadoghq.com/site: datadoghq.eu
+
+    # Datadog Dashboard
+    # datadoghq.com/dashboard-url: dashboard URL
+
+    # Datadog embedded graph
+    # datadoghq.com/graph-token: graph token 
+
+
+  # labels - additional information that can help to search through entities with similar characteristics 
+  labels: 
+    catalog-type: technology

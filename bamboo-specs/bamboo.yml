@@ -1,0 +1,34 @@
+#@ load("@ytt:template", "template")
+#@ load("@ytt:overlay", "overlay")
+
+#@ load("/plan/_templates/dotnet/api/template.lib.yaml", "build_plan_api_dotnet")
+#@ load("/plan/_templates/release-tests/template.lib.yaml", "build_plan_release_tests")
+#@ load("/deployment/_templates/dotnet/api/template.lib.yaml", "deployment_api_dotnet")
+#@ load("/plan-permissions/_templates/dotnet/api/template.lib.yaml", "plan_permissions_api_dotnet")
+#@ load("/deployment-permissions/_templates/dotnet/api/template.lib.yaml", "deployment_permissions_api_dotnet")
+
+#@ config = {
+#@   "project_key": "TURI",
+#@   "service_name": "contractservice",
+#@   "owner": "blancd01",
+#@   "teams": ["team-turijobs-dev"],
+#@   "aws_account_domain": "platform"
+#@ }
+
+#@ def build_plan_overrides():
+variables: 	
+    postDeploymentTestsTrigger: "True"
+#@ end
+
+#@ def deployment_overrides():
+#@ end
+
+#@ def release_tests_overrides():
+#@ end
+
+--- #@ template.replace([overlay.apply(build_plan_api_dotnet(config), build_plan_overrides())])
+--- #@ template.replace([overlay.apply(deployment_api_dotnet(config), deployment_overrides())])
+--- #@ template.replace([overlay.apply(build_plan_release_tests(config), release_tests_overrides())])
+--- #@ plan_permissions_api_dotnet(config)
+--- #@ plan_permissions_api_dotnet(config, "-release-tests")
+--- #@ deployment_permissions_api_dotnet(config)
