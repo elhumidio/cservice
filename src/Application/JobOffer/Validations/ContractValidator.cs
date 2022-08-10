@@ -12,12 +12,14 @@ namespace Application.JobOffer.Validations
 
         private readonly IContractRepository _contractRepo;
         private readonly IContractProductRepository _contractProductRepo;
+        private readonly IUserRepository _userRepo;
 
-        public ContractValidator(IContractProductRepository contractProductRepo, IMediator mediator, IContractRepository contractRepo)
+        public ContractValidator(IContractProductRepository contractProductRepo, IMediator mediator, IContractRepository contractRepo, IUserRepository userRepo)
         {
             _mediator = mediator;
             _contractProductRepo = contractProductRepo;
             _contractRepo = contractRepo;
+            _userRepo = userRepo;
 
             RuleFor(command => command)
                 .Must(IsValidContract)
@@ -28,6 +30,7 @@ namespace Application.JobOffer.Validations
                 .Must(HasAvailableUnits)
                 .WithMessage("Informed contract has not enough units for informed owner");
             RuleFor(command => command).Must(IsPack);
+
         }
 
         private bool IsValidContract(CreateOfferCommand obj)
@@ -43,6 +46,16 @@ namespace Application.JobOffer.Validations
 
         private bool HasAvailableUnits(CreateOfferCommand offer)
         {
+            if (_userRepo.IsAdmin((int)offer.IdenterpriseUserG){
+
+                //TODO verify by owner 
+            }
+            else
+            {
+
+                //TODO publish anyway and take the unit from whoever has and reassign it if we have to...
+            }
+
             var units = _mediator.Send(new GetAvailableUnitsByOwner.Query
             {
                 ContractId = offer.Idcontract,

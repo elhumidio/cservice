@@ -1,4 +1,5 @@
-﻿using Domain.Repositories;
+using Domain.Enums;
+using Domain.Repositories;
 
 namespace Persistence.Repositories
 {
@@ -17,6 +18,18 @@ namespace Persistence.Repositories
             if (user != null)
                 userId = user.Idsuser;
             return userId;
+        }
+
+        public bool IsAdmin(int userId)
+        {
+            bool IsAdmin = false;
+            var user = _dataContext.Users.Where(u => u.Idsuser == userId && u.ChkActive == true);
+            if (user != null && user.Any())
+            {
+                IsAdmin = user.First().IdstypeUser == (int)UserTypes.AdministradorEmpresa;
+            }
+            return IsAdmin
+
         }
     }
 }
