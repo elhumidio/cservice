@@ -1,4 +1,4 @@
-﻿using API.DataContext;
+using API.DataContext;
 using Application.Core;
 using AutoMapper;
 using Domain.Entities;
@@ -46,6 +46,10 @@ namespace Application.JobOffer.Commands
         {
             var job = new JobVacancy();
             var entity = mapper.Map(offer, job);
+
+            //TODO verif if exists
+            var offerAts = await _regJobVacRepo.Exists(offer.IntegrationData.ApplicationReference);
+
 
             var jobVacancyId = offerRepo.Add(entity);
             if (jobVacancyId == 0)

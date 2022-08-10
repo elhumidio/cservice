@@ -1,9 +1,11 @@
+using API.DataContext;
 using Application.ContractProducts.DTO;
 using Application.Contracts.DTO;
 using Application.EnterpriseContract.DTO;
 using Application.JobOffer.Commands;
 using Application.JobOffer.DTO;
 using AutoMapper;
+using Domain.DTO;
 using Domain.Entities;
 
 namespace Application.Core
@@ -19,6 +21,7 @@ namespace Application.Core
             CreateMap<ContractProduct, ContractProductDTO>();
             CreateMap<JobVacancy, CreateOfferCommand>();
             CreateMap<CreateOfferCommand, JobVacancy>();
+            CreateMap<RegJobVacMatching, RegJobVacMatchingDTO>();
 
             //crear dto enterprise
 

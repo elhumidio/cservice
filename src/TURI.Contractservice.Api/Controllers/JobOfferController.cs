@@ -1,4 +1,4 @@
-﻿using Application.JobOffer.Commands;
+using Application.JobOffer.Commands;
 using Application.JobOffer.Queries;
 using Microsoft.AspNetCore.Mvc;
 
@@ -23,9 +23,19 @@ namespace API.Controllers
             return HandleResult(result);
         }
 
+
+
+        /*[HttpGet("{applicationReference}", Name = "FileAtsOffer")]
+        public async Task<IActionResult> FileAtsOffer(string applicationReference)
+        {
+
+
+        }*/
+
         [HttpPost(Name = "Publish")]
         public async Task<IActionResult> PublishOffer(CreateOfferCommand createOfferCommand)
         {
+
             var result = await Mediator.Send(createOfferCommand);
             var ret = HandleResult(result);
             return ret;

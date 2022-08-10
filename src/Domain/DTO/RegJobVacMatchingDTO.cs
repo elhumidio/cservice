@@ -1,9 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-
-namespace API.DataContext
+namespace Domain.DTO
 {
-    [Table("TRegJobVacMatching")]
-    public partial class RegJobVacMatching
+    public class RegJobVacMatchingDTO
     {
         public int IdjobMatching { get; set; }
         public int IdjobVacancy { get; set; }
@@ -12,10 +9,5 @@ namespace API.DataContext
         public string? Redirection { get; set; }
         public string? AppEmail { get; set; }
         public string? Idintegration { get; set; }
-
-        public static explicit operator Task<object>(RegJobVacMatching? v)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

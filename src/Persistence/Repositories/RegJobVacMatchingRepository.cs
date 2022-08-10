@@ -1,10 +1,11 @@
-﻿using API.DataContext;
+using API.DataContext;
 
 namespace Persistence.Repositories
 {
     public class RegJobVacMatchingRepository : IRegJobVacMatchingRepository
     {
         DataContext _dataContext;
+
         public RegJobVacMatchingRepository(DataContext dataContext)
         {
             _dataContext = dataContext;
@@ -14,6 +15,13 @@ namespace Persistence.Repositories
             var a = _dataContext.Add(recjob).Entity;
             var ret = _dataContext.SaveChangesAsync();
             return ret;
+        }
+
+        public Task<RegJobVacMatching> Exists(string externalId)
+        {
+            RegJobVacMatching obj = new RegJobVacMatching();
+            obj = _dataContext.RegJobVacMatchings.Where(integration => integration.ExternalId == externalId).FirstOrDefault();
+            return Task.FromResult(obj);
         }
 
     }
