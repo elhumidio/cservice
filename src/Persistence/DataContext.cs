@@ -1,4 +1,4 @@
-﻿using API.DataContext;
+using API.DataContext;
 using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -44,13 +44,7 @@ namespace Persistence
         public virtual DbSet<ProductLine> ProductLines { get; set; } = null!;
         public virtual DbSet<Enterprise> Enterprises { get; set; } = null!;
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            if (!optionsBuilder.IsConfigured)
-            {
-                optionsBuilder.UseSqlServer("server=mssql-brandturijobs.live.stepstone.tools;user=tjweb;password=g32qmYUId;database=Turijobs.master");
-            }
-        }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
