@@ -28,7 +28,7 @@ namespace Persistence.Repositories
             {
                 IsAdmin = user.First().IdstypeUser == (int)UserTypes.AdministradorEmpresa;
             }
-            return IsAdmin
+            return IsAdmin;
 
         }
     }

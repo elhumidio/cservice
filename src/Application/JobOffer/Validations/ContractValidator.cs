@@ -1,5 +1,6 @@
 using Application.Contracts.Queries;
 using Application.JobOffer.Commands;
+using Domain.Enums;
 using Domain.Repositories;
 using FluentValidation;
 using MediatR;
@@ -13,13 +14,19 @@ namespace Application.JobOffer.Validations
         private readonly IContractRepository _contractRepo;
         private readonly IContractProductRepository _contractProductRepo;
         private readonly IUserRepository _userRepo;
+        private readonly IUnitsRepository _unitsRepo;
 
-        public ContractValidator(IContractProductRepository contractProductRepo, IMediator mediator, IContractRepository contractRepo, IUserRepository userRepo)
+        public ContractValidator(IContractProductRepository contractProductRepo,
+            IMediator mediator,
+            IContractRepository contractRepo,
+            IUserRepository userRepo,
+            IUnitsRepository unitsRepo)
         {
             _mediator = mediator;
             _contractProductRepo = contractProductRepo;
             _contractRepo = contractRepo;
             _userRepo = userRepo;
+            _unitsRepo = unitsRepo;
 
             RuleFor(command => command)
                 .Must(IsValidContract)
@@ -46,39 +53,61 @@ namespace Application.JobOffer.Validations
 
         private bool HasAvailableUnits(CreateOfferCommand offer)
         {
-            if (_userRepo.IsAdmin((int)offer.IdenterpriseUserG){
+            int totalunits = 0;
 
-                //TODO verify by owner 
-            }
-            else
-            {
-
-                //TODO publish anyway and take the unit from whoever has and reassign it if we have to...
-            }
-
-            var units = _mediator.Send(new GetAvailableUnitsByOwner.Query
+            var units = _mediator.Send(new GetAvailableUnits.Query
             {
                 ContractId = offer.Idcontract,
-                OwnerId = offer.IdenterpriseUserG.Value
-            }).Result.Value;
-            if (offer.IdjobVacType != -1)
-            {
-                var unitsAvailable = units.Where(u => (int)u.type == offer.IdjobVacType).ToList();
-                int totalunits = unitsAvailable.Sum(u => u.Units);
-                return totalunits > 0;
-            }
-            else
-            {
-                int totalunits = units.Sum(u => u.Units);
-                var idtype = -1;
-                foreach (var obj in units)
-                {
-                    idtype = obj.Units > 0 ? (int)obj.type : idtype;
-                }
-                offer.IdjobVacType = idtype;
-                return totalunits > 0;
 
-            } // assign first type available
+            }).Result.Value;
+            var unitsAvailable = units.Sum(u => u.Units);
+
+            if (unitsAvailable > 0)
+            {
+                //el user tiene unidades del mismo tipo
+                var unitsSameTypemanager = units.Where(u => u.OwnerId == offer.IdenterpriseUserG && offer.IdjobVacType == (int)u.type);
+                var unitsAssignedOtherKind = units.Where(u => u.OwnerId == offer.IdenterpriseUserG && offer.IdjobVacType != (int)u.type);
+                if (unitsSameTypemanager.Sum(unit => unit.Units) == 0)
+                {
+                    //verificar si alguien tiene del mismo tipo
+
+                    var unitsAssignedSameKind = units.Where(u => offer.IdjobVacType == (int)u.type || Enum.IsDefined(typeof(StandardWiseVacancyType), u.type))
+                        .OrderByDescending(d => d.Units);
+                    if (unitsAssignedSameKind != null && unitsAssignedSameKind.Any())
+                    {
+
+                        var unitsToUse = unitsAssignedSameKind.First();
+                        _unitsRepo.TakeUnitFromManager(offer.Idcontract, unitsToUse.type, unitsToUse.OwnerId);
+                        _unitsRepo.AssignUnitToManager(offer.Idcontract, unitsToUse.type, (int)offer.IdenterpriseUserG);
+                        return true;
+                    }
+                }
+                else
+                {
+                    if (unitsAssignedOtherKind.Sum(unit => unit.Units) > 0)
+                    {
+                        var victim = unitsAssignedOtherKind.First();
+                        offer.IdjobVacancy = (int)unitsAssignedOtherKind.First().type;
+                        _unitsRepo.TakeUnitFromManager(offer.Idcontract, victim.type, victim.OwnerId);
+                        _unitsRepo.AssignUnitToManager(offer.Idcontract, victim.type, (int)offer.IdenterpriseUserG);
+                        return true;
+                    }
+                    else
+                    {
+                        var assignment = units.Where(u => u.Units > 0).OrderByDescending(y => y.Units).FirstOrDefault();
+
+                        if (assignment != null)
+                        {
+                            offer.IdjobVacType = (int)assignment.type;
+                            return true;
+                        }
+                        else return false;
+
+                    }
+
+                }
+            }
+            else return false;
 
         }
     }
