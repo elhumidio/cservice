@@ -54,7 +54,7 @@ namespace Application.JobOffer.Validations
         private bool HasAvailableUnits(CreateOfferCommand offer)
         {
             int totalunits = 0;
-
+            bool ans = false;
             var units = _mediator.Send(new GetAvailableUnits.Query
             {
                 ContractId = offer.Idcontract,
@@ -106,8 +106,10 @@ namespace Application.JobOffer.Validations
                     }
 
                 }
+                return false;
             }
             else return false;
+
 
         }
     }
