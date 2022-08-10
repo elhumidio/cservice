@@ -1,4 +1,4 @@
-﻿using Application.ContractProducts.DTO;
+using Application.ContractProducts.DTO;
 using Application.Contracts.DTO;
 using Application.EnterpriseContract.DTO;
 using Application.JobOffer.Commands;
@@ -19,6 +19,8 @@ namespace Application.Core
             CreateMap<ContractProduct, ContractProductDTO>();
             CreateMap<JobVacancy, CreateOfferCommand>();
             CreateMap<CreateOfferCommand, JobVacancy>();
+
+            //crear dto enterprise
 
         }
     }

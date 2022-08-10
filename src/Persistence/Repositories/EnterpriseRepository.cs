@@ -1,4 +1,4 @@
-﻿using Domain.Enums;
+using Domain.Enums;
 using Domain.Repositories;
 
 namespace Persistence.Repositories
@@ -29,6 +29,19 @@ namespace Persistence.Repositories
             if (company != null)
                 company.Ats = true;
             return company != null;
+
+        }
+
+        public int GetSite(int companyId)
+        {
+            int site = 0;
+            var company = _dataContext.Enterprises.Where(e => e.Identerprise == companyId && e.ChkActive == true).FirstOrDefault();
+            if (company != null)
+            {
+                site = (int)company.SiteId;
+
+            }
+            return site;
 
         }
     }
