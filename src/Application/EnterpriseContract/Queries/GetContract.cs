@@ -62,6 +62,7 @@ namespace Application.EnterpriseContract.Queries
                             break;
 
                         }
+                        else return Result<ContractDTO>.Failure("There is no units available.\n");
                     }
                 }
 

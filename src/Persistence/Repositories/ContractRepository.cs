@@ -1,4 +1,4 @@
-﻿using Domain.Entities;
+using Domain.Entities;
 using Domain.Repositories;
 
 namespace Persistence.Repositories
@@ -25,7 +25,9 @@ namespace Persistence.Repositories
 
         public bool IsValidContract(int contractId)
         {
-            var contracts = _dataContext.Contracts.Where(c => c.FinishDate >= DateTime.Today && c.ChkApproved && c.Idcontract == contractId && !c.ChkCancel);
+            var contracts = _dataContext.Contracts
+                .Where(c => c.FinishDate >= DateTime.Today && c.ChkApproved && c.Idcontract == contractId && !c.ChkCancel)
+                .OrderBy(con => con.FinishDate);
             return contracts != null && contracts.Any();
         }
     }

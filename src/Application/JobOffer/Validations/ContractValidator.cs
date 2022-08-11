@@ -36,7 +36,7 @@ namespace Application.JobOffer.Validations
             RuleFor(command => command)
                 .Must(HasAvailableUnits)
                 .WithMessage("Informed contract has not enough units for informed owner");
-            RuleFor(command => command).Must(IsPack);
+
 
         }
 

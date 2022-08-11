@@ -1,4 +1,5 @@
 using Application.JobOffer.Commands;
+using Domain.Enums;
 using Domain.Repositories;
 using FluentValidation;
 
@@ -11,16 +12,18 @@ namespace Application.JobOffer.Validations
         public DegreeValidator(IDegreeRepository degreeRepo)
         {
             _degreeRepo = degreeRepo;
-            RuleFor(command => command.Idarea)
+            RuleFor(command => command)
                 .Must(IsRightDegree)
-                .WithMessage("Invalid value for degree field.\n")
-                .NotNull()
-                .WithMessage("DegreeId is mandatory.\n");
+                .WithMessage("Invalid value for Degree field.\n");
+
+
         }
 
-        private bool IsRightDegree(int _degreeId)
+        private bool IsRightDegree(CreateOfferCommand cmd)
         {
-            return _degreeRepo.IsRightDegree(_degreeId);
+            if (cmd.Iddegree == null || cmd.Iddegree < 1)
+                cmd.Iddegree = (int)degrees.BachelorsDegree;
+            return _degreeRepo.IsRightDegree(cmd.Iddegree);
         }
     }
 }
