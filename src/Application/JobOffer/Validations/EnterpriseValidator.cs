@@ -15,7 +15,7 @@ namespace Application.JobOffer.Validations
                 .Must(IsRightCompany)
                 .WithMessage("Invalid value for company field.\n")
                 .NotNull()
-                .WithMessage("CompanyId is mandatory.\n").Must(IsUpdatedATS).WithMessage("ATS not updated.\n");
+                .WithMessage("CompanyId is mandatory.\n");
             RuleFor(command => command).Must(IsCompletedUserLastMod).WithMessage("Couldn't complete IdEnterpriseUserLastMode.\n");
         }
 
@@ -23,10 +23,7 @@ namespace Application.JobOffer.Validations
         {
             return companyId > 0 && _enterpriseRepo.IsRightCompany(companyId);
         }
-        private bool IsUpdatedATS(int companyId)
-        {
-            return _enterpriseRepo.UpdateATS(companyId);
-        }
+
         private bool IsCompletedUserLastMod(CreateOfferCommand obj)
         {
             obj.IdenterpriseUserLastMod = (int)obj.IdenterpriseUserG;

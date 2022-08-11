@@ -1,4 +1,4 @@
-﻿using Domain.Entities;
+using Domain.Entities;
 using Domain.Enums;
 using Domain.Repositories;
 
@@ -36,6 +36,25 @@ namespace Persistence.Repositories
 
             return query;
 
+        }
+
+        public bool UpdateOffer(JobVacancy jobUpdated)
+        {
+
+            var current = _dataContext.JobVacancies.Where(a => a.IdjobVacancy == jobUpdated.IdjobVacancy).FirstOrDefault();
+            if (current != null)
+            {
+                current = jobUpdated;
+                _dataContext.SaveChanges();
+                return true;
+
+            }
+            return false;
+        }
+        public JobVacancy GetOfferById(int id)
+        {
+            var offer = _dataContext.JobVacancies.Where(o => o.IdjobVacancy == id).FirstOrDefault();
+            return offer;
         }
 
         public int Add(JobVacancy job)

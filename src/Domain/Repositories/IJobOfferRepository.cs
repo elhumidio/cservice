@@ -1,4 +1,4 @@
-﻿using Domain.Entities;
+using Domain.Entities;
 namespace Domain.Repositories
 {
     public interface IJobOfferRepository
@@ -13,6 +13,8 @@ namespace Domain.Repositories
         public IQueryable<JobVacancy> GetActiveOffersByCompany(int enterpriseId);
         IQueryable<JobVacancy> GetConsumedUnitsWelcomeNotSpain(int companyId);
         public int Add(JobVacancy job);
+        public JobVacancy GetOfferById(int id);
+        bool UpdateOffer(JobVacancy jobUpdated);
 
 
 

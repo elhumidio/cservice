@@ -57,5 +57,7 @@ namespace API.Extensions
             services.AddScoped<IGeoNamesConector, GeoNamesConector>();
             return services;
         }
+
+
     }
 }

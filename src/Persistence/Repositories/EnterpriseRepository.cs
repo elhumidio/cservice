@@ -28,6 +28,7 @@ namespace Persistence.Repositories
             var company = _dataContext.Enterprises.Where(e => e.Identerprise == enterpriseId).FirstOrDefault();
             if (company != null)
                 company.Ats = true;
+            _dataContext.SaveChanges();
             return company != null;
 
         }

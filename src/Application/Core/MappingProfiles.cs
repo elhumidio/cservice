@@ -20,11 +20,13 @@ namespace Application.Core
             CreateMap<RegEnterpriseContract, RegEnterpriseContractDTO>();
             CreateMap<ContractProduct, ContractProductDTO>();
             CreateMap<JobVacancy, CreateOfferCommand>();
-            CreateMap<CreateOfferCommand, JobVacancy>();
+            //  CreateMap<CreateOfferCommand, JobVacancy>();
+            CreateMap<CreateOfferCommand, JobVacancy>().MapOnlyIfChanged();
             CreateMap<RegJobVacMatching, RegJobVacMatchingDTO>();
 
             //crear dto enterprise
 
         }
+
     }
 }

@@ -21,6 +21,7 @@ namespace Application.JobOffer.Commands
         private readonly IValidator<CreateOfferCommand> _validator;
         private readonly IRegJobVacMatchingRepository _regJobVacRepo;
         private readonly IRegEnterpriseContractRepository _regContractRepo;
+        private readonly IEnterpriseRepository enterpriseRepository;
 
         #endregion
 
@@ -31,7 +32,8 @@ namespace Application.JobOffer.Commands
             IMapper _mapper,
             IJobOfferRepository _offerRepo,
             IContractRepository _contractRepo,
-            IProductRepository _productRepo)
+            IProductRepository _productRepo,
+            IEnterpriseRepository _enterpriseRepository)
         {
             contractRepo = _contractRepo;
             productRepo = _productRepo;
@@ -40,41 +42,53 @@ namespace Application.JobOffer.Commands
             _validator = validator;
             _regContractRepo = regContractRepo;
             _regJobVacRepo = regJobVacRepo;
-
+            this.enterpriseRepository = _enterpriseRepository;
         }
         public async Task<Result<Unit>> Handle(CreateOfferCommand offer, CancellationToken cancellationToken)
         {
             var job = new JobVacancy();
-            var entity = mapper.Map(offer, job);
-
-            //TODO verif if exists
             var offerAts = await _regJobVacRepo.Exists(offer.IntegrationData.ApplicationReference);
-
-
-            var jobVacancyId = offerRepo.Add(entity);
-            if (jobVacancyId == 0)
+            if (offerAts != null)
             {
-                return Result<Unit>.Failure("Failed to create offer");
+                //TODO get offer by id
+                var existentOffer = offerRepo.GetOfferById(offerAts.IdjobVacancy);
+                var entity = mapper.Map(offer, existentOffer);
+                offerRepo.UpdateOffer(entity);
+                enterpriseRepository.UpdateATS(entity.Identerprise);
+                return Result<Unit>.Success(Unit.Value);
             }
             else
             {
-                var updatedUnits = await _regContractRepo.UpdateUnits(job.Idcontract, job.IdjobVacType);
-
-                if (!string.IsNullOrEmpty(offer.IntegrationData.ApplicationReference))
+                var entity = mapper.Map(offer, job);
+                var jobVacancyId = offerRepo.Add(entity);
+                if (jobVacancyId == 0)
                 {
-                    RegJobVacMatching obj = new RegJobVacMatching
-                    {
-                        ExternalId = offer.IntegrationData.ApplicationReference,
-                        Idintegration = offer.IntegrationData.IDIntegration,
-                        IdjobVacancy = jobVacancyId,
-                        AppEmail = offer.IntegrationData.ApplicationEmail,
-                        Identerprise = offer.Identerprise,
-                        Redirection = offer.IntegrationData.ApplicationUrl
-                    };
-                    await _regJobVacRepo.Add(obj);
+                    return Result<Unit>.Failure("Failed to create offer");
                 }
-                return Result<Unit>.Success(Unit.Value);
+                else
+                {
+                    var updatedUnits = await _regContractRepo.UpdateUnits(job.Idcontract, job.IdjobVacType);
+
+                    if (!string.IsNullOrEmpty(offer.IntegrationData.ApplicationReference))
+                    {
+                        RegJobVacMatching obj = new RegJobVacMatching
+                        {
+                            ExternalId = offer.IntegrationData.ApplicationReference,
+                            Idintegration = offer.IntegrationData.IDIntegration,
+                            IdjobVacancy = jobVacancyId,
+                            AppEmail = offer.IntegrationData.ApplicationEmail,
+                            Identerprise = offer.Identerprise,
+                            Redirection = offer.IntegrationData.ApplicationUrl
+                        };
+                        await _regJobVacRepo.Add(obj);
+                    }
+                    enterpriseRepository.UpdateATS(entity.Identerprise);
+                    return Result<Unit>.Success(Unit.Value);
+                }
             }
+
+
+
         }
     }
 }
