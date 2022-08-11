@@ -53,7 +53,7 @@ namespace Application.JobOffer.Commands
                 //TODO get offer by id
                 var existentOffer = offerRepo.GetOfferById(offerAts.IdjobVacancy);
                 var entity = mapper.Map(offer, existentOffer);
-                offerRepo.UpdateOffer(entity);
+                offerRepo.UpdateOffer(existentOffer);
                 enterpriseRepository.UpdateATS(entity.Identerprise);
                 return Result<Unit>.Success(Unit.Value);
             }
