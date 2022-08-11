@@ -5,7 +5,6 @@ using Domain.Entities;
 using Domain.Repositories;
 using FluentValidation;
 using MediatR;
-using Persistence.Repositories;
 
 namespace Application.JobOffer.Commands
 {

@@ -1,4 +1,5 @@
 using API.DataContext;
+using Domain.Repositories;
 
 namespace Persistence.Repositories
 {

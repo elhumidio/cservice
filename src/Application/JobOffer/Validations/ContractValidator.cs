@@ -15,18 +15,20 @@ namespace Application.JobOffer.Validations
         private readonly IContractProductRepository _contractProductRepo;
         private readonly IUserRepository _userRepo;
         private readonly IUnitsRepository _unitsRepo;
+        private readonly IRegJobVacMatchingRepository _jobmatchAtsRepo;
 
         public ContractValidator(IContractProductRepository contractProductRepo,
             IMediator mediator,
             IContractRepository contractRepo,
             IUserRepository userRepo,
-            IUnitsRepository unitsRepo)
+            IUnitsRepository unitsRepo, IRegJobVacMatchingRepository jobMatchAtsRepo)
         {
             _mediator = mediator;
             _contractProductRepo = contractProductRepo;
             _contractRepo = contractRepo;
             _userRepo = userRepo;
             _unitsRepo = unitsRepo;
+            _jobmatchAtsRepo = jobMatchAtsRepo;
 
             RuleFor(command => command)
                 .Must(IsValidContract)
@@ -53,6 +55,11 @@ namespace Application.JobOffer.Validations
 
         private bool HasAvailableUnits(CreateOfferCommand offer)
         {
+            var existentOffer = _jobmatchAtsRepo.Exists(offer.IntegrationData.ApplicationReference).Result;
+            if (existentOffer != null || offer.IdjobVacancy > 0)
+            {
+                return true;
+            }
             int totalunits = 0;
             bool ans = false;
             var units = _mediator.Send(new GetAvailableUnits.Query

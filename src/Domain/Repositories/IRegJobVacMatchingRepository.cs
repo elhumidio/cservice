@@ -1,6 +1,6 @@
 using API.DataContext;
 
-namespace Persistence.Repositories
+namespace Domain.Repositories
 {
     public interface IRegJobVacMatchingRepository
     {
