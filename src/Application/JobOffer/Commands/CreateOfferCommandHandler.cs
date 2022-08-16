@@ -46,11 +46,22 @@ namespace Application.JobOffer.Commands
         public async Task<Result<Unit>> Handle(CreateOfferCommand offer, CancellationToken cancellationToken)
         {
             var job = new JobVacancy();
+
             var offerAts = await _regJobVacRepo.Exists(offer.IntegrationData.ApplicationReference);
+
+
             if (offerAts != null)
             {
                 //TODO get offer by id
-                var existentOffer = offerRepo.GetOfferById(offerAts.IdjobVacancy);
+                var existentOfferAts = offerRepo.GetOfferById(offerAts.IdjobVacancy);
+                var entity = mapper.Map(offer, existentOfferAts);
+                offerRepo.UpdateOffer(existentOfferAts);
+                enterpriseRepository.UpdateATS(entity.Identerprise);
+                return Result<Unit>.Success(Unit.Value);
+            }
+            else if (offer.IdjobVacancy > 0)
+            {
+                var existentOffer = offerRepo.GetOfferById(offer.IdjobVacancy);
                 var entity = mapper.Map(offer, existentOffer);
                 offerRepo.UpdateOffer(existentOffer);
                 enterpriseRepository.UpdateATS(entity.Identerprise);

@@ -55,8 +55,9 @@ namespace Application.JobOffer.Validations
 
         private bool HasAvailableUnits(CreateOfferCommand offer)
         {
-            var existentOffer = _jobmatchAtsRepo.Exists(offer.IntegrationData.ApplicationReference).Result;
-            if (existentOffer != null || offer.IdjobVacancy > 0)
+            var actualOfferAts = _jobmatchAtsRepo.Exists(offer.IntegrationData.ApplicationReference).Result;
+            bool IsValidEdit = actualOfferAts != null || offer.IdjobVacancy > 0;
+            if (IsValidEdit)
             {
                 return true;
             }
