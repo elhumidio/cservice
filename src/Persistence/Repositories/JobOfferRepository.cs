@@ -52,15 +52,13 @@ namespace Persistence.Repositories
             return false;
         }
 
-        public bool FileOffer(JobVacancy job)
+        public Task<int> FileOffer(JobVacancy job)
         {
             job.ChkFilled = true;
             job.FilledDate = DateTime.Now;
             job.ModificationDate = DateTime.Now;
-            var ret = _dataContext.SaveChanges();
-            if (ret > 0)
-                return true;
-            return false;
+            var ret = _dataContext.SaveChangesAsync();
+            return ret;
         }
 
         public JobVacancy GetOfferById(int id)

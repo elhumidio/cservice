@@ -6,14 +6,14 @@ using MediatR;
 
 namespace Application.JobOffer.Commands
 {
-    public class FileAtsJob : IRequestHandler<FileOfferDto, Result<Unit>>
+    public class FileAtsJobHandler : IRequestHandler<FileAtsOfferDto, Result<Unit>>
     {
         private readonly IJobOfferRepository _offerRepo;
         private readonly IRegJobVacMatchingRepository _regJobVacRepo;
+        public FileAtsOfferDto _offer { get; set; }
 
 
-
-        public FileAtsJob(IJobOfferRepository jobOfferRepository, IRegJobVacMatchingRepository regJobVacMatchingRepository)
+        public FileAtsJobHandler(IJobOfferRepository jobOfferRepository, IRegJobVacMatchingRepository regJobVacMatchingRepository)
         {
             _regJobVacRepo = regJobVacMatchingRepository;
             _offerRepo = jobOfferRepository;
@@ -21,14 +21,14 @@ namespace Application.JobOffer.Commands
         }
 
 
-        public async Task<Result<Unit>> Handle(FileOfferDto offer, CancellationToken cancellationToken)
+        public async Task<Result<Unit>> Handle(FileAtsOfferDto offer, CancellationToken cancellationToken)
         {
             var atsInfo = await _regJobVacRepo.GetAtsIntegrationInfo(offer.Application_reference);
             if (atsInfo != null)
             {
                 var job = _offerRepo.GetOfferById(atsInfo.IdjobVacancy);
                 var filed = _offerRepo.FileOffer(job);
-                if (filed)
+                if (filed.Result > 0)
                     return Result<Unit>.Success(Unit.Value);
                 else return Result<Unit>.Failure("Failed to file offer");
             }

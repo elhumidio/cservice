@@ -1,4 +1,5 @@
 using Application.JobOffer.Commands;
+using Application.JobOffer.DTO;
 using Application.JobOffer.Queries;
 using Microsoft.AspNetCore.Mvc;
 
@@ -24,18 +25,29 @@ namespace API.Controllers
         }
 
 
-
-        /*[HttpGet("{applicationReference}", Name = "FileAtsOffer")]
-        public async Task<IActionResult> FileAtsOffer(string applicationReference)
+        /// <summary>
+        /// File Ats Offer
+        /// </summary>
+        /// <param name="offer"></param>
+        /// <returns></returns>
+        [HttpPost(Name = "FileAtsOffer")]
+        public async Task<IActionResult> FileAtsOffer(FileAtsOfferDto offer)
         {
+            var result = await Mediator.Send(offer);
+            var ret = HandleResult(result);
+            return ret;
 
 
-        }*/
+        }
 
+        /// <summary>
+        /// Publish and update offer
+        /// </summary>
+        /// <param name="createOfferCommand"></param>
+        /// <returns></returns>
         [HttpPost(Name = "Publish")]
         public async Task<IActionResult> PublishOffer(CreateOfferCommand createOfferCommand)
         {
-
             var result = await Mediator.Send(createOfferCommand);
             var ret = HandleResult(result);
             return ret;

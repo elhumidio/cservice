@@ -5,7 +5,7 @@ using System.Runtime.Serialization;
 namespace Application.JobOffer.DTO
 {
     [DataContract]
-    public class FileOfferDto : IRequest<Result<Unit>>
+    public class FileAtsOfferDto : IRequest<Result<Unit>>
     {
         [DataMember]
         public string Username { get; set; }

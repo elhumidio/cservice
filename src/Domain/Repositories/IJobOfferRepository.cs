@@ -15,7 +15,7 @@ namespace Domain.Repositories
         public int Add(JobVacancy job);
         public JobVacancy GetOfferById(int id);
         bool UpdateOffer(JobVacancy jobUpdated);
-        bool FileOffer(JobVacancy job);
+        Task<int> FileOffer(JobVacancy job);
 
 
 
