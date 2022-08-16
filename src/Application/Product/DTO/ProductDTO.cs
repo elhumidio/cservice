@@ -2,7 +2,7 @@ using Domain.Entities;
 
 namespace Application.Product.DTO
 {
-    public partial class ProductDTO
+    public partial class ProductDto
     {
         public int Idproduct { get; set; }
         public int Idsite { get; set; }

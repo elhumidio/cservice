@@ -9,13 +9,13 @@ namespace Application.JobOffer.Queries
     public class GetCompanyInfo
     {
 
-        public class Query : IRequest<Result<CompanyinfoDTO>>
+        public class Query : IRequest<Result<CompanyinfoDto>>
         {
             public string Email { get; set; }
 
         }
 
-        public class Handler : IRequestHandler<Query, Result<CompanyinfoDTO>>
+        public class Handler : IRequestHandler<Query, Result<CompanyinfoDto>>
         {
 
             private readonly IEnterpriseUserRepository _enterpriseUserRepository;
@@ -35,9 +35,9 @@ namespace Application.JobOffer.Queries
                 _enterpriseRepository = enterpriseRepository;
             }
 
-            public async Task<Result<CompanyinfoDTO>> Handle(Query request, CancellationToken cancellationToken)
+            public async Task<Result<CompanyinfoDto>> Handle(Query request, CancellationToken cancellationToken)
             {
-                CompanyinfoDTO obj = new()
+                CompanyinfoDto obj = new()
                 {
                     IDSUser = _userRepository.GetUserIdByEmail(request.Email)
                 };
@@ -46,7 +46,7 @@ namespace Application.JobOffer.Queries
                 obj.Brands = _brandRepository.GetBrands(obj.CompanyId);
                 obj.UserEmail = request.Email;
                 obj.SiteId = _enterpriseRepository.GetSite(obj.CompanyId);
-                return Result<CompanyinfoDTO>.Success(await Task.FromResult(obj));
+                return Result<CompanyinfoDto>.Success(await Task.FromResult(obj));
             }
 
 

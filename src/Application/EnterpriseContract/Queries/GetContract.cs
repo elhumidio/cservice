@@ -11,13 +11,13 @@ namespace Application.EnterpriseContract.Queries
     {
 
 
-        public class Query : IRequest<Result<ContractDTO>>
+        public class Query : IRequest<Result<ContractDto>>
         {
             public int CompanyId { get; set; }
             public VacancyType? type { get; set; }
 
         }
-        public class Handler : IRequestHandler<Query, Result<ContractDTO>>
+        public class Handler : IRequestHandler<Query, Result<ContractDto>>
         {
             IMediator _mediatr;
             private readonly IContractRepository _contractRepository;
@@ -30,9 +30,9 @@ namespace Application.EnterpriseContract.Queries
                 _mediatr = mediatr;
             }
 
-            public async Task<Result<ContractDTO>> Handle(Query request, CancellationToken cancellationToken)
+            public async Task<Result<ContractDto>> Handle(Query request, CancellationToken cancellationToken)
             {
-                var ret = new ContractDTO();
+                var ret = new ContractDto();
                 var contracts = _mediatr.Send(new Application.Contracts.Queries.List.Query
                 {
                     CompanyId = request.CompanyId,
@@ -62,11 +62,11 @@ namespace Application.EnterpriseContract.Queries
                             break;
 
                         }
-                        else return Result<ContractDTO>.Failure("There is no units available.\n");
+                        else return Result<ContractDto>.Failure("There is no units available.\n");
                     }
                 }
 
-                return Result<ContractDTO>.Success(await Task.FromResult(ret));
+                return Result<ContractDto>.Success(await Task.FromResult(ret));
             }
         }
     }

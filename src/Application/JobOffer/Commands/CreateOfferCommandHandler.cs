@@ -47,7 +47,7 @@ namespace Application.JobOffer.Commands
         {
             var job = new JobVacancy();
 
-            var offerAts = await _regJobVacRepo.Exists(offer.IntegrationData.ApplicationReference);
+            var offerAts = await _regJobVacRepo.GetAtsIntegrationInfo(offer.IntegrationData.ApplicationReference);
 
 
             if (offerAts != null)
@@ -77,7 +77,7 @@ namespace Application.JobOffer.Commands
                 }
                 else
                 {
-                    var updatedUnits = await _regContractRepo.UpdateUnits(job.Idcontract, job.IdjobVacType);
+                    await _regContractRepo.UpdateUnits(job.Idcontract, job.IdjobVacType);
 
                     if (!string.IsNullOrEmpty(offer.IntegrationData.ApplicationReference))
                     {

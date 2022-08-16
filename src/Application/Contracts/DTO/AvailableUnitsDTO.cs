@@ -2,7 +2,7 @@ using Domain.Enums;
 
 namespace Application.Contracts.DTO
 {
-    public class AvailableUnitsDTO
+    public class AvailableUnitsDto
     {
         public int Units { get; set; }
         public int ContractId { get; set; }

@@ -1,9 +1,9 @@
-﻿using Application.ContractProducts.DTO;
+using Application.ContractProducts.DTO;
 using Application.EnterpriseContract.DTO;
 
 namespace Application.Contracts.DTO
 {
-    public class ContractDTO
+    public class ContractDto
     {
         public int Idcontract { get; set; }
         public int Identerprise { get; set; }
@@ -44,7 +44,7 @@ namespace Application.Contracts.DTO
         public int? IdJobVacType { get; set; }
 
 
-        public virtual ICollection<ContractProductDTO> ContractProducts { get; set; }
-        public virtual ICollection<RegEnterpriseContractDTO> RegEnterpriseContracts { get; set; }
+        public virtual ICollection<ContractProductDto> ContractProducts { get; set; }
+        public virtual ICollection<RegEnterpriseContractDto> RegEnterpriseContracts { get; set; }
     }
 }

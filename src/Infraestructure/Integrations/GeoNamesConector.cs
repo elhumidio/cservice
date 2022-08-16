@@ -15,14 +15,14 @@ namespace Infraestructure.Integrations
             _geoNamesUrl = configuration["GeoNames:BaseUrl"].ToString();
 
         }
-        public GeoNamesDTO GetPostalCodesCollection(string postalCode, string country)
+        public GeoNamesDto GetPostalCodesCollection(string postalCode, string country)
         {
-            GeoNamesDTO geoNames = new();
+            GeoNamesDto geoNames = new();
             string url = $"{_geoNamesUrl}?postalcode={postalCode}&country={country}&maxRows=100&username=turijobs";
 
             using (var httpClient = new HttpClient())
             {
-                geoNames = JsonConvert.DeserializeObject<GeoNamesDTO>(httpClient.GetStringAsync(new Uri(url)).Result);
+                geoNames = JsonConvert.DeserializeObject<GeoNamesDto>(httpClient.GetStringAsync(new Uri(url)).Result);
             }
 
             return geoNames;

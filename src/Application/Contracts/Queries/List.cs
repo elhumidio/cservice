@@ -11,12 +11,12 @@ namespace Application.Contracts.Queries
     public class List
     {
 
-        public class Query : IRequest<Result<List<ContractDTO>>>
+        public class Query : IRequest<Result<List<ContractDto>>>
         {
             public int CompanyId { get; set; }
         }
 
-        public class Handler : IRequestHandler<Query, Result<List<ContractDTO>>>
+        public class Handler : IRequestHandler<Query, Result<List<ContractDto>>>
         {
             private readonly IContractRepository _contractRepo;
             private readonly IMapper _mapper;
@@ -28,10 +28,10 @@ namespace Application.Contracts.Queries
                 _contractRepo = contractRepo;
             }
 
-            public async Task<Result<List<ContractDTO>>> Handle(Query request, CancellationToken cancellationToken)
+            public async Task<Result<List<ContractDto>>> Handle(Query request, CancellationToken cancellationToken)
             {
-                var query = _contractRepo.GetContracts(request.CompanyId).ProjectTo<ContractDTO>(_mapper.ConfigurationProvider).AsQueryable();
-                return Result<List<ContractDTO>>.Success(await query.ToListAsync());
+                var query = _contractRepo.GetContracts(request.CompanyId).ProjectTo<ContractDto>(_mapper.ConfigurationProvider).AsQueryable();
+                return Result<List<ContractDto>>.Success(await query.ToListAsync());
             }
         }
     }

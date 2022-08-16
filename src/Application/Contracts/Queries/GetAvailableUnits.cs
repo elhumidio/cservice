@@ -12,13 +12,13 @@ namespace Application.Contracts.Queries
     public class GetAvailableUnits
     {
 
-        public class Query : IRequest<Result<List<AvailableUnitsDTO>>>
+        public class Query : IRequest<Result<List<AvailableUnitsDto>>>
         {
             public int ContractId { get; set; }
 
         }
 
-        public class Handler : IRequestHandler<Query, Result<List<AvailableUnitsDTO>>>
+        public class Handler : IRequestHandler<Query, Result<List<AvailableUnitsDto>>>
         {
             private readonly IJobOfferRepository _jobOfferRepo;
             private readonly IContractProductRepository _contractProductRepo;
@@ -34,19 +34,19 @@ namespace Application.Contracts.Queries
                 _unitsRepo = unitsRepo;
             }
 
-            public async Task<Result<List<AvailableUnitsDTO>>> Handle(Query request, CancellationToken cancellationToken)
+            public async Task<Result<List<AvailableUnitsDto>>> Handle(Query request, CancellationToken cancellationToken)
             {
-                var list = new List<AvailableUnitsDTO>();
-                AvailableUnitsDTO dto;
+                var list = new List<AvailableUnitsDto>();
+                AvailableUnitsDto dto;
                 var isPack = _contractProductRepo.IsPack(request.ContractId);
                 var unitsAssigned = _unitsRepo.GetAssignmentsByContract(request.ContractId).ToList();
 
                 var activeOffers = isPack ? _jobOfferRepo.GetActiveOffersByContract(request.ContractId)
-                .ProjectTo<JobOfferDTO>(_mapper.ConfigurationProvider)
+                .ProjectTo<JobOfferDto>(_mapper.ConfigurationProvider)
                 .ToList().GroupBy(g => g.IdjobVacType)
                 :
                 _jobOfferRepo.GetActiveOffersByContractNoPack(request.ContractId)
-                .ProjectTo<JobOfferDTO>(_mapper.ConfigurationProvider)
+                .ProjectTo<JobOfferDto>(_mapper.ConfigurationProvider)
                 .ToList()
                 .GroupBy(g => g.IdjobVacType);
 
@@ -54,7 +54,7 @@ namespace Application.Contracts.Queries
                 {
                     var unitsConsumed = isPack ? _jobOfferRepo.GetActiveOffersByContractOwnerType(request.ContractId, units.IdenterpriseUser, units.IdjobVacType).Count()
                          : _jobOfferRepo.GetActiveOffersByContractOwnerTypeNoPack(request.ContractId, units.IdenterpriseUser, units.IdjobVacType).Count();
-                    dto = new AvailableUnitsDTO
+                    dto = new AvailableUnitsDto
                     {
                         ContractId = request.ContractId,
                         IsPack = isPack,
@@ -65,7 +65,7 @@ namespace Application.Contracts.Queries
                     list.Add(dto);
                 }
                 var orderedList = list.OrderBy(o => o.type).ToList();
-                return Result<List<AvailableUnitsDTO>>.Success(await Task.FromResult(orderedList));
+                return Result<List<AvailableUnitsDto>>.Success(await Task.FromResult(orderedList));
             }
         }
     }

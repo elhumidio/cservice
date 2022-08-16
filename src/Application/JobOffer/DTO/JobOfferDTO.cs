@@ -1,6 +1,6 @@
-﻿namespace Application.JobOffer.DTO
+namespace Application.JobOffer.DTO
 {
-    public class JobOfferDTO
+    public class JobOfferDto
     {
         public int IdjobVacancy { get; set; }
         public int Idcontract { get; set; }

@@ -1,6 +1,6 @@
 namespace Domain.DTO
 {
-    public class RegJobVacMatchingDTO
+    public class RegJobVacMatchingDto
     {
         public int IdjobMatching { get; set; }
         public int IdjobVacancy { get; set; }

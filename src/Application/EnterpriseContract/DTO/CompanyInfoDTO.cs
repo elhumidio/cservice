@@ -1,6 +1,6 @@
 namespace Application.EnterpriseContract.DTO
 {
-    public class CompanyinfoDTO
+    public class CompanyinfoDto
     {
         public int CompanyId { get; set; }
         public List<int> Brands { get; set; }

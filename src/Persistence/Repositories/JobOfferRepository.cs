@@ -51,6 +51,18 @@ namespace Persistence.Repositories
             }
             return false;
         }
+
+        public bool FileOffer(JobVacancy job)
+        {
+            job.ChkFilled = true;
+            job.FilledDate = DateTime.Now;
+            job.ModificationDate = DateTime.Now;
+            var ret = _dataContext.SaveChanges();
+            if (ret > 0)
+                return true;
+            return false;
+        }
+
         public JobVacancy GetOfferById(int id)
         {
             var offer = _dataContext.JobVacancies.Where(o => o.IdjobVacancy == id).FirstOrDefault();

@@ -1,10 +1,10 @@
 using Newtonsoft.Json;
 namespace Application.DTO.GeoNames;
 
-public class GeoNamesDTO
+public class GeoNamesDto
 {
     public List<PostalCode> postalCodes { get; set; }
-    public GeoNamesDTO()
+    public GeoNamesDto()
     {
         postalCodes = new List<PostalCode>();
     }

@@ -4,6 +4,6 @@ namespace Application.Interfaces
 {
     public interface IGeoNamesConector
     {
-        public GeoNamesDTO GetPostalCodesCollection(string postalCode, string country);
+        public GeoNamesDto GetPostalCodesCollection(string postalCode, string country);
     }
 }

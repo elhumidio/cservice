@@ -14,16 +14,16 @@ namespace Application.Core
     {
         public MappingProfiles()
         {
-            CreateMap<JobVacancy, JobOfferDTO>();
-            CreateMap<EnterpriseUserJobVac, UnitsAssignmentDTO>();
-            CreateMap<Contract, ContractDTO>();
-            CreateMap<RegEnterpriseContract, RegEnterpriseContractDTO>();
-            CreateMap<ContractProduct, ContractProductDTO>();
+            CreateMap<JobVacancy, JobOfferDto>();
+            CreateMap<EnterpriseUserJobVac, UnitsAssignmentDto>();
+            CreateMap<Contract, ContractDto>();
+            CreateMap<RegEnterpriseContract, RegEnterpriseContractDto>();
+            CreateMap<ContractProduct, ContractProductDto>();
             CreateMap<JobVacancy, CreateOfferCommand>();
             //  CreateMap<CreateOfferCommand, JobVacancy>();
             CreateMap<CreateOfferCommand, JobVacancy>().MapOnlyIfChanged().ForMember(a => a.IdjobVacancy, opt => opt.Ignore());
             CreateMap<JobVacancy, CreateOfferCommand>().MapOnlyIfChanged().ForMember(a => a.IdjobVacancy, opt => opt.Ignore());
-            CreateMap<RegJobVacMatching, RegJobVacMatchingDTO>();
+            CreateMap<RegJobVacMatching, RegJobVacMatchingDto>();
 
             //crear dto enterprise
 

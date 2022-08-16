@@ -11,13 +11,13 @@ namespace Application.JobOffer.Queries
     public class ListActives
     {
 
-        public class Query : IRequest<Result<List<JobOfferDTO>>>
+        public class Query : IRequest<Result<List<JobOfferDto>>>
         {
             public int ContractID { get; set; }
 
         }
 
-        public class Handler : IRequestHandler<Query, Result<List<JobOfferDTO>>>
+        public class Handler : IRequestHandler<Query, Result<List<JobOfferDto>>>
         {
 
             private readonly IJobOfferRepository _jobOffer;
@@ -31,10 +31,10 @@ namespace Application.JobOffer.Queries
 
             }
 
-            public async Task<Result<List<JobOfferDTO>>> Handle(Query request, CancellationToken cancellationToken)
+            public async Task<Result<List<JobOfferDto>>> Handle(Query request, CancellationToken cancellationToken)
             {
-                var query = _jobOffer.GetActiveOffersByContract(request.ContractID).ProjectTo<JobOfferDTO>(_mapper.ConfigurationProvider).AsQueryable();
-                return Result<List<JobOfferDTO>>.Success(
+                var query = _jobOffer.GetActiveOffersByContract(request.ContractID).ProjectTo<JobOfferDto>(_mapper.ConfigurationProvider).AsQueryable();
+                return Result<List<JobOfferDto>>.Success(
                     await query.ToListAsync()
                 );
             }

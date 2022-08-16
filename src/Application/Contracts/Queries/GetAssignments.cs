@@ -11,13 +11,13 @@ namespace Application.Contracts.Queries
     public class GetAssignments
     {
 
-        public class Query : IRequest<Result<List<UnitsAssignmentDTO>>>
+        public class Query : IRequest<Result<List<UnitsAssignmentDto>>>
         {
             public int ContractID { get; set; }
             public int OwnerID { get; set; }
         }
 
-        public class Handler : IRequestHandler<Query, Result<List<UnitsAssignmentDTO>>>
+        public class Handler : IRequestHandler<Query, Result<List<UnitsAssignmentDto>>>
         {
             private readonly IUnitsRepository _unitsRepo;
             private readonly IMapper _mapper;
@@ -29,12 +29,12 @@ namespace Application.Contracts.Queries
                 _unitsRepo = unitsRepo;
             }
 
-            public async Task<Result<List<UnitsAssignmentDTO>>> Handle(Query request, CancellationToken cancellationToken)
+            public async Task<Result<List<UnitsAssignmentDto>>> Handle(Query request, CancellationToken cancellationToken)
             {
                 var assignments = _unitsRepo.GetAssignmentsByContractAndManager(request.ContractID, request.OwnerID)
-                    .ProjectTo<UnitsAssignmentDTO>(_mapper.ConfigurationProvider)
+                    .ProjectTo<UnitsAssignmentDto>(_mapper.ConfigurationProvider)
                     .AsQueryable();
-                return Result<List<UnitsAssignmentDTO>>.Success(await assignments.ToListAsync());
+                return Result<List<UnitsAssignmentDto>>.Success(await assignments.ToListAsync());
             }
 
 

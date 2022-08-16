@@ -11,13 +11,13 @@ namespace Application.JobOffer.Queries
     public class ListActivesByCompany
     {
 
-        public class Query : IRequest<Result<List<JobOfferDTO>>>
+        public class Query : IRequest<Result<List<JobOfferDto>>>
         {
             public int CompanyId { get; set; }
 
         }
 
-        public class Handler : IRequestHandler<Query, Result<List<JobOfferDTO>>>
+        public class Handler : IRequestHandler<Query, Result<List<JobOfferDto>>>
         {
 
             private readonly IJobOfferRepository _jobOffer;
@@ -33,11 +33,11 @@ namespace Application.JobOffer.Queries
 
             }
 
-            public async Task<Result<List<JobOfferDTO>>> Handle(Query request, CancellationToken cancellationToken)
+            public async Task<Result<List<JobOfferDto>>> Handle(Query request, CancellationToken cancellationToken)
             {
-                IQueryable<JobOfferDTO> query = null;
-                query = _jobOffer.GetActiveOffersByCompany(request.CompanyId).ProjectTo<JobOfferDTO>(_mapper.ConfigurationProvider).AsQueryable();
-                return Result<List<JobOfferDTO>>.Success(await query.ToListAsync());
+                IQueryable<JobOfferDto> query = null;
+                query = _jobOffer.GetActiveOffersByCompany(request.CompanyId).ProjectTo<JobOfferDto>(_mapper.ConfigurationProvider).AsQueryable();
+                return Result<List<JobOfferDto>>.Success(await query.ToListAsync());
 
             }
         }

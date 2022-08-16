@@ -1,6 +1,6 @@
-﻿namespace Application.Contracts.DTO
+namespace Application.Contracts.DTO
 {
-    public partial class UnitsAssignmentDTO
+    public partial class UnitsAssignmentDto
     {
         public int IdenterpriseUser { get; set; }
         public int IdjobVacType { get; set; }

@@ -1,8 +1,8 @@
-﻿using Application.Contracts.DTO;
+using Application.Contracts.DTO;
 
 namespace Application.ContractProducts.DTO
 {
-    public class ContractProductDTO
+    public class ContractProductDto
     {
         public int Idcontract { get; set; }
         public int Idproduct { get; set; }
@@ -15,6 +15,6 @@ namespace Application.ContractProducts.DTO
         public decimal? CommercialDiscount { get; set; }
         public decimal? CouponDiscount { get; set; }
 
-        public virtual ContractDTO IdcontractNavigation { get; set; } = null!;
+        public virtual ContractDto IdcontractNavigation { get; set; } = null!;
     }
 }

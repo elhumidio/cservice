@@ -1,8 +1,8 @@
-﻿using Application.Contracts.DTO;
+using Application.Contracts.DTO;
 
 namespace Application.EnterpriseContract.DTO
 {
-    public class RegEnterpriseContractDTO
+    public class RegEnterpriseContractDto
     {
         public int Identerprise { get; set; }
         public int Idcontract { get; set; }
@@ -11,6 +11,6 @@ namespace Application.EnterpriseContract.DTO
         public int UnitsUsed { get; set; }
         public int? IdjobVacTypeComp { get; set; }
 
-        public virtual ContractDTO IdcontractNavigation { get; set; } = null!;
+        public virtual ContractDto IdcontractNavigation { get; set; } = null!;
     }
 }
