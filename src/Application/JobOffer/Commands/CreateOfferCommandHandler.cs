@@ -38,7 +38,7 @@ namespace Application.JobOffer.Commands
             productRepo = _productRepo;
             offerRepo = _offerRepo;
             mapper = _mapper;
-            _validator = validator;
+            //  _validator = validator;
             _regContractRepo = regContractRepo;
             _regJobVacRepo = regJobVacRepo;
             this.enterpriseRepository = _enterpriseRepository;

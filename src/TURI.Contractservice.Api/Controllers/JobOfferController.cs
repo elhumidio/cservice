@@ -41,6 +41,24 @@ namespace API.Controllers
         }
 
         /// <summary>
+        /// File Ats Offer
+        /// </summary>
+        /// <param name="offer"></param>
+        /// <returns></returns>
+        [HttpPost(Name = "FileOffers")]
+        public async Task<IActionResult> FileOffers(List<int> _offers)
+        {
+            var result = await Mediator.Send(new FileJobs.Command
+            {
+                offers = _offers
+            });
+            var ret = HandleResult(result);
+            return ret;
+
+
+        }
+
+        /// <summary>
         /// Publish and update offer
         /// </summary>
         /// <param name="createOfferCommand"></param>
