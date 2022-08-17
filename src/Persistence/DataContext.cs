@@ -14,6 +14,9 @@ namespace Persistence
             : base(options)
         {
         }
+        public virtual DbSet<EquestCountryState> EquestCountryStates { get; set; } = null!;
+        public virtual DbSet<EquestDegreeEquivalent> EquestDegreeEquivalents { get; set; } = null!;
+        public virtual DbSet<EquestIndustry> EquestIndustries { get; set; } = null!;
         public virtual DbSet<RegJobVacMatching> RegJobVacMatchings { get; set; } = null!;
         public virtual DbSet<CountryIso> CountryIsos { get; set; } = null!;
         public virtual DbSet<Brand> Brands { get; set; } = null!;
@@ -49,6 +52,53 @@ namespace Persistence
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.UseCollation("Modern_Spanish_CI_AS");
+
+
+            modelBuilder.Entity<EquestCountryState>(entity =>
+            {
+                entity.HasKey(e => e.IdcountryState);
+
+                entity.ToTable("TEQuestCountryState");
+
+                entity.Property(e => e.IdcountryState)
+                    .HasMaxLength(10)
+                    .HasColumnName("IDCountryState");
+
+                entity.Property(e => e.EquivalentId).HasColumnName("EquivalentID");
+
+                entity.Property(e => e.Name).HasMaxLength(255);
+            });
+
+            modelBuilder.Entity<EquestDegreeEquivalent>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToTable("TEQuestDegreeEquivalent");
+
+                entity.Property(e => e.Iddegree).HasColumnName("IDDegree");
+
+                entity.Property(e => e.IdequestDegree).HasColumnName("IDEQuestDegree");
+
+                entity.Property(e => e.Idsite).HasColumnName("IDSite");
+
+                entity.Property(e => e.Idslanguage).HasColumnName("IDSLanguage");
+            });
+
+            modelBuilder.Entity<EquestIndustry>(entity =>
+            {
+                entity.HasKey(e => e.IdindustryCode)
+                    .HasName("PK_TEQuestIndustryCode");
+
+                entity.ToTable("TEQuestIndustry");
+
+                entity.Property(e => e.IdindustryCode)
+                    .ValueGeneratedNever()
+                    .HasColumnName("IDIndustryCode");
+
+                entity.Property(e => e.EquivalentId).HasColumnName("EquivalentID");
+
+                entity.Property(e => e.Name).HasMaxLength(255);
+            });
 
             modelBuilder.Entity<Area>(entity =>
             {
