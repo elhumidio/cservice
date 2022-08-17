@@ -32,7 +32,7 @@ namespace Application.EnterpriseContract.Queries
 
             public async Task<Result<ContractDto>> Handle(Query request, CancellationToken cancellationToken)
             {
-                var ret = new ContractDto();
+                var contractToUse = new ContractDto();
                 var contracts = _mediatr.Send(new Application.Contracts.Queries.List.Query
                 {
                     CompanyId = request.CompanyId,
@@ -47,8 +47,8 @@ namespace Application.EnterpriseContract.Queries
                     {
                         if ((type.Units - type.UnitsUsed) > 0)
                         {
-                            ret = contract;
-                            ret.IdJobVacType = type.IdjobVacType;
+                            contractToUse = contract;
+                            contractToUse.IdJobVacType = type.IdjobVacType;
                             break;
                         }
                     }
@@ -57,16 +57,18 @@ namespace Application.EnterpriseContract.Queries
                         var canUse = (request.type == (VacancyType)type.IdjobVacType) && (type.Units - type.UnitsUsed > 0);
                         if (canUse)
                         {
-                            ret = contract;
-                            ret.IdJobVacType = type.IdjobVacType;
+                            contractToUse = contract;
+                            contractToUse.IdJobVacType = type.IdjobVacType;
                             break;
 
                         }
-                        else return Result<ContractDto>.Failure("There is no units available.\n");
+
                     }
                 }
-
-                return Result<ContractDto>.Success(await Task.FromResult(ret));
+                if (contractToUse.Idcontract == 0)
+                    return Result<ContractDto>.Failure("There is no units available.\n");
+                else
+                    return Result<ContractDto>.Success(await Task.FromResult(contractToUse));
             }
         }
     }
