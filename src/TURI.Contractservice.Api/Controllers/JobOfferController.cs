@@ -1,6 +1,7 @@
 using Application.JobOffer.Commands;
 using Application.JobOffer.DTO;
 using Application.JobOffer.Queries;
+using Application.Utils.Queries.Equest;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
@@ -149,6 +150,51 @@ namespace API.Controllers
             {
                 CompanyId = companyId,
 
+            });
+            return HandleResult(result);
+        }
+
+        /// <summary>
+        /// Gets Turijobs - Equest equivalent degree
+        /// </summary>
+        /// <param name="eqDegreeId"></param>
+        /// <returns></returns>
+        [HttpGet("{eqDegreeId}", Name = "GetEquestDegree")]
+        public async Task<IActionResult> GetEquestDegree(int eqDegreeId)
+        {
+            var result = await Mediator.Send(new DegreeEquivalent.Query
+            {
+                degreeId = eqDegreeId
+            });
+            return HandleResult(result);
+        }
+
+        /// <summary>
+        /// Gets Turijobs - Equest equivalent industry code
+        /// </summary>
+        /// <param name="eqDegreeId"></param>
+        /// <returns></returns>
+        [HttpGet("{industryCodeId}", Name = "GeteQuestIndustryCode")]
+        public async Task<IActionResult> GeteQuestIndustryCode(int industryCodeId)
+        {
+            var result = await Mediator.Send(new IndustryEquivalent.Query
+            {
+                industryCode = industryCodeId
+            });
+            return HandleResult(result);
+        }
+
+        /// <summary>
+        /// Gets Turijobs - Equest equivalent country/region code
+        /// </summary>
+        /// <param name="eqDegreeId"></param>
+        /// <returns></returns>
+        [HttpGet("{countryStateId}", Name = "GetEQuestCountryState")]
+        public async Task<IActionResult> GetEQuestCountryState(string countryStateId)
+        {
+            var result = await Mediator.Send(new CountryStateEQuivalent.Query
+            {
+                countryId = countryStateId
             });
             return HandleResult(result);
         }
