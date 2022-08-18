@@ -56,80 +56,84 @@ namespace Application.JobOffer.Validations
 
         private bool HasAvailableUnits(CreateOfferCommand offer)
         {
+            bool IsValidEdit = false;
+
             var actualOfferAts = _jobmatchAtsRepo.GetAtsIntegrationInfo(offer.IntegrationData.ApplicationReference).Result;
-            var offerDb = _jobRepo.GetOfferById(actualOfferAts.IdjobVacancy);
-            bool IsValidEdit = actualOfferAts != null || offer.IdjobVacancy > 0;
-
-            if (IsValidEdit && !offerDb.ChkFilled)
+            if (actualOfferAts != null)
             {
-                return true;
-            }
-            else
-            {
-                int totalunits = 0;
-                bool ans = false;
-                var units = _mediator.Send(new GetAvailableUnits.Query
+                var offerDb = _jobRepo.GetOfferById(actualOfferAts.IdjobVacancy);
+                IsValidEdit = actualOfferAts != null || offer.IdjobVacancy > 0 || offerDb != null;
+                if (IsValidEdit && !offerDb.ChkFilled)
                 {
-                    ContractId = offer.Idcontract,
-                }).Result.Value;
-                var unitsAvailable = units.Sum(u => u.Units);
-
-                if (unitsAvailable > 0)
-                {
-                    //el user tiene unidades del mismo tipo
-                    var unitsSameTypemanager = units.Where(u => u.OwnerId == offer.IdenterpriseUserG && offer.IdjobVacType == (int)u.type);
-                    var unitsAssignedOtherKind = units.Where(u => u.OwnerId == offer.IdenterpriseUserG && offer.IdjobVacType != (int)u.type);
-                    var bestUnits = unitsSameTypemanager.Sum(unit => unit.Units);
-
-                    switch (bestUnits)
-                    {
-                        case > 0:
-                            {
-                                var assignment = units.Where(u => u.Units > 0).OrderByDescending(y => y.Units).FirstOrDefault();
-
-                                if (assignment != null)
-                                {
-                                    offer.IdjobVacType = (int)assignment.type;
-                                    return true;
-                                }
-                                else return false;
-                            }
-
-                        case 0:
-                            {
-                                //verificar si alguien tiene del mismo tipo
-
-                                var unitsAssignedSameKind = units.Where(u => offer.IdjobVacType == (int)u.type || Enum.IsDefined(typeof(StandardWiseVacancyType), u.type))
-                                    .OrderByDescending(d => d.Units);
-                                if (unitsAssignedSameKind != null && unitsAssignedSameKind.Any())
-                                {
-                                    var unitsToUse = unitsAssignedSameKind.First();
-                                    _unitsRepo.TakeUnitFromManager(offer.Idcontract, unitsToUse.type, unitsToUse.OwnerId);
-                                    _unitsRepo.AssignUnitToManager(offer.Idcontract, unitsToUse.type, (int)offer.IdenterpriseUserG);
-                                    return true;
-                                }
-
-                                break;
-                            }
-
-                        default:
-                            {
-                                if (unitsAssignedOtherKind.Sum(unit => unit.Units) > 0)
-                                {
-                                    var victim = unitsAssignedOtherKind.First();
-                                    offer.IdjobVacancy = (int)unitsAssignedOtherKind.First().type;
-                                    _unitsRepo.TakeUnitFromManager(offer.Idcontract, victim.type, victim.OwnerId);
-                                    _unitsRepo.AssignUnitToManager(offer.Idcontract, victim.type, (int)offer.IdenterpriseUserG);
-                                    return true;
-                                }
-
-                                break;
-                            }
-                    }
-                    return false;
+                    return true;
                 }
-                else return false;
+
             }
+
+            int totalunits = 0;
+            bool ans = false;
+            var units = _mediator.Send(new GetAvailableUnits.Query
+            {
+                ContractId = offer.Idcontract,
+            }).Result.Value;
+            var unitsAvailable = units.Sum(u => u.Units);
+
+            if (unitsAvailable > 0)
+            {
+                //el user tiene unidades del mismo tipo
+                var unitsSameTypemanager = units.Where(u => u.OwnerId == offer.IdenterpriseUserG && offer.IdjobVacType == (int)u.type);
+                var unitsAssignedOtherKind = units.Where(u => u.OwnerId == offer.IdenterpriseUserG && offer.IdjobVacType != (int)u.type);
+                var bestUnits = unitsSameTypemanager.Sum(unit => unit.Units);
+
+                switch (bestUnits)
+                {
+                    case > 0:
+                        {
+                            var assignment = units.Where(u => u.Units > 0).OrderByDescending(y => y.Units).FirstOrDefault();
+
+                            if (assignment != null)
+                            {
+                                offer.IdjobVacType = (int)assignment.type;
+                                return true;
+                            }
+                            else return false;
+                        }
+
+                    case 0:
+                        {
+                            //verificar si alguien tiene del mismo tipo
+
+                            var unitsAssignedSameKind = units.Where(u => offer.IdjobVacType == (int)u.type || Enum.IsDefined(typeof(StandardWiseVacancyType), u.type))
+                                .OrderByDescending(d => d.Units);
+                            if (unitsAssignedSameKind != null && unitsAssignedSameKind.Any())
+                            {
+                                var unitsToUse = unitsAssignedSameKind.First();
+                                _unitsRepo.TakeUnitFromManager(offer.Idcontract, unitsToUse.type, unitsToUse.OwnerId);
+                                _unitsRepo.AssignUnitToManager(offer.Idcontract, unitsToUse.type, (int)offer.IdenterpriseUserG);
+                                return true;
+                            }
+
+                            break;
+                        }
+
+                    default:
+                        {
+                            if (unitsAssignedOtherKind.Sum(unit => unit.Units) > 0)
+                            {
+                                var victim = unitsAssignedOtherKind.First();
+                                offer.IdjobVacancy = (int)unitsAssignedOtherKind.First().type;
+                                _unitsRepo.TakeUnitFromManager(offer.Idcontract, victim.type, victim.OwnerId);
+                                _unitsRepo.AssignUnitToManager(offer.Idcontract, victim.type, (int)offer.IdenterpriseUserG);
+                                return true;
+                            }
+
+                            break;
+                        }
+                }
+                return false;
+            }
+            else return false;
+
         }
     }
 }
