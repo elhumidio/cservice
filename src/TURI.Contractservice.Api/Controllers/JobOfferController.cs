@@ -159,12 +159,13 @@ namespace API.Controllers
         /// </summary>
         /// <param name="eqDegreeId"></param>
         /// <returns></returns>
-        [HttpGet("{eqDegreeId}", Name = "GetEquestDegree")]
-        public async Task<IActionResult> GetEquestDegree(int eqDegreeId)
+        [HttpGet("{eqDegreeId}/{siteId}", Name = "GetEquestDegree")]
+        public async Task<IActionResult> GetEquestDegree(int eqDegreeId, int siteId)
         {
             var result = await Mediator.Send(new DegreeEquivalent.Query
             {
-                degreeId = eqDegreeId
+                DegreeId = eqDegreeId,
+                SiteId = siteId
             });
             return HandleResult(result);
         }
@@ -175,7 +176,7 @@ namespace API.Controllers
         /// <param name="eqDegreeId"></param>
         /// <returns></returns>
         [HttpGet("{industryCodeId}", Name = "GeteQuestIndustryCode")]
-        public async Task<IActionResult> GeteQuestIndustryCode(int industryCodeId)
+        public async Task<IActionResult> GetEQuestIndustryCode(int industryCodeId)
         {
             var result = await Mediator.Send(new IndustryEquivalent.Query
             {

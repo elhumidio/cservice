@@ -8,7 +8,8 @@ namespace Application.Utils.Queries.Equest
     {
         public class Query : IRequest<Result<int>>
         {
-            public int degreeId { get; set; }
+            public int DegreeId { get; set; }
+            public int SiteId { get; set; }
         }
 
         public class Handler : IRequestHandler<Query, Result<int>>
@@ -21,7 +22,7 @@ namespace Application.Utils.Queries.Equest
 
             public async Task<Result<int>> Handle(Query request, CancellationToken cancellationToken)
             {
-                var ret = await _eqDegreeRepo.GeteQuestDegree(request.degreeId);
+                var ret = await _eqDegreeRepo.GeteQuestDegree(request.DegreeId, request.SiteId);
                 return Result<int>.Success(ret);
             }
 

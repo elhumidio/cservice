@@ -16,7 +16,7 @@ namespace Persistence.Repositories
         public Task<int> GetEQuestIndustryCode(int industryCode)
         {
             var codes = _dataContext.EquestIndustries.Where(i => i.IdindustryCode == industryCode).FirstOrDefault();
-            if (codes != null)
+            if (codes.EquivalentId != null)
                 return Task.FromResult((int)codes.EquivalentId);
             else return Task.FromResult(-1);
         }

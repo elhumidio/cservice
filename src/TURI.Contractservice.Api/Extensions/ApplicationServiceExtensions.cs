@@ -52,7 +52,9 @@ namespace API.Extensions
             services.AddScoped<IRegEnterpriseContractRepository, RegEnterpriseContractRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IEnterpriseUserRepository, EnterpriseUserRepository>();
-
+            services.AddScoped<IEQuestDegreeEquivalentRepository, EQuestDegreeEquivalentRepository>();
+            services.AddScoped<ICountryStateEQRepository, CountryStateEQRepository>();
+            services.AddScoped<IindustryEQRepository, IndustryEQRepository>();
             #endregion
             services.AddScoped<IGeoNamesConector, GeoNamesConector>();
             return services;

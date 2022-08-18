@@ -1,4 +1,4 @@
-﻿using Application.JobOffer.Commands;
+using Application.JobOffer.Commands;
 using FluentValidation;
 using HtmlAgilityPack;
 
@@ -9,22 +9,22 @@ namespace Application.JobOffer.Validations
         HtmlDocument htmldoc = new();
         public EmptyStringValidator()
         {
-            RuleFor(command => command.Title).NotEmpty().WithMessage("Title is mandatory field.\n").Must(HasNotHtml);
-            RuleFor(command => command.Description).NotEmpty().WithMessage("Description is mandatory field.\n").Must(HasBeCleanHtml);
+            RuleFor(command => command).NotEmpty().WithMessage("Title is mandatory field.\n").Must(HasNotHtml);
+            RuleFor(command => command).NotEmpty().WithMessage("Description is mandatory field.\n").Must(HasBeCleanHtml);
 
         }
-        private bool HasNotHtml(string _title)
+        private bool HasNotHtml(CreateOfferCommand cmd)
         {
-            htmldoc.LoadHtml(_title);
-            _title = htmldoc.DocumentNode.InnerText;
+            htmldoc.LoadHtml(cmd.Title);
+            cmd.Title = htmldoc.DocumentNode.InnerText;
             return true;
         }
 
-        private bool HasBeCleanHtml(string _text)
+        private bool HasBeCleanHtml(CreateOfferCommand cmd)
         {
-            htmldoc.LoadHtml(_text);
-            if (htmldoc.ParseErrors.Count() > 0)
-                _text = htmldoc.DocumentNode.InnerText;
+            htmldoc.LoadHtml(cmd.Description);
+            if (htmldoc.ParseErrors.Any())
+                cmd.Description = htmldoc.DocumentNode.InnerText;
             return true;
         }
 
