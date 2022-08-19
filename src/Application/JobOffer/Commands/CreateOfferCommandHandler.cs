@@ -13,14 +13,15 @@ namespace Application.JobOffer.Commands
         #region PRIVATE PROPERTIES
 
         private readonly IMediator mediator;
-        private readonly IMapper mapper;
-        private readonly IJobOfferRepository offerRepo;
-        private readonly IContractRepository contractRepo;
-        private readonly IProductRepository productRepo;
+        private readonly IMapper _mapper;
+        private readonly IJobOfferRepository _offerRepo;
+        private readonly IContractRepository _contractRepo;
+        private readonly IProductRepository _productRepo;
         private readonly IValidator<CreateOfferCommand> _validator;
         private readonly IRegJobVacMatchingRepository _regJobVacRepo;
         private readonly IRegEnterpriseContractRepository _regContractRepo;
-        private readonly IEnterpriseRepository enterpriseRepository;
+        private readonly IEnterpriseRepository _enterpriseRepository;
+        private readonly IContractProductRepository _contractProductRepo;
 
         #endregion
 
@@ -28,49 +29,46 @@ namespace Application.JobOffer.Commands
         public CreateOfferCommandHandler(IRegEnterpriseContractRepository regContractRepo,
             IRegJobVacMatchingRepository regJobVacRepo,
             IValidator<CreateOfferCommand> validator,
-            IMapper _mapper,
-            IJobOfferRepository _offerRepo,
-            IContractRepository _contractRepo,
-            IProductRepository _productRepo,
-            IEnterpriseRepository _enterpriseRepository)
+            IMapper mapper,
+            IJobOfferRepository offerRepo,
+            IContractRepository contractRepo,
+            IProductRepository productRepo,
+            IEnterpriseRepository enterpriseRepository, IContractProductRepository contractProductRepo)
         {
-            contractRepo = _contractRepo;
-            productRepo = _productRepo;
-            offerRepo = _offerRepo;
-            mapper = _mapper;
-            //  _validator = validator;
+            _contractProductRepo = contractProductRepo;
+            _contractRepo = contractRepo;
+            _productRepo = productRepo;
+            _offerRepo = offerRepo;
+            _mapper = mapper;
             _regContractRepo = regContractRepo;
             _regJobVacRepo = regJobVacRepo;
-            this.enterpriseRepository = _enterpriseRepository;
+            _enterpriseRepository = enterpriseRepository;
         }
         public async Task<Result<Unit>> Handle(CreateOfferCommand offer, CancellationToken cancellationToken)
         {
             var job = new JobVacancy();
 
-            var offerAts = await _regJobVacRepo.GetAtsIntegrationInfo(offer.IntegrationData.ApplicationReference);
+            var integrationInfo = await _regJobVacRepo.GetAtsIntegrationInfo(offer.IntegrationData.ApplicationReference);
 
 
-            if (offerAts != null)
+            if (integrationInfo != null) //caso update ATS
             {
-                //TODO get offer by id
-                var existentOfferAts = offerRepo.GetOfferById(offerAts.IdjobVacancy);
-                var entity = mapper.Map(offer, existentOfferAts);
-                offerRepo.UpdateOffer(existentOfferAts);
-                enterpriseRepository.UpdateATS(entity.Identerprise);
-                return Result<Unit>.Success(Unit.Value);
+                //TODO VERIFICAR UNIDADES SI ES ACTIVAR, IMPEDIR ACTIVAR SI NO ES PACK
+                var existentOfferAts = _offerRepo.GetOfferById(integrationInfo.IdjobVacancy);
+
+                return UpdateAtsOffer(offer, existentOfferAts);
+
             }
-            else if (offer.IdjobVacancy > 0)
+            else if (offer.IdjobVacancy > 0) //caso Update general
             {
-                var existentOffer = offerRepo.GetOfferById(offer.IdjobVacancy);
-                var entity = mapper.Map(offer, existentOffer);
-                offerRepo.UpdateOffer(existentOffer);
-                enterpriseRepository.UpdateATS(entity.Identerprise);
-                return Result<Unit>.Success(Unit.Value);
+                //TODO VERIFICAR UNIDADES SI ES ACTIVAR, IMPEDIR ACTIVAR SI NO ES PACK
+                return Update(offer);
+
             }
             else
             {
-                var entity = mapper.Map(offer, job);
-                var jobVacancyId = offerRepo.Add(entity);
+                var entity = _mapper.Map(offer, job);
+                var jobVacancyId = _offerRepo.Add(entity);
                 if (jobVacancyId == 0)
                 {
                     return Result<Unit>.Failure("Failed to create offer");
@@ -92,13 +90,49 @@ namespace Application.JobOffer.Commands
                         };
                         await _regJobVacRepo.Add(obj);
                     }
-                    enterpriseRepository.UpdateATS(entity.Identerprise);
+                    _enterpriseRepository.UpdateATS(entity.Identerprise);
                     return Result<Unit>.Success(Unit.Value);
                 }
             }
 
 
 
+        }
+
+        private Result<Unit> UpdateAtsOffer(CreateOfferCommand offer, JobVacancy existentOfferAts)
+        {
+            bool IsActivate = existentOfferAts.ChkFilled;
+            bool IsPack = _contractProductRepo.IsPack(existentOfferAts.Idcontract);
+            bool CantUpdate = (IsActivate && !IsPack);
+            if (CantUpdate)
+            {
+                return Result<Unit>.Failure("Failed to Update offer");
+            }
+            else
+            {
+                var entity = _mapper.Map(offer, existentOfferAts);
+                _offerRepo.UpdateOffer(existentOfferAts);
+                _enterpriseRepository.UpdateATS(entity.Identerprise);
+                return Result<Unit>.Success(Unit.Value);
+            }
+        }
+
+        private Result<Unit> Update(CreateOfferCommand offer)
+        {
+            var existentOffer = _offerRepo.GetOfferById(offer.IdjobVacancy);
+            bool IsActivate = existentOffer.ChkFilled;
+            bool IsPack = _contractProductRepo.IsPack(existentOffer.Idcontract);
+            bool CantUpdate = (IsActivate && !IsPack);
+            if (CantUpdate)
+            {
+                return Result<Unit>.Failure("Failed to Update offer");
+            }
+            else
+            {
+                var entity = _mapper.Map(offer, existentOffer);
+                _offerRepo.UpdateOffer(existentOffer);
+                return Result<Unit>.Success(Unit.Value);
+            }
         }
     }
 }
