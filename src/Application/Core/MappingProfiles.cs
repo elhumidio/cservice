@@ -19,8 +19,6 @@ namespace Application.Core
             CreateMap<Contract, ContractDto>();
             CreateMap<RegEnterpriseContract, RegEnterpriseContractDto>();
             CreateMap<ContractProduct, ContractProductDto>();
-            CreateMap<JobVacancy, CreateOfferCommand>();
-            //  CreateMap<CreateOfferCommand, JobVacancy>();
             CreateMap<CreateOfferCommand, JobVacancy>().MapOnlyIfChanged().ForMember(a => a.IdjobVacancy, opt => opt.Ignore());
             CreateMap<JobVacancy, CreateOfferCommand>().MapOnlyIfChanged().ForMember(a => a.IdjobVacancy, opt => opt.Ignore());
             CreateMap<RegJobVacMatching, RegJobVacMatchingDto>();

@@ -56,7 +56,7 @@ namespace Application.JobOffer.Commands
                 //TODO VERIFICAR UNIDADES SI ES ACTIVAR, IMPEDIR ACTIVAR SI NO ES PACK
                 var existentOfferAts = _offerRepo.GetOfferById(integrationInfo.IdjobVacancy);
 
-                return UpdateAtsOffer(offer, existentOfferAts);
+                return Update(offer, existentOfferAts);
 
             }
             else if (offer.IdjobVacancy > 0) //caso Update general
@@ -98,8 +98,8 @@ namespace Application.JobOffer.Commands
 
 
         }
-
-        private Result<Unit> UpdateAtsOffer(CreateOfferCommand offer, JobVacancy existentOfferAts)
+        #region PRIVATE METHODS
+        private Result<Unit> Update(CreateOfferCommand offer, JobVacancy existentOfferAts)
         {
             bool IsActivate = existentOfferAts.ChkFilled;
             bool IsPack = _contractProductRepo.IsPack(existentOfferAts.Idcontract);
@@ -134,5 +134,6 @@ namespace Application.JobOffer.Commands
                 return Result<Unit>.Success(Unit.Value);
             }
         }
+        #endregion
     }
 }
