@@ -1,4 +1,5 @@
-﻿using Domain.Repositories;
+using Domain.Entities;
+using Domain.Repositories;
 
 namespace Persistence.Repositories
 {
@@ -19,6 +20,21 @@ namespace Persistence.Repositories
         {
             var salary = _dataContext.Salaries.Where(s => s.Value == _salary && s.IdsalaryType == _salaryType);
             return salary.Any();
+        }
+
+        public IQueryable<SalaryType> GetSalaryTypes(int siteId, int languageId)
+        {
+            var salariesTypes = _dataContext.SalaryTypes
+                .Where(a => a.Idsite == siteId && a.Idslanguage == languageId);
+
+            if (salariesTypes != null)
+            {
+                return salariesTypes;
+            }
+            else
+            {
+                return null;
+            }
         }
 
     }

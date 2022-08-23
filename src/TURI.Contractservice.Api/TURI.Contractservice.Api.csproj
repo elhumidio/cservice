@@ -27,6 +27,8 @@
 		<PackageReference Include="StepStone.Extensions.Diagnostics.HealthChecks.ServiceConfig" Version="3.1.45" />
 		<PackageReference Include="StepStone.Extensions.Diagnostics.Ping" Version="3.1.5" />
 		<PackageReference Include="StepStone.Extensions.Logging.Serilog" Version="3.1.40" />
+		<PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.4.0" />
+		<PackageReference Include="Swashbuckle.Core" Version="5.6.0" />
 
 	</ItemGroup>
 
