@@ -1,4 +1,5 @@
-﻿using Domain.Repositories;
+using Domain.Entities;
+using Domain.Repositories;
 
 namespace Persistence.Repositories
 {
@@ -14,6 +15,21 @@ namespace Persistence.Repositories
         {
             var jobexp = _dataContext.JobExpYears.Where(exp => exp.IdjobExpYears == _experienceYearsId);
             return jobexp.Any();
+        }
+
+        public IQueryable<JobExpYear> GetJobExperienceYears(int siteId, int languageId)
+        {
+            var jobExperienceYears = _dataContext.JobExpYears
+                .Where(a => a.Idsite == siteId && a.Idslanguage == languageId);
+
+            if (jobExperienceYears != null)
+            {
+                return jobExperienceYears;
+            }
+            else
+            {
+                return null;
+            }
         }
     }
 }
