@@ -57,6 +57,8 @@ namespace API.Extensions
             services.AddScoped<IindustryEQRepository, IndustryEQRepository>();
             services.AddScoped<ISalaryRepository, SalaryRepository>();
             services.AddScoped<IJobVacTypeRepository, JobVacTypeRepository>();
+            services.AddScoped<ISiteRepository, SiteRepository>();
+            services.AddScoped<ILanguageRepository, LanguageRepository>();
             #endregion
             services.AddScoped<IGeoNamesConector, GeoNamesConector>();
             return services;

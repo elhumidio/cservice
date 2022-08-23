@@ -12,13 +12,13 @@ namespace Application.AuxiliaryData.Queries
     public class ListResidenceTypes
     {
 
-        public class Query : IRequest<Result<List<ResidenceTypeDto>>>
+        public class Query : IRequest<Result<List<ResidenceTypeDTO>>>
         {
             public int siteID { get; set; }
             public int languageID { get; set; }
         }
 
-        public class Handler : IRequestHandler<Query, Result<List<ResidenceTypeDto>>>
+        public class Handler : IRequestHandler<Query, Result<List<ResidenceTypeDTO>>>
         {
             private readonly IResidenceTypeRepository _residenceType;
             private readonly IMapper _mapper;
@@ -30,10 +30,10 @@ namespace Application.AuxiliaryData.Queries
                 _residenceType = residenceType;
             }
 
-            public async Task<Result<List<ResidenceTypeDto>>> Handle(Query request, CancellationToken cancellationToken)
+            public async Task<Result<List<ResidenceTypeDTO>>> Handle(Query request, CancellationToken cancellationToken)
             {
-                var query = _residenceType.GetResidenceTypes(request.siteID, request.languageID).ProjectTo<ResidenceTypeDto>(_mapper.ConfigurationProvider);
-                return Result<List<ResidenceTypeDto>>.Success(await query.ToListAsync());                
+                var query = _residenceType.GetResidenceTypes(request.siteID, request.languageID).ProjectTo<ResidenceTypeDTO>(_mapper.ConfigurationProvider);
+                return Result<List<ResidenceTypeDTO>>.Success(await query.ToListAsync());                
             }         
         }
     }

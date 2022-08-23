@@ -12,13 +12,13 @@ namespace Application.AuxiliaryData.Queries
     public class ListDegrees
     {
 
-        public class Query : IRequest<Result<List<DegreeDto>>>
+        public class Query : IRequest<Result<List<DegreeDTO>>>
         {
             public int siteID { get; set; }
             public int languageID { get; set; }
         }
 
-        public class Handler : IRequestHandler<Query, Result<List<DegreeDto>>>
+        public class Handler : IRequestHandler<Query, Result<List<DegreeDTO>>>
         {
             private readonly IDegreeRepository _degree;
             private readonly IMapper _mapper;
@@ -30,10 +30,10 @@ namespace Application.AuxiliaryData.Queries
                 _degree = degree;
             }
 
-            public async Task<Result<List<DegreeDto>>> Handle(Query request, CancellationToken cancellationToken)
+            public async Task<Result<List<DegreeDTO>>> Handle(Query request, CancellationToken cancellationToken)
             {
-                var query = _degree.GetDegrees(request.siteID, request.languageID).ProjectTo<DegreeDto>(_mapper.ConfigurationProvider);
-                return Result<List<DegreeDto>>.Success(await query.ToListAsync());                
+                var query = _degree.GetDegrees(request.siteID, request.languageID).ProjectTo<DegreeDTO>(_mapper.ConfigurationProvider);
+                return Result<List<DegreeDTO>>.Success(await query.ToListAsync());                
             }         
         }
     }

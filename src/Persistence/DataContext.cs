@@ -46,6 +46,7 @@ namespace Persistence
         public virtual DbSet<ZipCode> ZipCodes { get; set; } = null!;
         public virtual DbSet<ProductLine> ProductLines { get; set; } = null!;
         public virtual DbSet<Enterprise> Enterprises { get; set; } = null!;
+        public virtual DbSet<Site> Sites { get; set; } = null!;
 
 
 
@@ -1406,6 +1407,17 @@ namespace Persistence
                 entity.Property(e => e.Longitude).HasColumnType("decimal(9, 6)");
 
                 entity.Property(e => e.Zip).HasMaxLength(20);
+            });
+
+            modelBuilder.Entity<Site>(entity =>
+            {
+                entity.HasKey(e => new { e.Idsite });
+
+                entity.ToTable("TSite");
+
+                entity.Property(e => e.Idsite).HasColumnName("IDSite");
+
+                entity.Property(e => e.BaseName).HasMaxLength(20);
             });
 
             OnModelCreatingPartial(modelBuilder);

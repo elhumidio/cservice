@@ -12,13 +12,13 @@ namespace Application.AuxiliaryData.Queries
     public class ListSalaries
     {
 
-        public class Query : IRequest<Result<List<SalaryDto>>>
+        public class Query : IRequest<Result<List<SalaryDTO>>>
         {
             public int siteID { get; set; }
             public int languageID { get; set; }
         }
 
-        public class Handler : IRequestHandler<Query, Result<List<SalaryDto>>>
+        public class Handler : IRequestHandler<Query, Result<List<SalaryDTO>>>
         {
             private readonly ISalaryRepository _salary;
             private readonly IMapper _mapper;
@@ -30,10 +30,10 @@ namespace Application.AuxiliaryData.Queries
                 _salary = salary;
             }
 
-            public async Task<Result<List<SalaryDto>>> Handle(Query request, CancellationToken cancellationToken)
+            public async Task<Result<List<SalaryDTO>>> Handle(Query request, CancellationToken cancellationToken)
             {
-                var query = _salary.GetSalaries(request.siteID, request.languageID).ProjectTo<SalaryDto>(_mapper.ConfigurationProvider);
-                return Result<List<SalaryDto>>.Success(await query.ToListAsync());                
+                var query = _salary.GetSalaries(request.siteID, request.languageID).ProjectTo<SalaryDTO>(_mapper.ConfigurationProvider);
+                return Result<List<SalaryDTO>>.Success(await query.ToListAsync());                
             }         
         }
     }

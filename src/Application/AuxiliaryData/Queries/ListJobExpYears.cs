@@ -12,13 +12,13 @@ namespace Application.AuxiliaryData.Queries
     public class ListJobExpYears
     {
 
-        public class Query : IRequest<Result<List<JobExpYearDto>>>
+        public class Query : IRequest<Result<List<JobExpYearDTO>>>
         {
             public int siteID { get; set; }
             public int languageID { get; set; }
         }
 
-        public class Handler : IRequestHandler<Query, Result<List<JobExpYearDto>>>
+        public class Handler : IRequestHandler<Query, Result<List<JobExpYearDTO>>>
         {
             private readonly IJobExpYearsRepository _jobExpYears;
             private readonly IMapper _mapper;
@@ -30,10 +30,10 @@ namespace Application.AuxiliaryData.Queries
                 _jobExpYears = jobExpYears;
             }
 
-            public async Task<Result<List<JobExpYearDto>>> Handle(Query request, CancellationToken cancellationToken)
+            public async Task<Result<List<JobExpYearDTO>>> Handle(Query request, CancellationToken cancellationToken)
             {
-                var query = _jobExpYears.GetJobExperienceYears(request.siteID, request.languageID).ProjectTo<JobExpYearDto>(_mapper.ConfigurationProvider);
-                return Result<List<JobExpYearDto>>.Success(await query.ToListAsync());                
+                var query = _jobExpYears.GetJobExperienceYears(request.siteID, request.languageID).ProjectTo<JobExpYearDTO>(_mapper.ConfigurationProvider);
+                return Result<List<JobExpYearDTO>>.Success(await query.ToListAsync());                
             }         
         }
     }

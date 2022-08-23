@@ -12,13 +12,13 @@ namespace Application.AuxiliaryData.Queries
     public class ListJobVacTypes
     {
 
-        public class Query : IRequest<Result<List<JobVacTypeDto>>>
+        public class Query : IRequest<Result<List<JobVacTypeDTO>>>
         {
             public int siteID { get; set; }
             public int languageID { get; set; }
         }
 
-        public class Handler : IRequestHandler<Query, Result<List<JobVacTypeDto>>>
+        public class Handler : IRequestHandler<Query, Result<List<JobVacTypeDTO>>>
         {
             private readonly IJobVacTypeRepository _jobVacType;
             private readonly IMapper _mapper;
@@ -30,10 +30,10 @@ namespace Application.AuxiliaryData.Queries
                 _jobVacType = jobVacType;
             }
 
-            public async Task<Result<List<JobVacTypeDto>>> Handle(Query request, CancellationToken cancellationToken)
+            public async Task<Result<List<JobVacTypeDTO>>> Handle(Query request, CancellationToken cancellationToken)
             {
-                var query = _jobVacType.GetJobVacTypes(request.siteID, request.languageID).ProjectTo<JobVacTypeDto>(_mapper.ConfigurationProvider);
-                return Result<List<JobVacTypeDto>>.Success(await query.ToListAsync());                
+                var query = _jobVacType.GetJobVacTypes(request.siteID, request.languageID).ProjectTo<JobVacTypeDTO>(_mapper.ConfigurationProvider);
+                return Result<List<JobVacTypeDTO>>.Success(await query.ToListAsync());                
             }         
         }
     }
