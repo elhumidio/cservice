@@ -24,4 +24,25 @@ namespace Application.JobOffer.Validations
         }
 
     }
+
+    public class OfferAreaValidatorUp : AbstractValidator<UpdateOfferCommand>
+    {
+        private readonly IAreaRepository _areaRepo;
+        public OfferAreaValidatorUp(IAreaRepository areaRepo)
+        {
+            _areaRepo = areaRepo;
+
+            RuleFor(command => command.Idarea)
+                .Must(IsRightArea)
+                .WithMessage("Invalid value for job industry field.")
+                .NotNull()
+                .WithMessage("AreaId is mandatory field. \n");
+        }
+
+        private bool IsRightArea(int _areaId)
+        {
+            return _areaRepo.IsRightArea(_areaId);
+        }
+
+    }
 }

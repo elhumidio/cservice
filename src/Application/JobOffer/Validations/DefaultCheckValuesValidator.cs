@@ -27,4 +27,26 @@ namespace Application.JobOffer.Validations
             return true;
         }
     }
+    public class DefaultCheckValuesValidatorUp : AbstractValidator<UpdateOfferCommand>
+    {
+        public DefaultCheckValuesValidatorUp(IMediator mediator, IContractProductRepository contractProdRepo)
+        {
+
+            RuleFor(command => command)
+                .Must(HasDefaultValues)
+                .WithMessage("Couldn't set default values.\n");
+        }
+
+        private bool HasDefaultValues(UpdateOfferCommand obj)
+        {
+            obj.ChkBlindVac = false;
+            obj.ChkFilled = false;
+            obj.ChkDeleted = false;
+            obj.ChkEnterpriseVisible = true;
+            obj.ChkBlindSalary = false;
+            obj.ChkDisability = false;
+            obj.ChkUpdateDate = true;
+            return true;
+        }
+    }
 }

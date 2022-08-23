@@ -23,4 +23,23 @@ namespace Application.JobOffer.Validations
             return _contractTypeRepo.IsRightContractType(_contractType);
         }
     }
+    public class ContractTypeValidatorUp : AbstractValidator<UpdateOfferCommand>
+    {
+        private readonly IJobContractTypeRepository _contractTypeRepo;
+
+        public ContractTypeValidatorUp(IJobContractTypeRepository contractTypeRepo)
+        {
+            _contractTypeRepo = contractTypeRepo;
+            RuleFor(command => command.IdjobContractType)
+                .Must(IsRightContractType)
+                .WithMessage("Invalid value for job industry field.")
+                .NotNull()
+                .WithMessage("contractTypeId is mandatory field. \n");
+        }
+
+        private bool IsRightContractType(int _contractType)
+        {
+            return _contractTypeRepo.IsRightContractType(_contractType);
+        }
+    }
 }

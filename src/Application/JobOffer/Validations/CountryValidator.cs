@@ -23,4 +23,24 @@ namespace Application.JobOffer.Validations
             return _countryRepo.IsRightCountry(_countryId);
         }
     }
+
+    public class CountryValidatorUp : AbstractValidator<UpdateOfferCommand>
+    {
+        private readonly ICountryRepository _countryRepo;
+
+        public CountryValidatorUp(ICountryRepository countryRepo)
+        {
+            _countryRepo = countryRepo;
+            RuleFor(command => command.Idcountry)
+                .Must(IsRightCountry)
+                .WithMessage("Invalid value for Country field.\n")
+                .NotNull()
+                .WithMessage("Countryid is mandatory.\n");
+        }
+
+        private bool IsRightCountry(int _countryId)
+        {
+            return _countryRepo.IsRightCountry(_countryId);
+        }
+    }
 }

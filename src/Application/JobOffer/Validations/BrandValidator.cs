@@ -23,4 +23,24 @@ namespace Application.JobOffer.Validations
             return _brandRepo.IsRightBrand(obj.Idbrand, obj.Identerprise);
         }
     }
+
+    public class BrandValidatorUpdate : AbstractValidator<UpdateOfferCommand>
+    {
+        private readonly IBrandRepository _brandRepo;
+
+        public BrandValidatorUpdate(IBrandRepository brandRepo)
+        {
+            _brandRepo = brandRepo;
+            RuleFor(command => command)
+                .Must(IsRightBrand)
+                .WithMessage("Invalid value for Brand field.\n")
+                .NotNull()
+                .WithMessage("BrandId is mandatory.\n");
+        }
+
+        private bool IsRightBrand(UpdateOfferCommand obj)
+        {
+            return _brandRepo.IsRightBrand(obj.Idbrand, obj.Identerprise);
+        }
+    }
 }

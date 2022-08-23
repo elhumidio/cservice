@@ -23,4 +23,24 @@ namespace Application.JobOffer.Validations
             return _jobCatRepo.IsRightCategory(_jobCatId);
         }
     }
+
+    public class CategoryValidatorUp : AbstractValidator<UpdateOfferCommand>
+    {
+        private readonly IJobCategoryRepository _jobCatRepo;
+
+        public CategoryValidatorUp(IJobCategoryRepository jobCatRepo)
+        {
+            _jobCatRepo = jobCatRepo;
+            RuleFor(command => command.IdjobCategory)
+                .Must(IsRightCategory)
+                .WithMessage("Invalid value for JobCategory field.\n")
+                .NotNull()
+                .WithMessage("JobCategoryId is mandatory.\n");
+        }
+
+        private bool IsRightCategory(int? _jobCatId)
+        {
+            return _jobCatRepo.IsRightCategory(_jobCatId);
+        }
+    }
 }
