@@ -109,6 +109,8 @@ namespace Application.JobOffer.Validations
                             {
                                 var unitsToUse = unitsAssignedSameKind.First();
                                 _unitsRepo.TakeUnitFromManager(offer.Idcontract, unitsToUse.type, unitsToUse.OwnerId);
+                                offer.IdenterpriseUserG = unitsToUse.OwnerId;
+                                offer.IdenterpriseUserLastMod = unitsToUse.OwnerId;
                                 _unitsRepo.AssignUnitToManager(offer.Idcontract, unitsToUse.type, (int)offer.IdenterpriseUserG);
                                 return true;
                             }
@@ -120,10 +122,12 @@ namespace Application.JobOffer.Validations
                         {
                             if (unitsAssignedOtherKind.Sum(unit => unit.Units) > 0)
                             {
-                                var victim = unitsAssignedOtherKind.First();
+                                var unitsToUse = unitsAssignedOtherKind.First();
+                                offer.IdenterpriseUserG = unitsToUse.OwnerId;
+                                offer.IdenterpriseUserLastMod = unitsToUse.OwnerId;
                                 offer.IdjobVacancy = (int)unitsAssignedOtherKind.First().type;
-                                _unitsRepo.TakeUnitFromManager(offer.Idcontract, victim.type, victim.OwnerId);
-                                _unitsRepo.AssignUnitToManager(offer.Idcontract, victim.type, (int)offer.IdenterpriseUserG);
+                                _unitsRepo.TakeUnitFromManager(offer.Idcontract, unitsToUse.type, unitsToUse.OwnerId);
+                                _unitsRepo.AssignUnitToManager(offer.Idcontract, unitsToUse.type, (int)offer.IdenterpriseUserG);
                                 return true;
                             }
 

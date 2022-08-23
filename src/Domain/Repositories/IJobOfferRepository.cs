@@ -14,7 +14,7 @@ namespace Domain.Repositories
         IQueryable<JobVacancy> GetConsumedUnitsWelcomeNotSpain(int companyId);
         public int Add(JobVacancy job);
         public JobVacancy GetOfferById(int id);
-        bool UpdateOffer(JobVacancy jobUpdated);
+        Task<int> UpdateOffer(JobVacancy jobUpdated);
         Task<int> FileOffer(JobVacancy job);
 
 

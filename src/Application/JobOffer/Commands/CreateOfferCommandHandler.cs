@@ -8,7 +8,7 @@ using MediatR;
 
 namespace Application.JobOffer.Commands
 {
-    public class CreateOfferCommandHandler : IRequestHandler<CreateOfferCommand, Result<Unit>>
+    public class CreateOfferCommandHandler : IRequestHandler<CreateOfferCommand, Result<string>>
     {
         #region PRIVATE PROPERTIES
 
@@ -44,34 +44,23 @@ namespace Application.JobOffer.Commands
             _regJobVacRepo = regJobVacRepo;
             _enterpriseRepository = enterpriseRepository;
         }
-        public async Task<Result<Unit>> Handle(CreateOfferCommand offer, CancellationToken cancellationToken)
+        public async Task<Result<string>> Handle(CreateOfferCommand offer, CancellationToken cancellationToken)
         {
             var job = new JobVacancy();
-
             var integrationInfo = await _regJobVacRepo.GetAtsIntegrationInfo(offer.IntegrationData.ApplicationReference);
-
-
             if (integrationInfo != null) //caso update ATS
             {
-                //TODO VERIFICAR UNIDADES SI ES ACTIVAR, IMPEDIR ACTIVAR SI NO ES PACK
                 var existentOfferAts = _offerRepo.GetOfferById(integrationInfo.IdjobVacancy);
-
-                return Update(offer, existentOfferAts);
-
+                return Result<string>.Failure("Offer already exists");
             }
-            else if (offer.IdjobVacancy > 0) //caso Update general
-            {
-                //TODO VERIFICAR UNIDADES SI ES ACTIVAR, IMPEDIR ACTIVAR SI NO ES PACK
-                return Update(offer);
 
-            }
             else
             {
                 var entity = _mapper.Map(offer, job);
                 var jobVacancyId = _offerRepo.Add(entity);
                 if (jobVacancyId == 0)
                 {
-                    return Result<Unit>.Failure("Failed to create offer");
+                    return Result<string>.Failure("Failed to create offer");
                 }
                 else
                 {
@@ -91,7 +80,8 @@ namespace Application.JobOffer.Commands
                         await _regJobVacRepo.Add(obj);
                     }
                     _enterpriseRepository.UpdateATS(entity.Identerprise);
-                    return Result<Unit>.Success(Unit.Value);
+
+                    return Result<string>.Success("Offer Added");
                 }
             }
 
@@ -99,25 +89,31 @@ namespace Application.JobOffer.Commands
 
         }
         #region PRIVATE METHODS
-        private Result<Unit> Update(CreateOfferCommand offer, JobVacancy existentOfferAts)
+        private Result<string> Update(CreateOfferCommand offer, JobVacancy existentOfferAts)
         {
             bool IsActivate = existentOfferAts.ChkFilled;
             bool IsPack = _contractProductRepo.IsPack(existentOfferAts.Idcontract);
             bool CantUpdate = (IsActivate && !IsPack);
             if (CantUpdate)
             {
-                return Result<Unit>.Failure("Failed to Update offer");
+                return Result<string>.Failure("Failed to Update offer");
             }
             else
             {
                 var entity = _mapper.Map(offer, existentOfferAts);
+                if (IsActivate)
+                {
+                    existentOfferAts.FilledDate = null;
+                }
+
+
                 _offerRepo.UpdateOffer(existentOfferAts);
                 _enterpriseRepository.UpdateATS(entity.Identerprise);
-                return Result<Unit>.Success(Unit.Value);
+                return Result<string>.Success("Updated");
             }
         }
 
-        private Result<Unit> Update(CreateOfferCommand offer)
+        private Result<string> Update(CreateOfferCommand offer)
         {
             var existentOffer = _offerRepo.GetOfferById(offer.IdjobVacancy);
             bool IsActivate = existentOffer.ChkFilled;
@@ -125,13 +121,13 @@ namespace Application.JobOffer.Commands
             bool CantUpdate = (IsActivate && !IsPack);
             if (CantUpdate)
             {
-                return Result<Unit>.Failure("Failed to Update offer");
+                return Result<string>.Failure("Failed to Update offer");
             }
             else
             {
                 var entity = _mapper.Map(offer, existentOffer);
                 _offerRepo.UpdateOffer(existentOffer);
-                return Result<Unit>.Success(Unit.Value);
+                return Result<string>.Success("Updated");
             }
         }
         #endregion

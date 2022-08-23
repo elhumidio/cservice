@@ -37,8 +37,6 @@ namespace API.Controllers
             var result = await Mediator.Send(offer);
             var ret = HandleResult(result);
             return ret;
-
-
         }
 
         /// <summary>
@@ -55,8 +53,6 @@ namespace API.Controllers
             });
             var ret = HandleResult(result);
             return ret;
-
-
         }
 
         /// <summary>
@@ -68,6 +64,19 @@ namespace API.Controllers
         public async Task<IActionResult> PublishOffer(CreateOfferCommand createOfferCommand)
         {
             var result = await Mediator.Send(createOfferCommand);
+            var ret = HandleResult(result);
+            return ret;
+        }
+
+        /// <summary>
+        /// Update offer
+        /// </summary>
+        /// <param name="createOfferCommand"></param>
+        /// <returns></returns>
+        [HttpPost(Name = "UpdateOffer")]
+        public async Task<IActionResult> UpdateOffer(UpdateOfferCommand updateOfferCommand)
+        {
+            var result = await Mediator.Send(updateOfferCommand);
             var ret = HandleResult(result);
             return ret;
         }
@@ -199,5 +208,22 @@ namespace API.Controllers
             });
             return HandleResult(result);
         }
+
+
+        /// <summary>
+        /// Gets idjobvacancy ats offer,  In case offer exists returns idjobvacancy else return -1
+        /// </summary>
+        /// <param name="externalId"></param>
+        /// <returns></returns>
+        [HttpGet("{externalId}", Name = "GetAtsOffer")]
+        public async Task<IActionResult> GetAtsOffer(string externalId)
+        {
+            var result = await Mediator.Send(new VerifyOffer.Query
+            {
+                ExternalId = externalId
+            });
+            return HandleResult(result);
+        }
+
     }
 }

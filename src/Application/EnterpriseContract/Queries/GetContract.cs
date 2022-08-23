@@ -39,6 +39,8 @@ namespace Application.EnterpriseContract.Queries
 
 
                 }).Result;
+
+
                 foreach (var (contract, type) in from contract in contracts.Value
                                                  from type in contract.RegEnterpriseContracts
                                                  select (contract, type))

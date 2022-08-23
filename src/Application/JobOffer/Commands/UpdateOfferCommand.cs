@@ -5,7 +5,7 @@ using System.Runtime.Serialization;
 namespace Application.JobOffer.Commands
 {
     [DataContract]
-    public class CreateOfferCommand : IRequest<Result<string>>
+    public class UpdateOfferCommand : IRequest<Result<string>>
     {
         [DataMember]
         public int IdjobVacancy { get; set; }
@@ -118,8 +118,6 @@ namespace Application.JobOffer.Commands
         public int? Idstatus { get; set; }
         [DataMember]
         public int? Idcity { get; set; }
-        //  [DataMember]
-        //   public string? CityOld { get; set; }
         [DataMember]
         public string? JobLocation { get; set; }
         [DataMember]
@@ -132,31 +130,11 @@ namespace Application.JobOffer.Commands
         public int IdjobRegType { get; set; }
         [DataMember]
         public int Idsite { get; set; }
-
         [DataMember]
         public DateTime? LastVisitorDate { get; set; }
         [DataMember]
         public string? ZipCode { get; set; }
-        [DataMember]
-        public IntegrationData IntegrationData { get; set; }
 
-        public CreateOfferCommand()
-        {
-            IntegrationData = new IntegrationData();
-        }
-    }
-
-
-    public class IntegrationData
-    {
-        public string? IDIntegration { get; set; }
-        public string? ApplicationEmail { get; set; }
-        public string? ApplicationUrl { get; set; }
-        public string? ApplicationReference { get; set; }
 
     }
-
-
-
-
 }

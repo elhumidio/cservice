@@ -38,18 +38,18 @@ namespace Persistence.Repositories
 
         }
 
-        public bool UpdateOffer(JobVacancy jobUpdated)
+        public Task<int> UpdateOffer(JobVacancy jobUpdated)
         {
 
             var current = _dataContext.JobVacancies.Where(a => a.IdjobVacancy == jobUpdated.IdjobVacancy).FirstOrDefault();
             if (current != null)
             {
                 current = jobUpdated;
-                _dataContext.SaveChanges();
-                return true;
-
+                var ret = _dataContext.SaveChangesAsync();
+                return ret;
             }
-            return false;
+            else return Task.FromResult(-1);
+
         }
 
         public Task<int> FileOffer(JobVacancy job)
