@@ -1,4 +1,5 @@
-﻿using Domain.Repositories;
+using Domain.Entities;
+using Domain.Repositories;
 
 namespace Persistence.Repositories
 {
@@ -13,6 +14,23 @@ namespace Persistence.Repositories
         {
             var area = _dataContext.Areas.Where(a => a.Idarea == _areaId);
             return area.Any();
+        }
+
+        public IQueryable<Area> GetAreas(int siteId, int languageId)
+        {
+            var areas = _dataContext.Areas
+                .Where(a => a.Idsite == siteId && a.Idslanguage == languageId)
+                .Where(a => a.Idarea > 0)
+                .Where(a => a.ChkActive == 1);
+
+            if(areas != null)
+            {
+                return areas;
+            }
+            else
+            {
+                return null;
+            }
         }
     }
 }

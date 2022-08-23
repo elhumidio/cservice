@@ -1,4 +1,5 @@
-﻿using Domain.Repositories;
+using Domain.Entities;
+using Domain.Repositories;
 
 namespace Persistence.Repositories
 {
@@ -19,6 +20,21 @@ namespace Persistence.Repositories
                 brands = activebrands;
             return brands;
 
+        }
+
+        public IQueryable<Brand> GetListBrands(int companyId)
+        {
+            var brands = _dataContext.Brands
+                .Where(a => a.Identerprise == companyId && a.Active == true);
+
+            if (brands != null)
+            {
+                return brands;
+            }
+            else
+            {
+                return null;
+            }
         }
 
         public bool IsRightBrand(int _brandId, int _enterpriseId)
