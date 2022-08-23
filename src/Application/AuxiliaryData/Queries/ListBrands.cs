@@ -12,12 +12,12 @@ namespace Application.AuxiliaryData.Queries
     public class ListBrands
     {
 
-        public class Query : IRequest<Result<List<BrandDto>>>
+        public class Query : IRequest<Result<List<BrandDTO>>>
         {
             public int companyID { get; set; }
         }
 
-        public class Handler : IRequestHandler<Query, Result<List<BrandDto>>>
+        public class Handler : IRequestHandler<Query, Result<List<BrandDTO>>>
         {
             private readonly IBrandRepository _brand;
             private readonly IMapper _mapper;
@@ -29,10 +29,10 @@ namespace Application.AuxiliaryData.Queries
                 _brand = brand;
             }
 
-            public async Task<Result<List<BrandDto>>> Handle(Query request, CancellationToken cancellationToken)
+            public async Task<Result<List<BrandDTO>>> Handle(Query request, CancellationToken cancellationToken)
             {
-                var query = _brand.GetListBrands(request.companyID).ProjectTo<BrandDto>(_mapper.ConfigurationProvider);
-                return Result<List<BrandDto>>.Success(await query.ToListAsync());                
+                var query = _brand.GetListBrands(request.companyID).ProjectTo<BrandDTO>(_mapper.ConfigurationProvider);
+                return Result<List<BrandDTO>>.Success(await query.ToListAsync());                
             }         
         }
     }

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Application.AuxiliaryData.DTO
 {
-    public partial class AreaDto
+    public partial class AreaDTO
     {  
         public int Idarea { get; set; }
         public int Idsite { get; set; }

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Application.AuxiliaryData.DTO
 {
-    public partial class BrandDto
+    public partial class BrandDTO
     {
         public int Idbrand { get; set; }
         public int Identerprise { get; set; }

@@ -148,5 +148,25 @@ namespace API.Controllers
             });
             return HandleResult(result);
         }
+
+        [HttpGet("", Name = "GetSites")]
+        public async Task<IActionResult> GetSites()
+        {
+            var result = await Mediator.Send(new ListSites.Query
+            {
+
+            });
+            return HandleResult(result);
+        }
+
+        [HttpGet("{siteId}", Name = "GetLanguages")]
+        public async Task<IActionResult> GetLanguages(int siteId)
+        {
+            var result = await Mediator.Send(new ListLanguages.Query
+            {
+                siteID = siteId
+            });
+            return HandleResult(result);
+        }
     }
 }

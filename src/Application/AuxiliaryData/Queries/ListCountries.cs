@@ -12,13 +12,13 @@ namespace Application.AuxiliaryData.Queries
     public class ListCountries
     {
 
-        public class Query : IRequest<Result<List<CountryDto>>>
+        public class Query : IRequest<Result<List<CountryDTO>>>
         {
             public int siteID { get; set; }
             public int languageID { get; set; }
         }
 
-        public class Handler : IRequestHandler<Query, Result<List<CountryDto>>>
+        public class Handler : IRequestHandler<Query, Result<List<CountryDTO>>>
         {
             private readonly ICountryRepository _country;
             private readonly IMapper _mapper;
@@ -30,10 +30,10 @@ namespace Application.AuxiliaryData.Queries
                 _country = country;
             }
 
-            public async Task<Result<List<CountryDto>>> Handle(Query request, CancellationToken cancellationToken)
+            public async Task<Result<List<CountryDTO>>> Handle(Query request, CancellationToken cancellationToken)
             {
-                var query = _country.GetCountries(request.siteID, request.languageID).ProjectTo<CountryDto>(_mapper.ConfigurationProvider);
-                return Result<List<CountryDto>>.Success(await query.ToListAsync());                
+                var query = _country.GetCountries(request.siteID, request.languageID).ProjectTo<CountryDTO>(_mapper.ConfigurationProvider);
+                return Result<List<CountryDTO>>.Success(await query.ToListAsync());                
             }         
         }
     }

@@ -23,18 +23,20 @@ namespace Application.Core
             CreateMap<CreateOfferCommand, JobVacancy>().MapOnlyIfChanged().ForMember(a => a.IdjobVacancy, opt => opt.Ignore());
             CreateMap<JobVacancy, CreateOfferCommand>().MapOnlyIfChanged().ForMember(a => a.IdjobVacancy, opt => opt.Ignore());
             CreateMap<RegJobVacMatching, RegJobVacMatchingDto>();
-            CreateMap<Area, AreaDto>();
-            CreateMap<Degree, DegreeDto>();
-            CreateMap<Brand, BrandDto>();
-            CreateMap<JobCategory, JobCategoryDto>();
-            CreateMap<JobContractType, JobContractTypeDto>();
-            CreateMap<JobExpYear, JobExpYearDto>();
-            CreateMap<Salary, SalaryDto>();
-            CreateMap<Country, CountryDto>();
-            CreateMap<Region, RegionDto>();
-            CreateMap<JobVacType, JobVacTypeDto>();
-            CreateMap<ResidenceType, ResidenceTypeDto>();
-            CreateMap<SalaryType, SalaryTypeDto>();
+            CreateMap<Area, AreaDTO>();
+            CreateMap<Degree, DegreeDTO>();
+            CreateMap<Brand, BrandDTO>();
+            CreateMap<JobCategory, JobCategoryDTO>();
+            CreateMap<JobContractType, JobContractTypeDTO>();
+            CreateMap<JobExpYear, JobExpYearDTO>();
+            CreateMap<Salary, SalaryDTO>();
+            CreateMap<Country, CountryDTO>();
+            CreateMap<Region, RegionDTO>();
+            CreateMap<JobVacType, JobVacTypeDTO>();
+            CreateMap<ResidenceType, ResidenceTypeDTO>();
+            CreateMap<SalaryType, SalaryTypeDTO>();
+            CreateMap<Site, SiteDTO>();
+            CreateMap<TsturijobsLang, LanguageDTO>();
 
             //crear dto enterprise
 

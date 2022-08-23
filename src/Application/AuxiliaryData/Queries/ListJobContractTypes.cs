@@ -11,13 +11,13 @@ namespace Application.AuxiliaryData.Queries
 {
     public class ListJobContractTypes
     {
-        public class Query : IRequest<Result<List<JobContractTypeDto>>>
+        public class Query : IRequest<Result<List<JobContractTypeDTO>>>
         {
             public int siteID { get; set; }
             public int languageID { get; set; }
         }
 
-        public class Handler : IRequestHandler<Query, Result<List<JobContractTypeDto>>>
+        public class Handler : IRequestHandler<Query, Result<List<JobContractTypeDTO>>>
         {
             private readonly IJobContractTypeRepository _jobContractType;
             private readonly IMapper _mapper;
@@ -29,10 +29,10 @@ namespace Application.AuxiliaryData.Queries
                 _jobContractType = jobContractType;
             }
 
-            public async Task<Result<List<JobContractTypeDto>>> Handle(Query request, CancellationToken cancellationToken)
+            public async Task<Result<List<JobContractTypeDTO>>> Handle(Query request, CancellationToken cancellationToken)
             {
-                var query = _jobContractType.GetJobContractTypes(request.siteID, request.languageID).ProjectTo<JobContractTypeDto>(_mapper.ConfigurationProvider);
-                return Result<List<JobContractTypeDto>>.Success(await query.ToListAsync());                
+                var query = _jobContractType.GetJobContractTypes(request.siteID, request.languageID).ProjectTo<JobContractTypeDTO>(_mapper.ConfigurationProvider);
+                return Result<List<JobContractTypeDTO>>.Success(await query.ToListAsync());                
             }         
         }
     }

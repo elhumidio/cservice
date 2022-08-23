@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Application.AuxiliaryData.DTO
 {
-    public partial class RegionDto
+    public partial class RegionDTO
     {
         public int Idregion { get; set; }
         public int Idcountry { get; set; }

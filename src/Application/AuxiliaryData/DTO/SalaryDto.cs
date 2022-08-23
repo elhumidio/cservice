@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Application.AuxiliaryData.DTO
 {
-    public partial class SalaryDto
+    public partial class SalaryDTO
     {
         public int Idsalary { get; set; }
         public int Idsite { get; set; }

@@ -12,13 +12,13 @@ namespace Application.AuxiliaryData.Queries
     public class ListAreas
     {
 
-        public class Query : IRequest<Result<List<AreaDto>>>
+        public class Query : IRequest<Result<List<AreaDTO>>>
         {
             public int siteID { get; set; }
             public int languageID { get; set; }
         }
 
-        public class Handler : IRequestHandler<Query, Result<List<AreaDto>>>
+        public class Handler : IRequestHandler<Query, Result<List<AreaDTO>>>
         {
             private readonly IAreaRepository _area;
             private readonly IMapper _mapper;
@@ -30,10 +30,10 @@ namespace Application.AuxiliaryData.Queries
                 _area = area;
             }
 
-            public async Task<Result<List<AreaDto>>> Handle(Query request, CancellationToken cancellationToken)
+            public async Task<Result<List<AreaDTO>>> Handle(Query request, CancellationToken cancellationToken)
             {
-                var query =  _area.GetAreas(request.siteID, request.languageID).ProjectTo<AreaDto>(_mapper.ConfigurationProvider);
-                return Result<List<AreaDto>>.Success(await query.ToListAsync());                
+                var query =  _area.GetAreas(request.siteID, request.languageID).ProjectTo<AreaDTO>(_mapper.ConfigurationProvider);
+                return Result<List<AreaDTO>>.Success(await query.ToListAsync());                
             }         
         }
     }

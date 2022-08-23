@@ -12,13 +12,13 @@ namespace Application.AuxiliaryData.Queries
     public class ListRegions
     {
 
-        public class Query : IRequest<Result<List<RegionDto>>>
+        public class Query : IRequest<Result<List<RegionDTO>>>
         {
             public int siteID { get; set; }
             public int languageID { get; set; }
         }
 
-        public class Handler : IRequestHandler<Query, Result<List<RegionDto>>>
+        public class Handler : IRequestHandler<Query, Result<List<RegionDTO>>>
         {
             private readonly IRegionRepository _region;
             private readonly IMapper _mapper;
@@ -30,10 +30,10 @@ namespace Application.AuxiliaryData.Queries
                 _region = region;
             }
 
-            public async Task<Result<List<RegionDto>>> Handle(Query request, CancellationToken cancellationToken)
+            public async Task<Result<List<RegionDTO>>> Handle(Query request, CancellationToken cancellationToken)
             {
-                var query = _region.GetRegions(request.siteID, request.languageID).ProjectTo<RegionDto>(_mapper.ConfigurationProvider);
-                return Result<List<RegionDto>>.Success(await query.ToListAsync());                
+                var query = _region.GetRegions(request.siteID, request.languageID).ProjectTo<RegionDTO>(_mapper.ConfigurationProvider);
+                return Result<List<RegionDTO>>.Success(await query.ToListAsync());                
             }         
         }
     }
