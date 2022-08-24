@@ -39,7 +39,7 @@ namespace TURI.Contractservice.Tests.Unit.Contracts.Queries
 
             var result = await handler.Handle(new GetAvailableUnitsByOwner.Query(), CancellationToken.None);
             result.Value.ShouldBeOfType<List<AvailableUnitsDto>>();
-
+            result.Value.Count.ShouldBeGreaterThan(0);
         }
     }
 }
