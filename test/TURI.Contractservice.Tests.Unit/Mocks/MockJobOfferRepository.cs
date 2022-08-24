@@ -18,19 +18,16 @@ namespace TURI.Contractservice.Tests.Unit.Mocks
             }.AsQueryable();
             var mockRepo = new Mock<IJobOfferRepository>();
             mockRepo.Setup(r => r.GetActiveOffersByContractAndManager(It.IsAny<int>(), It.IsAny<int>())).Returns(listOffers);
-            mockRepo.Setup(r => r.UpdateOffer(It.IsAny<JobVacancy>())).ReturnsAsync(() =>
-            {
-                return 1;
-            });
+            mockRepo.Setup(r => r.UpdateOffer(It.IsAny<JobVacancy>())).ReturnsAsync(1);
+
+
             mockRepo.Setup(r => r.Add(It.IsAny<JobVacancy>())).Returns((JobVacancy job) =>
             {
                 listOffers.ToList().Add(job);
                 return 1;
             });
-            mockRepo.Setup(r => r.FileOffer(It.IsAny<JobVacancy>())).Returns(() =>
-            {
-                return 1;
-            });
+            mockRepo.Setup(r => r.FileOffer(It.IsAny<JobVacancy>())).ReturnsAsync(1);
+
 
             mockRepo.Setup(r => r.GetActiveOffersByContract(It.IsAny<int>())).Returns(listOffers);
             mockRepo.Setup(r => r.GetActiveOffersByContractNoPack(It.IsAny<int>())).Returns(listOffers);
@@ -40,6 +37,8 @@ namespace TURI.Contractservice.Tests.Unit.Mocks
             mockRepo.Setup(r => r.GetActiveOffersByContractOwnerTypeNoPack(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())).Returns(listOffers);
             mockRepo.Setup(r => r.GetConsumedUnitsWelcomeNotSpain(It.IsAny<int>())).Returns(listOffers);
             mockRepo.Setup(r => r.GetOfferById(It.IsAny<int>())).Returns(new JobVacancy { IdjobVacancy = 1 });
+            mockRepo.Setup(r => r.GetActiveOffersByContractAndManager(It.IsAny<int>(), It.IsAny<int>())).Returns(listOffers);
+
             mockRepo.Setup(r => r.GetOffersByContract(It.IsAny<int>())).Returns(listOffers);
             return mockRepo;
 

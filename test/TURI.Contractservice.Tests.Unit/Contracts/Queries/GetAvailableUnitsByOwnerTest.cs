@@ -1,9 +1,11 @@
+using Application.Contracts.DTO;
 using Application.Contracts.Queries;
 using Application.Core;
 using AutoMapper;
 using Domain.Repositories;
 using Moq;
 using NUnit.Framework;
+using Shouldly;
 using TURI.Contractservice.Tests.Unit.Mocks;
 
 namespace TURI.Contractservice.Tests.Unit.Contracts.Queries
@@ -15,33 +17,28 @@ namespace TURI.Contractservice.Tests.Unit.Contracts.Queries
         private readonly Mock<IContractProductRepository> _contractProductRepoMock;
         private readonly Mock<IUnitsRepository> _unitsRepoMock;
 
-
         public GetAvailableUnitsByOwnerTest()
         {
-
             _jobOfferRepoMock = MockJobOfferRepository.GetJobOfferRepository();
             _contractProductRepoMock = MockContractProductRepository.GetContractProductRepository();
             _unitsRepoMock = MockIUnitsRepository.GetMockIUnitsRepository();
             var mapperConfig = new MapperConfiguration(c =>
             {
-
                 c.AddProfile<MappingProfiles>();
-
             });
             _mapper = mapperConfig.CreateMapper();
-
         }
 
         [Test]
         public async Task GetAvailableUnitsByOwner()
         {
             var handler = new GetAvailableUnitsByOwner.Handler(_mapper,
-                (IJobOfferRepository)_jobOfferRepoMock,
-                (IContractProductRepository)_contractProductRepoMock,
-                (IUnitsRepository)_unitsRepoMock);
+                _jobOfferRepoMock.Object,
+                _contractProductRepoMock.Object,
+                _unitsRepoMock.Object);
 
-
-            var result = handler.Handle(new GetAvailableUnitsByOwner.Query(), CancellationToken.None);
+            var result = await handler.Handle(new GetAvailableUnitsByOwner.Query(), CancellationToken.None);
+            result.Value.ShouldBeOfType<List<AvailableUnitsDto>>();
 
         }
     }
