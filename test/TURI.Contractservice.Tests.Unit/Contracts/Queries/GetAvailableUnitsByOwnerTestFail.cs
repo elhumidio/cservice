@@ -10,18 +10,18 @@ using TURI.Contractservice.Tests.Unit.Mocks;
 
 namespace TURI.Contractservice.Tests.Unit.Contracts.Queries
 {
-    public class GetAvailableUnitsByOwnerTest
+    public class GetAvailableUnitsByOwnerTestFail
     {
         private readonly IMapper _mapper;
         private readonly Mock<IJobOfferRepository> _jobOfferRepoMock;
         private readonly Mock<IContractProductRepository> _contractProductRepoMock;
         private readonly Mock<IUnitsRepository> _unitsRepoMock;
 
-        public GetAvailableUnitsByOwnerTest()
+        public GetAvailableUnitsByOwnerTestFail()
         {
             _jobOfferRepoMock = MockJobOfferRepository.GetJobOfferRepository();
-            _contractProductRepoMock = MockContractProductRepository.GetContractProductRepository();
-            _unitsRepoMock = MockIUnitsRepository.GetMockIUnitsRepository();
+            _contractProductRepoMock = MockContractProductRepository.GetContractProductRepository(false);
+            _unitsRepoMock = MockIUnitsRepository.GetMockIUnitsRepository(false);
             var mapperConfig = new MapperConfiguration(c =>
             {
                 c.AddProfile<MappingProfiles>();
@@ -30,8 +30,9 @@ namespace TURI.Contractservice.Tests.Unit.Contracts.Queries
         }
 
         [Test]
-        public async Task GetAvailableUnitsByOwner()
+        public async Task GetAvailableUnitsByOwnerFail()
         {
+
             var handler = new GetAvailableUnitsByOwner.Handler(_mapper,
                 _jobOfferRepoMock.Object,
                 _contractProductRepoMock.Object,
@@ -42,5 +43,7 @@ namespace TURI.Contractservice.Tests.Unit.Contracts.Queries
             result.Value.Count.ShouldBeGreaterThan(0);
             result.Value.Sum(a => a.Units).ShouldBeGreaterThan(0);
         }
+
+
     }
 }

@@ -12,7 +12,8 @@ namespace TURI.Contractservice.Tests.Unit.Mocks
 
             var listOffers = new List<JobVacancy>
             {
-                new JobVacancy{ IdjobVacancy=1 },new JobVacancy{IdjobVacancy =2 }
+                new JobVacancy{ IdjobVacancy=1,Idcontract=1,FinishDate=DateTime.Today.AddDays(90),IdenterpriseUserG=1 },
+                new JobVacancy{IdjobVacancy =2,Idcontract=1,FinishDate=DateTime.Today.AddDays(90),IdenterpriseUserG=1 }
 
 
             }.AsQueryable();
