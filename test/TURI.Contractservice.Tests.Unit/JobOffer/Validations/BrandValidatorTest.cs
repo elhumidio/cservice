@@ -3,8 +3,8 @@ using Application.JobOffer.Validations;
 using Domain.Repositories;
 using Moq;
 using NUnit.Framework;
+using Shouldly;
 using TURI.Contractservice.Tests.Unit.Mocks;
-
 namespace TURI.Contractservice.Tests.Unit.JobOffer.Validations
 {
 
@@ -15,7 +15,7 @@ namespace TURI.Contractservice.Tests.Unit.JobOffer.Validations
 
         public BrandValidatorTest()
         {
-            _brandRepositoryMock = MockBrandRepository.GetBrandRepository();
+            _brandRepositoryMock = MockBrandRepository.GetBrandRepository(true);
             _validator = new BrandValidator(_brandRepositoryMock.Object);
         }
         [Test]
@@ -23,15 +23,15 @@ namespace TURI.Contractservice.Tests.Unit.JobOffer.Validations
         {
             // Given
             var cmd = new CreateOfferCommand();
-            cmd.Idbrand = -10;
-            cmd.Identerprise = 10175;
+
 
             // When
             var result = _validator.Validate(cmd);
 
             // Then
+            result.Errors.ShouldBeEmpty();
 
-            Assert.That(result.Errors.Any(o => o.PropertyName == "IDBrand"), Is.False);
+
         }
 
 
