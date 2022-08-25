@@ -1,6 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations.Schema;
 
-namespace API.DataContext
+namespace Domain.Entities
 {
     [Table("TRegJobVacMatching")]
     public partial class RegJobVacMatching

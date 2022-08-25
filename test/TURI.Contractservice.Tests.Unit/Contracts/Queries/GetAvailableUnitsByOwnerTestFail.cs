@@ -19,7 +19,7 @@ namespace TURI.Contractservice.Tests.Unit.Contracts.Queries
 
         public GetAvailableUnitsByOwnerTestFail()
         {
-            _jobOfferRepoMock = MockJobOfferRepository.GetJobOfferRepository();
+            _jobOfferRepoMock = MockJobOfferRepository.GetJobOfferRepository(false);
             _contractProductRepoMock = MockContractProductRepository.GetContractProductRepository(false);
             _unitsRepoMock = MockIUnitsRepository.GetMockIUnitsRepository(false);
             var mapperConfig = new MapperConfiguration(c =>

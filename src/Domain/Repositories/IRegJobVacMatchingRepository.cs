@@ -1,4 +1,4 @@
-using API.DataContext;
+using Domain.Entities;
 
 namespace Domain.Repositories
 {

@@ -6,7 +6,7 @@ namespace TURI.Contractservice.Tests.Unit.Mocks
 {
     public static class MockJobOfferRepository
     {
-        public static Mock<IJobOfferRepository> GetJobOfferRepository()
+        public static Mock<IJobOfferRepository> GetJobOfferRepository(bool rightOffer)
         {
 
 
@@ -21,12 +21,34 @@ namespace TURI.Contractservice.Tests.Unit.Mocks
             mockRepo.Setup(r => r.GetActiveOffersByContractAndManager(It.IsAny<int>(), It.IsAny<int>())).Returns(listOffers);
             mockRepo.Setup(r => r.UpdateOffer(It.IsAny<JobVacancy>())).ReturnsAsync(1);
 
-
-            mockRepo.Setup(r => r.Add(It.IsAny<JobVacancy>())).Returns((JobVacancy job) =>
+            JobVacancy job = new()
             {
-                listOffers.ToList().Add(job);
-                return 1;
-            });
+
+
+            };
+            if (!rightOffer)
+            {
+                mockRepo.Setup(r => r.Add(It.IsAny<JobVacancy>())).Returns((JobVacancy job) =>
+                {
+                    listOffers.ToList().Add(job);
+                    return 1;
+                });
+            }
+            else
+            {
+                mockRepo.Setup(r => r.Add(It.IsAny<JobVacancy>())).Returns((JobVacancy job) =>
+                {
+                    job.ChkBlindSalary = true;
+                    job.SalaryMax = "60000";
+                    job.SalaryMin = "40000";
+                    job.Idbrand = 321;
+                    job.Identerprise = 44;
+                    listOffers.ToList().Add(job);
+                    return 1;
+                });
+
+            }
+
             mockRepo.Setup(r => r.FileOffer(It.IsAny<JobVacancy>())).ReturnsAsync(1);
 
 

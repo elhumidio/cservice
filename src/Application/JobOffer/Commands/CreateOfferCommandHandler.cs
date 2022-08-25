@@ -1,4 +1,3 @@
-using API.DataContext;
 using Application.Core;
 using AutoMapper;
 using Domain.Entities;
@@ -48,12 +47,11 @@ namespace Application.JobOffer.Commands
         {
             var job = new JobVacancy();
             var integrationInfo = await _regJobVacRepo.GetAtsIntegrationInfo(offer.IntegrationData.ApplicationReference);
-            if (integrationInfo != null) //caso update ATS
+            if (integrationInfo != null && integrationInfo.IdjobVacancy > 0) //caso update ATS
             {
                 var existentOfferAts = _offerRepo.GetOfferById(integrationInfo.IdjobVacancy);
                 return Result<string>.Failure("Offer already exists");
             }
-
             else
             {
                 var entity = _mapper.Map(offer, job);

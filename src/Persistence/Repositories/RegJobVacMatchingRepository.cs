@@ -1,4 +1,4 @@
-using API.DataContext;
+using Domain.Entities;
 using Domain.Repositories;
 
 namespace Persistence.Repositories
@@ -20,9 +20,10 @@ namespace Persistence.Repositories
 
         public Task<RegJobVacMatching> GetAtsIntegrationInfo(string externalId)
         {
-            RegJobVacMatching obj = new RegJobVacMatching();
-            obj = _dataContext.RegJobVacMatchings.Where(integration => integration.ExternalId == externalId).FirstOrDefault();
-            return Task.FromResult(obj);
+            var obj = _dataContext.RegJobVacMatchings.Where(integration => integration.ExternalId == externalId);
+            if (obj != null)
+                return Task.FromResult(obj.First());
+            else return Task.FromResult<RegJobVacMatching>(null);
         }
 
     }
