@@ -39,7 +39,10 @@ namespace Persistence.Repositories
 
         public bool IsRightBrand(int _brandId, int _enterpriseId)
         {
-            var brand = _dataContext.Brands.Where(b => b.Idbrand == _brandId && b.Identerprise == _enterpriseId);
+            var brand = _dataContext.Brands.Where(b => b.Idbrand == _brandId
+            && b.Identerprise == _enterpriseId
+            && b.Idbrand > 0
+            && b.Active == true);
             return brand.Any();
         }
     }
