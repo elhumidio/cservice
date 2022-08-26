@@ -16,6 +16,11 @@ namespace TURI.Contractservice.Api
     {
         public static void ConfigureServices(IServiceCollection services)
         {
+            services.AddGrpc(options =>
+            {
+                options.EnableDetailedErrors = true;
+            });
+
             var provider = services.BuildServiceProvider();
             var config = provider.GetRequiredService<IConfiguration>();
 
@@ -53,13 +58,14 @@ namespace TURI.Contractservice.Api
             services.ConfigureForwardedHeaders();
             services.AddApplicationServices(config);
             services.AddApplicationInsightsTelemetry();
+
         }
 
-        public static void Configure(WebApplication app)
+        public static void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
         {
             // Configure the HTTP request pipeline.
             app.UseMiddleware<ExceptionMiddleware>();
-            if (app.Environment.IsDevelopment())
+            if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
@@ -69,11 +75,32 @@ namespace TURI.Contractservice.Api
                 app.UseHsts();
             }
 
-            app.UseHttpsRedirection();
+            //  app.UseHttpsRedirection();
+            app.UseRouting();
 
             app.UseAuthorization();
 
-            app.MapControllers();
+            // app.MapControllers();
+            app.UseEndpoints(endpoints =>
+            {
+                //endpoints.MapGrpcService<ContractService>();
+                endpoints.MapDefaultControllerRoute();
+                endpoints.MapControllers();
+                endpoints.MapGet("/_proto/", async ctx =>
+                {
+                    ctx.Response.ContentType = "text/plain";
+                    using var fs = new FileStream(Path.Combine(env.ContentRootPath, "Proto", "profile.proto"), FileMode.Open, FileAccess.Read);
+                    using var sr = new StreamReader(fs);
+                    while (!sr.EndOfStream)
+                    {
+                        var line = await sr.ReadLineAsync();
+                        if (line != "/* >>" || line != "<< */")
+                        {
+                            await ctx.Response.WriteAsync(line);
+                        }
+                    }
+                });
+            });
 
             app.UseStepStoneHealthChecks();
             app.UsePing();

@@ -1,0 +1,78 @@
+syntax = "proto3";
+
+option csharp_namespace = "GrpcContract";
+package ContractApi;
+
+service ContractGrpc {
+
+//rpc GetAvailableUnits(ContractId) returns (AvailableUnitsResult){}
+//rpc GetAvailableUnitsByOwner(ContractOwnerId) returns (AvailableUnitsResult){}
+//rpc GetAssignedUnitsByOwner(ContractOwnerId) returns (UnitsAssignmentResult){}
+rpc SayHello(HelloRequest) returns (HelloReply) {}
+
+}
+message HelloRequest {
+    string name = 1;
+}
+
+message HelloReply {
+    string message = 1;
+}
+/*message ContractId{
+    int32 Id = 1;
+}
+
+message ContractOwnerId{
+    int32 ContractId = 1;
+    int32 OwnerId = 2;
+}
+ message  AvailableUnitsDto
+    {
+
+         int32 Units=1;
+         int32 ContractId = 2;
+         bool IsPack =3;
+         VacancyType type = 4;
+         int32 OwnerId =5;
+         
+  enum VacancyType
+    {
+        
+        Standard = 0;
+        Featured = 1;
+        Combinada = 2;
+        Weekly = 3;
+        WelcomeSP = 6;
+        StandardNP = 4;
+        SimpleMes = 5;
+        StandardPT = 7;
+        Classic = 8;
+        SuperiorPT = 9;
+        StandardCredit = 10;
+    }
+ }
+
+ message AvailableUnitsResult{
+     repeated AvailableUnitsDto Units=1;
+ }
+
+ message UnitsAssignmentResult{
+         repeated UnitsAssignmentDto Assignments=1;
+ }
+
+  message UnitsAssignmentDto
+    {
+        int32 IdenterpriseUser = 1;
+        int32 IdjobVacType = 2;
+        int32 MaxJobVacancies=3;
+        int32 JobVacUsed=4;
+        int32 Idproduct=5;
+        int32 Idcontract=6;
+        int32 IdjobVacTypeComp=7;
+    }*/
+
+
+
+
+
+

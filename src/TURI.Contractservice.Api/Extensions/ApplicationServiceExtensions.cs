@@ -26,6 +26,7 @@ namespace API.Extensions
             services.AddAutoMapper(typeof(Application.Core.MappingProfiles).Assembly);
             services.AddControllers().AddNewtonsoftJson();
 
+
             #region MAPPING REPOSITORIES
             services.AddScoped<IContractRepository, ContractRepository>();
             services.AddScoped<IJobOfferRepository, JobOfferRepository>();

@@ -2,6 +2,7 @@ using Application.Contracts.Queries;
 using Application.EnterpriseContract.Queries;
 using Domain.Enums;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace API.Controllers
 {

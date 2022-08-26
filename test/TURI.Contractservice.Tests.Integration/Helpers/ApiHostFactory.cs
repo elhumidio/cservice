@@ -5,7 +5,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using TURI.Contractservice.Api;
-using System;
 
 namespace TURI.Contractservice.Tests.Integration.Helpers
 {
@@ -42,7 +41,8 @@ namespace TURI.Contractservice.Tests.Integration.Helpers
 
             var app = builder.Build();
 
-            Startup.Configure(app);
+            //  Startup.Configure(app
+            Startup.Configure(app, app.Environment, null);
 
             return app;
 
