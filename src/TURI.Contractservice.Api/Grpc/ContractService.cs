@@ -6,6 +6,7 @@ using AutoMapper;
 using Grpc.Core;
 using MediatR;
 using System.ComponentModel.Design;
+using TURI.Contractservice.Grpc.MappingProfiles;
 
 namespace GrpcContract
 {
@@ -85,9 +86,14 @@ namespace GrpcContract
         }
         public override async Task<PublishOfferResult> PublishOffer(Offer offer, ServerCallContext context)
         {
+            var mapperConfig = new MapperConfiguration(c =>
+            {
+                c.AddProfile<MappingProfiles>();
+            });
+            var mapper = mapperConfig.CreateMapper();
             PublishOfferResult res = new PublishOfferResult();
             CreateOfferCommand command = new CreateOfferCommand();
-            var offercommand = _mapper.Map(offer, command);
+            var offercommand = mapper.Map(offer, command);
             var result = await _mediator.Send(offercommand);
             if(result.IsSuccess)
                 res.Message = "Offer created";
