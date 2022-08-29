@@ -29,7 +29,7 @@ IWebHost BuildWebHost(IConfiguration configuration, string[] args) =>
             options.Listen(IPAddress.Any, ports.httpPort, listenOptions =>
             {
                 listenOptions.Protocols = HttpProtocols.Http1AndHttp2;
-                listenOptions.UseHttps();
+               // listenOptions.UseHttps();
             });
 
             options.Listen(IPAddress.Any, ports.grpcPort, listenOptions =>
@@ -57,8 +57,8 @@ IConfiguration GetConfiguration()
 
 (int httpPort, int grpcPort) GetDefinedPorts(IConfiguration config)
 {
-    var grpcPort = config.GetValue("GRPC_PORT", 8899);
-    var port = config.GetValue("PORT", 443);
+    var grpcPort = config.GetValue("GRPC_PORT", 9988);
+    var port = config.GetValue("PORT", 80);
     return (port, grpcPort);
 }
 

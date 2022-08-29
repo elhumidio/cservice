@@ -11,5 +11,10 @@ namespace Application.Contracts.DTO
         public int OwnerId { get; set; }
     }
 
+    public class AvailableUnitsResult
+    {
+        public List<AvailableUnitsDto> Units { get; set; }  
+    }
+
 
 }

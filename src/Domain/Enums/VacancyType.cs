@@ -1,8 +1,8 @@
-﻿namespace Domain.Enums
+namespace Domain.Enums
 {
     public enum VacancyType
     {
-        None = -1,
+        None = 99,
         Standard = 0,
         Featured = 1,
         Combinada = 2,

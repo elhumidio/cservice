@@ -1,5 +1,6 @@
 using API.Extensions;
 using API.Middleware;
+using GrpcContract;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using StepStone.AspNetCore.Authentication.ApiKeyHeader;
 using StepStone.Extensions.Diagnostics.HealthChecks;
@@ -83,13 +84,13 @@ namespace TURI.Contractservice.Api
             // app.MapControllers();
             app.UseEndpoints(endpoints =>
             {
-                //endpoints.MapGrpcService<ContractService>();
+                endpoints.MapGrpcService<ContractService>();
                 endpoints.MapDefaultControllerRoute();
                 endpoints.MapControllers();
                 endpoints.MapGet("/_proto/", async ctx =>
                 {
                     ctx.Response.ContentType = "text/plain";
-                    using var fs = new FileStream(Path.Combine(env.ContentRootPath, "Proto", "profile.proto"), FileMode.Open, FileAccess.Read);
+                    using var fs = new FileStream(Path.Combine(env.ContentRootPath, "Proto", "contracts.proto"), FileMode.Open, FileAccess.Read);
                     using var sr = new StreamReader(fs);
                     while (!sr.EndOfStream)
                     {
