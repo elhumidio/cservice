@@ -13,14 +13,19 @@ namespace GrpcContract
     public class ContractService : ContractGrpc.ContractGrpcBase
     {
             private readonly IMediator _mediator;
-            private readonly IMapper _mapper;
+            private readonly MapperConfiguration _mapperConfig;
+        private readonly IMapper _mapper;
 
-         public ContractService(IMediator mediator, IMapper mapper)
+         public ContractService(IMediator mediator)
          {
-             _mapper = mapper;
+           
              _mediator = mediator;
-
-         }
+            _mapperConfig = new MapperConfiguration(c =>
+            {
+                c.AddProfile<MappingProfiles>();
+            });
+            _mapper = _mapperConfig.CreateMapper();
+        }
           public override async Task<AvailableUnitsResult> GetAvailableUnits(ContractIdRequest request, ServerCallContext context)
           {
               var result = await _mediator.Send(new GetAvailableUnits.Query
