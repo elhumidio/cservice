@@ -13,9 +13,19 @@ service PublishGrpc {
     rpc FileOffers(ListInt) returns (GenericMessage){}
     rpc GetAtsOffer(OfferExternalReference) returns (IdOffer){}
     rpc FileAtsOffer(IntegrationData) returns (GenericMessage){}
+    rpc GetEquestDegree(EquestValue) returns (GenericIntReqRet){}
+    rpc GetEQuestIndustryCode(GenericIntReqRet) returns (GenericIntReqRet){}
+    rpc GetEQuestCountryState(GenericMessage) returns (GenericIntReqRet){}
 }
 
+message EquestValue{
+    int32 eqDegreeId=1;
+    int32 siteId = 2;
+}
 
+message GenericIntReqRet{
+    int32 value = 1;
+}
 message OfferExternalReference{
 string externalReference = 1;
 }

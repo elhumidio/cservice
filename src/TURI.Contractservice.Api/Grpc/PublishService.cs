@@ -2,6 +2,7 @@ using Application.Contracts.Queries;
 using Application.EnterpriseContract.Queries;
 using Application.JobOffer.Commands;
 using Application.JobOffer.Queries;
+using Application.Utils.Queries.Equest;
 using AutoMapper;
 using Grpc.Core;
 using MediatR;
@@ -193,7 +194,7 @@ namespace GrpcPublish
         }
 
         /// <summary>
-        /// 
+        /// File Ats Offer
         /// </summary>
         /// <param name="data"></param>
         /// <param name="context"></param>
@@ -207,6 +208,56 @@ namespace GrpcPublish
                 offer = adaptedData
             });
             return new GenericMessage() { Message = result.Value }; 
+        }
+
+
+        /// <summary>
+        /// Get Equest Degree
+        /// </summary>
+        /// <param name="values"></param>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        public override async Task<GenericIntReqRet> GetEquestDegree(EquestValue values, ServerCallContext context) {
+            var result = await _mediator.Send(new DegreeEquivalent.Query
+            {
+                DegreeId = values.EqDegreeId,
+                SiteId = values.SiteId
+            });
+            return new GenericIntReqRet() { Value = result.Value };
+        }
+
+        /// <summary>
+        ///  Get EQuest Industry Code
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        public override async Task<GenericIntReqRet> GetEQuestIndustryCode(GenericIntReqRet id, ServerCallContext context) {
+
+            var result = await _mediator.Send(new IndustryEquivalent.Query
+            {
+                industryCode = id.Value
+            });
+
+            return new GenericIntReqRet { Value = result.Value };
+        }
+
+
+
+        /// <summary>
+        /// Get EQuest Country State
+        /// </summary>
+        /// <param name="value"></param>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        public override async Task<GenericIntReqRet> GetEQuestCountryState(GenericMessage value, ServerCallContext context) {
+
+            var result = await _mediator.Send(new CountryStateEQuivalent.Query
+            {
+                countryId = value.Message
+            });
+
+            return new GenericIntReqRet() { Value = result.Value };
         }
 
 
