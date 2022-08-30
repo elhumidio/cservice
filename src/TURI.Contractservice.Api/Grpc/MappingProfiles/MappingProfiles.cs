@@ -1,7 +1,7 @@
 using Application.Contracts.DTO;
 using Application.JobOffer.Commands;
 using AutoMapper;
-using GrpcContract;
+using GrpcPublish;
 using System;
 
 namespace TURI.Contractservice.Grpc.MappingProfiles
@@ -10,11 +10,13 @@ namespace TURI.Contractservice.Grpc.MappingProfiles
     {
         public MappingProfiles()
         {
-            CreateMap<List<Application.Contracts.DTO.AvailableUnitsResult>, GrpcContract.AvailableUnitsResult>();
+            CreateMap<List<Application.Contracts.DTO.AvailableUnitsResult>, GrpcPublish.AvailableUnitsResult>();
             CreateMap<Offer, CreateOfferCommand>();
             CreateMap<CreateOfferCommand,Offer>();
-            CreateMap<Application.JobOffer.Commands.IntegrationData, GrpcContract.IntegrationData>();
-            CreateMap<GrpcContract.IntegrationData,Application.JobOffer.Commands.IntegrationData>();
+            CreateMap<UpdateOfferCommand, Offer>();
+            CreateMap<Offer,UpdateOfferCommand>();
+            CreateMap<Application.JobOffer.Commands.IntegrationData, GrpcPublish.IntegrationData>();
+            CreateMap<GrpcPublish.IntegrationData,Application.JobOffer.Commands.IntegrationData>();
         }
     }
 }

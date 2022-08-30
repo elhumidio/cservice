@@ -1,19 +1,18 @@
 syntax = "proto3";
 import "google/protobuf/timestamp.proto";
-option csharp_namespace = "GrpcContract";
+option csharp_namespace = "GrpcPublish";
 package ContractApi;
 
-service ContractGrpc {
+service PublishGrpc {
 
     rpc GetAvailableUnits(ContractIdRequest) returns (AvailableUnitsResult){}
     rpc GetCompanyInfo(UserName) returns (CompanyInfoResult){}
     rpc GetContractAndType(CompanyAndTypeRequest) returns (ContractAndTypeResult){}
-    rpc PublishOffer(Offer) returns (PublishOfferResult){}
+    rpc PublishOffer(Offer) returns (GenericMessage){}
+    rpc UpdateOffer(Offer) returns (GenericMessage){}
+    rpc FileOffers(ListInt) returns (GenericMessage){}
 }
-message PublishOfferResult{
-string message = 1;
 
-}
 message CompanyInfoResult{
          int32 CompanyId =1;
          repeated int32 Brands =2;
@@ -28,6 +27,14 @@ string user = 1;
 
 }
 
+message GenericMessage{
+string message = 1;
+}
+
+message ListInt{
+    repeated int32 ids =1;
+}
+
 message CompanyAndTypeRequest{
 int32 CompanyId = 1;
 VacancyType type = 2;
@@ -37,13 +44,7 @@ message ContractAndTypeResult{
     int32 ContractId = 1;
     VacancyType type = 2;
 }
-message HolaRequest {
-    string name = 1;
-}
 
-message HolaReply {
-    string message = 1;
-}
 message ContractIdRequest{
     int32 Id = 1;
 }

@@ -1,6 +1,6 @@
 using API.Extensions;
 using API.Middleware;
-using GrpcContract;
+using GrpcPublish;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using StepStone.AspNetCore.Authentication.ApiKeyHeader;
 using StepStone.Extensions.Diagnostics.HealthChecks;
@@ -84,7 +84,7 @@ namespace TURI.Contractservice.Api
             // app.MapControllers();
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapGrpcService<ContractService>();
+                endpoints.MapGrpcService<PublishService>();
                 endpoints.MapDefaultControllerRoute();
                 endpoints.MapControllers();
                 endpoints.MapGet("/_proto/", async ctx =>
@@ -105,7 +105,6 @@ namespace TURI.Contractservice.Api
 
             app.UseStepStoneHealthChecks();
             app.UsePing();
-
             app.UseSwagger();
             app.UseSwaggerUI();
         }

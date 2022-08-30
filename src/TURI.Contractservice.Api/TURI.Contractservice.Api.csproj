@@ -40,9 +40,10 @@
 	</ItemGroup>
 
   <ItemGroup>
-    <Protobuf Include="Proto\contracts.proto" GrpcServices="Server" Generator="MSBuild:Compile" />
-    <Content Include="Proto\contracts.proto" />
+    <Protobuf Include="Proto\publish.proto" GrpcServices="Server" Generator="MSBuild:Compile" />
+    <Content Include="Proto\publish.proto" />
     <None Remove="@(Protobuf)" />
+    <None Remove="Proto\publish.proto" />
   </ItemGroup>
 
 </Project>
