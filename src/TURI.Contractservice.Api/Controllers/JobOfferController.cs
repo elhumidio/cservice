@@ -32,9 +32,11 @@ namespace API.Controllers
         /// <param name="offer"></param>
         /// <returns></returns>
         [HttpPost(Name = "FileAtsOffer")]
-        public async Task<IActionResult> FileAtsOffer(FileAtsOfferDto offer)
+        public async Task<IActionResult> FileAtsOffer(AtsOffer offer)
         {
-            var result = await Mediator.Send(offer);
+            var result = await Mediator.Send(new FileAtsOffer.Command {
+                   offer = offer   
+            });
             var ret = HandleResult(result);
             return ret;
         }
@@ -211,7 +213,7 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// Gets idjobvacancy ats offer,  In case offer exists returns idjobvacancy else return -1
+        /// Gets idjobvacancy ats offer,  In case offer exists returns idjobvacancy else returns 0
         /// </summary>
         /// <param name="externalId"></param>
         /// <returns></returns>

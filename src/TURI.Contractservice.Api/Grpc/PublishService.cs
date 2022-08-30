@@ -5,6 +5,7 @@ using Application.JobOffer.Queries;
 using AutoMapper;
 using Grpc.Core;
 using MediatR;
+using System;
 using System.ComponentModel.Design;
 using TURI.Contractservice.Grpc.MappingProfiles;
 
@@ -174,6 +175,39 @@ namespace GrpcPublish
             return res;
         }
 
+
+        /// <summary>
+        /// retrieves an offer from external publisher, id not exists return 0
+        /// </summary>
+        /// <param name="reference"></param>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        public override async Task<IdOffer> GetAtsOffer(OfferExternalReference reference,  ServerCallContext context)
+        {
+            var result = await _mediator.Send(new VerifyOffer.Query
+            {
+                ExternalId = reference.ExternalReference
+            });
+            
+            return new IdOffer { IdJobVacancy = result.Value};
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="data"></param>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        public override async Task<GenericMessage> FileAtsOffer(IntegrationData data, ServerCallContext context)
+        {
+            var apiData = new Application.JobOffer.DTO.AtsOffer();
+            var adaptedData = _mapper.Map(data, apiData);
+            var result = await _mediator.Send(new FileAtsOffer.Command
+            {
+                offer = adaptedData
+            });
+            return new GenericMessage() { Message = result.Value }; 
+        }
 
 
 

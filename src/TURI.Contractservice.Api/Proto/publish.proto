@@ -11,6 +11,16 @@ service PublishGrpc {
     rpc PublishOffer(Offer) returns (GenericMessage){}
     rpc UpdateOffer(Offer) returns (GenericMessage){}
     rpc FileOffers(ListInt) returns (GenericMessage){}
+    rpc GetAtsOffer(OfferExternalReference) returns (IdOffer){}
+    rpc FileAtsOffer(IntegrationData) returns (GenericMessage){}
+}
+
+
+message OfferExternalReference{
+string externalReference = 1;
+}
+message IdOffer{
+        int32 IdJobVacancy = 1;
 }
 
 message CompanyInfoResult{

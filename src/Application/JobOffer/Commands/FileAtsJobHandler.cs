@@ -6,33 +6,44 @@ using MediatR;
 
 namespace Application.JobOffer.Commands
 {
-    public class FileAtsJobHandler : IRequestHandler<FileAtsOfferDto, Result<Unit>>
-    {
-        private readonly IJobOfferRepository _offerRepo;
-        private readonly IRegJobVacMatchingRepository _regJobVacRepo;
-        public FileAtsOfferDto _offer { get; set; }
 
+    public class FileAtsOffer {
 
-        public FileAtsJobHandler(IJobOfferRepository jobOfferRepository, IRegJobVacMatchingRepository regJobVacMatchingRepository)
+        public class Command : IRequest<Result<string>>
         {
-            _regJobVacRepo = regJobVacMatchingRepository;
-            _offerRepo = jobOfferRepository;
-
+            public DTO.AtsOffer offer { get; set; }
         }
 
 
-        public async Task<Result<Unit>> Handle(FileAtsOfferDto offer, CancellationToken cancellationToken)
+        public class Handler : IRequestHandler<DTO.AtsOffer, Result<Unit>>
         {
-            var atsInfo = await _regJobVacRepo.GetAtsIntegrationInfo(offer.Application_reference);
-            if (atsInfo != null)
+            private readonly IJobOfferRepository _offerRepo;
+            private readonly IRegJobVacMatchingRepository _regJobVacRepo;
+            public AtsOffer _offer { get; set; }
+
+
+            public Handler(IJobOfferRepository jobOfferRepository, IRegJobVacMatchingRepository regJobVacMatchingRepository)
             {
-                var job = _offerRepo.GetOfferById(atsInfo.IdjobVacancy);
-                var filed = _offerRepo.FileOffer(job);
-                if (filed.Result > 0)
-                    return Result<Unit>.Success(Unit.Value);
-                else return Result<Unit>.Failure("Failed to file offer");
+                _regJobVacRepo = regJobVacMatchingRepository;
+                _offerRepo = jobOfferRepository;
+
             }
-            return Result<Unit>.Failure("Failed to file offer");
+
+
+            public async Task<Result<Unit>> Handle(AtsOffer offer, CancellationToken cancellationToken)
+            {
+                var atsInfo = await _regJobVacRepo.GetAtsIntegrationInfo(offer.Application_reference);
+                if (atsInfo != null)
+                {
+                    var job = _offerRepo.GetOfferById(atsInfo.IdjobVacancy);
+                    var filed = _offerRepo.FileOffer(job);
+                    if (filed.Result > 0)
+                        return Result<Unit>.Success(Unit.Value);
+                    else return Result<Unit>.Failure("Failed to file offer");
+                }
+                return Result<Unit>.Failure("Failed to file offer");
+            }
         }
     }
+   
 }
