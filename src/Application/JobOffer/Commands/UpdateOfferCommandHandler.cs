@@ -57,11 +57,12 @@ namespace Application.JobOffer.Commands
                 if (IsActivate)
                 {
                     offer.FilledDate = null;
-                    offer.FinishDate = existentOffer.FinishDate;
-                    offer.LastVisitorDate = existentOffer.LastVisitorDate;
+                    //offer.FinishDate = existentOffer.FinishDate;
+                    //offer.LastVisitorDate = existentOffer.LastVisitorDate;
                     offer.ChkUpdateDate = existentOffer.ChkUpdateDate;
                     offer.ChkFilled = false;
                     offer.ChkDeleted = false;
+                    //Finish date remains the same
                 }
                 var entity = _mapper.Map(offer, existentOffer);
 

@@ -17,6 +17,10 @@ namespace Application.JobOffer.DTO
         public int? IdjobCategory { get; set; }
         public int Idarea { get; set; }
         public int? IdsubArea { get; set; }
+        public DateTime? FinishDate { get; set; }
+        public DateTime? PublicationDate { get; set; }
+        public DateTime? LastVisitorDate { get; set; }
+        public bool chkFilled { get; set; }
 
     }
 }

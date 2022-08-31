@@ -38,6 +38,8 @@ namespace Application.Core
             CreateMap<SalaryType, SalaryTypeDTO>();
             CreateMap<Site, SiteDTO>();
             CreateMap<TsturijobsLang, LanguageDTO>();
+            CreateMap<JobVacancy, JobOfferDto>();
+            CreateMap<JobOfferDto,JobVacancy>();
 
             //crear dto enterprise
 

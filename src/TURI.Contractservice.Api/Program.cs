@@ -29,7 +29,7 @@ IWebHost BuildWebHost(IConfiguration configuration, string[] args) =>
             options.Listen(IPAddress.Any, ports.httpPort, listenOptions =>
             {
                 listenOptions.Protocols = HttpProtocols.Http1AndHttp2;
-               // listenOptions.UseHttps();
+                //listenOptions.UseHttps();
             });
 
             options.Listen(IPAddress.Any, ports.grpcPort, listenOptions =>

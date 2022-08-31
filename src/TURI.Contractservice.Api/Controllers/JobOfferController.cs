@@ -58,7 +58,7 @@ namespace API.Controllers
         }
 
         /// <summary>
-        /// Publish and update offer
+        /// Publish an offer
         /// </summary>
         /// <param name="createOfferCommand"></param>
         /// <returns></returns>
@@ -226,6 +226,8 @@ namespace API.Controllers
             });
             return HandleResult(result);
         }
+
+
 
     }
 }

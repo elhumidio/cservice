@@ -24,16 +24,24 @@ namespace Application.JobOffer.Validations
         }
 
         private bool HasRightFinishDate(CreateOfferCommand obj)
-        {
-            //TODO get product from Contract
+        {            
             var productId = _contractProdRepo.GetIdProductByContract(obj.Idcontract);
-            var finishDate = _mediator.Send(new CalculateFinishDateOffer.Query
-            {
-                ContractID = obj.Idcontract,
-                ProductId = productId,
+            
+            if (obj.IdjobVacancy != 0)            {
+               
+                obj.FinishDate = _mediator.Send(new Get.Query
+                {
+                    OfferId = obj.IdjobVacancy,
+                }).Result.FinishDate;                
+            }
+            else {
+                    obj.FinishDate = _mediator.Send(new CalculateFinishDateOffer.Query
+                    {
+                        ContractID = obj.Idcontract,
+                        ProductId = productId,
 
-            }).Result.Value;
-            obj.FinishDate = finishDate;
+                    }).Result.Value;                                  
+            }
             obj.UpdatingDate = DateTime.Now;
             obj.PublicationDate = DateTime.Now;
             obj.UpdatingDate = DateTime.Now;
@@ -41,8 +49,7 @@ namespace Application.JobOffer.Validations
             obj.FilledDate = null;
             obj.ModificationDate = DateTime.Now;
             obj.LastVisitorDate = DateTime.Now;
-
-            return finishDate > DateTime.Today ? true : false;
+            return obj.FinishDate > DateTime.Today ? true : false;
         }
     }
 
@@ -67,22 +74,34 @@ namespace Application.JobOffer.Validations
         {
             //TODO get product from Contract
             var productId = _contractProdRepo.GetIdProductByContract(obj.Idcontract);
-            var finishDate = _mediator.Send(new CalculateFinishDateOffer.Query
+            var dto = _mediator.Send(new Get.Query
             {
-                ContractID = obj.Idcontract,
-                ProductId = productId,
+                OfferId = obj.IdjobVacancy,
+            }).Result;
 
-            }).Result.Value;
-            obj.FinishDate = finishDate;
-            obj.UpdatingDate = DateTime.Now;
-            obj.PublicationDate = DateTime.Now;
-            obj.UpdatingDate = DateTime.Now;
+            if (obj.ChkFilled)
+            {
+                var finishDate = _mediator.Send(new CalculateFinishDateOffer.Query
+                {
+                    ContractID = obj.Idcontract,
+                    ProductId = productId,
+
+                }).Result.Value;                
+                obj.FinishDate = finishDate;
+            }
+            else
+            {                
+                obj.FinishDate = dto.FinishDate;                
+            }
+            obj.LastVisitorDate = dto.LastVisitorDate;
+            obj.PublicationDate = dto.PublicationDate;
+
+            obj.UpdatingDate = DateTime.Now;            
             obj.LastVisitorDate = null;
             obj.FilledDate = null;
             obj.ModificationDate = DateTime.Now;
             obj.LastVisitorDate = DateTime.Now;
-
-            return finishDate > DateTime.Today ? true : false;
+            return obj.FinishDate > DateTime.Today ? true : false;
         }
     }
 }
