@@ -72,7 +72,6 @@ namespace Application.JobOffer.Validations
 
         private bool HasRightFinishDate(UpdateOfferCommand obj)
         {
-            //TODO get product from Contract
             var productId = _contractProdRepo.GetIdProductByContract(obj.Idcontract);
             var dto = _mediator.Send(new Get.Query
             {
