@@ -2,6 +2,7 @@ using Application.Core;
 using Application.JobOffer.Commands;
 using AutoMapper;
 using Domain.Repositories;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using Shouldly;
@@ -12,6 +13,7 @@ namespace TURI.Contractservice.Tests.Unit.JobOffer.Commands
     public class CreateOfferCommandHandlerTest
     {
         private readonly IMapper _mapper;
+        private readonly ILogger _logger;
         private readonly Mock<IContractProductRepository> _contractProductRepoMock;
         private readonly Mock<IContractRepository> _contractRepositoryMock;
         private readonly Mock<IProductRepository> _productRepositoryMock;
@@ -33,6 +35,7 @@ namespace TURI.Contractservice.Tests.Unit.JobOffer.Commands
             _unitsRepositoryMock = MockIUnitsRepository.GetMockIUnitsRepository(true);
             _regVacMatchingRepositoryMock = MockJobVacMatchingRepository.GetJobVacMatchingRepository(true);
             _enterpriseRepositoryMock = MockEnterpriseRepository.GetEnterpriseRepository(true);
+
             var mapperConfig = new MapperConfiguration(c =>
             {
                 c.AddProfile<MappingProfiles>();
@@ -53,7 +56,7 @@ namespace TURI.Contractservice.Tests.Unit.JobOffer.Commands
                 _contractRepositoryMock.Object,
                  _productRepositoryMock.Object,
                  _enterpriseRepositoryMock.Object,
-                 _contractProductRepoMock.Object
+                 _contractProductRepoMock.Object,_logger
                 );
 
             var result = await handler.Handle(new CreateOfferCommand() { }, CancellationToken.None);

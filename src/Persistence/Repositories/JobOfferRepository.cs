@@ -1,16 +1,19 @@
 using Domain.Entities;
 using Domain.Enums;
 using Domain.Repositories;
+using Microsoft.Extensions.Logging;
 
 namespace Persistence.Repositories
 {
     public class JobOfferRepository : IJobOfferRepository
     {
         private readonly DataContext _dataContext;
+        private readonly ILogger _logger;
 
-        public JobOfferRepository(DataContext dataContext)
+        public JobOfferRepository(DataContext dataContext,ILogger logger)
         {
             _dataContext = dataContext;
+            _logger = logger;
         }
         public IQueryable<JobVacancy> GetActiveOffersByContract(int contractId)
         {
@@ -40,25 +43,41 @@ namespace Persistence.Repositories
 
         public Task<int> UpdateOffer(JobVacancy jobUpdated)
         {
-
-            var current = _dataContext.JobVacancies.Where(a => a.IdjobVacancy == jobUpdated.IdjobVacancy).FirstOrDefault();
-            if (current != null)
-            {
-                current = jobUpdated;
-                var ret = _dataContext.SaveChangesAsync();
-                return ret;
+            try {
+                var current = _dataContext.JobVacancies.Where(a => a.IdjobVacancy == jobUpdated.IdjobVacancy).FirstOrDefault();
+                if (current != null)
+                {
+                    current = jobUpdated;
+                    var ret = _dataContext.SaveChangesAsync();
+                    return ret;
+                }
+                else return Task.FromResult(-1);
             }
-            else return Task.FromResult(-1);
+            catch (Exception ex) {
+                string message = $"Message: {ex.Message} - InnerException: {ex.InnerException} - StackTrace: {ex.StackTrace}";
+                _logger.LogError(message: message);
+                return Task.FromResult(-1);
+            }
+            
 
         }
 
         public Task<int> FileOffer(JobVacancy job)
         {
-            job.ChkFilled = true;
-            job.FilledDate = DateTime.Now;
-            job.ModificationDate = DateTime.Now;
-            var ret = _dataContext.SaveChangesAsync();
-            return ret;
+            try {
+                job.ChkFilled = true;
+                job.FilledDate = DateTime.Now;
+                job.ModificationDate = DateTime.Now;
+                var ret = _dataContext.SaveChangesAsync();
+                return ret;
+            }
+            catch (Exception ex) {
+                string message = $"Message: {ex.Message} - InnerException: {ex.InnerException} - StackTrace: {ex.StackTrace}";
+                _logger.LogError(message: message);
+                return Task.FromResult(-1);
+            }
+            
+            
         }
 
         public JobVacancy GetOfferById(int id)
@@ -69,9 +88,17 @@ namespace Persistence.Repositories
 
         public int Add(JobVacancy job)
         {
-            var a = _dataContext.Add(job).Entity;
-            var ret = _dataContext.SaveChanges();
-            return job.IdjobVacancy;
+            try {
+                var a = _dataContext.Add(job).Entity;
+                var ret = _dataContext.SaveChanges();
+                return job.IdjobVacancy;
+            }
+            catch (Exception ex) {
+                string message = $"Message: {ex.Message} - InnerException: {ex.InnerException} - StackTrace: {ex.StackTrace}";
+                _logger.LogError(message: message);
+                return -1;
+            }
+            
         }
 
 

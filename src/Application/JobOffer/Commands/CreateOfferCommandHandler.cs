@@ -4,6 +4,7 @@ using Domain.Entities;
 using Domain.Repositories;
 using FluentValidation;
 using MediatR;
+using Microsoft.Extensions.Logging;
 
 namespace Application.JobOffer.Commands
 {
@@ -11,7 +12,7 @@ namespace Application.JobOffer.Commands
     {
         #region PRIVATE PROPERTIES
 
-        private readonly IMediator mediator;
+        private readonly ILogger _logger;
         private readonly IMapper _mapper;
         private readonly IJobOfferRepository _offerRepo;
         private readonly IContractRepository _contractRepo;
@@ -32,7 +33,8 @@ namespace Application.JobOffer.Commands
             IJobOfferRepository offerRepo,
             IContractRepository contractRepo,
             IProductRepository productRepo,
-            IEnterpriseRepository enterpriseRepository, IContractProductRepository contractProductRepo)
+            IEnterpriseRepository enterpriseRepository,
+            IContractProductRepository contractProductRepo,ILogger logger)
         {
             _contractProductRepo = contractProductRepo;
             _contractRepo = contractRepo;
@@ -42,6 +44,7 @@ namespace Application.JobOffer.Commands
             _regContractRepo = regContractRepo;
             _regJobVacRepo = regJobVacRepo;
             _enterpriseRepository = enterpriseRepository;
+            _logger = logger;
         }
         public async Task<Result<string>> Handle(CreateOfferCommand offer, CancellationToken cancellationToken)
         {
@@ -50,37 +53,59 @@ namespace Application.JobOffer.Commands
             if (integrationInfo != null && integrationInfo.IdjobVacancy > 0) //caso update ATS
             {
                 var existentOfferAts = _offerRepo.GetOfferById(integrationInfo.IdjobVacancy);
+                string error = $"IntegrationId: {offer.IntegrationData.IDIntegration} - Reference: {offer.IntegrationData.ApplicationReference} - Offer already exists";
+                _logger.LogError(error);
                 return Result<string>.Failure("Offer already exists");
             }
-            else
+            else if (offer.IdjobVacancy == 0 )
             {
                 var entity = _mapper.Map(offer, job);
                 var jobVacancyId = _offerRepo.Add(entity);
                 if (jobVacancyId == 0)
                 {
-                    return Result<string>.Failure("Failed to create offer");
+                    string error;
+                    error = "Failed to create offer";
+                    _logger.LogError(error);
+                    return Result<string>.Failure(error);
                 }
                 else
                 {
-                    await _regContractRepo.UpdateUnits(job.Idcontract, job.IdjobVacType);
-
-                    if (!string.IsNullOrEmpty(offer.IntegrationData.ApplicationReference))
+                    try
                     {
-                        RegJobVacMatching obj = new RegJobVacMatching
-                        {
-                            ExternalId = offer.IntegrationData.ApplicationReference,
-                            Idintegration = offer.IntegrationData.IDIntegration,
-                            IdjobVacancy = jobVacancyId,
-                            AppEmail = offer.IntegrationData.ApplicationEmail,
-                            Identerprise = offer.Identerprise,
-                            Redirection = offer.IntegrationData.ApplicationUrl
-                        };
-                        await _regJobVacRepo.Add(obj);
-                    }
-                    _enterpriseRepository.UpdateATS(entity.Identerprise);
+                        await _regContractRepo.UpdateUnits(job.Idcontract, job.IdjobVacType);
 
-                    return Result<string>.Success("Offer Added");
+                        if (!string.IsNullOrEmpty(offer.IntegrationData.ApplicationReference))
+                        {
+                            RegJobVacMatching obj = new RegJobVacMatching
+                            {
+                                ExternalId = offer.IntegrationData.ApplicationReference,
+                                Idintegration = offer.IntegrationData.IDIntegration,
+                                IdjobVacancy = jobVacancyId,
+                                AppEmail = offer.IntegrationData.ApplicationEmail,
+                                Identerprise = offer.Identerprise,
+                                Redirection = offer.IntegrationData.ApplicationUrl
+                            };
+                            await _regJobVacRepo.Add(obj);
+                        }
+                        _enterpriseRepository.UpdateATS(entity.Identerprise);
+
+                        return Result<string>.Success("Offer Added");
+                    }
+                    catch (Exception ex)
+                    {
+                        string error = $"message: Couldn't add Offer - Exception: {ex.Message} - {ex.InnerException}";
+                        _logger.LogError(error);
+                        return Result<string>.Failure($"Couldn't add Offer - Exception: {ex.Message} - {ex.InnerException}");
+
+                    }
+
                 }
+
+            }
+            else {
+                string error = $"Couldn't perform any operations, the offer {offer.IdjobVacancy} already exists.";
+                _logger.LogError(error);
+                return Result<string>.Failure(error);
             }
 
 

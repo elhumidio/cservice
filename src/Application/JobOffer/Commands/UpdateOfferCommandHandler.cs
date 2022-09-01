@@ -3,6 +3,7 @@ using AutoMapper;
 using Domain.Repositories;
 using FluentValidation;
 using MediatR;
+using Microsoft.Extensions.Logging;
 
 namespace Application.JobOffer.Commands
 {
@@ -10,7 +11,7 @@ namespace Application.JobOffer.Commands
     {
         #region PRIVATE PROPERTIES
 
-        private readonly IMediator mediator;
+        private readonly ILogger _logger;
         private readonly IMapper _mapper;
         private readonly IJobOfferRepository _offerRepo;
         private readonly IContractRepository _contractRepo;
@@ -31,7 +32,9 @@ namespace Application.JobOffer.Commands
             IJobOfferRepository offerRepo,
             IContractRepository contractRepo,
             IProductRepository productRepo,
-            IEnterpriseRepository enterpriseRepository, IContractProductRepository contractProductRepo)
+            IEnterpriseRepository enterpriseRepository,
+            IContractProductRepository contractProductRepo,
+            ILogger logger)
         {
             _contractProductRepo = contractProductRepo;
             _contractRepo = contractRepo;
@@ -41,6 +44,7 @@ namespace Application.JobOffer.Commands
             _regContractRepo = regContractRepo;
             _regJobVacRepo = regJobVacRepo;
             _enterpriseRepository = enterpriseRepository;
+            _logger = logger;
         }
         public async Task<Result<string>> Handle(UpdateOfferCommand offer, CancellationToken cancellationToken)
         {
@@ -50,6 +54,8 @@ namespace Application.JobOffer.Commands
             bool CantUpdate = (IsActivate && !IsPack);
             if (CantUpdate)
             {
+                var error = $"IntegrationId: {offer.IntegrationData.IDIntegration} - Reference: {offer.IntegrationData.ApplicationReference} - Failed to Update offer";
+                _logger.LogError(error);
                 return Result<string>.Failure("Failed to Update offer");
             }
             else

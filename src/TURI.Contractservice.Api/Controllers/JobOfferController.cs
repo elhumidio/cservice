@@ -32,7 +32,7 @@ namespace API.Controllers
         /// <param name="offer"></param>
         /// <returns></returns>
         [HttpPost(Name = "FileAtsOffer")]
-        public async Task<IActionResult> FileAtsOffer(AtsOffer offer)
+        public async Task<IActionResult> FileAtsOffer(AtsOfferDto offer)
         {
             var result = await Mediator.Send(new FileAtsOffer.Command {
                    offer = offer   

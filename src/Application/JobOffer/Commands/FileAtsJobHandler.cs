@@ -2,7 +2,7 @@ using Application.Core;
 using Application.JobOffer.DTO;
 using Domain.Repositories;
 using MediatR;
-
+using Microsoft.Extensions.Logging;
 
 namespace Application.JobOffer.Commands
 {
@@ -11,26 +11,27 @@ namespace Application.JobOffer.Commands
 
         public class Command : IRequest<Result<string>>
         {
-            public DTO.AtsOffer offer { get; set; }
+            public DTO.AtsOfferDto offer { get; set; }
         }
 
 
-        public class Handler : IRequestHandler<DTO.AtsOffer, Result<Unit>>
+        public class Handler : IRequestHandler<DTO.AtsOfferDto, Result<Unit>>
         {
             private readonly IJobOfferRepository _offerRepo;
             private readonly IRegJobVacMatchingRepository _regJobVacRepo;
-            public AtsOffer _offer { get; set; }
+            private readonly ILogger _logger;
+            public AtsOfferDto _offer { get; set; }
 
 
-            public Handler(IJobOfferRepository jobOfferRepository, IRegJobVacMatchingRepository regJobVacMatchingRepository)
+            public Handler(IJobOfferRepository jobOfferRepository, IRegJobVacMatchingRepository regJobVacMatchingRepository,ILogger logger)
             {
                 _regJobVacRepo = regJobVacMatchingRepository;
                 _offerRepo = jobOfferRepository;
-
+                _logger = logger;   
             }
 
 
-            public async Task<Result<Unit>> Handle(AtsOffer offer, CancellationToken cancellationToken)
+            public async Task<Result<Unit>> Handle(AtsOfferDto offer, CancellationToken cancellationToken)
             {
                 var atsInfo = await _regJobVacRepo.GetAtsIntegrationInfo(offer.Application_reference);
                 if (atsInfo != null)
@@ -39,9 +40,12 @@ namespace Application.JobOffer.Commands
                     var filed = _offerRepo.FileOffer(job);
                     if (filed.Result > 0)
                         return Result<Unit>.Success(Unit.Value);
-                    else return Result<Unit>.Failure("Failed to file offer");
+                    else {
+                        _logger.LogError($"idjobvacancy: {job.IdjobVacancy} - IdIntegration: {offer.IDIntegration} - Reference: {offer.Application_reference} - Failed to file ats offer");
+                        return Result<Unit>.Failure("Failed to file offer");
+                    } 
                 }
-                return Result<Unit>.Failure("Failed to file offer");
+                return Result<Unit>.Failure("Failed to file ats offer");
             }
         }
     }

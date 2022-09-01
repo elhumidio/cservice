@@ -18,8 +18,8 @@ namespace TURI.Contractservice.Grpc.MappingProfiles
             CreateMap<Offer,UpdateOfferCommand>();
             CreateMap<Application.JobOffer.Commands.IntegrationData, GrpcPublish.IntegrationData>();
             CreateMap<GrpcPublish.IntegrationData,Application.JobOffer.Commands.IntegrationData>();
-            CreateMap<AtsOffer, GrpcPublish.IntegrationData>();
-            CreateMap<GrpcPublish.IntegrationData,AtsOffer>();
+            CreateMap<AtsOfferDto, GrpcPublish.IntegrationData>();
+            CreateMap<GrpcPublish.IntegrationData,AtsOfferDto>();
         }
     }
 }
