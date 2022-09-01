@@ -140,11 +140,33 @@ namespace Persistence.Repositories
             && a.Idstatus == (int)OfferStatus.Active);
             return query;
         }
+
+        public IQueryable<JobVacancy> GetActiveOffersByContractAndType(int contractId, int type)
+        {
+            var query = _dataContext.JobVacancies.Where(a => a.Idcontract == contractId            
+            && a.IdjobVacType == type
+            && !a.ChkDeleted
+            && !a.ChkFilled
+            && a.FinishDate >= DateTime.Today
+            && a.Idstatus == (int)OfferStatus.Active);
+            return query;
+        }
+
+        public IQueryable<JobVacancy> GetActiveOffersByContractAndTypeNoPack(int contractId, int type)
+        {
+            var query = _dataContext.JobVacancies.Where(a => a.Idcontract == contractId
+            && a.IdjobVacType == type            
+            && a.FinishDate >= DateTime.Today
+            && a.Idstatus == (int)OfferStatus.Active);
+            return query;
+        }
+
         public IQueryable<JobVacancy> GetActiveOffersByContractOwnerTypeNoPack(int contractId, int owner, int type)
         {
             var query = _dataContext.JobVacancies.Where(a => a.Idcontract == contractId
             && a.IdenterpriseUserG == owner
             && a.IdjobVacType == type
+            && a.FinishDate >= DateTime.Today
             && a.Idstatus == (int)OfferStatus.Active);
             return query;
         }

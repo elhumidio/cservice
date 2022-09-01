@@ -17,6 +17,11 @@ namespace Persistence.Repositories
             return region != null || _regionId == (int)Regions.AllCountry;
         }
 
+        public Region Get(int _regionId) {
+            var region = _dataContext.Regions.Where(r => r.Idregion == _regionId && r.ChkActive == 1).FirstOrDefault();
+            return region;
+        }
+
         public IQueryable<Region> GetRegions(int siteId, int languageId)
         {
             var regions = _dataContext.Regions

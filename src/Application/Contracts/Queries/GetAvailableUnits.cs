@@ -1,4 +1,4 @@
-﻿using Application.Contracts.DTO;
+using Application.Contracts.DTO;
 using Application.Core;
 using Application.JobOffer.DTO;
 using AutoMapper;
@@ -41,19 +41,19 @@ namespace Application.Contracts.Queries
                 var isPack = _contractProductRepo.IsPack(request.ContractId);
                 var unitsAssigned = _unitsRepo.GetAssignmentsByContract(request.ContractId).ToList();
 
-                var activeOffers = isPack ? _jobOfferRepo.GetActiveOffersByContract(request.ContractId)
+              /*  var activeOffers = isPack ? _jobOfferRepo.GetActiveOffersByContract(request.ContractId)
                 .ProjectTo<JobOfferDto>(_mapper.ConfigurationProvider)
                 .ToList().GroupBy(g => g.IdjobVacType)
                 :
                 _jobOfferRepo.GetActiveOffersByContractNoPack(request.ContractId)
                 .ProjectTo<JobOfferDto>(_mapper.ConfigurationProvider)
                 .ToList()
-                .GroupBy(g => g.IdjobVacType);
+                .GroupBy(g => g.IdjobVacType);*/
 
                 foreach (var units in unitsAssigned)
                 {
-                    var unitsConsumed = isPack ? _jobOfferRepo.GetActiveOffersByContractOwnerType(request.ContractId, units.IdenterpriseUser, units.IdjobVacType).Count()
-                         : _jobOfferRepo.GetActiveOffersByContractOwnerTypeNoPack(request.ContractId, units.IdenterpriseUser, units.IdjobVacType).Count();
+                    var unitsConsumed = isPack ? _jobOfferRepo.GetActiveOffersByContractAndType(request.ContractId, units.IdjobVacType).Count()
+                         : _jobOfferRepo.GetActiveOffersByContractAndTypeNoPack(request.ContractId, units.IdjobVacType).Count();
                     dto = new AvailableUnitsDto
                     {
                         ContractId = request.ContractId,

@@ -16,6 +16,8 @@ namespace Domain.Repositories
         public JobVacancy GetOfferById(int id);
         Task<int> UpdateOffer(JobVacancy jobUpdated);
         Task<int> FileOffer(JobVacancy job);
+        public IQueryable<JobVacancy> GetActiveOffersByContractAndType(int contractId, int type);
+        public IQueryable<JobVacancy> GetActiveOffersByContractAndTypeNoPack(int contractId, int type);
 
 
 

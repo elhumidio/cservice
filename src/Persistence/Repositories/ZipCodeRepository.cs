@@ -1,4 +1,5 @@
-﻿using Domain.Repositories;
+using Domain.Entities;
+using Domain.Repositories;
 
 namespace Persistence.Repositories
 {
@@ -20,6 +21,13 @@ namespace Persistence.Repositories
             }
 
             return zipCodeId;
+        }
+
+        public ZipCode GetZipCodeEntity(string zipcode, int countryId)
+        {
+
+            var zipCode = _dataContext.ZipCodes.Where(z => z.Zip == zipcode.Trim() && z.Idcountry == countryId).FirstOrDefault();
+            return zipCode;
         }
 
         public int GetCityIdByZip(string zipcode)

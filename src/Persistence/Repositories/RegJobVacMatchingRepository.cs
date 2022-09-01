@@ -21,7 +21,7 @@ namespace Persistence.Repositories
         public Task<RegJobVacMatching> GetAtsIntegrationInfo(string externalId)
         {
             var obj = _dataContext.RegJobVacMatchings.Where(integration => integration.ExternalId == externalId);
-            if (obj != null)
+            if (obj != null && obj.Any())
                 return Task.FromResult(obj.First());
             else return Task.FromResult<RegJobVacMatching>(null);
         }

@@ -11,17 +11,21 @@ namespace Application.JobOffer.Validations
         private readonly IGeoNamesConector _geoNames;
         private readonly ICountryIsoRepository _countryIsoRepo;
         private readonly IZipCodeRepository _zipCodeRepo;
+        private readonly IRegionRepository _regionRepo;
 
-        public ZipCodeValidator(IGeoNamesConector geoNames, ICountryIsoRepository countryIsoRepo, IZipCodeRepository zipCodeRepo)
+        public ZipCodeValidator(IGeoNamesConector geoNames, ICountryIsoRepository countryIsoRepo, IZipCodeRepository zipCodeRepo, IRegionRepository regionRepo)
         {
             _geoNames = geoNames;
             _countryIsoRepo = countryIsoRepo;
             _zipCodeRepo = zipCodeRepo;
+            _regionRepo = regionRepo;
+
             RuleFor(command => command).Must(IsRightPostalCode)
                 .WithMessage("ZipCode is wrong formatted");
         }
         private bool IsRightPostalCode(CreateOfferCommand obj)
         {
+            var ret = false;
             var ans = _geoNames.GetPostalCodesCollection(obj.ZipCode, GetCountryIsoByIdCountry(obj.Idcountry));
             if (ans != null && ans.postalCodes.Any())
             {
@@ -45,10 +49,21 @@ namespace Application.JobOffer.Validations
                 //Get cityId based on Postal code
                 obj.Idcity = _zipCodeRepo.GetCityIdByZip(obj.ZipCode);
 
-                return true;
+                ret =  true;
             }
-            else return false;
+            else {
 
+                var zipCodeEntity = _zipCodeRepo.GetZipCodeEntity(obj.ZipCode, obj.Idcountry);
+                if (zipCodeEntity != null)
+                {
+                    obj.IdzipCode = zipCodeEntity.IdzipCode;
+                    var region = _regionRepo.Get(zipCodeEntity.Idregion);
+                    obj.JobLocation = region != null ? region.BaseName : string.Empty;
+                    ret =  true;
+                }
+                else ret =  false;
+            }
+            return ret;
         }
 
         private string GetCountryIsoByIdCountry(int countryId)
@@ -64,17 +79,21 @@ namespace Application.JobOffer.Validations
         private readonly IGeoNamesConector _geoNames;
         private readonly ICountryIsoRepository _countryIsoRepo;
         private readonly IZipCodeRepository _zipCodeRepo;
+        private readonly IRegionRepository _regionRepo;
 
-        public ZipCodeValidatorUp(IGeoNamesConector geoNames, ICountryIsoRepository countryIsoRepo, IZipCodeRepository zipCodeRepo)
+        public ZipCodeValidatorUp(IGeoNamesConector geoNames, ICountryIsoRepository countryIsoRepo, IZipCodeRepository zipCodeRepo,IRegionRepository regionRepo)
         {
             _geoNames = geoNames;
             _countryIsoRepo = countryIsoRepo;
             _zipCodeRepo = zipCodeRepo;
+            _regionRepo = regionRepo;
+
             RuleFor(command => command).Must(IsRightPostalCode)
                 .WithMessage("ZipCode is wrong formatted");
         }
         private bool IsRightPostalCode(UpdateOfferCommand obj)
         {
+            bool ret = false;
             var ans = _geoNames.GetPostalCodesCollection(obj.ZipCode, GetCountryIsoByIdCountry(obj.Idcountry));
             if (ans != null && ans.postalCodes.Any())
             {
@@ -98,10 +117,22 @@ namespace Application.JobOffer.Validations
                 //Get cityId based on Postal code
                 obj.Idcity = _zipCodeRepo.GetCityIdByZip(obj.ZipCode);
 
-                return true;
+                ret = true;
             }
-            else return false;
+            else
+            {
 
+                var zipCodeEntity = _zipCodeRepo.GetZipCodeEntity(obj.ZipCode, obj.Idcountry);
+                if (zipCodeEntity != null)
+                {
+                    obj.IdzipCode = zipCodeEntity.IdzipCode;
+                    var region = _regionRepo.Get(zipCodeEntity.Idregion);
+                    obj.JobLocation = region != null ? region.BaseName : string.Empty;
+                    ret = true;
+                }
+                else ret= false;
+            }
+            return ret;
         }
 
         private string GetCountryIsoByIdCountry(int countryId)
