@@ -5,7 +5,7 @@ using System.Runtime.Serialization;
 namespace Application.JobOffer.Commands
 {
     [DataContract]
-    public class FileAtsOfferCommand : IRequest<Result<string>>
+    public class FileAtsOfferCommand : IRequest<Result<Unit>>
     {
         [DataMember]
         public string Username { get; set; }

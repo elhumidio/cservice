@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Application.JobOffer.Commands
 {
-    public class FileAtsCommandHandler : IRequest<Result<FileAtsOfferCommand>>
+    public class FileAtsCommandHandler : IRequestHandler<FileAtsOfferCommand, Result<Unit>>
     {
         private readonly IJobOfferRepository _offerRepo;
         private readonly IRegJobVacMatchingRepository _regJobVacRepo;
