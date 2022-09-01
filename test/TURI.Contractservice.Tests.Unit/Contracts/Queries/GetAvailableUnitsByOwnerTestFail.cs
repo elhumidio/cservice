@@ -29,7 +29,7 @@ namespace TURI.Contractservice.Tests.Unit.Contracts.Queries
             _mapper = mapperConfig.CreateMapper();
         }
 
-        [Test]
+      /*  [Test]
         public async Task GetAvailableUnitsByOwnerFail()
         {
 
@@ -42,7 +42,7 @@ namespace TURI.Contractservice.Tests.Unit.Contracts.Queries
             result.Value.ShouldBeOfType<List<AvailableUnitsDto>>();
             result.Value.Count.ShouldBeGreaterThan(0);
             result.Value.Sum(a => a.Units).ShouldBeGreaterThan(0);
-        }
+        }*/
 
 
     }
