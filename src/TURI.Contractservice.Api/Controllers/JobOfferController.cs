@@ -1,5 +1,4 @@
 using Application.JobOffer.Commands;
-using Application.JobOffer.DTO;
 using Application.JobOffer.Queries;
 using Application.Utils.Queries.Equest;
 using Microsoft.AspNetCore.Mvc;
@@ -32,11 +31,9 @@ namespace API.Controllers
         /// <param name="offer"></param>
         /// <returns></returns>
         [HttpPost(Name = "FileAtsOffer")]
-        public async Task<IActionResult> FileAtsOffer(AtsOfferDto offer)
+        public async Task<IActionResult> FileAtsOffer(FileAtsOfferCommand offer)
         {
-            var result = await Mediator.Send(new FileAtsOffer.Command {
-                   offer = offer   
-            });
+            var result = await Mediator.Send(offer);
             var ret = HandleResult(result);
             return ret;
         }

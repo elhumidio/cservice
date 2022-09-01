@@ -201,12 +201,9 @@ namespace GrpcPublish
         /// <returns></returns>
         public override async Task<GenericMessage> FileAtsOffer(IntegrationData data, ServerCallContext context)
         {
-            var apiData = new Application.JobOffer.DTO.AtsOfferDto();
+            var apiData = new Application.JobOffer.Commands.FileAtsOfferCommand();
             var adaptedData = _mapper.Map(data, apiData);
-            var result = await _mediator.Send(new FileAtsOffer.Command
-            {
-                offer = adaptedData
-            });
+            var result = await _mediator.Send(adaptedData);            
             return new GenericMessage() { Message = result.Value }; 
         }
 

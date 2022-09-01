@@ -3,7 +3,6 @@ using Application.JobOffer.Commands;
 using AutoMapper;
 using GrpcPublish;
 using System;
-using Application.JobOffer.DTO;
 
 namespace TURI.Contractservice.Grpc.MappingProfiles
 {
@@ -18,8 +17,8 @@ namespace TURI.Contractservice.Grpc.MappingProfiles
             CreateMap<Offer,UpdateOfferCommand>();
             CreateMap<Application.JobOffer.Commands.IntegrationData, GrpcPublish.IntegrationData>();
             CreateMap<GrpcPublish.IntegrationData,Application.JobOffer.Commands.IntegrationData>();
-            CreateMap<AtsOfferDto, GrpcPublish.IntegrationData>();
-            CreateMap<GrpcPublish.IntegrationData,AtsOfferDto>();
+            CreateMap<FileAtsOfferCommand, GrpcPublish.IntegrationData>();
+            CreateMap<GrpcPublish.IntegrationData,FileAtsOfferCommand>();
         }
     }
 }

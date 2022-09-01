@@ -74,7 +74,7 @@ namespace Application.EnterpriseContract.Queries
                     }
                 }
                 if (contractToUse.Idcontract == 0)
-                    return Result<ContractDto>.Failure("There is no units available.\n");
+                    return Result<ContractDto>.Failure("There is no contracts or units available.\n");
                 else
                     return Result<ContractDto>.Success(await Task.FromResult(contractToUse));
             }

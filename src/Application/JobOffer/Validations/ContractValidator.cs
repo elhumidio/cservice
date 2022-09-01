@@ -73,7 +73,7 @@ namespace Application.JobOffer.Validations
 
             int totalunits = 0;
             bool ans = false;
-            var units = _mediator.Send(new GetAvailableUnits.Query
+                var units = _mediator.Send(new GetAvailableUnits.Query
             {
                 ContractId = offer.Idcontract,
             }).Result.Value;
@@ -90,7 +90,7 @@ namespace Application.JobOffer.Validations
                 {
                     case > 0:
                         {
-                            var assignment = units.Where(u => u.Units > 0).OrderByDescending(y => y.Units).FirstOrDefault();
+                            var assignment = unitsSameTypemanager.Where(u => u.Units > 0).OrderByDescending(y => y.Units).FirstOrDefault();
 
                             if (assignment != null)
                             {
@@ -103,12 +103,13 @@ namespace Application.JobOffer.Validations
                     case 0:
                         {
                             //verificar si alguien tiene del mismo tipo
-
-                            var unitsAssignedSameKind = units.Where(u => offer.IdjobVacType == (int)u.type || Enum.IsDefined(typeof(StandardWiseVacancyType), u.type))
+                            
+                            var unitsAssignedAnyKind = units.Where(u => u.Units > 0)
                                 .OrderByDescending(d => d.Units);
-                            if (unitsAssignedSameKind != null && unitsAssignedSameKind.Any())
+                            if (unitsAssignedAnyKind != null && unitsAssignedAnyKind.Any())
                             {
-                                var unitsToUse = unitsAssignedSameKind.First();
+                                var unitsToUse = unitsAssignedAnyKind.First();
+                                offer.IdjobVacType = (int)unitsToUse.type;  
                                 _unitsRepo.TakeUnitFromManager(offer.Idcontract, unitsToUse.type, unitsToUse.OwnerId);
                                 offer.IdenterpriseUserG = unitsToUse.OwnerId;
                                 offer.IdenterpriseUserLastMod = unitsToUse.OwnerId;

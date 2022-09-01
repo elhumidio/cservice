@@ -2,10 +2,10 @@ using Application.Core;
 using MediatR;
 using System.Runtime.Serialization;
 
-namespace Application.JobOffer.DTO
+namespace Application.JobOffer.Commands
 {
     [DataContract]
-    public class AtsOfferDto : IRequest<Result<Unit>>
+    public class FileAtsOfferCommand : IRequest<Result<string>>
     {
         [DataMember]
         public string Username { get; set; }
