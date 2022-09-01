@@ -1,4 +1,5 @@
 using Application.Contracts.DTO;
+using Application.Contracts.Queries;
 using Application.Core;
 using AutoMapper;
 using Domain.Enums;
@@ -9,17 +10,15 @@ namespace Application.EnterpriseContract.Queries
 {
     public class GetContract
     {
-
-
         public class Query : IRequest<Result<ContractDto>>
         {
             public int CompanyId { get; set; }
             public VacancyType? type { get; set; }
-
         }
+
         public class Handler : IRequestHandler<Query, Result<ContractDto>>
         {
-            IMediator _mediatr;
+            private IMediator _mediatr;
             private readonly IContractRepository _contractRepository;
             private readonly IMapper _mapper;
 
@@ -33,13 +32,10 @@ namespace Application.EnterpriseContract.Queries
             public async Task<Result<ContractDto>> Handle(Query request, CancellationToken cancellationToken)
             {
                 var contractToUse = new ContractDto();
-                var contracts = _mediatr.Send(new Application.Contracts.Queries.List.Query
+                var contracts = _mediatr.Send(new List.Query
                 {
                     CompanyId = request.CompanyId,
-
-
                 }).Result;
-
 
                 foreach (var (contract, type) in from contract in contracts.Value
                                                  from type in contract.RegEnterpriseContracts
@@ -47,7 +43,13 @@ namespace Application.EnterpriseContract.Queries
                 {
                     if (request.type == VacancyType.None)
                     {
-                        if ((type.Units - type.UnitsUsed) > 0)
+                        var units = _mediatr
+                            .Send(new GetAvailableUnits.Query { ContractId = contract.Idcontract })
+                            .Result
+                            .Value;
+                        var unitsAvailable = units.Sum(u => u.Units);
+
+                        if ((unitsAvailable) > 0)
                         {
                             contractToUse = contract;
                             contractToUse.IdJobVacType = type.IdjobVacType;
@@ -56,15 +58,19 @@ namespace Application.EnterpriseContract.Queries
                     }
                     else
                     {
-                        var canUse = (request.type == (VacancyType)type.IdjobVacType) && (type.Units - type.UnitsUsed > 0);
+                        //TODO get available units from tjobvacancy
+                        var units = _mediatr
+                            .Send(new GetAvailableUnits.Query { ContractId = contract.Idcontract })
+                            .Result
+                            .Value.Where(u => u.type == request.type).Sum(r => r.Units);
+
+                        var canUse = (request.type == (VacancyType)type.IdjobVacType) && (units > 0);
                         if (canUse)
                         {
                             contractToUse = contract;
                             contractToUse.IdJobVacType = type.IdjobVacType;
                             break;
-
                         }
-
                     }
                 }
                 if (contractToUse.Idcontract == 0)
