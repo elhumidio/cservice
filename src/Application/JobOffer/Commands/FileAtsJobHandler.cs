@@ -19,11 +19,11 @@ namespace Application.JobOffer.Commands
         {
             private readonly IJobOfferRepository _offerRepo;
             private readonly IRegJobVacMatchingRepository _regJobVacRepo;
-            private readonly ILogger _logger;
+            private readonly ILogger<Handler> _logger;
             public AtsOfferDto _offer { get; set; }
 
 
-            public Handler(IJobOfferRepository jobOfferRepository, IRegJobVacMatchingRepository regJobVacMatchingRepository,ILogger logger)
+            public Handler(IJobOfferRepository jobOfferRepository, IRegJobVacMatchingRepository regJobVacMatchingRepository,ILogger<Handler> logger)
             {
                 _regJobVacRepo = regJobVacMatchingRepository;
                 _offerRepo = jobOfferRepository;

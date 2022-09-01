@@ -13,7 +13,7 @@ namespace TURI.Contractservice.Tests.Unit.JobOffer.Commands
     public class CreateOfferCommandHandlerTest
     {
         private readonly IMapper _mapper;
-        private readonly ILogger _logger;
+        private readonly ILogger<CreateOfferCommandHandler> _logger;
         private readonly Mock<IContractProductRepository> _contractProductRepoMock;
         private readonly Mock<IContractRepository> _contractRepositoryMock;
         private readonly Mock<IProductRepository> _productRepositoryMock;

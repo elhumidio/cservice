@@ -11,7 +11,7 @@ namespace Application.JobOffer.Commands
     {
         #region PRIVATE PROPERTIES
 
-        private readonly ILogger _logger;
+        private readonly ILogger<UpdateOfferCommandHandler> _logger;
         private readonly IMapper _mapper;
         private readonly IJobOfferRepository _offerRepo;
         private readonly IContractRepository _contractRepo;
@@ -34,7 +34,7 @@ namespace Application.JobOffer.Commands
             IProductRepository productRepo,
             IEnterpriseRepository enterpriseRepository,
             IContractProductRepository contractProductRepo,
-            ILogger logger)
+            ILogger<UpdateOfferCommandHandler> logger)
         {
             _contractProductRepo = contractProductRepo;
             _contractRepo = contractRepo;

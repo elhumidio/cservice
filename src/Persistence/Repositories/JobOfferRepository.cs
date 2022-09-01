@@ -8,9 +8,9 @@ namespace Persistence.Repositories
     public class JobOfferRepository : IJobOfferRepository
     {
         private readonly DataContext _dataContext;
-        private readonly ILogger _logger;
+        private readonly ILogger<JobOfferRepository> _logger;
 
-        public JobOfferRepository(DataContext dataContext,ILogger logger)
+        public JobOfferRepository(DataContext dataContext,ILogger<JobOfferRepository> logger)
         {
             _dataContext = dataContext;
             _logger = logger;
