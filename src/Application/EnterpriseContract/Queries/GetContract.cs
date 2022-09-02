@@ -58,7 +58,7 @@ namespace Application.EnterpriseContract.Queries
                     }
                     else
                     {
-                        //TODO get available units from tjobvacancy
+                        
                         var units = _mediatr
                             .Send(new GetAvailableUnits.Query { ContractId = contract.Idcontract })
                             .Result

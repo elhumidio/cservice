@@ -65,7 +65,7 @@ namespace Application.JobOffer.Commands
 
                 await _offerRepo.UpdateOffer(existentOffer);
                 return Result<string>.Success("Updated");
-            //}
+           
         }
 
     }
