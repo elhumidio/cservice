@@ -104,17 +104,29 @@ namespace Application.JobOffer.Validations
                         {
                             //verificar si alguien tiene del mismo tipo
                             
-                            var unitsAssignedAnyKind = units.Where(u => u.Units > 0)
+                            var unitsAssignedAnyKind = units.Where(u => u.Units > 0 && u.type == (VacancyType)offer.IdjobVacType)
                                 .OrderByDescending(d => d.Units);
                             if (unitsAssignedAnyKind != null && unitsAssignedAnyKind.Any())
                             {
                                 var unitsToUse = unitsAssignedAnyKind.First();
-                                offer.IdjobVacType = (int)unitsToUse.type;  
+                                offer.IdjobVacType = (int)unitsToUse.type;
                                 _unitsRepo.TakeUnitFromManager(offer.Idcontract, unitsToUse.type, unitsToUse.OwnerId);
                                 offer.IdenterpriseUserG = unitsToUse.OwnerId;
                                 offer.IdenterpriseUserLastMod = unitsToUse.OwnerId;
                                 _unitsRepo.AssignUnitToManager(offer.Idcontract, unitsToUse.type, (int)offer.IdenterpriseUserG);
                                 return true;
+                            }
+                            else {
+                                if (unitsAssignedOtherKind.Sum(unit => unit.Units) > 0)
+                                {
+                                    var unitsToUse = unitsAssignedOtherKind.First();
+                                    offer.IdenterpriseUserG = unitsToUse.OwnerId;
+                                    offer.IdenterpriseUserLastMod = unitsToUse.OwnerId;
+                                    offer.IdjobVacType = (int)unitsAssignedOtherKind.First().type;
+                                    _unitsRepo.TakeUnitFromManager(offer.Idcontract, unitsToUse.type, unitsToUse.OwnerId);
+                                    _unitsRepo.AssignUnitToManager(offer.Idcontract, unitsToUse.type, (int)offer.IdenterpriseUserG);
+                                    return true;
+                                }
                             }
 
                             break;
@@ -122,16 +134,7 @@ namespace Application.JobOffer.Validations
 
                     default:
                         {
-                            if (unitsAssignedOtherKind.Sum(unit => unit.Units) > 0)
-                            {
-                                var unitsToUse = unitsAssignedOtherKind.First();
-                                offer.IdenterpriseUserG = unitsToUse.OwnerId;
-                                offer.IdenterpriseUserLastMod = unitsToUse.OwnerId;
-                                offer.IdjobVacancy = (int)unitsAssignedOtherKind.First().type;
-                                _unitsRepo.TakeUnitFromManager(offer.Idcontract, unitsToUse.type, unitsToUse.OwnerId);
-                                _unitsRepo.AssignUnitToManager(offer.Idcontract, unitsToUse.type, (int)offer.IdenterpriseUserG);
-                                return true;
-                            }
+                            
 
                             break;
                         }
