@@ -51,28 +51,21 @@ namespace Application.JobOffer.Commands
             var existentOffer = _offerRepo.GetOfferById(offer.IdjobVacancy);
             bool IsActivate = existentOffer.ChkFilled;
             bool IsPack = _contractProductRepo.IsPack(existentOffer.Idcontract);
-            bool CantUpdate = (IsActivate && !IsPack);
-            if (CantUpdate)
-            {
-                var error = $"IntegrationId: {offer.IntegrationData.IDIntegration} - Reference: {offer.IntegrationData.ApplicationReference} - Failed to Update offer";
-                _logger.LogError(error);
-                return Result<string>.Failure("Failed to Update offer");
-            }
-            else
-            {
+   
                 if (IsActivate)
                 {
                     offer.FilledDate = null;                 
                     offer.ChkUpdateDate = existentOffer.ChkUpdateDate;
                     offer.ChkFilled = false;
                     offer.ChkDeleted = false;
-               
+                
+                await _regContractRepo.UpdateUnits(offer.Idcontract, offer.IdjobVacType);
                 }
                 var entity = _mapper.Map(offer, existentOffer);
 
                 await _offerRepo.UpdateOffer(existentOffer);
                 return Result<string>.Success("Updated");
-            }
+            //}
         }
 
     }

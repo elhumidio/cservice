@@ -10,17 +10,20 @@ namespace Application.JobOffer.Commands
         private readonly IJobOfferRepository _offerRepo;
         private readonly IRegEnterpriseContractRepository _regEnterpriseContractRepository;
         private readonly IRegJobVacMatchingRepository _regJobVacRepo;
+        private readonly IContractProductRepository _contractProductRepo;
         private readonly ILogger<FileAtsCommandHandler> _logger;
 
         public FileAtsCommandHandler(IJobOfferRepository jobOfferRepository,
             IRegJobVacMatchingRepository regJobVacMatchingRepository,
             IRegEnterpriseContractRepository regEnterpriseContractRepository,
+            IContractProductRepository contractProductRepo,
             ILogger<FileAtsCommandHandler> logger)
         {
             _regJobVacRepo = regJobVacMatchingRepository;
             _offerRepo = jobOfferRepository;
             _logger = logger;
-            _regEnterpriseContractRepository = regEnterpriseContractRepository; 
+            _regEnterpriseContractRepository = regEnterpriseContractRepository;
+            _contractProductRepo = contractProductRepo; 
         }
 
         public async Task<Result<Unit>> Handle(FileAtsOfferCommand offer, CancellationToken cancellationToken)
@@ -31,8 +34,9 @@ namespace Application.JobOffer.Commands
                 var job = _offerRepo.GetOfferById(atsInfo.IdjobVacancy);
                 var filed = _offerRepo.FileOffer(job);
                 if (filed.Result > 0) {
-                    
-                    await _regEnterpriseContractRepository.ReduceUnits(job.Idcontract, job.IdjobVacType);
+                    bool IsPack = _contractProductRepo.IsPack(job.Idcontract);
+                    if(IsPack)
+                        await _regEnterpriseContractRepository.ReduceUnits(job.Idcontract, job.IdjobVacType);
                     return Result<Unit>.Success(Unit.Value);
                 }   
                 else
