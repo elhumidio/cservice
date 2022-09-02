@@ -86,7 +86,9 @@ namespace Application.JobOffer.Commands
                                 Identerprise = offer.Identerprise,
                                 Redirection = offer.IntegrationData.ApplicationUrl
                             };
-                            await _regJobVacRepo.Add(obj);
+                            var integration = _regJobVacRepo.GetAtsIntegrationInfo(obj.ExternalId);
+                            if(integration == null)
+                                await _regJobVacRepo.Add(obj);
                         }
                         _enterpriseRepository.UpdateATS(entity.Identerprise);
 

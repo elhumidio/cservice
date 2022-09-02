@@ -40,7 +40,7 @@ namespace Application.EnterpriseContract.Queries
                 foreach (var (contract, type) in from contract in contracts.Value
                                                  from type in contract.RegEnterpriseContracts
                                                  select (contract, type))
-                {
+                {   
                     if (request.type == VacancyType.None)
                     {
                         var units = _mediatr
