@@ -14,10 +14,12 @@ namespace Application.JobOffer.Commands
         public class Handler : IRequestHandler<Command, Result<string>>
         {
             private readonly IJobOfferRepository _offerRepo;
+            private readonly IRegEnterpriseContractRepository _regEnterpriseContractRepository;
 
-            public Handler(IJobOfferRepository offerRepo)
+            public Handler(IJobOfferRepository offerRepo, IRegEnterpriseContractRepository regEnterpriseContractRepository)
             {
                 _offerRepo = offerRepo;
+                _regEnterpriseContractRepository = regEnterpriseContractRepository; 
             }
 
             public async Task<Result<string>> Handle(Command request, CancellationToken cancellationToken)
@@ -30,8 +32,10 @@ namespace Application.JobOffer.Commands
                     if (job != null)
                     {
                         var ret = await _offerRepo.FileOffer(job);
-                        if (ret == 0)
+                        if (ret == 0) {
+                            await _regEnterpriseContractRepository.ReduceUnits(job.Idcontract, job.IdjobVacType);
                             msgRight += $"Failed to file offer {id}\n\r";
+                        }                     
                         else msgWrong += $"Offer {id} - Filed Successfully ";
                     }
                 }
