@@ -204,7 +204,7 @@ namespace GrpcPublish
             var apiData = new Application.JobOffer.Commands.FileAtsOfferCommand();
             var adaptedData = _mapper.Map(data, apiData);
             var result = await _mediator.Send(adaptedData);            
-            return new GenericMessage() { Message = result.Value }; 
+            return new GenericMessage() { Message = String.Empty }; 
         }
 
 

@@ -7,6 +7,14 @@ namespace API.Controllers
 {
     public class UtilInfoController : BaseApiController
     {
+        [HttpGet]
+        public async Task<string> GetConfigValues() {
+            var config = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
+            var key = $"{config["Service:ServiceVersion"]} - {config["Service:Environment"]}";
+            return key;
+
+        }
+
 
         [HttpGet("{email}", Name = "company")]
         public async Task<IActionResult> GetCompany(string email)
@@ -168,5 +176,7 @@ namespace API.Controllers
             });
             return HandleResult(result);
         }
+
+  
     }
 }
