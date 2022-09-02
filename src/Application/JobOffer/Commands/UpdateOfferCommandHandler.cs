@@ -58,6 +58,7 @@ namespace Application.JobOffer.Commands
                     offer.ChkUpdateDate = existentOffer.ChkUpdateDate;
                     offer.ChkFilled = false;
                     offer.ChkDeleted = false;
+                    offer.ChkPack = IsPack;
                 
                 await _regContractRepo.UpdateUnits(offer.Idcontract, offer.IdjobVacType);
                 }
