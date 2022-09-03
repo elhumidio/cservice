@@ -1,4 +1,4 @@
-﻿using Domain.Repositories;
+using Domain.Repositories;
 
 namespace Persistence.Repositories
 {
@@ -31,9 +31,9 @@ namespace Persistence.Repositories
             .Select(o => o.ppl.cp.Idproduct)
             .First();
             return res;
-
-
         }
+
+       
 
     }
 }
