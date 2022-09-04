@@ -2,6 +2,7 @@ using Application.JobOffer.Commands;
 using Domain.Repositories;
 using FluentValidation;
 using MediatR;
+using Domain.Enums;
 
 namespace Application.JobOffer.Validations
 {
@@ -27,7 +28,7 @@ namespace Application.JobOffer.Validations
             obj.ChkEnterpriseVisible = true;
             obj.ChkBlindSalary = false;
             obj.ChkDisability = false;
-            obj.ChkUpdateDate = services.Where(a => a.ServiceType == 2).Any() ? true : false;
+            obj.ChkUpdateDate = services.Where(a => a.ServiceType == (int)ServiceTypes.ManualJobRefresh).Any() ? true : false;
             return true;
         }
     }

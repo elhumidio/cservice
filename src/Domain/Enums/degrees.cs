@@ -17,4 +17,5 @@ namespace Domain.Enums
         UniversityDegree = 17
 
     }
+
 }
