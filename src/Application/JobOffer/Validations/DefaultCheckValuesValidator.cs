@@ -19,8 +19,7 @@ namespace Application.JobOffer.Validations
 
         private bool HasDefaultValues(CreateOfferCommand obj)
         {
-            //TODO get list of services
-
+         
             var services = _contractRepository.GetServiceTypes(obj.Idcontract).ToList();
             obj.ChkBlindVac = false;
             obj.ChkFilled = false;
