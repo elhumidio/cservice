@@ -40,8 +40,8 @@ namespace Application.Core
             CreateMap<TsturijobsLang, LanguageDTO>();
             CreateMap<JobVacancy, JobOfferDto>();
             CreateMap<JobOfferDto, JobVacancy>();
-            CreateMap<JobVacancy, OfferDto>();
-            CreateMap<OfferDto, JobOfferDto>();
+            CreateMap<JobVacancy, OfferResultDto>();
+            CreateMap<OfferResultDto, JobOfferDto>();
             CreateMap<RegJobVacMatching, IntegrationData>()
                 .ForMember(a => a.ApplicationReference, opt => opt.MapFrom(src => src.ExternalId))
                 .ForMember(a => a.IDIntegration, opt => opt.MapFrom(src => src.Idintegration))

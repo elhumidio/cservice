@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Application.JobOffer.DTO
 {
-    public class OfferDto
+    public class OfferResultDto
     {
         public int IdjobVacancy { get; set; }
         public int Idcontract { get; set; }
@@ -24,7 +24,7 @@ namespace Application.JobOffer.DTO
         public bool chkFilled { get; set; }
         public IntegrationData IntegrationData { get; set; }
 
-        public OfferDto()
+        public OfferResultDto()
         {
             IntegrationData = new IntegrationData();
         }

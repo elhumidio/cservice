@@ -7,13 +7,13 @@ namespace Application.JobOffer.Queries
 {
     public class GetResult
     {
-        public class Query : IRequest<OfferDto>
+        public class Query : IRequest<OfferResultDto>
         {
             public string ExternalId { get; set; }
             public int OfferId { get; set; }
         }
 
-        public class Handler : IRequestHandler<Query, OfferDto>
+        public class Handler : IRequestHandler<Query, OfferResultDto>
         {
             private readonly IJobOfferRepository _jobOffer;
             private readonly IRegJobVacMatchingRepository _regJobVacMatchingRepository;
@@ -26,9 +26,9 @@ namespace Application.JobOffer.Queries
                 _regJobVacMatchingRepository = regJobVacMatchingRepository;
             }
 
-            public Task<OfferDto> Handle(Query request, CancellationToken cancellationToken)
+            public Task<OfferResultDto> Handle(Query request, CancellationToken cancellationToken)
             {
-                var offerDto = new OfferDto();
+                var offerDto = new OfferResultDto();
                 var job = _jobOffer.GetOfferById(request.OfferId);
                 var integration = _regJobVacMatchingRepository.GetAtsIntegrationInfo(request.ExternalId);
                 _mapper.Map(job, offerDto);
