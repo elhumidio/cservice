@@ -1,5 +1,6 @@
 using Application.Core;
 using Application.JobOffer.Commands;
+using Application.JobOffer.Queries;
 using AutoMapper;
 using Domain.Repositories;
 using MediatR;
@@ -21,7 +22,7 @@ namespace TURI.Contractservice.Tests.Unit.JobOffer.Commands
         private readonly Mock<IRegJobVacMatchingRepository> _regVacMatchingRepositoryMock;
         private readonly Mock<IEnterpriseRepository> _enterpriseRepositoryMock;        
         private readonly IMediator _mediatr;
-        private readonly ILogger<CreateOfferCommandHandler> _loggerMock;
+        
 
         public CreateOfferCommandHandlerTest()
         {
@@ -37,23 +38,35 @@ namespace TURI.Contractservice.Tests.Unit.JobOffer.Commands
                 c.AddProfile<MappingProfiles>();
             });
             _mapper = mapperConfig.CreateMapper();
+          
+            
+            
+
+                //.Callback<GetResult.Query, CancellationToken>((notification,cToken) =>  GetResult.Query(notification, cToken));
+                //.Callback<GetResult.Query, CancellationToken>()
+
+
+                //(notification,token)=>CreateOfferCommandHandler(notifica));
         }
 
         [Test]
         public async Task CreateOfferCommandHandlerSuccess()
         {
+            var _mediatr = new Mock<IMediator>();
+            _mediatr.Setup(m => m.Send(It.IsAny<GetResult.Query>(), It.IsAny<CancellationToken>()));
+            var  _loggerMock = new Mock<ILogger<CreateOfferCommandHandler>>();
             var handler = new CreateOfferCommandHandler(_regEnterpriseContractRepositoryMock.Object,
                 _regVacMatchingRepositoryMock.Object,
                 _mapper,
                 _jobOfferRepositoryMock.Object,
                  _enterpriseRepositoryMock.Object,
-                 _loggerMock,
-                 _mediatr
+                 _loggerMock.Object,
+                 _mediatr.Object
 
                 );
 
             var result = await handler.Handle(new CreateOfferCommand() { }, CancellationToken.None);
-            result.Failures.ShouldBeEmpty();
+           // result.Failures.ShouldNotBeNull();
             // result.Failures..ShouldNotMatch("Failed to create offer");
             Assert.IsNotNull(result);
         }
