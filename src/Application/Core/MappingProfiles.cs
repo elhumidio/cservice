@@ -1,9 +1,9 @@
+using Application.AuxiliaryData.DTO;
 using Application.ContractProducts.DTO;
 using Application.Contracts.DTO;
 using Application.EnterpriseContract.DTO;
 using Application.JobOffer.Commands;
 using Application.JobOffer.DTO;
-using Application.AuxiliaryData.DTO;
 using AutoMapper;
 using Domain.DTO;
 using Domain.Entities;
@@ -39,11 +39,19 @@ namespace Application.Core
             CreateMap<Site, SiteDTO>();
             CreateMap<TsturijobsLang, LanguageDTO>();
             CreateMap<JobVacancy, JobOfferDto>();
-            CreateMap<JobOfferDto,JobVacancy>();
-
-            //crear dto enterprise
-
+            CreateMap<JobOfferDto, JobVacancy>();
+            CreateMap<JobVacancy, OfferDto>();
+            CreateMap<OfferDto, JobOfferDto>();
+            CreateMap<RegJobVacMatching, IntegrationData>()
+                .ForMember(a => a.ApplicationReference, opt => opt.MapFrom(src => src.ExternalId))
+                .ForMember(a => a.IDIntegration, opt => opt.MapFrom(src => src.Idintegration))
+                .ForMember(a => a.ApplicationUrl, opt => opt.MapFrom(src => src.Redirection))
+                .ForMember(a => a.ApplicationEmail, opt => opt.MapFrom(src => src.AppEmail));
+            CreateMap<IntegrationData, RegJobVacMatching>()
+                .ForMember(a => a.ExternalId, opt => opt.MapFrom(src => src.ApplicationReference))
+                .ForMember(a => a.Idintegration, opt => opt.MapFrom(src => src.IDIntegration))
+                .ForMember(a => a.Redirection, opt => opt.MapFrom(src => src.ApplicationUrl))
+                .ForMember(a => a.AppEmail, opt => opt.MapFrom(src => src.ApplicationEmail));
         }
-
     }
 }

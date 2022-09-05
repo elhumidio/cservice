@@ -1,11 +1,12 @@
 using Application.Core;
+using Application.JobOffer.DTO;
 using MediatR;
 using System.Runtime.Serialization;
 
 namespace Application.JobOffer.Commands
 {
     [DataContract]
-    public class CreateOfferCommand : IRequest<Result<string>>
+    public class CreateOfferCommand : IRequest<OfferModificationResult>
     {
         [DataMember]
         public int IdjobVacancy { get; set; }

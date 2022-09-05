@@ -1,4 +1,5 @@
-﻿using Application.Core;
+using Application.Core;
+using Application.JobOffer.DTO;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -21,6 +22,18 @@ namespace API.Controllers
                 return Ok(result.Value);
 
             return BadRequest(result.Error);
+        }
+
+        protected IActionResult HandleResult(OfferModificationResult result)
+        {
+            if (result == null ||
+                (!result.IsSuccess && result.Value == null))
+                return NotFound();
+
+            if (result.IsSuccess && result != null)
+                return Ok(result.Value);
+
+            return BadRequest(result.Failures);
         }
     }
 }

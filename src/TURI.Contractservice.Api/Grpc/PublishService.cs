@@ -126,7 +126,12 @@ namespace GrpcPublish
             if(result.IsSuccess)
                 res.Message = "Offer created";
             else {
-                 res.Message = result.Value ;
+                var msg = string.Empty;
+                foreach (string failure in result.Failures)
+                {
+                    res.Message += $"{failure} \n\r";
+                }
+                 
             }
             return res;
         }
@@ -171,7 +176,12 @@ namespace GrpcPublish
                 res.Message = "Offer created";
             else
             {
-                res.Message = result.Value;
+                var msg = string.Empty;
+                foreach (string failure in result.Failures)
+                {
+                    res.Message += $"{failure} \n\r";
+                }
+
             }
             return res;
         }
