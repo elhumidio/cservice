@@ -7,7 +7,6 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
-using Shouldly;
 using TURI.Contractservice.Tests.Unit.Mocks;
 
 namespace TURI.Contractservice.Tests.Unit.JobOffer.Commands
@@ -20,13 +19,11 @@ namespace TURI.Contractservice.Tests.Unit.JobOffer.Commands
         private readonly Mock<IRegEnterpriseContractRepository> _regEnterpriseContractRepositoryMock;
         private readonly Mock<IUnitsRepository> _unitsRepositoryMock;
         private readonly Mock<IRegJobVacMatchingRepository> _regVacMatchingRepositoryMock;
-        private readonly Mock<IEnterpriseRepository> _enterpriseRepositoryMock;        
+        private readonly Mock<IEnterpriseRepository> _enterpriseRepositoryMock;
         private readonly IMediator _mediatr;
-        
 
         public CreateOfferCommandHandlerTest()
         {
-
             _jobOfferRepositoryMock = MockJobOfferRepository.GetJobOfferRepository(true);
             _regEnterpriseContractRepositoryMock = MockRegContractRepo.GetRegEnterpriseContractRepository();
             _unitsRepositoryMock = MockIUnitsRepository.GetMockIUnitsRepository(true);
@@ -38,15 +35,11 @@ namespace TURI.Contractservice.Tests.Unit.JobOffer.Commands
                 c.AddProfile<MappingProfiles>();
             });
             _mapper = mapperConfig.CreateMapper();
-          
-            
-            
 
-                //.Callback<GetResult.Query, CancellationToken>((notification,cToken) =>  GetResult.Query(notification, cToken));
-                //.Callback<GetResult.Query, CancellationToken>()
+            //.Callback<GetResult.Query, CancellationToken>((notification,cToken) =>  GetResult.Query(notification, cToken));
+            //.Callback<GetResult.Query, CancellationToken>()
 
-
-                //(notification,token)=>CreateOfferCommandHandler(notifica));
+            //(notification,token)=>CreateOfferCommandHandler(notifica));
         }
 
         [Test]
@@ -54,7 +47,7 @@ namespace TURI.Contractservice.Tests.Unit.JobOffer.Commands
         {
             var _mediatr = new Mock<IMediator>();
             _mediatr.Setup(m => m.Send(It.IsAny<GetResult.Query>(), It.IsAny<CancellationToken>()));
-            var  _loggerMock = new Mock<ILogger<CreateOfferCommandHandler>>();
+            var _loggerMock = new Mock<ILogger<CreateOfferCommandHandler>>();
             var handler = new CreateOfferCommandHandler(_regEnterpriseContractRepositoryMock.Object,
                 _regVacMatchingRepositoryMock.Object,
                 _mapper,
@@ -66,7 +59,7 @@ namespace TURI.Contractservice.Tests.Unit.JobOffer.Commands
                 );
 
             var result = await handler.Handle(new CreateOfferCommand() { }, CancellationToken.None);
-           // result.Failures.ShouldNotBeNull();
+            // result.Failures.ShouldNotBeNull();
             // result.Failures..ShouldNotMatch("Failed to create offer");
             Assert.IsNotNull(result);
         }

@@ -7,7 +7,6 @@ namespace Application.JobOffer.Queries
 {
     public class VerifyOffer
     {
-
         public class Query : IRequest<Result<int>>
         {
             public string ExternalId { get; set; }
@@ -17,7 +16,6 @@ namespace Application.JobOffer.Queries
         {
             private readonly IRegJobVacMatchingRepository _matchingRepo;
             private readonly IJobOfferRepository _jobOffer;
-
 
             public Handler(IMapper mapper, IJobOfferRepository jobOffer, IRegJobVacMatchingRepository matchingRepo)
             {
@@ -35,7 +33,6 @@ namespace Application.JobOffer.Queries
                 }
                 return Result<int>.Success(idJobVacancy);
             }
-
         }
     }
 }

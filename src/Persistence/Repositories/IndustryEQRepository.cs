@@ -8,10 +8,8 @@ namespace Persistence.Repositories
 
         public IndustryEQRepository(DataContext dataContext)
         {
-
             _dataContext = dataContext;
         }
-
 
         public Task<int> GetEQuestIndustryCode(int industryCode)
         {

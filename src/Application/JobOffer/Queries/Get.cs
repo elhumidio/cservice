@@ -1,14 +1,7 @@
-using Application.Core;
 using Application.JobOffer.DTO;
 using AutoMapper;
 using Domain.Repositories;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 
 namespace Application.JobOffer.Queries
 {
@@ -24,7 +17,6 @@ namespace Application.JobOffer.Queries
             private readonly IJobOfferRepository _jobOffer;
             private readonly IMapper _mapper;
 
-
             public Handler(IMapper mapper, IJobOfferRepository jobOffer)
             {
                 _mapper = mapper;
@@ -33,13 +25,11 @@ namespace Application.JobOffer.Queries
 
             public Task<JobOfferDto> Handle(Query request, CancellationToken cancellationToken)
             {
-                var jobdto = new JobOfferDto(); 
-                var job =  _jobOffer.GetOfferById(request.OfferId);
+                var jobdto = new JobOfferDto();
+                var job = _jobOffer.GetOfferById(request.OfferId);
                 _mapper.Map(job, jobdto);
                 return Task.FromResult(jobdto);
             }
-
-
         }
     }
 }

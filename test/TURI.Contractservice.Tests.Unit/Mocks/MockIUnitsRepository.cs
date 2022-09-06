@@ -7,11 +7,9 @@ namespace TURI.Contractservice.Tests.Unit.Mocks
 {
     public static class MockIUnitsRepository
     {
-
         public static Mock<IUnitsRepository> GetMockIUnitsRepository(bool success)
         {
             var genericList = new List<EnterpriseUserJobVac>();
-
 
             var listAssignments = new List<EnterpriseUserJobVac>
             {
@@ -20,7 +18,6 @@ namespace TURI.Contractservice.Tests.Unit.Mocks
                     IdenterpriseUser =1,
                     JobVacUsed =4,
                      IdjobVacType =0
-
                 },
                 new EnterpriseUserJobVac{
                     Idcontract=1,
@@ -36,7 +33,6 @@ namespace TURI.Contractservice.Tests.Unit.Mocks
                     IdenterpriseUser =1,
                     JobVacUsed =0,
                      IdjobVacType =0
-
                 },
                 new EnterpriseUserJobVac{
                     Idcontract=1,

@@ -1,4 +1,4 @@
-﻿using Application.Core;
+using Application.Core;
 using Application.JobOffer.DTO;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
@@ -10,28 +10,22 @@ namespace Application.JobOffer.Queries
 {
     public class GetConsumedUnitsWelcomeNotSpain
     {
-
         public class Query : IRequest<Result<List<JobOfferDto>>>
         {
             public int CompanyId { get; set; }
-
-
         }
 
         public class Handler : IRequestHandler<Query, Result<List<JobOfferDto>>>
         {
-
             private readonly IJobOfferRepository _jobOffer;
             private readonly IContractProductRepository _contractProductRepo;
             private readonly IMapper _mapper;
-
 
             public Handler(IMapper mapper, IJobOfferRepository jobOffer, IContractProductRepository contractProductRepo)
             {
                 _mapper = mapper;
                 _jobOffer = jobOffer;
                 _contractProductRepo = contractProductRepo;
-
             }
 
             public async Task<Result<List<JobOfferDto>>> Handle(Query request, CancellationToken cancellationToken)

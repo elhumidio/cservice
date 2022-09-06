@@ -6,7 +6,8 @@ namespace Application.JobOffer.Validations
 {
     public class EmptyStringValidator : AbstractValidator<CreateOfferCommand>
     {
-        HtmlDocument htmldoc = new();
+        private HtmlDocument htmldoc = new();
+
         public EmptyStringValidator()
         {
             RuleFor(command => command).NotEmpty().WithMessage("Title is mandatory field.\n").Must(HasNotHtml);
@@ -14,8 +15,8 @@ namespace Application.JobOffer.Validations
                 .Must(HasBeCleanHtml)
                 .Must(DescriptionMaxLength)
                 .Must(RequirementsMaxLength);
-
         }
+
         private bool HasNotHtml(CreateOfferCommand cmd)
         {
             htmldoc.LoadHtml(cmd.Title);
@@ -30,6 +31,7 @@ namespace Application.JobOffer.Validations
                 cmd.Description = htmldoc.DocumentNode.InnerText;
             return true;
         }
+
         private bool DescriptionMaxLength(CreateOfferCommand cmd)
         {
             htmldoc.LoadHtml(cmd.Description);
@@ -42,6 +44,7 @@ namespace Application.JobOffer.Validations
             }
             return true;
         }
+
         private bool RequirementsMaxLength(CreateOfferCommand cmd)
         {
             htmldoc.LoadHtml(cmd.Requirements);
@@ -54,13 +57,12 @@ namespace Application.JobOffer.Validations
             }
             return true;
         }
-
     }
-
 
     public class EmptyStringValidatorUp : AbstractValidator<UpdateOfferCommand>
     {
-        HtmlDocument htmldoc = new();
+        private HtmlDocument htmldoc = new();
+
         public EmptyStringValidatorUp()
         {
             RuleFor(command => command).NotEmpty().WithMessage("Title is mandatory field.\n").Must(HasNotHtml);
@@ -68,8 +70,8 @@ namespace Application.JobOffer.Validations
                 .Must(HasBeCleanHtml)
                 .Must(DescriptionMaxLength)
                 .Must(RequirementsMaxLength);
-
         }
+
         private bool HasNotHtml(UpdateOfferCommand cmd)
         {
             htmldoc.LoadHtml(cmd.Title);
@@ -84,6 +86,7 @@ namespace Application.JobOffer.Validations
                 cmd.Description = htmldoc.DocumentNode.InnerText;
             return true;
         }
+
         private bool DescriptionMaxLength(UpdateOfferCommand cmd)
         {
             htmldoc.LoadHtml(cmd.Description);
@@ -96,6 +99,7 @@ namespace Application.JobOffer.Validations
             }
             return true;
         }
+
         private bool RequirementsMaxLength(UpdateOfferCommand cmd)
         {
             htmldoc.LoadHtml(cmd.Requirements);
@@ -108,6 +112,5 @@ namespace Application.JobOffer.Validations
             }
             return true;
         }
-
     }
 }

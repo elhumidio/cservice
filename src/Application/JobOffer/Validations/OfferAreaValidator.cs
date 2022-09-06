@@ -7,6 +7,7 @@ namespace Application.JobOffer.Validations
     public class OfferAreaValidator : AbstractValidator<CreateOfferCommand>
     {
         private readonly IAreaRepository _areaRepo;
+
         public OfferAreaValidator(IAreaRepository areaRepo)
         {
             _areaRepo = areaRepo;
@@ -22,12 +23,12 @@ namespace Application.JobOffer.Validations
         {
             return _areaRepo.IsRightArea(_areaId);
         }
-
     }
 
     public class OfferAreaValidatorUp : AbstractValidator<UpdateOfferCommand>
     {
         private readonly IAreaRepository _areaRepo;
+
         public OfferAreaValidatorUp(IAreaRepository areaRepo)
         {
             _areaRepo = areaRepo;
@@ -43,6 +44,5 @@ namespace Application.JobOffer.Validations
         {
             return _areaRepo.IsRightArea(_areaId);
         }
-
     }
 }

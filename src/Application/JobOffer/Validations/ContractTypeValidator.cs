@@ -23,6 +23,7 @@ namespace Application.JobOffer.Validations
             return _contractTypeRepo.IsRightContractType(_contractType);
         }
     }
+
     public class ContractTypeValidatorUp : AbstractValidator<UpdateOfferCommand>
     {
         private readonly IJobContractTypeRepository _contractTypeRepo;

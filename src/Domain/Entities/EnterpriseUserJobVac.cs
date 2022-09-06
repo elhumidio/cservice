@@ -1,8 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Domain.Entities
 {
-
     [Table("TenterpriseUserJobVac")]
     public partial class EnterpriseUserJobVac
     {

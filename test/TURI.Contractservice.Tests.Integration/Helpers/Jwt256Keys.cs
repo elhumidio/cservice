@@ -1,7 +1,5 @@
-﻿using Microsoft.IdentityModel.Logging;
+using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
-using System;
-using System.IO;
 using System.Security.Cryptography;
 
 namespace TURI.Contractservice.Tests.Integration.Helpers

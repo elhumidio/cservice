@@ -3,7 +3,6 @@ using Application.JobOffer.Commands;
 using Domain.Repositories;
 using FluentValidation;
 
-
 namespace Application.JobOffer.Validations
 {
     public class ZipCodeValidator : AbstractValidator<CreateOfferCommand>
@@ -23,6 +22,7 @@ namespace Application.JobOffer.Validations
             RuleFor(command => command).Must(IsRightPostalCode)
                 .WithMessage("ZipCode is wrong formatted");
         }
+
         private bool IsRightPostalCode(CreateOfferCommand obj)
         {
             var ret = false;
@@ -35,7 +35,7 @@ namespace Application.JobOffer.Validations
                     obj.IdzipCode = IdzipCode;
                 else if (IdzipCode == 0)
                 {
-                    //go for another id based on location name 
+                    //go for another id based on location name
                     IdzipCode = _zipCodeRepo.GetZipCodeIdByCity(obj.City);
                     if (IdzipCode != 0)
                         obj.IdzipCode = IdzipCode;
@@ -43,32 +43,30 @@ namespace Application.JobOffer.Validations
                     {
                         obj.IdzipCode = 0;
                     }
-
                 }
 
                 //Get cityId based on Postal code
                 obj.Idcity = _zipCodeRepo.GetCityIdByZip(obj.ZipCode);
 
-                ret =  true;
+                ret = true;
             }
-            else {
-
+            else
+            {
                 var zipCodeEntity = _zipCodeRepo.GetZipCodeEntity(obj.ZipCode, obj.Idcountry);
                 if (zipCodeEntity != null)
                 {
                     obj.IdzipCode = zipCodeEntity.IdzipCode;
                     var region = _regionRepo.Get(zipCodeEntity.Idregion);
                     obj.JobLocation = region != null ? region.BaseName : string.Empty;
-                    ret =  true;
+                    ret = true;
                 }
-                else ret =  false;
+                else ret = false;
             }
             return ret;
         }
 
         private string GetCountryIsoByIdCountry(int countryId)
         {
-
             var isoCode = _countryIsoRepo.GetIsobyCountryId(countryId);
             return isoCode;
         }
@@ -81,7 +79,7 @@ namespace Application.JobOffer.Validations
         private readonly IZipCodeRepository _zipCodeRepo;
         private readonly IRegionRepository _regionRepo;
 
-        public ZipCodeValidatorUp(IGeoNamesConector geoNames, ICountryIsoRepository countryIsoRepo, IZipCodeRepository zipCodeRepo,IRegionRepository regionRepo)
+        public ZipCodeValidatorUp(IGeoNamesConector geoNames, ICountryIsoRepository countryIsoRepo, IZipCodeRepository zipCodeRepo, IRegionRepository regionRepo)
         {
             _geoNames = geoNames;
             _countryIsoRepo = countryIsoRepo;
@@ -91,6 +89,7 @@ namespace Application.JobOffer.Validations
             RuleFor(command => command).Must(IsRightPostalCode)
                 .WithMessage("ZipCode is wrong formatted");
         }
+
         private bool IsRightPostalCode(UpdateOfferCommand obj)
         {
             bool ret = false;
@@ -103,7 +102,7 @@ namespace Application.JobOffer.Validations
                     obj.IdzipCode = IdzipCode;
                 else if (IdzipCode == 0)
                 {
-                    //go for another id based on location name 
+                    //go for another id based on location name
                     IdzipCode = _zipCodeRepo.GetZipCodeIdByCity(obj.City);
                     if (IdzipCode != 0)
                         obj.IdzipCode = IdzipCode;
@@ -111,7 +110,6 @@ namespace Application.JobOffer.Validations
                     {
                         obj.IdzipCode = 0;
                     }
-
                 }
 
                 //Get cityId based on Postal code
@@ -121,7 +119,6 @@ namespace Application.JobOffer.Validations
             }
             else
             {
-
                 var zipCodeEntity = _zipCodeRepo.GetZipCodeEntity(obj.ZipCode, obj.Idcountry);
                 if (zipCodeEntity != null)
                 {
@@ -130,14 +127,13 @@ namespace Application.JobOffer.Validations
                     obj.JobLocation = region != null ? region.BaseName : string.Empty;
                     ret = true;
                 }
-                else ret= false;
+                else ret = false;
             }
             return ret;
         }
 
         private string GetCountryIsoByIdCountry(int countryId)
         {
-
             var isoCode = _countryIsoRepo.GetIsobyCountryId(countryId);
             return isoCode;
         }

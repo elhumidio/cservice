@@ -1,6 +1,7 @@
 using Application.JobOffer.Commands;
 using Domain.Enums;
 using FluentValidation;
+
 namespace Application.JobOffer.Validations
 {
     public class RegistrationTypeValidator : AbstractValidator<CreateOfferCommand>
@@ -17,7 +18,6 @@ namespace Application.JobOffer.Validations
                 obj.IdjobRegType = (int)RegistrationType.Classic;
             }
             return true;
-
         }
     }
 
@@ -35,7 +35,6 @@ namespace Application.JobOffer.Validations
                 obj.IdjobRegType = (int)RegistrationType.Classic;
             }
             return true;
-
         }
     }
 }

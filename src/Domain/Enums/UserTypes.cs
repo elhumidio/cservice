@@ -2,7 +2,6 @@ namespace Domain.Enums
 {
     public enum UserTypes
     {
-
         BackOfficeAdministrador = 1,
         BackOfficeComercial = 2,
         BackOfficePublicador = 3,

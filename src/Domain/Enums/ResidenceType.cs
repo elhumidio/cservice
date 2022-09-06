@@ -1,4 +1,4 @@
-﻿namespace Domain.Enums
+namespace Domain.Enums
 {
     public enum ResidenceType
     {
@@ -6,6 +6,5 @@
         VacancyRegion = 2,
         VacancyCountry = 3,
         EuropeanUnion = 4,
-
     }
 }

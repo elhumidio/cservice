@@ -6,6 +6,7 @@ namespace Persistence.Repositories
     public class SiteRepository : ISiteRepository
     {
         private readonly DataContext _dataContext;
+
         public SiteRepository(DataContext dataContext)
         {
             _dataContext = dataContext;
@@ -15,7 +16,7 @@ namespace Persistence.Repositories
         {
             var items = _dataContext.Sites;
 
-            if(items != null)
+            if (items != null)
             {
                 return items;
             }

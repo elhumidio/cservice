@@ -1,6 +1,5 @@
 using Application.AuxiliaryData.DTO;
 using Application.Core;
-using Application.JobOffer.DTO;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Domain.Repositories;
@@ -11,7 +10,6 @@ namespace Application.AuxiliaryData.Queries
 {
     public class ListCountries
     {
-
         public class Query : IRequest<Result<List<CountryDTO>>>
         {
             public int siteID { get; set; }
@@ -23,7 +21,6 @@ namespace Application.AuxiliaryData.Queries
             private readonly ICountryRepository _country;
             private readonly IMapper _mapper;
 
-
             public Handler(IMapper mapper, ICountryRepository country)
             {
                 _mapper = mapper;
@@ -33,8 +30,8 @@ namespace Application.AuxiliaryData.Queries
             public async Task<Result<List<CountryDTO>>> Handle(Query request, CancellationToken cancellationToken)
             {
                 var query = _country.GetCountries(request.siteID, request.languageID).ProjectTo<CountryDTO>(_mapper.ConfigurationProvider);
-                return Result<List<CountryDTO>>.Success(await query.ToListAsync());                
-            }         
+                return Result<List<CountryDTO>>.Success(await query.ToListAsync());
+            }
         }
     }
 }

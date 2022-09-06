@@ -1,11 +1,7 @@
-using Application.Contracts.DTO;
-using Application.Contracts.Queries;
 using Application.Core;
 using AutoMapper;
 using Domain.Repositories;
 using Moq;
-using NUnit.Framework;
-using Shouldly;
 using TURI.Contractservice.Tests.Unit.Mocks;
 
 namespace TURI.Contractservice.Tests.Unit.Contracts.Queries
@@ -29,21 +25,18 @@ namespace TURI.Contractservice.Tests.Unit.Contracts.Queries
             _mapper = mapperConfig.CreateMapper();
         }
 
-      /*  [Test]
-        public async Task GetAvailableUnitsByOwnerFail()
-        {
+        /*  [Test]
+          public async Task GetAvailableUnitsByOwnerFail()
+          {
+              var handler = new GetAvailableUnitsByOwner.Handler(_mapper,
+                  _jobOfferRepoMock.Object,
+                  _contractProductRepoMock.Object,
+                  _unitsRepoMock.Object);
 
-            var handler = new GetAvailableUnitsByOwner.Handler(_mapper,
-                _jobOfferRepoMock.Object,
-                _contractProductRepoMock.Object,
-                _unitsRepoMock.Object);
-
-            var result = await handler.Handle(new GetAvailableUnitsByOwner.Query(), CancellationToken.None);
-            result.Value.ShouldBeOfType<List<AvailableUnitsDto>>();
-            result.Value.Count.ShouldBeGreaterThan(0);
-            result.Value.Sum(a => a.Units).ShouldBeGreaterThan(0);
-        }*/
-
-
+              var result = await handler.Handle(new GetAvailableUnitsByOwner.Query(), CancellationToken.None);
+              result.Value.ShouldBeOfType<List<AvailableUnitsDto>>();
+              result.Value.Count.ShouldBeGreaterThan(0);
+              result.Value.Sum(a => a.Units).ShouldBeGreaterThan(0);
+          }*/
     }
 }

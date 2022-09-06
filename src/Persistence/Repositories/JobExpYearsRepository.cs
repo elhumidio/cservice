@@ -5,7 +5,8 @@ namespace Persistence.Repositories
 {
     public class JobExpYearsRepository : IJobExpYearsRepository
     {
-        DataContext _dataContext;
+        private DataContext _dataContext;
+
         public JobExpYearsRepository(DataContext dataContext)
         {
             _dataContext = dataContext;

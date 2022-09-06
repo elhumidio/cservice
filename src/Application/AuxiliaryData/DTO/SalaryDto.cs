@@ -1,10 +1,3 @@
-using Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace Application.AuxiliaryData.DTO
 {
     public partial class SalaryDTO
@@ -16,6 +9,5 @@ namespace Application.AuxiliaryData.DTO
         public int IdsalaryType { get; set; }
         public int? Idcurrency { get; set; }
         public int? ChkActive { get; set; }
-
     }
 }

@@ -8,7 +8,6 @@ namespace Application.JobOffer.Validations
 {
     public class DatesValidator : AbstractValidator<CreateOfferCommand>
     {
-
         private IMediator _mediator;
         private readonly IContractProductRepository _contractProdRepo;
 
@@ -17,30 +16,29 @@ namespace Application.JobOffer.Validations
             _mediator = mediator;
             _contractProdRepo = contractProdRepo;
 
-
             RuleFor(command => command)
                 .Must(HasRightFinishDate)
                 .WithMessage("Couldn't establish right finish date.\n");
         }
 
         private bool HasRightFinishDate(CreateOfferCommand obj)
-        {            
+        {
             var productId = _contractProdRepo.GetIdProductByContract(obj.Idcontract);
-            
-            if (obj.IdjobVacancy != 0)            {
-               
+
+            if (obj.IdjobVacancy != 0)
+            {
                 obj.FinishDate = _mediator.Send(new Get.Query
                 {
                     OfferId = obj.IdjobVacancy,
-                }).Result.FinishDate;                
+                }).Result.FinishDate;
             }
-            else {
-                    obj.FinishDate = _mediator.Send(new CalculateFinishDateOffer.Query
-                    {
-                        ContractID = obj.Idcontract,
-                        ProductId = productId,
-
-                    }).Result.Value;                                  
+            else
+            {
+                obj.FinishDate = _mediator.Send(new CalculateFinishDateOffer.Query
+                {
+                    ContractID = obj.Idcontract,
+                    ProductId = productId,
+                }).Result.Value;
             }
             obj.UpdatingDate = DateTime.Now;
             obj.PublicationDate = DateTime.Now;
@@ -55,7 +53,6 @@ namespace Application.JobOffer.Validations
 
     public class DatesValidatorUp : AbstractValidator<UpdateOfferCommand>
     {
-
         private IMediator _mediator;
         private readonly IContractProductRepository _contractProdRepo;
 
@@ -63,7 +60,6 @@ namespace Application.JobOffer.Validations
         {
             _mediator = mediator;
             _contractProdRepo = contractProdRepo;
-
 
             RuleFor(command => command)
                 .Must(HasRightFinishDate)
@@ -84,18 +80,17 @@ namespace Application.JobOffer.Validations
                 {
                     ContractID = obj.Idcontract,
                     ProductId = productId,
-
-                }).Result.Value;                
+                }).Result.Value;
                 obj.FinishDate = finishDate;
             }
             else
-            {                
-                obj.FinishDate = dto.FinishDate;                
+            {
+                obj.FinishDate = dto.FinishDate;
             }
             obj.LastVisitorDate = dto.LastVisitorDate;
             obj.PublicationDate = dto.PublicationDate;
 
-            obj.UpdatingDate = DateTime.Now;            
+            obj.UpdatingDate = DateTime.Now;
             obj.LastVisitorDate = null;
             obj.FilledDate = null;
             obj.ModificationDate = DateTime.Now;

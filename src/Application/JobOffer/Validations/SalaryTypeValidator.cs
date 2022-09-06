@@ -20,7 +20,6 @@ namespace Application.JobOffer.Validations
                 .WithMessage("Invalid value for salaryType field.\n")
                 .NotNull()
                 .WithMessage("IdsalaryType is mandatory.\n");
-
         }
 
         private bool IsRightSalaryType(CreateOfferCommand obj)
@@ -47,6 +46,7 @@ namespace Application.JobOffer.Validations
 
             return _salaryTypeRepo.IsRightSalaryValue(obj.SalaryMax, obj.IdsalaryType) || obj.SalaryMax.Equals(string.Empty);
         }
+
         private bool IsRightMinSalaryValue(CreateOfferCommand obj)
         {
             bool IsNotDefinedSalMin = string.IsNullOrEmpty(obj.SalaryMin) || Convert.ToInt32(obj.SalaryMin) == (int)SalaryType.NotSpecified;
@@ -57,11 +57,8 @@ namespace Application.JobOffer.Validations
             }
 
             return (_salaryTypeRepo.IsRightSalaryValue(obj.SalaryMin, obj.IdsalaryType) || obj.SalaryMin.Equals(string.Empty));
-
         }
     }
-
-
 
     public class SalaryTypeValidatorUp : AbstractValidator<UpdateOfferCommand>
     {
@@ -77,7 +74,6 @@ namespace Application.JobOffer.Validations
                 .WithMessage("Invalid value for salaryType field.\n")
                 .NotNull()
                 .WithMessage("IdsalaryType is mandatory.\n");
-
         }
 
         private bool IsRightSalaryType(UpdateOfferCommand obj)
@@ -104,6 +100,7 @@ namespace Application.JobOffer.Validations
 
             return _salaryTypeRepo.IsRightSalaryValue(obj.SalaryMax, obj.IdsalaryType) || obj.SalaryMax.Equals(string.Empty);
         }
+
         private bool IsRightMinSalaryValue(UpdateOfferCommand obj)
         {
             bool IsNotDefinedSalMin = string.IsNullOrEmpty(obj.SalaryMin) || Convert.ToInt32(obj.SalaryMin) == (int)SalaryType.NotSpecified;
@@ -114,7 +111,6 @@ namespace Application.JobOffer.Validations
             }
 
             return (_salaryTypeRepo.IsRightSalaryValue(obj.SalaryMin, obj.IdsalaryType) || obj.SalaryMin.Equals(string.Empty));
-
         }
     }
 }

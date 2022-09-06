@@ -24,9 +24,7 @@ namespace Application.JobOffer.Validations
             }
 
             return ans;
-
         }
-
     }
 
     public class ExternalOfferValidatorUp : AbstractValidator<UpdateOfferCommand>
@@ -49,8 +47,6 @@ namespace Application.JobOffer.Validations
             }
 
             return ans;
-
         }
-
     }
 }

@@ -6,11 +6,12 @@ namespace Persistence.Repositories
     public class EQuestDegreeEquivalentRepository : IEQuestDegreeEquivalentRepository
     {
         private readonly DataContext _dataContext;
+
         public EQuestDegreeEquivalentRepository(DataContext dataContext)
         {
-
             _dataContext = dataContext;
         }
+
         public Task<int> GeteQuestDegree(int degreeId, int siteId)
         {
             var degree = _dataContext.EquestDegreeEquivalents

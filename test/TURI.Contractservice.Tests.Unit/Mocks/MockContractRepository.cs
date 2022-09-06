@@ -8,20 +8,16 @@ namespace TURI.Contractservice.Tests.Unit.Mocks
     {
         public static Mock<IContractRepository> GetContractRepository()
         {
-
             var contractList = new List<Contract>
             {
                 new Contract{ Idcontract =1,Identerprise=10175,FinishDate= DateTime.Now.AddDays(90), ChkApproved=true },
                 new Contract{Idcontract =2,Identerprise=10175,FinishDate= DateTime.Now.AddDays(90), ChkApproved=false},
                 new Contract{Idcontract =3,Identerprise=10175,FinishDate= DateTime.Now.AddDays(90), ChkApproved=true}
-
-
             }.AsQueryable();
 
             var contractListGet = new List<Contract>
             {
                 new Contract{ Idcontract =1,Identerprise=10175,FinishDate= DateTime.Now.AddDays(90), ChkApproved=true }
-
             }.AsQueryable();
 
             var mockRepo = new Mock<IContractRepository>();

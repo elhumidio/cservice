@@ -1,6 +1,5 @@
-using NUnit.Framework;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.TestHost;
+using NUnit.Framework;
 using System.Net;
 using TURI.Contractservice.Tests.Integration.Helpers;
 using TURI.Contractservice.Tests.Integration.Helpers.Extensions;

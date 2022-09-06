@@ -27,8 +27,8 @@ namespace API.Extensions
             services.AddAutoMapper(typeof(Application.Core.MappingProfiles).Assembly);
             services.AddControllers().AddNewtonsoftJson();
 
-
             #region MAPPING REPOSITORIES
+
             services.AddScoped<IContractRepository, ContractRepository>();
             services.AddScoped<IJobOfferRepository, JobOfferRepository>();
             services.AddScoped<IUnitsRepository, UnitsRepository>();
@@ -62,11 +62,11 @@ namespace API.Extensions
             services.AddScoped<IJobVacTypeRepository, JobVacTypeRepository>();
             services.AddScoped<ISiteRepository, SiteRepository>();
             services.AddScoped<ILanguageRepository, LanguageRepository>();
-            #endregion
+
+            #endregion MAPPING REPOSITORIES
+
             services.AddScoped<IGeoNamesConector, GeoNamesConector>();
             return services;
         }
-
-
     }
 }

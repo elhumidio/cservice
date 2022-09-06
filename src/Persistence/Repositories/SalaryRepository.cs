@@ -5,7 +5,8 @@ namespace Persistence.Repositories
 {
     public class SalaryRepository : ISalaryRepository
     {
-        DataContext _dataContext;
+        private DataContext _dataContext;
+
         public SalaryRepository(DataContext dataContext)
         {
             _dataContext = dataContext;
@@ -26,6 +27,5 @@ namespace Persistence.Repositories
                 return null;
             }
         }
-
     }
 }

@@ -10,9 +10,11 @@ namespace Application.Utils.Queries.Equest
         {
             public int industryCode { get; set; }
         }
+
         public class Handler : IRequestHandler<Query, Result<int>>
         {
-            IindustryEQRepository _eqindustryRepo;
+            private IindustryEQRepository _eqindustryRepo;
+
             public Handler(IindustryEQRepository eqindustryRepo)
             {
                 _eqindustryRepo = eqindustryRepo;
@@ -23,8 +25,6 @@ namespace Application.Utils.Queries.Equest
                 var ret = await _eqindustryRepo.GetEQuestIndustryCode(request.industryCode);
                 return Result<int>.Success(ret);
             }
-
-
         }
     }
 }

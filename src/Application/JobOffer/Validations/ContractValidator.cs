@@ -68,12 +68,11 @@ namespace Application.JobOffer.Validations
                 {
                     return true;
                 }
-
             }
 
             int totalunits = 0;
             bool ans = false;
-                var units = _mediator.Send(new GetAvailableUnits.Query
+            var units = _mediator.Send(new GetAvailableUnits.Query
             {
                 ContractId = offer.Idcontract,
             }).Result.Value;
@@ -103,7 +102,7 @@ namespace Application.JobOffer.Validations
                     case 0:
                         {
                             //verificar si alguien tiene del mismo tipo
-                            
+
                             var unitsAssignedAnyKind = units.Where(u => u.Units > 0 && u.type == (VacancyType)offer.IdjobVacType)
                                 .OrderByDescending(d => d.Units);
                             if (unitsAssignedAnyKind != null && unitsAssignedAnyKind.Any())
@@ -116,7 +115,8 @@ namespace Application.JobOffer.Validations
                                 _unitsRepo.AssignUnitToManager(offer.Idcontract, unitsToUse.type, (int)offer.IdenterpriseUserG);
                                 return true;
                             }
-                            else {
+                            else
+                            {
                                 if (unitsAssignedOtherKind.Sum(unit => unit.Units) > 0)
                                 {
                                     var unitsToUse = unitsAssignedOtherKind.First();
@@ -134,15 +134,12 @@ namespace Application.JobOffer.Validations
 
                     default:
                         {
-                            
-
                             break;
                         }
                 }
                 return false;
             }
             else return false;
-
         }
     }
 }

@@ -10,11 +10,12 @@ namespace Persistence.Repositories
         private readonly DataContext _dataContext;
         private readonly ILogger<JobOfferRepository> _logger;
 
-        public JobOfferRepository(DataContext dataContext,ILogger<JobOfferRepository> logger)
+        public JobOfferRepository(DataContext dataContext, ILogger<JobOfferRepository> logger)
         {
             _dataContext = dataContext;
             _logger = logger;
         }
+
         public IQueryable<JobVacancy> GetActiveOffersByContract(int contractId)
         {
             var query = _dataContext.JobVacancies.Where(a => a.Idcontract == contractId
@@ -38,12 +39,12 @@ namespace Persistence.Repositories
                 && a.FinishDate >= DateTime.Today && a.IdenterpriseUserG == managerId && a.Idstatus == (int)OfferStatus.Active);
 
             return query;
-
         }
 
         public Task<int> UpdateOffer(JobVacancy jobUpdated)
         {
-            try {
+            try
+            {
                 var current = _dataContext.JobVacancies.Where(a => a.IdjobVacancy == jobUpdated.IdjobVacancy).FirstOrDefault();
                 if (current != null)
                 {
@@ -53,31 +54,30 @@ namespace Persistence.Repositories
                 }
                 else return Task.FromResult(-1);
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 string message = $"Message: {ex.Message} - InnerException: {ex.InnerException} - StackTrace: {ex.StackTrace}";
                 _logger.LogError(message: message);
                 return Task.FromResult(-1);
             }
-            
-
         }
 
         public Task<int> FileOffer(JobVacancy job)
         {
-            try {
+            try
+            {
                 job.ChkFilled = true;
                 job.FilledDate = DateTime.Now;
                 job.ModificationDate = DateTime.Now;
                 var ret = _dataContext.SaveChangesAsync();
                 return ret;
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 string message = $"Message: {ex.Message} - InnerException: {ex.InnerException} - StackTrace: {ex.StackTrace}";
                 _logger.LogError(message: message);
                 return Task.FromResult(-1);
             }
-            
-            
         }
 
         public JobVacancy GetOfferById(int id)
@@ -88,19 +88,19 @@ namespace Persistence.Repositories
 
         public int Add(JobVacancy job)
         {
-            try {
+            try
+            {
                 var a = _dataContext.Add(job).Entity;
                 var ret = _dataContext.SaveChanges();
                 return job.IdjobVacancy;
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 string message = $"Message: {ex.Message} - InnerException: {ex.InnerException} - StackTrace: {ex.StackTrace}";
                 _logger.LogError(message: message);
                 return -1;
             }
-            
         }
-
 
         public IQueryable<JobVacancy> GetActiveOffersByContractAndManagerNoPack(int contractId, int managerId)
         {
@@ -108,7 +108,6 @@ namespace Persistence.Repositories
                  && a.IdenterpriseUserG == managerId && a.Idstatus == (int)OfferStatus.Active);
 
             return query;
-
         }
 
         public IQueryable<JobVacancy> GetActiveOffersByCompany(int enterpriseId)
@@ -120,8 +119,8 @@ namespace Persistence.Repositories
                 && a.Idstatus == (int)OfferStatus.Active);
 
             return query;
-
         }
+
         public IQueryable<JobVacancy> GetActiveOffersByContractNoPack(int contractId)
         {
             var query = _dataContext.JobVacancies.Where(a => a.Idcontract == contractId
@@ -143,7 +142,7 @@ namespace Persistence.Repositories
 
         public IQueryable<JobVacancy> GetActiveOffersByContractAndType(int contractId, int type)
         {
-            var query = _dataContext.JobVacancies.Where(a => a.Idcontract == contractId            
+            var query = _dataContext.JobVacancies.Where(a => a.Idcontract == contractId
             && a.IdjobVacType == type
             && !a.ChkDeleted
             && !a.ChkFilled
@@ -155,7 +154,7 @@ namespace Persistence.Repositories
         public IQueryable<JobVacancy> GetActiveOffersByContractAndTypeNoPack(int contractId, int type)
         {
             var query = _dataContext.JobVacancies.Where(a => a.Idcontract == contractId
-            && a.IdjobVacType == type            
+            && a.IdjobVacType == type
             && a.FinishDate >= DateTime.Today
             && a.Idstatus == (int)OfferStatus.Active);
             return query;
@@ -186,7 +185,5 @@ namespace Persistence.Repositories
 
             return res;
         }
-
-
     }
 }

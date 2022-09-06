@@ -6,6 +6,7 @@ namespace Persistence.Repositories
     public class CountryRepository : ICountryRepository
     {
         private readonly DataContext _dataContext;
+
         public CountryRepository(DataContext dataContext)
         {
             _dataContext = dataContext;

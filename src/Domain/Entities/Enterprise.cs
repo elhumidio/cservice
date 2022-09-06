@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace API.DataContext
 {
@@ -18,10 +18,12 @@ namespace API.DataContext
         public int? IdcountryInvoicing { get; set; }
         public int? IdregionInvoicing { get; set; }
         public int? IdzipCodeInvoicing { get; set; }
+
         /// <summary>
         /// Employees Number
         /// </summary>
         public int Employees { get; set; }
+
         public int VisitsNumber { get; set; }
         public string City { get; set; } = null!;
         public string Address { get; set; } = null!;

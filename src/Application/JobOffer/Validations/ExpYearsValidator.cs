@@ -4,10 +4,10 @@ using FluentValidation;
 
 namespace Application.JobOffer.Validations
 {
-
     public class ExpYearsValidator : AbstractValidator<CreateOfferCommand>
     {
         private readonly IJobExpYearsRepository _jobExpRepo;
+
         public ExpYearsValidator(IJobExpYearsRepository jobExpRepo)
         {
             _jobExpRepo = jobExpRepo;
@@ -27,6 +27,7 @@ namespace Application.JobOffer.Validations
     public class ExpYearsValidatorUp : AbstractValidator<UpdateOfferCommand>
     {
         private readonly IJobExpYearsRepository _jobExpRepo;
+
         public ExpYearsValidatorUp(IJobExpYearsRepository jobExpRepo)
         {
             _jobExpRepo = jobExpRepo;
@@ -42,6 +43,4 @@ namespace Application.JobOffer.Validations
             return _jobExpRepo.IsRightExperienceYears(_expYearsId);
         }
     }
-
 }
-

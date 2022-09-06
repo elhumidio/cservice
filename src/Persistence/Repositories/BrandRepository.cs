@@ -5,7 +5,7 @@ namespace Persistence.Repositories
 {
     public class BrandRepository : IBrandRepository
     {
-        DataContext _dataContext;
+        private DataContext _dataContext;
 
         public BrandRepository(DataContext dataContext)
         {
@@ -19,7 +19,6 @@ namespace Persistence.Repositories
             if (activebrands != null && activebrands.Any())
                 brands = activebrands;
             return brands;
-
         }
 
         public IQueryable<Brand> GetListBrands(int companyId)

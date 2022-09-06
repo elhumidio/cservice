@@ -1,5 +1,4 @@
-﻿using StepStone.AspNetCore.Authentication.ApiKeyHeader;
-using System.Net.Http;
+using StepStone.AspNetCore.Authentication.ApiKeyHeader;
 using System.Net.Http.Headers;
 
 namespace TURI.Contractservice.Tests.Integration.Helpers.Extensions

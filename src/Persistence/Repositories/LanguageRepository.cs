@@ -6,6 +6,7 @@ namespace Persistence.Repositories
     public class LanguageRepository : ILanguageRepository
     {
         private readonly DataContext _dataContext;
+
         public LanguageRepository(DataContext dataContext)
         {
             _dataContext = dataContext;
@@ -16,7 +17,7 @@ namespace Persistence.Repositories
             var languages = _dataContext.TsturijobsLangs
                 .Where(a => a.Idsite == siteId);
 
-            if(languages != null)
+            if (languages != null)
             {
                 return languages;
             }

@@ -14,6 +14,7 @@ namespace Application.JobOffer.Validations
                 .WithMessage("Value should be between 1-100");
             RuleFor(command => command).Must(HasVacancies).WithMessage("Vacancy number should be greater than zero.\n");
         }
+
         private bool HasVacancies(CreateOfferCommand obj)
         {
             if (obj.VacancyNumber <= 0)
@@ -35,6 +36,7 @@ namespace Application.JobOffer.Validations
                 .WithMessage("Value should be between 1-100");
             RuleFor(command => command).Must(HasVacancies).WithMessage("Vacancy number should be greater than zero.\n");
         }
+
         private bool HasVacancies(UpdateOfferCommand obj)
         {
             if (obj.VacancyNumber <= 0)

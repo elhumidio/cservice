@@ -10,7 +10,6 @@ namespace Application.JobOffer.Queries
 {
     public class List
     {
-
         public class Query : IRequest<Result<List<JobOfferDto>>>
         {
             public int ContractID { get; set; }
@@ -20,7 +19,6 @@ namespace Application.JobOffer.Queries
         {
             private readonly IJobOfferRepository _jobOffer;
             private readonly IMapper _mapper;
-
 
             public Handler(IMapper mapper, IJobOfferRepository jobOffer)
             {
@@ -33,8 +31,6 @@ namespace Application.JobOffer.Queries
                 var query = _jobOffer.GetOffersByContract(request.ContractID).ProjectTo<JobOfferDto>(_mapper.ConfigurationProvider).AsQueryable();
                 return Result<List<JobOfferDto>>.Success(await query.ToListAsync());
             }
-
-
         }
     }
 }

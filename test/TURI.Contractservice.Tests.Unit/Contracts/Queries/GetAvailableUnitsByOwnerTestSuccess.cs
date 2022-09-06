@@ -29,11 +29,9 @@ namespace TURI.Contractservice.Tests.Unit.Contracts.Queries
             _mapper = mapperConfig.CreateMapper();
         }
 
-
         [Test]
         public async Task GetAvailableUnitsByOwnerSuccess()
         {
-
             var handler = new GetAvailableUnitsByOwner.Handler(_mapper,
                 _jobOfferRepoMock.Object,
                 _contractProductRepoMock.Object,

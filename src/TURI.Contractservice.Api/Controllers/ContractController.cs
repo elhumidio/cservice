@@ -2,7 +2,6 @@ using Application.Contracts.Queries;
 using Application.EnterpriseContract.Queries;
 using Domain.Enums;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
 
 namespace API.Controllers
 {
@@ -23,7 +22,6 @@ namespace API.Controllers
             return HandleResult(result);
         }
 
-
         /// <summary>
         /// Gets available units, given a contract and an owner (verifies consumed units and assignments)
         /// </summary>
@@ -40,6 +38,7 @@ namespace API.Controllers
             });
             return HandleResult(result);
         }
+
         /// <summary>
         /// Gets assignments given a contract and an Owner
         /// </summary>
@@ -57,8 +56,6 @@ namespace API.Controllers
             return HandleResult(result);
         }
 
-
-
         [HttpGet("{companyId}/{type}", Name = "contract")]
         public async Task<IActionResult> GetContract(int companyId, VacancyType type)
         {
@@ -71,17 +68,7 @@ namespace API.Controllers
             {
                 return HandleResult(result);
             }
-            else return  BadRequest(result.Error);
-            
+            else return BadRequest(result.Error);
         }
-
-
-
-
-
-
-
-
-
     }
 }

@@ -5,12 +5,13 @@ namespace Persistence.Repositories
 {
     public class ZipCodeRepository : IZipCodeRepository
     {
-        DataContext _dataContext;
+        private DataContext _dataContext;
 
         public ZipCodeRepository(DataContext dataContext)
         {
             _dataContext = dataContext;
         }
+
         public int GetZipCodeIdByCodeAndCountry(string zipcode, int countryId)
         {
             int zipCodeId = 0;
@@ -25,7 +26,6 @@ namespace Persistence.Repositories
 
         public ZipCode GetZipCodeEntity(string zipcode, int countryId)
         {
-
             var zipCode = _dataContext.ZipCodes.Where(z => z.Zip == zipcode.Trim() && z.Idcountry == countryId).FirstOrDefault();
             return zipCode;
         }
@@ -38,7 +38,6 @@ namespace Persistence.Repositories
                 cityId = (int)code.First().Idcity;
 
             return cityId;
-
         }
 
         public int GetZipCodeIdByCity(string cityName)

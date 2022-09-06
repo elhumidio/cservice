@@ -10,9 +10,11 @@ namespace Application.Utils.Queries.Equest
         {
             public string countryId { get; set; }
         }
+
         public class Handler : IRequestHandler<Query, Result<int>>
         {
-            ICountryStateEQRepository _countryEqRepo;
+            private ICountryStateEQRepository _countryEqRepo;
+
             public Handler(ICountryStateEQRepository countryEqRepo)
             {
                 _countryEqRepo = countryEqRepo;
@@ -23,7 +25,6 @@ namespace Application.Utils.Queries.Equest
                 var ret = await _countryEqRepo.GetCountryStateEQ(request.countryId);
                 return Result<int>.Success(ret);
             }
-
         }
     }
 }

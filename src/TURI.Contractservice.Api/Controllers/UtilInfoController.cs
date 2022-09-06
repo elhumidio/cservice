@@ -1,20 +1,18 @@
 using Application.AuxiliaryData.Queries;
 using Application.JobOffer.Queries;
 using Microsoft.AspNetCore.Mvc;
-using Swashbuckle.AspNetCore.Annotations;
 
 namespace API.Controllers
 {
     public class UtilInfoController : BaseApiController
     {
         [HttpGet]
-        public async Task<string> GetConfigValues() {
+        public async Task<string> GetConfigValues()
+        {
             var config = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
             var key = $"{config["Service:ServiceVersion"]} - {config["Service:Environment"]}";
             return key;
-
         }
-
 
         [HttpGet("{email}", Name = "company")]
         public async Task<IActionResult> GetCompany(string email)
@@ -31,8 +29,8 @@ namespace API.Controllers
         {
             var result = await Mediator.Send(new ListAreas.Query
             {
-                 languageID = languageId,
-                 siteID = siteId
+                languageID = languageId,
+                siteID = siteId
             });
             return HandleResult(result);
         }
@@ -162,7 +160,6 @@ namespace API.Controllers
         {
             var result = await Mediator.Send(new ListSites.Query
             {
-
             });
             return HandleResult(result);
         }
@@ -176,7 +173,5 @@ namespace API.Controllers
             });
             return HandleResult(result);
         }
-
-  
     }
 }

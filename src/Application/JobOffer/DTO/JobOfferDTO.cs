@@ -21,6 +21,5 @@ namespace Application.JobOffer.DTO
         public DateTime? PublicationDate { get; set; }
         public DateTime? LastVisitorDate { get; set; }
         public bool chkFilled { get; set; }
-
     }
 }

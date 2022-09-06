@@ -6,7 +6,6 @@ namespace TURI.Contractservice.Tests.Unit.Mocks
 {
     public static class MockJobVacMatchingRepository
     {
-
         public static Mock<IRegJobVacMatchingRepository> GetJobVacMatchingRepository(bool pass)
         {
             RegJobVacMatching match = new RegJobVacMatching
@@ -20,11 +19,8 @@ namespace TURI.Contractservice.Tests.Unit.Mocks
             var mockRepo = new Mock<IRegJobVacMatchingRepository>();
             if (pass)
             {
-
-
                 mockRepo.Setup(r => r.Add(match)).ReturnsAsync(1);
                 mockRepo.Setup(r => r.GetAtsIntegrationInfo(It.IsAny<string>())).ReturnsAsync(new RegJobVacMatching());
-
             }
             else
             {
@@ -32,7 +28,6 @@ namespace TURI.Contractservice.Tests.Unit.Mocks
                 match.ExternalId = string.Empty;
                 mockRepo.Setup(r => r.Add(match)).ReturnsAsync(-1);
                 mockRepo.Setup(r => r.GetAtsIntegrationInfo(It.IsAny<string>())).ReturnsAsync(new RegJobVacMatching());
-
             }
 
             return mockRepo;

@@ -10,7 +10,6 @@ namespace TURI.Contractservice.Tests.Unit.Mocks
             var brandsList = new List<int> { 1, 2, 3, 4 };
             if (pass)
             {
-
                 var mockRepo = new Mock<IBrandRepository>();
                 mockRepo.Setup(r => r.GetBrands(It.IsAny<int>())).Returns(brandsList);
                 mockRepo.Setup(r => r.IsRightBrand(It.IsAny<int>(), It.IsAny<int>())).Returns(brandsList.Any());
@@ -24,8 +23,6 @@ namespace TURI.Contractservice.Tests.Unit.Mocks
                 mockRepo.Setup(r => r.IsRightBrand(It.IsAny<int>(), It.IsAny<int>())).Returns(brandsList.Any());
                 return mockRepo;
             }
-
-
         }
     }
 }

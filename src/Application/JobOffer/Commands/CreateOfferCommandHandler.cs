@@ -1,10 +1,8 @@
-using Application.Core;
 using Application.JobOffer.DTO;
 using Application.JobOffer.Queries;
 using AutoMapper;
 using Domain.Entities;
 using Domain.Repositories;
-using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
@@ -16,19 +14,19 @@ namespace Application.JobOffer.Commands
 
         private readonly ILogger<CreateOfferCommandHandler> _logger;
         private readonly IMapper _mapper;
-        private readonly IJobOfferRepository _offerRepo;        
+        private readonly IJobOfferRepository _offerRepo;
         private readonly IRegJobVacMatchingRepository _regJobVacRepo;
         private readonly IRegEnterpriseContractRepository _regContractRepo;
-        private readonly IEnterpriseRepository _enterpriseRepository;        
+        private readonly IEnterpriseRepository _enterpriseRepository;
         private readonly IMediator _mediatr;
 
         #endregion PRIVATE PROPERTIES
 
         public CreateOfferCommandHandler(IRegEnterpriseContractRepository regContractRepo,
-            IRegJobVacMatchingRepository regJobVacRepo,            
+            IRegJobVacMatchingRepository regJobVacRepo,
             IMapper mapper,
-            IJobOfferRepository offerRepo,                        
-            IEnterpriseRepository enterpriseRepository,            
+            IJobOfferRepository offerRepo,
+            IEnterpriseRepository enterpriseRepository,
             ILogger<CreateOfferCommandHandler> logger,
             IMediator mediatr)
         {
@@ -66,14 +64,17 @@ namespace Application.JobOffer.Commands
                 if (jobVacancyId == 0)
                 {
                     error = "Failed to create offer";
-                    _logger.LogError(error);                    
-                    return OfferModificationResult.Failure(new List<string> { error });                    
+                    _logger.LogError(error);
+                    return OfferModificationResult.Failure(new List<string> { error });
                 }
                 else
                 {
                     try
                     {
-                        var createdOffer = _mediatr.Send(new GetResult.Query { ExternalId = offer.IntegrationData.ApplicationReference, OfferId = jobVacancyId }); await _regContractRepo.UpdateUnits(job.Idcontract, job.IdjobVacType);
+                        var createdOffer = _mediatr.Send(new GetResult.Query
+                        { ExternalId = offer.IntegrationData.ApplicationReference, OfferId = jobVacancyId
+                        });
+                        await _regContractRepo.UpdateUnits(job.Idcontract, job.IdjobVacType);
 
                         if (!string.IsNullOrEmpty(offer.IntegrationData.ApplicationReference))
                         {
@@ -88,16 +89,27 @@ namespace Application.JobOffer.Commands
                             };
                             var integration = _regJobVacRepo.GetAtsIntegrationInfo(obj.ExternalId);
                             if (integration != null)
+                            {
+                                var info = $"IDJobVacancy: {job.IdjobVacancy} - IdIntegration: {integration.Result.Idintegration} - Reference: {integration.Result.ExternalId} - Offer ATS Created";
+                                _logger.LogInformation(info);
                                 await _regJobVacRepo.Add(obj);
+                            }
+                            else {
+                                var info = $"IDJobVacancy: {job.IdjobVacancy} - IDEnterprise: {job.Identerprise} - IDContract: {job.Idcontract} - Offer Created";
+                                _logger.LogInformation(info);
+
+                            }
+
                         }
                         _enterpriseRepository.UpdateATS(entity.Identerprise);
-                        return OfferModificationResult.Success(createdOffer.Result);                        
+                        
+                        return OfferModificationResult.Success(createdOffer.Result);
                     }
                     catch (Exception ex)
                     {
                         error = $"message: Couldn't add Offer - Exception: {ex.Message} - {ex.InnerException}";
                         _logger.LogError(error);
-                        return OfferModificationResult.Failure(new List<string> { error });                    
+                        return OfferModificationResult.Failure(new List<string> { error });
                     }
                 }
             }

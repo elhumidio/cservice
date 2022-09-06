@@ -10,7 +10,6 @@ namespace Application.Contracts.Queries
 {
     public class GetAssignments
     {
-
         public class Query : IRequest<Result<List<UnitsAssignmentDto>>>
         {
             public int ContractID { get; set; }
@@ -21,7 +20,6 @@ namespace Application.Contracts.Queries
         {
             private readonly IUnitsRepository _unitsRepo;
             private readonly IMapper _mapper;
-
 
             public Handler(IMapper mapper, IUnitsRepository unitsRepo)
             {
@@ -36,8 +34,6 @@ namespace Application.Contracts.Queries
                     .AsQueryable();
                 return Result<List<UnitsAssignmentDto>>.Success(await assignments.ToListAsync());
             }
-
-
         }
     }
 }

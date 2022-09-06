@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
+
 namespace Application.JobOffer.DTO;
 
 public class GeoNames
@@ -20,9 +21,9 @@ public class PostalCode
 
     [JsonProperty("ISO3166-2")]
     public string ISO31662 { get; set; }
+
     public string placeName { get; set; }
     public double lat { get; set; }
     public string adminCode3 { get; set; }
     public string adminName3 { get; set; }
 }
-

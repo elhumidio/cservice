@@ -22,7 +22,6 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
       "launchUrl": "swagger"
-      
     }
   }
 }

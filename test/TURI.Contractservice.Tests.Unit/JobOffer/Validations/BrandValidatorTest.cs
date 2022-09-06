@@ -5,9 +5,9 @@ using Moq;
 using NUnit.Framework;
 using Shouldly;
 using TURI.Contractservice.Tests.Unit.Mocks;
+
 namespace TURI.Contractservice.Tests.Unit.JobOffer.Validations
 {
-
     public class BrandValidatorTest
     {
         private BrandValidator _validator;
@@ -18,23 +18,18 @@ namespace TURI.Contractservice.Tests.Unit.JobOffer.Validations
             _brandRepositoryMock = MockBrandRepository.GetBrandRepository(true);
             _validator = new BrandValidator(_brandRepositoryMock.Object);
         }
+
         [Test]
         public void NotNegativeOrEmptyValue()
         {
             // Given
             var cmd = new CreateOfferCommand();
 
-
             // When
             var result = _validator.Validate(cmd);
 
             // Then
             result.Errors.ShouldBeEmpty();
-
-
         }
-
-
-
     }
 }

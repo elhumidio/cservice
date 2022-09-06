@@ -8,23 +8,19 @@ namespace Application.JobOffer.Queries
 {
     public class GetCompanyInfo
     {
-
         public class Query : IRequest<Result<CompanyinfoDto>>
         {
             public string Email { get; set; }
-
         }
 
         public class Handler : IRequestHandler<Query, Result<CompanyinfoDto>>
         {
-
             private readonly IEnterpriseUserRepository _enterpriseUserRepository;
             private readonly IBrandRepository _brandRepository;
             private readonly IUserRepository _userRepository;
             private readonly IEnterpriseRepository _enterpriseRepository;
 
             private readonly IMapper _mapper;
-
 
             public Handler(IMapper mapper, IEnterpriseUserRepository enterpriseUserRepo, IBrandRepository brandRepo, IUserRepository userRepo, IEnterpriseRepository enterpriseRepository)
             {
@@ -48,8 +44,6 @@ namespace Application.JobOffer.Queries
                 obj.SiteId = _enterpriseRepository.GetSite(obj.CompanyId);
                 return Result<CompanyinfoDto>.Success(await Task.FromResult(obj));
             }
-
-
         }
     }
 }

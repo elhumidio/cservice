@@ -36,14 +36,11 @@ IWebHost BuildWebHost(IConfiguration configuration, string[] args) =>
             {
                 listenOptions.Protocols = HttpProtocols.Http2;
             });
-
         })
         .ConfigureAppConfiguration(x => x.AddConfiguration(configuration))
         .UseStartup<Startup>()
         .UseContentRoot(Directory.GetCurrentDirectory())
         .Build();
-
-
 
 IConfiguration GetConfiguration()
 {
@@ -64,7 +61,6 @@ IConfiguration GetConfiguration()
 
 public partial class Program
 {
-
     public static string Namespace = typeof(Startup).Namespace;
     public static string AppName = Namespace.Substring(Namespace.LastIndexOf('.', Namespace.LastIndexOf('.') - 1) + 1);
 }

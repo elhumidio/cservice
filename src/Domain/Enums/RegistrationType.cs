@@ -1,6 +1,5 @@
 namespace Domain.Enums
 {
-
     public enum RegistrationType
     {
         Classic = 1,

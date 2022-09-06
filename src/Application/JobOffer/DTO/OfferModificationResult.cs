@@ -1,9 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace Application.JobOffer.DTO
 {
     public class OfferModificationResult
@@ -13,6 +7,7 @@ namespace Application.JobOffer.DTO
         public List<string> Failures { get; set; }
 
         public static OfferModificationResult Success(OfferResultDto value) => new OfferModificationResult { IsSuccess = true, Value = value };
+
         public static OfferModificationResult Failure(List<string> failures) => new OfferModificationResult { IsSuccess = false, Failures = failures };
     }
 }

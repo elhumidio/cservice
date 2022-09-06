@@ -1,14 +1,15 @@
 using Application.JobOffer.Commands;
+using Domain.Enums;
 using Domain.Repositories;
 using FluentValidation;
 using MediatR;
-using Domain.Enums;
 
 namespace Application.JobOffer.Validations
 {
     public class DefaultCheckValuesValidator : AbstractValidator<CreateOfferCommand>
     {
-        IContractRepository _contractRepository;
+        private IContractRepository _contractRepository;
+
         public DefaultCheckValuesValidator(IMediator mediator, IContractProductRepository contractProdRepo, IContractRepository contractRepository)
         {
             _contractRepository = contractRepository;
@@ -19,7 +20,6 @@ namespace Application.JobOffer.Validations
 
         private bool HasDefaultValues(CreateOfferCommand obj)
         {
-         
             var services = _contractRepository.GetServiceTypes(obj.Idcontract).ToList();
             obj.ChkBlindVac = false;
             obj.ChkFilled = false;
@@ -31,11 +31,11 @@ namespace Application.JobOffer.Validations
             return true;
         }
     }
+
     public class DefaultCheckValuesValidatorUp : AbstractValidator<UpdateOfferCommand>
     {
         public DefaultCheckValuesValidatorUp(IMediator mediator, IContractProductRepository contractProdRepo)
         {
-
             RuleFor(command => command)
                 .Must(HasDefaultValues)
                 .WithMessage("Couldn't set default values.\n");

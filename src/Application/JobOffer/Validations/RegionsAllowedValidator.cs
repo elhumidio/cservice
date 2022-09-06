@@ -41,6 +41,4 @@ namespace Application.JobOffer.Validations
             return (regions == null) || !regions.Any() || (regions.Any() && regions.Contains(obj.Idregion));
         }
     }
-
-
 }

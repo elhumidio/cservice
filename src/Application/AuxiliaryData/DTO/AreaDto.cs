@@ -1,14 +1,7 @@
-using Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace Application.AuxiliaryData.DTO
 {
     public partial class AreaDTO
-    {  
+    {
         public int Idarea { get; set; }
         public int Idsite { get; set; }
         public int Idslanguage { get; set; }
@@ -17,6 +10,5 @@ namespace Application.AuxiliaryData.DTO
         public int? ChkActive { get; set; }
         public int? NumVacancies { get; set; }
         public int? Threshold { get; set; }
-
     }
 }

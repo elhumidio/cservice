@@ -5,12 +5,13 @@ namespace Persistence.Repositories
 {
     public class UserRepository : IUserRepository
     {
-        DataContext _dataContext;
+        private DataContext _dataContext;
 
         public UserRepository(DataContext dataContext)
         {
             _dataContext = dataContext;
         }
+
         public int GetUserIdByEmail(string email)
         {
             int userId = 0;
@@ -29,7 +30,6 @@ namespace Persistence.Repositories
                 IsAdmin = user.First().IdstypeUser == (int)UserTypes.AdministradorEmpresa;
             }
             return IsAdmin;
-
         }
     }
 }

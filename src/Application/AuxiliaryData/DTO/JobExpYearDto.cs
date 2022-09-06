@@ -1,10 +1,3 @@
-using Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace Application.AuxiliaryData.DTO
 {
     public partial class JobExpYearDTO
@@ -15,6 +8,5 @@ namespace Application.AuxiliaryData.DTO
         public string BaseName { get; set; } = null!;
         public string? BaseNameShort { get; set; }
         public int? ShowOrder { get; set; }
-
     }
 }

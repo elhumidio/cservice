@@ -12,13 +12,13 @@ namespace Application.JobOffer.Queries
             public int ContractID { get; set; }
             public int ProductId { get; set; }
         }
+
         public class Handler : IRequestHandler<Query, Result<DateTime>>
         {
             private readonly IProductRepository _productRepo;
             private readonly IProductLineRepository _productLineRepo;
             private readonly IContractRepository _contractRepo;
             private readonly IMapper _mapper;
-
 
             public Handler(IMapper mapper, IProductRepository productRepo, IProductLineRepository productLineRepo, IContractRepository contractRepo)
             {
@@ -56,9 +56,7 @@ namespace Application.JobOffer.Queries
                     secondCompareWinner = prodLineBasedFinishDate.Date;
                 }
                 return await Task.FromResult(Result<DateTime>.Success(secondCompareWinner));
-
             }
         }
-
     }
 }

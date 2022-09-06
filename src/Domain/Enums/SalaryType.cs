@@ -1,4 +1,4 @@
-﻿namespace Domain.Enums
+namespace Domain.Enums
 {
     public enum SalaryType
     {
@@ -7,6 +7,5 @@
         GrossAnual = 3,
         UnpaidWork = 5,
         GrossPerHur = 6
-
     }
 }

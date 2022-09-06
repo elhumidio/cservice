@@ -14,6 +14,7 @@ namespace Persistence
             : base(options)
         {
         }
+
         public virtual DbSet<EquestCountryState> EquestCountryStates { get; set; } = null!;
         public virtual DbSet<EquestDegreeEquivalent> EquestDegreeEquivalents { get; set; } = null!;
         public virtual DbSet<EquestIndustry> EquestIndustries { get; set; } = null!;
@@ -48,12 +49,9 @@ namespace Persistence
         public virtual DbSet<Enterprise> Enterprises { get; set; } = null!;
         public virtual DbSet<Site> Sites { get; set; } = null!;
 
-
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.UseCollation("Modern_Spanish_CI_AS");
-
 
             modelBuilder.Entity<EquestCountryState>(entity =>
             {
@@ -125,7 +123,6 @@ namespace Persistence
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_TArea_TSTuriJobsLang");
             });
-
 
             modelBuilder.Entity<RegJobVacMatching>(entity =>
             {

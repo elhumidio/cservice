@@ -1,14 +1,16 @@
-﻿using Domain.Repositories;
+using Domain.Repositories;
 
 namespace Persistence.Repositories
 {
     public class EnterpriseUserRepository : IEnterpriseUserRepository
     {
-        DataContext _dataContext;
+        private DataContext _dataContext;
+
         public EnterpriseUserRepository(DataContext dataContext)
         {
             _dataContext = dataContext;
         }
+
         public int GetCompanyIdByUserId(int userid)
         {
             var companyId = 0;

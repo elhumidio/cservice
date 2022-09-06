@@ -1,6 +1,5 @@
 using Application.AuxiliaryData.DTO;
 using Application.Core;
-using Application.JobOffer.DTO;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Domain.Repositories;
@@ -22,7 +21,6 @@ namespace Application.AuxiliaryData.Queries
             private readonly IJobContractTypeRepository _jobContractType;
             private readonly IMapper _mapper;
 
-
             public Handler(IMapper mapper, IJobContractTypeRepository jobContractType)
             {
                 _mapper = mapper;
@@ -32,8 +30,8 @@ namespace Application.AuxiliaryData.Queries
             public async Task<Result<List<JobContractTypeDTO>>> Handle(Query request, CancellationToken cancellationToken)
             {
                 var query = _jobContractType.GetJobContractTypes(request.siteID, request.languageID).ProjectTo<JobContractTypeDTO>(_mapper.ConfigurationProvider);
-                return Result<List<JobContractTypeDTO>>.Success(await query.ToListAsync());                
-            }         
+                return Result<List<JobContractTypeDTO>>.Success(await query.ToListAsync());
+            }
         }
     }
 }

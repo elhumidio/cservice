@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Domain.Entities;
 
@@ -15,4 +15,3 @@ public partial class ContractPublicationRegion
     public DateTime? DeactivationDate { get; set; }
     public string? DeactivationBouserId { get; set; }
 }
-

@@ -13,8 +13,8 @@ namespace Infraestructure.Integrations
         public GeoNamesConector(IConfiguration configuration)
         {
             _geoNamesUrl = configuration["GeoNames:BaseUrl"].ToString();
-
         }
+
         public GeoNamesDto GetPostalCodesCollection(string postalCode, string country)
         {
             GeoNamesDto geoNames = new();
@@ -27,8 +27,5 @@ namespace Infraestructure.Integrations
 
             return geoNames;
         }
-
-
     }
-
 }

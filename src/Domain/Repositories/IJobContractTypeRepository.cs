@@ -8,5 +8,4 @@ namespace Domain.Repositories
 
         public IQueryable<JobContractType> GetJobContractTypes(int siteId, int languageId);
     }
-
 }

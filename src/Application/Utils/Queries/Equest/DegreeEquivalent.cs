@@ -14,7 +14,8 @@ namespace Application.Utils.Queries.Equest
 
         public class Handler : IRequestHandler<Query, Result<int>>
         {
-            IEQuestDegreeEquivalentRepository _eqDegreeRepo;
+            private IEQuestDegreeEquivalentRepository _eqDegreeRepo;
+
             public Handler(IEQuestDegreeEquivalentRepository eqDegreeRepo)
             {
                 _eqDegreeRepo = eqDegreeRepo;
@@ -25,8 +26,6 @@ namespace Application.Utils.Queries.Equest
                 var ret = await _eqDegreeRepo.GeteQuestDegree(request.DegreeId, request.SiteId);
                 return Result<int>.Success(ret);
             }
-
-
         }
     }
 }

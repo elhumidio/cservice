@@ -12,20 +12,18 @@ namespace Persistence.Repositories
         {
             _dataContext = dataContext;
         }
+
         public IQueryable<EnterpriseUserJobVac> GetAssignmentsByContract(int contractId)
         {
             var query = _dataContext.EnterpriseUserJobVacs.Where(a => a.Idcontract == contractId);
             return query;
         }
 
-
-
         IQueryable<EnterpriseUserJobVac> IUnitsRepository.GetAssignmentsByContractAndManager(int contractId, int manager)
         {
             var query = _dataContext.EnterpriseUserJobVacs.Where(a => a.Idcontract == contractId && a.IdenterpriseUser == manager);
             return query;
         }
-
 
         public bool AssignUnitToManager(int contractId, VacancyType type, int ownerId)
         {
@@ -39,6 +37,7 @@ namespace Persistence.Repositories
             }
             return true;
         }
+
         public bool TakeUnitFromManager(int contractId, VacancyType type, int ownerId)
         {
             var assignment = _dataContext.EnterpriseUserJobVacs.Where(a => a.IdjobVacType == (int)type
@@ -51,6 +50,5 @@ namespace Persistence.Repositories
             }
             return true;
         }
-
     }
 }

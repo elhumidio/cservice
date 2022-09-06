@@ -11,7 +11,6 @@ namespace Application.Contracts.Queries
 {
     public class GetAvailableUnitsByOwner
     {
-
         public class Query : IRequest<Result<List<AvailableUnitsDto>>>
         {
             public int ContractId { get; set; }
@@ -20,8 +19,6 @@ namespace Application.Contracts.Queries
 
         public class Handler : IRequestHandler<Query, Result<List<AvailableUnitsDto>>>
         {
-
-
             private readonly IJobOfferRepository _jobOfferRepo;
             private readonly IContractProductRepository _contractProductRepo;
             private readonly IUnitsRepository _unitsRepo;
@@ -29,7 +26,6 @@ namespace Application.Contracts.Queries
 
             public Handler(IMapper mapper, IJobOfferRepository jobOfferRepo, IContractProductRepository contractProductRepo, IUnitsRepository unitsRepo)
             {
-
                 _mapper = mapper;
                 _jobOfferRepo = jobOfferRepo;
                 _contractProductRepo = contractProductRepo;
@@ -51,7 +47,6 @@ namespace Application.Contracts.Queries
                 .ProjectTo<JobOfferDto>(_mapper.ConfigurationProvider)
                 .ToList()
                 .GroupBy(g => g.IdjobVacType);
-
 
                 foreach (var units in unitsAssigned)
                 {

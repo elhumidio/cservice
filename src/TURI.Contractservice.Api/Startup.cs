@@ -10,7 +10,6 @@ using StepStone.Extensions.Logging.Serilog.Options;
 using StepStone.Service.Core.Options;
 using TURI.Contractservice.Api.StartupExtensions;
 
-
 namespace TURI.Contractservice.Api
 {
     public class Startup
@@ -59,7 +58,6 @@ namespace TURI.Contractservice.Api
             services.ConfigureForwardedHeaders();
             services.AddApplicationServices(config);
             services.AddApplicationInsightsTelemetry();
-
         }
 
         public static void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)

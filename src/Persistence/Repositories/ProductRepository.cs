@@ -1,16 +1,15 @@
-﻿using Domain.Repositories;
+using Domain.Repositories;
 
 namespace Persistence.Repositories
 {
     public class ProductRepository : IProductRepository
     {
-        DataContext _dataContext;
+        private DataContext _dataContext;
 
         public ProductRepository(DataContext dataContext)
         {
             _dataContext = dataContext;
         }
-
 
         public int GetProductDuration(int idProduct)
         {

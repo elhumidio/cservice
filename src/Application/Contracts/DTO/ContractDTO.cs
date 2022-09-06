@@ -43,7 +43,6 @@ namespace Application.Contracts.DTO
         public int? OldIdcontract { get; set; }
         public int? IdJobVacType { get; set; }
 
-
         public virtual ICollection<ContractProductDto> ContractProducts { get; set; }
         public virtual ICollection<RegEnterpriseContractDto> RegEnterpriseContracts { get; set; }
     }

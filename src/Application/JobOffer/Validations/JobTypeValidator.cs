@@ -24,7 +24,6 @@ namespace Application.JobOffer.Validations
         }
     }
 
-
     public class JobTypeValidatorUp : AbstractValidator<UpdateOfferCommand>
     {
         private readonly IJobTypeRepository _jobTypeRepo;

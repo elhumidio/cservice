@@ -31,7 +31,6 @@ namespace Application.JobOffer.Validations
         }
     }
 
-
     public class EnterpriseValidatorUp : AbstractValidator<UpdateOfferCommand>
     {
         private readonly IEnterpriseRepository _enterpriseRepo;

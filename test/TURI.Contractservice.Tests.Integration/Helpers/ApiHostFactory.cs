@@ -26,7 +26,6 @@ namespace TURI.Contractservice.Tests.Integration.Helpers
             Action<IConfigurationBuilder>? configureDelegate = null,
             Action<IServiceCollection>? testServices = null)
         {
-
             var builder = WebApplication.CreateBuilder();
 
             if (configureDelegate != null)
@@ -45,7 +44,6 @@ namespace TURI.Contractservice.Tests.Integration.Helpers
             Startup.Configure(app, app.Environment, null);
 
             return app;
-
         }
     }
 }

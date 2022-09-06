@@ -19,7 +19,6 @@ namespace TURI.Contractservice.Tests.Unit.Mocks
                 mockRepo.Setup(r => r.UpdateATS(It.IsAny<int>())).Returns(false);
                 mockRepo.Setup(r => r.IsRightCompany(It.IsAny<int>())).Returns(false);
                 mockRepo.Setup(r => r.GetSite(It.IsAny<int>())).Returns(54);
-
             }
 
             return mockRepo;

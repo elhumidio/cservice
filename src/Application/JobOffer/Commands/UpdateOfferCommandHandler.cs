@@ -67,9 +67,11 @@ namespace Application.JobOffer.Commands
 
             var ret = await _offerRepo.UpdateOffer(existentOffer);
             var createdOffer = _mediatr.Send(new GetResult.Query
-            {   ExternalId = offer.IntegrationData.ApplicationReference,
+            {
+                ExternalId = offer.IntegrationData.ApplicationReference,
                 OfferId = offer.IdjobVacancy
             });
+            
             await _regContractRepo.UpdateUnits(offer.Idcontract, offer.IdjobVacType);
             if (ret < 0)
                 return OfferModificationResult.Failure(new List<string> { "no update" });

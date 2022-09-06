@@ -1,10 +1,3 @@
-using Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace Application.AuxiliaryData.DTO
 {
     public partial class RegionDTO
@@ -18,6 +11,5 @@ namespace Application.AuxiliaryData.DTO
         public int? ChkActive { get; set; }
         public int? NumVacancies { get; set; }
         public int? Threshold { get; set; }
-
     }
 }

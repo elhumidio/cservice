@@ -1,6 +1,5 @@
 using Application.AuxiliaryData.DTO;
 using Application.Core;
-using Application.JobOffer.DTO;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Domain.Repositories;
@@ -11,7 +10,6 @@ namespace Application.AuxiliaryData.Queries
 {
     public class ListSalaries
     {
-
         public class Query : IRequest<Result<List<SalaryDTO>>>
         {
             public int siteID { get; set; }
@@ -23,7 +21,6 @@ namespace Application.AuxiliaryData.Queries
             private readonly ISalaryRepository _salary;
             private readonly IMapper _mapper;
 
-
             public Handler(IMapper mapper, ISalaryRepository salary)
             {
                 _mapper = mapper;
@@ -33,8 +30,8 @@ namespace Application.AuxiliaryData.Queries
             public async Task<Result<List<SalaryDTO>>> Handle(Query request, CancellationToken cancellationToken)
             {
                 var query = _salary.GetSalaries(request.siteID, request.languageID).ProjectTo<SalaryDTO>(_mapper.ConfigurationProvider);
-                return Result<List<SalaryDTO>>.Success(await query.ToListAsync());                
-            }         
+                return Result<List<SalaryDTO>>.Success(await query.ToListAsync());
+            }
         }
     }
 }

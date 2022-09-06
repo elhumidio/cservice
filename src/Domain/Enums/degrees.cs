@@ -15,7 +15,5 @@ namespace Domain.Enums
         EngineersDegreeEngineerDiploma = 15,
         Otherdegrees = 16,
         UniversityDegree = 17
-
     }
-
 }

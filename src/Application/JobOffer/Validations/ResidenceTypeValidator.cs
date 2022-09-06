@@ -8,6 +8,7 @@ namespace Application.JobOffer.Validations
     public class ResidenceTypeValidator : AbstractValidator<CreateOfferCommand>
     {
         private readonly IResidenceTypeRepository _residenceTypeRepo;
+
         public ResidenceTypeValidator(IResidenceTypeRepository residenceTypeRepo)
         {
             _residenceTypeRepo = residenceTypeRepo;
@@ -26,7 +27,6 @@ namespace Application.JobOffer.Validations
                 obj.IdresidenceType = (int)ResidenceType.Indiferent;
                 return true;
             }
-
             else
                 return _residenceTypeRepo.IsRightResidenceType(obj.IdresidenceType);
         }
@@ -35,6 +35,7 @@ namespace Application.JobOffer.Validations
     public class ResidenceTypeValidatorUp : AbstractValidator<UpdateOfferCommand>
     {
         private readonly IResidenceTypeRepository _residenceTypeRepo;
+
         public ResidenceTypeValidatorUp(IResidenceTypeRepository residenceTypeRepo)
         {
             _residenceTypeRepo = residenceTypeRepo;
@@ -53,7 +54,6 @@ namespace Application.JobOffer.Validations
                 obj.IdresidenceType = (int)ResidenceType.Indiferent;
                 return true;
             }
-
             else
                 return _residenceTypeRepo.IsRightResidenceType(obj.IdresidenceType);
         }

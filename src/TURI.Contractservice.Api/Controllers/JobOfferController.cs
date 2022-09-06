@@ -7,10 +7,8 @@ namespace API.Controllers
 {
     public class JobOfferController : BaseApiController
     {
-
-
         /// <summary>
-        /// Get active JobOffers 
+        /// Get active JobOffers
         /// </summary>
         /// <param name="contractId"></param>
         /// <returns></returns>
@@ -23,7 +21,6 @@ namespace API.Controllers
             });
             return HandleResult(result);
         }
-
 
         /// <summary>
         /// File Ats Offer
@@ -80,9 +77,8 @@ namespace API.Controllers
             return ret;
         }
 
-
         /// <summary>
-        /// Get Consumed JobOffers Pack Checks (Don't verifies deleted, filed, finishdate, gets all published offers with a given contract) 
+        /// Get Consumed JobOffers Pack Checks (Don't verifies deleted, filed, finishdate, gets all published offers with a given contract)
         /// </summary>
         /// <param name="contractId"></param>
         /// <returns></returns>
@@ -96,9 +92,8 @@ namespace API.Controllers
             return HandleResult(result);
         }
 
-
         /// <summary>
-        /// Get Consumed JobOffers Pack or not pack by manager 
+        /// Get Consumed JobOffers Pack or not pack by manager
         /// </summary>
         /// <param name="contractId"></param>
         /// <returns></returns>
@@ -109,7 +104,6 @@ namespace API.Controllers
             {
                 ContractID = contractId,
                 OwnerID = ownerId
-
             });
             return HandleResult(result);
         }
@@ -125,7 +119,6 @@ namespace API.Controllers
             var result = await Mediator.Send(new ListAutoFiltered.Query
             {
                 ContractID = contractId
-
             });
             return HandleResult(result);
         }
@@ -134,30 +127,28 @@ namespace API.Controllers
         /// Get consumed units welcome not Spain
         /// </summary>
         /// <param name="contractId"></param>
-        /// <returns></returns> 
+        /// <returns></returns>
         [HttpGet("{companyId}", Name = "GetConsumedUnitsWelcomeNotSpain")]
         public async Task<IActionResult> GetConsumedUnitsWelcomeNotSpain(int companyId)
         {
             var result = await Mediator.Send(new GetConsumedUnitsWelcomeNotSpain.Query
             {
                 CompanyId = companyId,
-
             });
             return HandleResult(result);
         }
 
         /// <summary>
-        /// Get Consumed JobOffers Pack or not pack by company 
+        /// Get Consumed JobOffers Pack or not pack by company
         /// </summary>
         /// <param name="contractId"></param>
-        /// <returns></returns> 
+        /// <returns></returns>
         [HttpGet("{companyId}", Name = "GetActiveOffersByCompany")]
         public async Task<IActionResult> GetActiveOffersByCompany(int companyId)
         {
             var result = await Mediator.Send(new ListActivesByCompany.Query
             {
                 CompanyId = companyId,
-
             });
             return HandleResult(result);
         }
@@ -208,7 +199,6 @@ namespace API.Controllers
             return HandleResult(result);
         }
 
-
         /// <summary>
         /// Gets idjobvacancy ats offer,  In case offer exists returns idjobvacancy else returns 0
         /// </summary>
@@ -223,8 +213,5 @@ namespace API.Controllers
             });
             return HandleResult(result);
         }
-
-
-
     }
 }

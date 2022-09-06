@@ -5,10 +5,12 @@ namespace Persistence.Repositories
     public class ContractProductRepository : IContractProductRepository
     {
         private readonly DataContext _dataContext;
+
         public ContractProductRepository(DataContext dataContext)
         {
             _dataContext = dataContext;
         }
+
         public bool IsPack(int contractId)
         {
             var res = _dataContext.ContractProducts
@@ -32,8 +34,5 @@ namespace Persistence.Repositories
             .First();
             return res;
         }
-
-       
-
     }
 }

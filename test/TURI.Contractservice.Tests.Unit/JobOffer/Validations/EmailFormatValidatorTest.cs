@@ -9,12 +9,11 @@ namespace TURI.Contractservice.Tests.Unit.JobOffer.Validations
     {
         private EmailFormatValidator _validator;
 
-
         public EmailFormatValidatorTest()
         {
-
             _validator = new EmailFormatValidator();
         }
+
         [Test]
         public void RightFormatOrEmptyValue()
         {
@@ -27,8 +26,6 @@ namespace TURI.Contractservice.Tests.Unit.JobOffer.Validations
 
             // Then
             result.Errors.Count().ShouldBeGreaterThan(0);
-
         }
-
     }
 }

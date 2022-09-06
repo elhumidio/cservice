@@ -1,9 +1,11 @@
 using Newtonsoft.Json;
+
 namespace Application.DTO.GeoNames;
 
 public class GeoNamesDto
 {
     public List<PostalCode> postalCodes { get; set; }
+
     public GeoNamesDto()
     {
         postalCodes = new List<PostalCode>();
@@ -24,9 +26,9 @@ public class PostalCode
 
     [JsonProperty("ISO3166-2")]
     public string ISO31662 { get; set; }
+
     public string placeName { get; set; }
     public double lat { get; set; }
     public string adminCode3 { get; set; }
     public string adminName3 { get; set; }
 }
-

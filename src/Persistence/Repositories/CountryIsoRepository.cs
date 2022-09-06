@@ -1,4 +1,4 @@
-﻿using Domain.Repositories;
+using Domain.Repositories;
 
 namespace Persistence.Repositories
 {
@@ -10,6 +10,7 @@ namespace Persistence.Repositories
         {
             _dataContext = dataContext;
         }
+
         public string GetIsobyCountryId(int countryId)
         {
             var countries = _dataContext.CountryIsos.Where(c => c.Idcountry == countryId);

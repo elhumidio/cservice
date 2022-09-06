@@ -5,14 +5,12 @@ namespace Persistence.Repositories
 {
     public class EnterpriseRepository : IEnterpriseRepository
     {
-        DataContext _dataContext;
+        private DataContext _dataContext;
 
         public EnterpriseRepository(DataContext dataContext)
         {
             _dataContext = dataContext;
         }
-
-
 
         public bool IsRightCompany(int enterpriseId)
         {
@@ -30,7 +28,6 @@ namespace Persistence.Repositories
                 company.Ats = true;
             _dataContext.SaveChanges();
             return company != null;
-
         }
 
         public int GetSite(int companyId)
@@ -40,11 +37,8 @@ namespace Persistence.Repositories
             if (company != null)
             {
                 site = (int)company.SiteId;
-
             }
             return site;
-
         }
     }
 }
-

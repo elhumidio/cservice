@@ -4,12 +4,13 @@ namespace Persistence.Repositories
 {
     public class ContractPublicationRegionRepository : IContractPublicationRegionRepository
     {
-        DataContext _dataContext;
+        private DataContext _dataContext;
 
         public ContractPublicationRegionRepository(DataContext dataContext)
         {
             _dataContext = dataContext;
         }
+
         public List<int> AllowedRegionsByContract(int _idContract)
         {
             List<int> regionsAllowed = new List<int>();
@@ -21,7 +22,6 @@ namespace Persistence.Repositories
             }
 
             return regionsAllowed;
-
         }
     }
 }

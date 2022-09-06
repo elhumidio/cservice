@@ -10,7 +10,6 @@ namespace Application.Contracts.Queries
 {
     public class List
     {
-
         public class Query : IRequest<Result<List<ContractDto>>>
         {
             public int CompanyId { get; set; }
@@ -20,7 +19,6 @@ namespace Application.Contracts.Queries
         {
             private readonly IContractRepository _contractRepo;
             private readonly IMapper _mapper;
-
 
             public Handler(IMapper mapper, IContractRepository contractRepo)
             {

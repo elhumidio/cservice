@@ -6,6 +6,7 @@ namespace Persistence.Repositories
     public class JobVacTypeRepository : IJobVacTypeRepository
     {
         private readonly DataContext _dataContext;
+
         public JobVacTypeRepository(DataContext dataContext)
         {
             _dataContext = dataContext;
@@ -16,7 +17,7 @@ namespace Persistence.Repositories
             var jobVacTypes = _dataContext.JobVacTypes
                 .Where(a => a.Idsite == siteId && a.Idslanguage == languageId);
 
-            if(jobVacTypes != null)
+            if (jobVacTypes != null)
             {
                 return jobVacTypes;
             }

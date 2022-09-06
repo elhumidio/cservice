@@ -13,8 +13,6 @@ namespace Application.Contracts.DTO
 
     public class AvailableUnitsResult
     {
-        public List<AvailableUnitsDto> Units { get; set; }  
+        public List<AvailableUnitsDto> Units { get; set; }
     }
-
-
 }

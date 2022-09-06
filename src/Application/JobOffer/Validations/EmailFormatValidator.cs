@@ -6,12 +6,12 @@ namespace Application.JobOffer.Validations
 {
     public class EmailFormatValidator : AbstractValidator<CreateOfferCommand>
     {
-
         public EmailFormatValidator()
         {
             RuleFor(command => command.IntegrationData.ApplicationEmail).Must(IsRightFormat).WithMessage("ApplicationEmail is wrongly formatted.\n");
             RuleFor(command => command.IntegrationData.ApplicationEmail).EmailAddress().WithMessage("ApplicationEmail is wrongly formatted.\n");
         }
+
         private static bool IsRightFormat(string _email)
         {
             if (string.IsNullOrEmpty(_email))
@@ -21,14 +21,13 @@ namespace Application.JobOffer.Validations
         }
     }
 
-
     public class EmailFormatValidatorUp : AbstractValidator<UpdateOfferCommand>
     {
-
         public EmailFormatValidatorUp()
         {
             RuleFor(command => command.IntegrationData.ApplicationEmail).Must(IsRightFormat).WithMessage("ApplicationEmail is wrongly formatted.\n");
         }
+
         private static bool IsRightFormat(string _email)
         {
             if (string.IsNullOrEmpty(_email))
