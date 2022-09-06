@@ -29,12 +29,12 @@ namespace API.Controllers
         {
             if (result == null ||
                 (!result.IsSuccess && result.Value == null))
-                return NotFound();
+                return BadRequest(result);
 
             if (result.IsSuccess && result != null)
-                return Ok(result.Value);
+                return Ok(result);
 
-            return BadRequest(result.Failures);
+            return BadRequest(result);
         }
     }
 }

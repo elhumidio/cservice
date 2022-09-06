@@ -30,9 +30,9 @@ namespace Application.JobOffer.Queries
             {
                 var offerDto = new OfferResultDto();
                 var job = _jobOffer.GetOfferById(request.OfferId);
-                var integration = _regJobVacMatchingRepository.GetAtsIntegrationInfo(request.ExternalId);
-                _mapper.Map(job, offerDto);
-                _mapper.Map(integration, offerDto);
+                var integration = _regJobVacMatchingRepository.GetAtsIntegrationInfo(request.ExternalId).Result;
+                offerDto = _mapper.Map(job, offerDto);
+                _mapper.Map(integration, offerDto.IntegrationData);
                 return Task.FromResult(offerDto);
             }
         }

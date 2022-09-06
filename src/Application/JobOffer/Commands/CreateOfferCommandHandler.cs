@@ -71,9 +71,7 @@ namespace Application.JobOffer.Commands
                 {
                     try
                     {
-                        var createdOffer = _mediatr.Send(new GetResult.Query
-                        { ExternalId = offer.IntegrationData.ApplicationReference, OfferId = jobVacancyId
-                        });
+             
                         await _regContractRepo.UpdateUnits(job.Idcontract, job.IdjobVacType);
 
                         if (!string.IsNullOrEmpty(offer.IntegrationData.ApplicationReference))
@@ -87,20 +85,23 @@ namespace Application.JobOffer.Commands
                                 Identerprise = offer.Identerprise,
                                 Redirection = offer.IntegrationData.ApplicationUrl
                             };
-                            var integration = _regJobVacRepo.GetAtsIntegrationInfo(obj.ExternalId);
-                            if (integration != null)
+                            var integration = _regJobVacRepo.GetAtsIntegrationInfo(obj.ExternalId).Result;
+                            if (integration == null)
                             {
-                                var info = $"IDJobVacancy: {job.IdjobVacancy} - IdIntegration: {integration.Result.Idintegration} - Reference: {integration.Result.ExternalId} - Offer ATS Created";
+                                var info = $"IDJobVacancy: {job.IdjobVacancy} - IdIntegration: {offer.IntegrationData.IDIntegration} - Reference: {offer.IntegrationData.ApplicationReference} - Offer ATS Created";
                                 _logger.LogInformation(info);
                                 await _regJobVacRepo.Add(obj);
                             }
                             else {
                                 var info = $"IDJobVacancy: {job.IdjobVacancy} - IDEnterprise: {job.Identerprise} - IDContract: {job.Idcontract} - Offer Created";
                                 _logger.LogInformation(info);
-
                             }
-
                         }
+                        var createdOffer = _mediatr.Send(new GetResult.Query
+                        {
+                            ExternalId = offer.IntegrationData.ApplicationReference,
+                            OfferId = jobVacancyId
+                        });
                         _enterpriseRepository.UpdateATS(entity.Identerprise);
                         
                         return OfferModificationResult.Success(createdOffer.Result);
