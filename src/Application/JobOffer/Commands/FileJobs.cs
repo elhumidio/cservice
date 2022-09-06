@@ -31,7 +31,7 @@ namespace Application.JobOffer.Commands
                     var job = _offerRepo.GetOfferById(id);
                     if (job != null)
                     {
-                        var ret = await _offerRepo.FileOffer(job);
+                        var ret = _offerRepo.FileOffer(job);
                         if (ret == 0)
                         {
                             await _regEnterpriseContractRepository.IncrementAvailableUnits(job.Idcontract, job.IdjobVacType);

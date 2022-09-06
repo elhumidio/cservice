@@ -28,7 +28,7 @@ namespace Domain.Repositories
 
         Task<int> UpdateOffer(JobVacancy jobUpdated);
 
-        Task<int> FileOffer(JobVacancy job);
+        public int FileOffer(JobVacancy job);
 
         public IQueryable<JobVacancy> GetActiveOffersByContractAndType(int contractId, int type);
 

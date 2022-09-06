@@ -62,21 +62,21 @@ namespace Persistence.Repositories
             }
         }
 
-        public Task<int> FileOffer(JobVacancy job)
+        public int FileOffer(JobVacancy job)
         {
             try
             {
                 job.ChkFilled = true;
                 job.FilledDate = DateTime.Now;
                 job.ModificationDate = DateTime.Now;
-                var ret = _dataContext.SaveChangesAsync();
+                var ret = _dataContext.SaveChanges();
                 return ret;
             }
             catch (Exception ex)
             {
                 string message = $"Message: {ex.Message} - InnerException: {ex.InnerException} - StackTrace: {ex.StackTrace}";
                 _logger.LogError(message: message);
-                return Task.FromResult(-1);
+                return -1;
             }
         }
 

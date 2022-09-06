@@ -38,7 +38,7 @@ namespace Application.JobOffer.Commands
                 var job = _offerRepo.GetOfferById(atsInfo.IdjobVacancy);
                 var filed = _offerRepo.FileOffer(job);
                 var createdOffer = _mediatr.Send(new GetResult.Query { ExternalId = offer.Application_reference, OfferId = job.IdjobVacancy });
-                if (filed.Result > 0)
+                if (filed > 0)
                 {
                     bool IsPack = _contractProductRepo.IsPack(job.Idcontract);
 

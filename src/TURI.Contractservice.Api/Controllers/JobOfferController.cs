@@ -44,10 +44,12 @@ namespace API.Controllers
         [HttpPost]
         public async Task<IActionResult> FileOffers(List<int> _offers)
         {
+
             var result = await Mediator.Send(new FileJobs.Command
             {
                 offers = _offers
             });
+
             var ret = HandleResult(result);
             return ret;
         }
@@ -96,7 +98,7 @@ namespace API.Controllers
         /// </summary>
         /// <param name="contractId"></param>
         /// <returns></returns>
-        [HttpGet("{contractId}"]
+        [HttpGet("{contractId}")]
         public async Task<IActionResult> GetAllConsumedJobOffers(int contractId)
         {
             var result = await Mediator.Send(new Application.JobOffer.Queries.List.Query
@@ -111,7 +113,7 @@ namespace API.Controllers
         /// </summary>
         /// <param name="contractId"></param>
         /// <returns></returns>
-        [HttpGet("{contractId}/{ownerId}"]
+        [HttpGet("{contractId}/{ownerId}")]
         public async Task<IActionResult> GetConsumedJobOffersChecksByManager(int contractId, int ownerId)
         {
             var result = await Mediator.Send(new ListActivesByManager.Query
@@ -127,7 +129,7 @@ namespace API.Controllers
         /// </summary>
         /// <param name="contractId"></param>
         /// <returns></returns>
-        [HttpGet("{contractId}"]
+        [HttpGet("{contractId}")]
         public async Task<IActionResult> GetConsumedUnitsAutoFiltered(int contractId)
         {
             var result = await Mediator.Send(new ListAutoFiltered.Query
@@ -142,7 +144,7 @@ namespace API.Controllers
         /// </summary>
         /// <param name="contractId"></param>
         /// <returns></returns>
-        [HttpGet("{companyId}"]
+        [HttpGet("{companyId}")]
         public async Task<IActionResult> GetConsumedUnitsWelcomeNotSpain(int companyId)
         {
             var result = await Mediator.Send(new GetConsumedUnitsWelcomeNotSpain.Query
@@ -157,7 +159,7 @@ namespace API.Controllers
         /// </summary>
         /// <param name="contractId"></param>
         /// <returns></returns>
-        [HttpGet("{companyId}"]
+        [HttpGet("{companyId}")]
         public async Task<IActionResult> GetActiveOffersByCompany(int companyId)
         {
             var result = await Mediator.Send(new ListActivesByCompany.Query
@@ -172,7 +174,7 @@ namespace API.Controllers
         /// </summary>
         /// <param name="eqDegreeId"></param>
         /// <returns></returns>
-        [HttpGet("{eqDegreeId}/{siteId}"]
+        [HttpGet("{eqDegreeId}/{siteId}")]
         public async Task<IActionResult> GetEquestDegree(int eqDegreeId, int siteId)
         {
             var result = await Mediator.Send(new DegreeEquivalent.Query
@@ -188,7 +190,7 @@ namespace API.Controllers
         /// </summary>
         /// <param name="eqDegreeId"></param>
         /// <returns></returns>
-        [HttpGet("{industryCodeId}"]
+        [HttpGet("{industryCodeId}")]
         public async Task<IActionResult> GetEQuestIndustryCode(int industryCodeId)
         {
             var result = await Mediator.Send(new IndustryEquivalent.Query
@@ -203,7 +205,7 @@ namespace API.Controllers
         /// </summary>
         /// <param name="eqDegreeId"></param>
         /// <returns></returns>
-        [HttpGet("{countryStateId}"]
+        [HttpGet("{countryStateId}")]
         public async Task<IActionResult> GetEQuestCountryState(string countryStateId)
         {
             var result = await Mediator.Send(new CountryStateEQuivalent.Query
@@ -218,7 +220,7 @@ namespace API.Controllers
         /// </summary>
         /// <param name="externalId"></param>
         /// <returns></returns>
-        [HttpGet("{externalId}"]
+        [HttpGet("{externalId}")]
         public async Task<IActionResult> GetAtsOffer(string externalId)
         {
             var result = await Mediator.Send(new VerifyOffer.Query

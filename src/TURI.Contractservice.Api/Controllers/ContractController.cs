@@ -12,7 +12,7 @@ namespace API.Controllers
         /// </summary>
         /// <param name="contractId"></param>
         /// <returns></returns>
-        [HttpGet("{contractId}", Name = "GetAvailableUnits")]
+        [HttpGet("{contractId}")]
         public async Task<IActionResult> GetAvailableUnits(int contractId)
         {
             var result = await Mediator.Send(new GetAvailableUnits.Query
@@ -28,7 +28,7 @@ namespace API.Controllers
         /// <param name="contractId"></param>
         /// <param name="Owner"></param>
         /// <returns></returns>
-        [HttpGet("{contractId}/{Owner}", Name = "GetAvailableUnitsByOwner")]
+        [HttpGet("{contractId}/{Owner}")]
         public async Task<IActionResult> GetAvailableUnitsByOwner(int contractId, int Owner)
         {
             var result = await Mediator.Send(new GetAvailableUnitsByOwner.Query
@@ -45,7 +45,7 @@ namespace API.Controllers
         /// <param name="contractId"></param>
         /// <param name="Owner"></param>
         /// <returns></returns>
-        [HttpGet("{contractId}/{Owner}", Name = "GetAssignedUnitsByOwner")]
+        [HttpGet("{contractId}/{Owner}")]
         public async Task<IActionResult> GetAssignedUnitsByOwner(int contractId, int Owner)
         {
             var result = await Mediator.Send(new GetAssignedUnitsByOwner.Query
@@ -56,7 +56,7 @@ namespace API.Controllers
             return HandleResult(result);
         }
 
-        [HttpGet("{companyId}/{type}", Name = "contract")]
+        [HttpGet("{companyId}/{type}")]
         public async Task<IActionResult> GetContract(int companyId, VacancyType type)
         {
             var result = await Mediator.Send(new GetContract.Query
