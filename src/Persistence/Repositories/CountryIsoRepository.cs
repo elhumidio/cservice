@@ -14,8 +14,10 @@ namespace Persistence.Repositories
         public string GetIsobyCountryId(int countryId)
         {
             var countries = _dataContext.CountryIsos.Where(c => c.Idcountry == countryId);
-            var Iso = countries.FirstOrDefault()?.Iso;
-            return !string.IsNullOrEmpty(Iso) ? Iso : string.Empty;
+            if (countries != null && countries.Any())
+                return countries.FirstOrDefault().Iso;
+            else return string.Empty;
+            
         }
     }
 }

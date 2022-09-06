@@ -1,4 +1,5 @@
 using Application.JobOffer.Commands;
+using Application.JobOffer.DTO;
 using Application.JobOffer.Queries;
 using Application.Utils.Queries.Equest;
 using Microsoft.AspNetCore.Mvc;
@@ -59,9 +60,15 @@ namespace API.Controllers
         [HttpPost(Name = "Publish")]
         public async Task<IActionResult> PublishOffer(CreateOfferCommand createOfferCommand)
         {
-            var result = await Mediator.Send(createOfferCommand);
-            var ret = HandleResult(result);
-            return ret;
+            try {
+                var result = await Mediator.Send(createOfferCommand);
+                var ret = HandleResult(result);
+                return ret;            }
+
+            catch (Exception ex) {
+                var ret = HandleResult(OfferModificationResult.Failure(new List<string> { ex.Message}));
+                return ret;
+            }
         }
 
         /// <summary>
