@@ -42,7 +42,7 @@ namespace TURI.Contractservice.Tests.Unit.Mocks
                 });
             }
 
-            mockRepo.Setup(r => r.FileOffer(It.IsAny<JobVacancy>())).ReturnsAsync(1);
+            mockRepo.Setup(r => r.FileOffer(It.IsAny<JobVacancy>())).Returns(1);
 
             mockRepo.Setup(r => r.GetActiveOffersByContract(It.IsAny<int>())).Returns(listOffers);
             mockRepo.Setup(r => r.GetActiveOffersByContractNoPack(It.IsAny<int>())).Returns(listOffers);
