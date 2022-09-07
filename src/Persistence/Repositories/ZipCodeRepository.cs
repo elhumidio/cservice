@@ -40,6 +40,23 @@ namespace Persistence.Repositories
             return cityId;
         }
 
+        public int GetCityIdByName(string _cityName)
+        {
+            int cityId = 0;
+            var code = _dataContext.Cities.Where(z => z.Name == _cityName);
+            if (code.Any())
+                cityId = (int)code.First().Idcity;
+            return cityId;
+        }
+
+
+        public int Add(ZipCode _zipcode)
+        {
+            _dataContext.ZipCodes.Add(_zipcode);
+            var ret = _dataContext.SaveChanges();
+            return ret;
+        }
+
         public int GetZipCodeIdByCity(string cityName)
         {
             var zipCodeId = 0;

@@ -46,10 +46,44 @@ namespace Persistence
         public virtual DbSet<ProductLine> ProductLines { get; set; } = null!;
         public virtual DbSet<Enterprise> Enterprises { get; set; } = null!;
         public virtual DbSet<Site> Sites { get; set; } = null!;
+        public virtual DbSet<City> Cities { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.UseCollation("Modern_Spanish_CI_AS");
+
+            modelBuilder.Entity<City>(entity =>
+            {
+                entity.HasKey(e => e.Idcity)
+                    .HasName("PK__TCity__36D35083D6278DDF");
+
+                entity.ToTable("TCity");
+
+                entity.HasIndex(e => new { e.Idcountry, e.Idregion }, "ix_TCity_IDCountry_IDRegion_includes")
+                    .HasFillFactor(90);
+
+                entity.Property(e => e.Idcity).HasColumnName("IDCity");
+
+                entity.Property(e => e.Cmun)
+                    .HasMaxLength(3)
+                    .HasColumnName("CMUN");
+
+                entity.Property(e => e.Cpro)
+                    .HasMaxLength(2)
+                    .HasColumnName("CPRO");
+
+                entity.Property(e => e.Dc)
+                    .HasMaxLength(1)
+                    .HasColumnName("DC");
+
+                entity.Property(e => e.Idcountry).HasColumnName("IDCountry");
+
+                entity.Property(e => e.Idregion).HasColumnName("IDRegion");
+
+                entity.Property(e => e.Name).HasMaxLength(255);
+            });
+
+
 
             modelBuilder.Entity<EquestCountryState>(entity =>
             {
