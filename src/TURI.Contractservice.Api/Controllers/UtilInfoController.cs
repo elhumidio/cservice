@@ -6,12 +6,20 @@ namespace API.Controllers
 {
     public class UtilInfoController : BaseApiController
     {
+        public IHostEnvironment _env;
+
+        public UtilInfoController(IHostEnvironment env) {
+            _env = env;
+        }
+
+
         [HttpGet]
-        public async Task<string> GetConfigValues()
+        public async Task<IActionResult> GetConfigValuesOther()
         {
-            var config = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
-            var key = $"{config["Service:ServiceVersion"]} - {config["Service:Environment"]}";
-            return key;
+
+            var result = Application.Core.Result<string>.Success(_env.EnvironmentName);
+            return HandleResult(result);
+
         }
 
         [HttpGet("{email}", Name = "company")]
