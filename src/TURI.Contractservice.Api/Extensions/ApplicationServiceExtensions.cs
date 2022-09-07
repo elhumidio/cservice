@@ -1,3 +1,4 @@
+using Application.Behaviors;
 using Application.Interfaces;
 using Application.JobOffer.Commands;
 using Application.JobOffer.Queries;
@@ -26,7 +27,7 @@ namespace API.Extensions
             services.AddMediatR(typeof(ListActives.Handler).Assembly);
             services.AddAutoMapper(typeof(Application.Core.MappingProfiles).Assembly);
             services.AddControllers().AddNewtonsoftJson();
-
+            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
             #region MAPPING REPOSITORIES
 
             services.AddScoped<IContractRepository, ContractRepository>();

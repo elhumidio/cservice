@@ -53,7 +53,6 @@ namespace TURI.Contractservice.Tests.Unit.Mocks
             mockRepo.Setup(r => r.GetConsumedUnitsWelcomeNotSpain(It.IsAny<int>())).Returns(listOffers);
             mockRepo.Setup(r => r.GetOfferById(It.IsAny<int>())).Returns(new JobVacancy { IdjobVacancy = 1 });
             mockRepo.Setup(r => r.GetActiveOffersByContractAndManager(It.IsAny<int>(), It.IsAny<int>())).Returns(listOffers);
-
             mockRepo.Setup(r => r.GetOffersByContract(It.IsAny<int>())).Returns(listOffers);
             return mockRepo;
         }
