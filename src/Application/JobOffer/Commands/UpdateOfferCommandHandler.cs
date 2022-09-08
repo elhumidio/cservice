@@ -60,8 +60,7 @@ namespace Application.JobOffer.Commands
                 offer.ChkUpdateDate = existentOffer.ChkUpdateDate;
                 offer.ChkFilled = false;
                 offer.ChkDeleted = false;               
-                await _regContractRepo.UpdateUnits(offer.Idcontract, offer.IdjobVacType);
-            }
+                await _regContractRepo.UpdateUnits(offer.Idcontract, existentOffer.IdjobVacType);            }
             var entity = _mapper.Map(offer, existentOffer);
 
             var ret = await _offerRepo.UpdateOffer(existentOffer);
