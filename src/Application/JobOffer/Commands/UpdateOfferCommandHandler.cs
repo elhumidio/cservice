@@ -52,15 +52,14 @@ namespace Application.JobOffer.Commands
             var existentOffer = _offerRepo.GetOfferById(offer.IdjobVacancy);
             bool IsActivate = existentOffer.ChkFilled;
             bool IsPack = _contractProductRepo.IsPack(existentOffer.Idcontract);
+            offer.ChkPack = IsPack;
 
             if (IsActivate)
             {
                 offer.FilledDate = null;
                 offer.ChkUpdateDate = existentOffer.ChkUpdateDate;
                 offer.ChkFilled = false;
-                offer.ChkDeleted = false;
-                offer.ChkPack = IsPack;
-
+                offer.ChkDeleted = false;               
                 await _regContractRepo.UpdateUnits(offer.Idcontract, offer.IdjobVacType);
             }
             var entity = _mapper.Map(offer, existentOffer);
