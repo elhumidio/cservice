@@ -72,7 +72,7 @@ namespace Application.JobOffer.Commands
                 OfferId = offer.IdjobVacancy
             });
             
-            await _regContractRepo.UpdateUnits(offer.Idcontract, offer.IdjobVacType);
+          
             if (ret < 0)
                 return OfferModificationResult.Failure(new List<string> { "no update" });
             else
