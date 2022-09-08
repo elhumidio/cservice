@@ -55,6 +55,10 @@
         {
           "name": "TEAM_NAME",
           "value": "${bamboo_teamName}"
+        },
+		{
+          "name": "ASPNETCORE_ENVIRONMENT",
+          "value": "${bamboo_service_envvar_DOTNET_ENVIRONMENT}"
         }
       ],
       "dockerLabels": {
