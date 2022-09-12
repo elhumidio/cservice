@@ -1,6 +1,7 @@
 using Application.Contracts.DTO;
 using Application.Contracts.Queries;
 using Application.Core;
+using Application.DTO;
 using AutoMapper;
 using Domain.Enums;
 using Domain.Repositories;
@@ -10,13 +11,13 @@ namespace Application.EnterpriseContract.Queries
 {
     public class GetContract
     {
-        public class Query : IRequest<Result<ContractDto>>
+        public class Query : IRequest<ContractResult>
         {
             public int CompanyId { get; set; }
             public VacancyType? type { get; set; }
         }
 
-        public class Handler : IRequestHandler<Query, Result<ContractDto>>
+        public class Handler : IRequestHandler<Query, ContractResult>
         {
             private IMediator _mediatr;
             private readonly IContractRepository _contractRepository;
@@ -29,7 +30,7 @@ namespace Application.EnterpriseContract.Queries
                 _mediatr = mediatr;
             }
 
-            public async Task<Result<ContractDto>> Handle(Query request, CancellationToken cancellationToken)
+            public async Task<ContractResult> Handle(Query request, CancellationToken cancellationToken)
             {
                 var contractToUse = new ContractDto();
                 var contracts = _mediatr.Send(new List.Query
@@ -73,9 +74,9 @@ namespace Application.EnterpriseContract.Queries
                     }
                 }
                 if (contractToUse.Idcontract == 0)
-                    return Result<ContractDto>.Failure("There is no contracts or units available.\n");
+                    return ContractResult.Failure(new List<string> { "There is no contracts or units available." });
                 else
-                    return Result<ContractDto>.Success(await Task.FromResult(contractToUse));
+                    return ContractResult.Success(await Task.FromResult(contractToUse));
             }
         }
     }

@@ -1,4 +1,5 @@
 using Application.Core;
+using Application.DTO;
 using Application.JobOffer.DTO;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -35,6 +36,11 @@ namespace API.Controllers
                 return Ok(result);
 
             return BadRequest(result);
+        }
+
+        protected IActionResult HandleResult(ContractResult result)
+        {
+            return Ok(result);
         }
     }
 }

@@ -59,6 +59,7 @@ namespace Application.JobOffer.Commands
             else if (offer.IdjobVacancy == 0)
             {
                 var entity = _mapper.Map(offer, job);
+                entity.IntegrationId = offer.IntegrationData.IDIntegration;
                 jobVacancyId = _offerRepo.Add(entity);
 
                 if (jobVacancyId == 0)
