@@ -64,11 +64,9 @@ namespace API.Controllers
                 CompanyId = companyId,
                 type = type
             });
-            if (result.IsSuccess)
-            {
-                return HandleResult(result);
-            }
-            else return BadRequest(result.Error);
+            return HandleResult(result);
+           
+           
         }
     }
 }
