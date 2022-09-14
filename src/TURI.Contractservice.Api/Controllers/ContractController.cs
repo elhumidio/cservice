@@ -56,19 +56,18 @@ namespace API.Controllers
             return HandleResult(result);
         }
 
-        [HttpGet("{companyId}/{type}")]
-        public async Task<IActionResult> GetContract(int companyId, VacancyType type)
+        [HttpGet("{companyId}/{type}/{regionid}")]
+        public async Task<IActionResult> GetContract(int companyId, VacancyType type, int regionId)
         {
             var result = await Mediator.Send(new GetContract.Query
             {
                 CompanyId = companyId,
-                type = type
+                type = type,
+                RegionId = regionId
             });
-            if (result.IsSuccess)
-            {
-                return HandleResult(result);
-            }
-            else return BadRequest(result.Error);
+            return HandleResult(result);
+           
+           
         }
     }
 }

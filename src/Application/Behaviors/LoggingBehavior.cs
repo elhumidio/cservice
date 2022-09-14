@@ -18,7 +18,7 @@ namespace Application.Behaviors
                 return response;
             }
             catch(Exception ex) {
-                _logger.LogInformation("----- Command {CommandName} Failed ({@Command})", request.GetGenericTypeName(), request);
+                _logger.LogError("----- Command {CommandName} Failed ({@Command})", request.GetGenericTypeName(), request);
                 throw ex;
             }
         }

@@ -59,8 +59,10 @@ namespace Application.JobOffer.Commands
                 offer.FilledDate = null;
                 offer.ChkUpdateDate = existentOffer.ChkUpdateDate;
                 offer.ChkFilled = false;
-                offer.ChkDeleted = false;               
-                await _regContractRepo.UpdateUnits(offer.Idcontract, existentOffer.IdjobVacType);            }
+                offer.ChkDeleted = false;
+                offer.IdjobVacType = existentOffer.IdjobVacType;
+                await _regContractRepo.UpdateUnits(offer.Idcontract, existentOffer.IdjobVacType);
+            }
             var entity = _mapper.Map(offer, existentOffer);
 
             var ret = await _offerRepo.UpdateOffer(existentOffer);
@@ -69,8 +71,7 @@ namespace Application.JobOffer.Commands
                 ExternalId = offer.IntegrationData.ApplicationReference,
                 OfferId = offer.IdjobVacancy
             });
-            
-          
+
             if (ret < 0)
                 return OfferModificationResult.Failure(new List<string> { "no update" });
             else
