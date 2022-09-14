@@ -3,6 +3,7 @@ using Application.JobOffer.Queries;
 using Domain.Repositories;
 using MediatR;
 using Microsoft.Extensions.Logging;
+using System.Threading.Tasks;
 
 namespace Application.JobOffer.Commands
 {
