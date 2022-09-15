@@ -34,6 +34,7 @@ namespace Application.EnterpriseContract.Queries
 
             public async Task<ContractResult> Handle(Query request, CancellationToken cancellationToken)
             {
+                List<string> failures = new List<string>();
                 var contractToUse = new ContractDto();
                 var contractsRegionAllowed = new List<ContractDto>();
                 var regions = new List<int>();
@@ -41,6 +42,8 @@ namespace Application.EnterpriseContract.Queries
                 {
                     CompanyId = request.CompanyId,
                 }).Result;
+                if (!contracts.Value.Any())
+                    failures.Add("No contracts available.\n\r");
 
                 foreach (var contract in contracts.Value)
                 {
@@ -51,6 +54,7 @@ namespace Application.EnterpriseContract.Queries
                     {
                         contractsRegionAllowed.Add(contract);
                     }
+                    else failures.Add("Not allowed region.\n\r");
                 }
 
                 if (contractsRegionAllowed.Any())
@@ -77,6 +81,7 @@ namespace Application.EnterpriseContract.Queries
                                 }
                                 break;
                             }
+                            else failures.Add("No units available.\n\r");
                         }
                         else
                         {
@@ -92,11 +97,12 @@ namespace Application.EnterpriseContract.Queries
                                 contractToUse.IdJobVacType = type.IdjobVacType;
                                 break;
                             }
+                            else failures.Add("No units available.\n\r");
                         }
                     }
                 }
                 if (contractToUse.Idcontract == 0)
-                    return ContractResult.Failure(new List<string> { "There is no contracts / units or regions assigned available." });
+                    return ContractResult.Failure(failures);
                 else
                     return ContractResult.Success(await Task.FromResult(contractToUse));
             }
