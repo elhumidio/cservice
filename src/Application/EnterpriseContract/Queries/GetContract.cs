@@ -36,6 +36,7 @@ namespace Application.EnterpriseContract.Queries
             {
                 var contractToUse = new ContractDto();
                 var contractsRegionAllowed = new List<ContractDto>();
+                var regions = new List<int>();
                 var contracts = _mediatr.Send(new List.Query
                 {
                     CompanyId = request.CompanyId,
@@ -43,13 +44,15 @@ namespace Application.EnterpriseContract.Queries
 
                 foreach (var contract in contracts.Value)
                 {
-                    var regions = _contractPublicationRegionRepository.AllowedRegionsByContract(contract.Idcontract);
-                    if (regions.Contains(request.RegionId))
+                    regions = _contractPublicationRegionRepository.AllowedRegionsByContract(contract.Idcontract);
+                    bool IsContractWithAllowedRegion = regions.Contains(request.RegionId) || !regions.Any();
+
+                    if (IsContractWithAllowedRegion)
                     {
                         contractsRegionAllowed.Add(contract);
                     }
-                        
                 }
+
                 if (contractsRegionAllowed.Any())
                 {
                     foreach (var (contract, type) in from contract in contractsRegionAllowed
