@@ -65,12 +65,16 @@ namespace Application.EnterpriseContract.Queries
                                 .Send(new GetAvailableUnits.Query { ContractId = contract.Idcontract })
                                 .Result
                                 .Value;
-                            var unitsAvailable = units.Sum(u => u.Units);
+                            var unitsAvailable = units.Where(s => s.Units > 0);
 
-                            if ((unitsAvailable) > 0)
+                            if ((unitsAvailable.Sum(u => u.Units)) > 0)
                             {
                                 contractToUse = contract;
-                                contractToUse.IdJobVacType = type.IdjobVacType;
+                                var unitsToUse = unitsAvailable.Where(ua => ua.Units > 0).FirstOrDefault();
+                                if (unitsToUse != null)
+                                {
+                                    contractToUse.IdJobVacType = (int)unitsToUse.type;
+                                }
                                 break;
                             }
                         }
