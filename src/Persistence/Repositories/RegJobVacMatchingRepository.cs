@@ -26,5 +26,13 @@ namespace Persistence.Repositories
                 return Task.FromResult(obj.First());
             else return Task.FromResult<RegJobVacMatching>(null);
         }
+
+        public Task<List<RegJobVacMatching>> GetAtsIntegrationInfoForFile(string externalId)
+        {
+            var obj = _dataContext.RegJobVacMatchings.Where(integration => integration.ExternalId == externalId).OrderByDescending(i => i.IdjobVacancy).ToList();
+            if (obj != null && obj.Any())
+                return Task.FromResult(obj);
+            else return Task.FromResult<List<RegJobVacMatching>>(null);
+        }
     }
 }
