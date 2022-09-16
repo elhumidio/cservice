@@ -170,6 +170,21 @@ namespace API.Controllers
         }
 
         /// <summary>
+        /// Get Consumed JobOffers Pack or not pack by company
+        /// </summary>
+        /// <param name="contractId"></param>
+        /// <returns></returns>
+        [HttpGet("")]
+        public async Task<IActionResult> GetAllJobs()
+        {
+            var result = await Mediator.Send(new ListAllJobs.Query
+            {
+
+            });
+            return HandleResult(result);
+        }
+
+        /// <summary>
         /// Gets Turijobs - Equest equivalent degree
         /// </summary>
         /// <param name="eqDegreeId"></param>
