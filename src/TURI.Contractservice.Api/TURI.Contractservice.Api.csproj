@@ -46,4 +46,8 @@
     <None Remove="Proto\publish.proto" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="DataContext\" />
+  </ItemGroup>
+
 </Project>

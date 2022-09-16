@@ -1,3 +1,4 @@
+using Domain.Classes;
 using Domain.Entities;
 
 namespace Domain.Repositories
@@ -19,6 +20,7 @@ namespace Domain.Repositories
         public IQueryable<JobVacancy> GetActiveOffersByContractOwnerType(int contractId, int owner, int type);
 
         public IQueryable<JobVacancy> GetActiveOffersByCompany(int enterpriseId);
+        public Task<IQueryable<JobData>> GetAllJobs();
 
         IQueryable<JobVacancy> GetConsumedUnitsWelcomeNotSpain(int companyId);
 
