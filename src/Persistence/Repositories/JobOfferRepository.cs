@@ -1,7 +1,11 @@
+using API.DataContext;
+using Domain.Classes;
 using Domain.Entities;
 using Domain.Enums;
 using Domain.Repositories;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System.Diagnostics.Metrics;
 
 namespace Persistence.Repositories
 {
@@ -184,6 +188,59 @@ namespace Persistence.Repositories
                .Select(o => o.jvc.jv);
 
             return res;
+        }
+
+        /*
+        public IQueryable<JobVacancy> GetAllJobs(int countryId)
+        {
+            var query = _dataContext.JobVacancies.Where(a => a.Identerprise == 28463
+                && !a.ChkDeleted
+                && !a.ChkFilled
+                && a.FinishDate > DateTime.Today.AddDays(-1)
+                && a.Idstatus == (int)OfferStatus.Active);
+
+            return query;
+        }
+        */
+
+        public async Task<IQueryable<JobData>> GetAllJobs()
+        {
+            var semanal = DateTime.Now.AddDays(-7).Date;
+            var catstr = "";
+            var catstrEn = "";
+            var _enLanguageID = 14;
+
+            var query = (from job in _dataContext.JobVacancies
+                         join enterprise in _dataContext.Enterprises on job.Identerprise equals enterprise.Identerprise
+                         join brand in _dataContext.Brands on job.Idbrand equals brand.Idbrand
+                         where !job.ChkDeleted
+                                && !job.ChkFilled
+                                && job.PublicationDate.AddDays(14) >= DateTime.Now
+                                && job.Idstatus == (int)OfferStatus.Active
+                        select new JobData()
+                        {
+                            Title = job.Title,
+                            CompanyName = brand.Name,
+                            IDCountry = job.Idcountry,
+                            IDRegion = job.Idregion,
+                            IDArea = job.Idarea,
+                            IDJobVacancy = job.IdjobVacancy,
+                            IDBrand = job.Idbrand,
+                            IDEnterprise = job.Identerprise,
+                            ChkBlindVacancy = job.ChkBlindVac,
+                            PublicationDate = job.PublicationDate,
+                            City = job.City,
+                            IDCity = (job.Idcity.HasValue) ? job.Idcity.Value : 0
+                        });
+
+            //LOCATION = job.IDRegion == 61 ? country.BaseName : region.BaseName + ", " + country.BaseName,
+            //CATEGORY = area.BaseName,
+            //CATEGORY_EN = areaEn.BaseName,
+            //LOCATION_EN = job.IDRegion == 61 ? country.BaseName : regionEn.BaseName + ", " + country.BaseName,
+            //CATEGORY_MORE_JOBS = catstr + area.BaseName,
+            //CATEGORY_MORE_JOBS_EN = catstrEn + areaEn.BaseName,
+
+            return (IQueryable<JobData>)query;
         }
     }
 }
