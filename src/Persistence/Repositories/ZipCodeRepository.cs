@@ -54,7 +54,7 @@ namespace Persistence.Repositories
         {
             _dataContext.ZipCodes.Add(_zipcode);
             var ret = _dataContext.SaveChanges();
-            return ret;
+            return _zipcode.IdzipCode;
         }
 
         public int GetZipCodeIdByCity(string cityName)

@@ -71,6 +71,6 @@ namespace Domain.Entities
         public int? OldIdMx { get; set; }
         public int? IdClosingReason { get; set; }
         public DateTime? LastVisitorDate { get; set; }
-        public string IntegrationId { get; set; }
+        public string? IntegrationId { get; set; }
     }
 }

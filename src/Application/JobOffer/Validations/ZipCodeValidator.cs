@@ -57,8 +57,8 @@ namespace Application.JobOffer.Validations
                                 Latitude = Convert.ToDecimal(ans.postalCodes.First().lat),
                                 City = ans.postalCodes.First().placeName
                             };
-                            _zipCodeRepo.Add(zip);
-                            obj.IdzipCode = 0;
+                            var idZipcode = _zipCodeRepo.Add(zip);
+                            obj.IdzipCode = idZipcode;
                         }
                     }
 
