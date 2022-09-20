@@ -28,19 +28,13 @@ namespace API.Controllers
 
         protected IActionResult HandleResult(OfferModificationResult result)
         {
-            if (result == null ||
-                (!result.IsSuccess && result.Value == null))
-                return BadRequest(result);
-
-            if (result.IsSuccess && result != null)
-                return Ok(result);
-
-            return BadRequest(result);
+            return Ok(result);
         }
 
         protected IActionResult HandleResult(ContractResult result)
         {
             return Ok(result);
+            
         }
     }
 }
