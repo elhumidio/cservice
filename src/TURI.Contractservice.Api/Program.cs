@@ -49,26 +49,7 @@ IWebHost BuildWebHost(string[] args) =>
         })
         .UseStartup<Startup>()
         .UseContentRoot(Directory.GetCurrentDirectory())
-        .Build();
-
-
-
-//IConfiguration GetConfiguration()
-//{
-//    var builder = new ConfigurationBuilder()
-//        .SetBasePath(Directory.GetCurrentDirectory())
-//        .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-//        .AddEnvironmentVariables();
-
-//    return builder.Build();
-//}
-
-//(int httpPort, int grpcPort) GetDefinedPorts(IConfiguration config)
-//{
-//    var grpcPort = config.GetValue("GRPC_PORT", 9988);
-//    var port = config.GetValue("PORT", 80);
-//    return (port, grpcPort);
-//}
+        .Build();   
 
 public partial class Program
 {

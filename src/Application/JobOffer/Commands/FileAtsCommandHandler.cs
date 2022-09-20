@@ -1,9 +1,10 @@
 using Application.JobOffer.DTO;
 using Application.JobOffer.Queries;
+using AutoMapper;
+using Domain.Enums;
 using Domain.Repositories;
 using MediatR;
 using Microsoft.Extensions.Logging;
-using System.Threading.Tasks;
 
 namespace Application.JobOffer.Commands
 {
@@ -15,13 +16,14 @@ namespace Application.JobOffer.Commands
         private readonly IContractProductRepository _contractProductRepo;
         private readonly ILogger<FileAtsCommandHandler> _logger;
         private readonly IMediator _mediatr;
+        private readonly IMapper _mapper;
 
         public FileAtsCommandHandler(IJobOfferRepository jobOfferRepository,
             IRegJobVacMatchingRepository regJobVacMatchingRepository,
             IRegEnterpriseContractRepository regEnterpriseContractRepository,
             IContractProductRepository contractProductRepo,
             ILogger<FileAtsCommandHandler> logger,
-            IMediator mediatr)
+            IMediator mediatr, IMapper mapper)
         {
             _regJobVacRepo = regJobVacMatchingRepository;
             _offerRepo = jobOfferRepository;
@@ -29,34 +31,45 @@ namespace Application.JobOffer.Commands
             _regEnterpriseContractRepository = regEnterpriseContractRepository;
             _contractProductRepo = contractProductRepo;
             _mediatr = mediatr;
+            _mapper = mapper;
         }
 
         public async Task<OfferModificationResult> Handle(FileAtsOfferCommand offer, CancellationToken cancellationToken)
         {
             var ats = await _regJobVacRepo.GetAtsIntegrationInfoForFile(offer.Application_reference);
+            var offerToFile = ats.FirstOrDefault();
+            var jobToUpdateUnits = _offerRepo.GetOfferById(offerToFile.IdjobVacancy);
+            var filed = 0;
             if (ats != null)
             {
-
-                foreach (var atsInfo in ats) {
+                bool isActiveOffer = false;
+                foreach (var atsInfo in ats)
+                {
                     var job = _offerRepo.GetOfferById(atsInfo.IdjobVacancy);
-                    var filed = _offerRepo.FileOffer(job);
-                    var createdOffer = _mediatr.Send(new GetResult.Query { ExternalId = offer.Application_reference, OfferId = job.IdjobVacancy });
-                    if (filed > 0)
+                    isActiveOffer = !job.ChkFilled && !job.ChkDeleted && job.FinishDate.Date >= DateTime.Now.Date && job.Idstatus == (int)OfferStatus.Active;
+                    if (isActiveOffer)
                     {
-                        bool IsPack = _contractProductRepo.IsPack(job.Idcontract);
+                        var ret = _offerRepo.FileOffer(job);
+                        if (ret > 0) filed++;                      
+                    }
+                }
+                if (filed > 0)
+                {
+                    bool IsPack = _contractProductRepo.IsPack(jobToUpdateUnits.Idcontract);
 
-                        if (IsPack)
-                            await _regEnterpriseContractRepository.IncrementAvailableUnits(job.Idcontract, job.IdjobVacType);
-                        var info = $"IDJobVacancy: {job.IdjobVacancy} - IdIntegration: {offer.IDIntegration} - Reference: {offer.Application_reference} - Offer Filed";
-                        _logger.LogInformation(info);
-                        return OfferModificationResult.Success(createdOffer.Result);
-                    }
-                    else
-                    {
-                        var err = $"IDJobVacancy: {job.IdjobVacancy} - IdIntegration: {offer.IDIntegration} - Reference: {offer.Application_reference} - Failed to file ats offer";
-                        _logger.LogError(err);
-                        return OfferModificationResult.Failure(new List<string> { err });
-                    }
+                    if (IsPack)
+                        await _regEnterpriseContractRepository.IncrementAvailableUnits(jobToUpdateUnits.Idcontract, jobToUpdateUnits.IdjobVacType);
+                    var info = $"IDJobVacancy: {jobToUpdateUnits.IdjobVacancy} - IdIntegration: {offer.IDIntegration} - Reference: {offer.Application_reference} - Offer Filed";
+                    _logger.LogInformation(info);
+                    var offerDto = new OfferResultDto();
+                    offerDto = _mapper.Map(jobToUpdateUnits, offerDto);
+                    return OfferModificationResult.Success(offerDto);
+                }
+                else
+                {
+                    var err = $"IDJobVacancy: {jobToUpdateUnits.IdjobVacancy} - IdIntegration: {offer.IDIntegration} - Reference: {offer.Application_reference} - Failed to file ats offer";
+                    _logger.LogError(err);
+                    return OfferModificationResult.Failure(new List<string> { err });
                 }
             }
             return OfferModificationResult.Failure(new List<string> { "AtsInfo is null" });
