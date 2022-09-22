@@ -1,6 +1,8 @@
+using Application.EnterpriseContract.Queries;
 using Application.JobOffer.DTO;
 using Application.JobOffer.Queries;
 using AutoMapper;
+using Domain.Enums;
 using Domain.Repositories;
 using MediatR;
 using Microsoft.Extensions.Logging;
@@ -56,12 +58,23 @@ namespace Application.JobOffer.Commands
 
             if (IsActivate)
             {
-                offer.FilledDate = null;
-                offer.ChkUpdateDate = existentOffer.ChkUpdateDate;
-                offer.ChkFilled = false;
-                offer.ChkDeleted = false;
-                offer.IdjobVacType = existentOffer.IdjobVacType;
-                await _regContractRepo.UpdateUnits(offer.Idcontract, existentOffer.IdjobVacType);
+                //TODO verificar si tiene unidades
+                var result = await _mediatr.Send(new GetContract.Query
+                {
+                    CompanyId = offer.Identerprise,
+                    type = (VacancyType)offer.IdjobVacType,
+                    RegionId = offer.Idregion
+                });
+
+                if (result.Value.Idcontract > 0) {
+                    offer.FilledDate = null;
+                    offer.ChkUpdateDate = existentOffer.ChkUpdateDate;
+                    offer.ChkFilled = false;
+                    offer.ChkDeleted = false;
+                    offer.IdjobVacType = existentOffer.IdjobVacType;
+                    await _regContractRepo.UpdateUnits(offer.Idcontract, existentOffer.IdjobVacType);
+                }
+                
             }
             var entity = _mapper.Map(offer, existentOffer);
 
