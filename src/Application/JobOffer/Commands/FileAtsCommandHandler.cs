@@ -45,39 +45,46 @@ namespace Application.JobOffer.Commands
             var filed = 0;
             string alreadyFiledMsg = string.Empty;
             bool isActiveOffer = false;
+            try {
 
-            foreach (var atsInfo in ats)
-            {
-                var job = _offerRepo.GetOfferById(atsInfo.IdjobVacancy);
-                isActiveOffer = !job.ChkFilled && !job.ChkDeleted && job.FinishDate.Date >= DateTime.Now.Date && job.Idstatus == (int)OfferStatus.Active;
-                if (isActiveOffer)
+                foreach (var atsInfo in ats)
                 {
-                    var ret = _offerRepo.FileOffer(job);
-                    if (ret > 0) filed++;
+                    var job = _offerRepo.GetOfferById(atsInfo.IdjobVacancy);
+                    isActiveOffer = !job.ChkFilled && !job.ChkDeleted && job.FinishDate.Date >= DateTime.Now.Date && job.Idstatus == (int)OfferStatus.Active;
+                    if (isActiveOffer)
+                    {
+                        var ret = _offerRepo.FileOffer(job);
+                        if (ret > 0) filed++;
+                    }
+                    else
+                    {
+                        alreadyFiledMsg += $"The offer with IDJobVacancy: {job.IdjobVacancy} and reference: {atsInfo.ExternalId} is already filed. Couldn't filed. Please check data. ";
+                    }
+                }
+                if (filed > 0)
+                {
+                    bool IsPack = _contractProductRepo.IsPack(jobToUpdateUnits.Idcontract);
+
+                    if (IsPack)
+                        await _regEnterpriseContractRepository.IncrementAvailableUnits(jobToUpdateUnits.Idcontract, jobToUpdateUnits.IdjobVacType);
+                    var info = $"IDJobVacancy: {jobToUpdateUnits.IdjobVacancy} - IdIntegration: {offer.IDIntegration} - Reference: {offer.Application_reference} - Offer Filed";
+                    _logger.LogInformation(info);
+                    var offerDto = new OfferResultDto();
+                    offerDto = _mapper.Map(jobToUpdateUnits, offerDto);
+                    return OfferModificationResult.Success(offerDto);
                 }
                 else
                 {
-                    alreadyFiledMsg += $"The offer with IDJobVacancy: {job.IdjobVacancy} and reference: {atsInfo.ExternalId} is already filed. Couldn't filed. Please check data. ";
+                    var err = $"IDJobVacancy: {jobToUpdateUnits.IdjobVacancy} - IdIntegration: {offer.IDIntegration} - Reference: {offer.Application_reference} - Failed to file ats offer / {alreadyFiledMsg}";
+                    _logger.LogError(err);
+                    return OfferModificationResult.Success(new List<string> { err });
                 }
             }
-            if (filed > 0)
-            {
-                bool IsPack = _contractProductRepo.IsPack(jobToUpdateUnits.Idcontract);
-
-                if (IsPack)
-                    await _regEnterpriseContractRepository.IncrementAvailableUnits(jobToUpdateUnits.Idcontract, jobToUpdateUnits.IdjobVacType);
-                var info = $"IDJobVacancy: {jobToUpdateUnits.IdjobVacancy} - IdIntegration: {offer.IDIntegration} - Reference: {offer.Application_reference} - Offer Filed";
-                _logger.LogInformation(info);
-                var offerDto = new OfferResultDto();
-                offerDto = _mapper.Map(jobToUpdateUnits, offerDto);
-                return OfferModificationResult.Success(offerDto);
-            }
-            else
-            {
-                var err = $"IDJobVacancy: {jobToUpdateUnits.IdjobVacancy} - IdIntegration: {offer.IDIntegration} - Reference: {offer.Application_reference} - Failed to file ats offer / {alreadyFiledMsg}";
-                _logger.LogError(err);
+            catch (Exception ex) {
+                var err = $"{ex.Message} / {ex.InnerException} / {ex.StackTrace}";
                 return OfferModificationResult.Failure(new List<string> { err });
             }
+            
         }
     }
 }
