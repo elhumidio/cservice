@@ -76,12 +76,13 @@ namespace Application.JobOffer.Commands
                 else
                 {
                     var err = $"IDJobVacancy: {jobToUpdateUnits.IdjobVacancy} - IdIntegration: {offer.IDIntegration} - Reference: {offer.Application_reference} - Failed to file ats offer / {alreadyFiledMsg}";
-                    _logger.LogError(err);
+                    _logger.LogInformation(err);
                     return OfferModificationResult.Success(new List<string> { err });
                 }
             }
-            catch (Exception ex) {
+            catch (Exception ex) {                
                 var err = $"{ex.Message} / {ex.InnerException} / {ex.StackTrace}";
+                _logger.LogError(err);
                 return OfferModificationResult.Failure(new List<string> { err });
             }
             
