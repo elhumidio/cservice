@@ -55,19 +55,24 @@ namespace Application.JobOffer.Validations
     {
         private IMediator _mediator;
         private readonly IContractProductRepository _contractProdRepo;
+        private readonly IJobOfferRepository _jobOfferRepo;
 
-        public DatesValidatorUp(IMediator mediator, IContractProductRepository contractProdRepo)
+        public DatesValidatorUp(IMediator mediator, IContractProductRepository contractProdRepo, IJobOfferRepository jobOfferRepo)
         {
             _mediator = mediator;
             _contractProdRepo = contractProdRepo;
+            _jobOfferRepo = jobOfferRepo;   
 
             RuleFor(command => command)
-                .Must(HasRightFinishDate)
+                .Must(HasRightFinishDate)   
                 .WithMessage("Couldn't establish right finish date.\n");
         }
 
         private bool HasRightFinishDate(UpdateOfferCommand obj)
         {
+            var offer = _jobOfferRepo.GetOfferById(obj.IdjobVacancy);
+            if (obj.Idcontract == 0)
+                obj.Idcontract = offer.Idcontract;
             var productId = _contractProdRepo.GetIdProductByContract(obj.Idcontract);
             var dto = _mediator.Send(new Get.Query
             {

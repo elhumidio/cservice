@@ -72,7 +72,7 @@ namespace Application.JobOffer.Commands
                     offer.ChkFilled = false;
                     offer.ChkDeleted = false;
                     offer.IdjobVacType = existentOffer.IdjobVacType;
-                    await _regContractRepo.UpdateUnits(offer.Idcontract, existentOffer.IdjobVacType);
+                    await _regContractRepo.UpdateUnits(result.Value.Idcontract, (int)result.Value.IdJobVacType);
                 }
                 
             }

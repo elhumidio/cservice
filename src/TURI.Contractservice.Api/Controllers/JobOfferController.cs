@@ -82,6 +82,7 @@ namespace API.Controllers
         public async Task<IActionResult> UpdateOffer(UpdateOfferCommand updateOfferCommand)
         {
             try {
+
                 var result = await Mediator.Send(updateOfferCommand);
                 var ret = HandleResult(result);
                 return ret;

@@ -22,7 +22,7 @@ namespace Persistence.Repositories
         {
             var areas = _dataContext.Areas
                 .Where(a => a.Idsite == siteId && a.Idslanguage == languageId)
-                .Where(a => a.Idarea > 0)
+                .Where(a => a.Idarea > 0 || a.Idarea == -1)
                 .Where(a => a.ChkActive == 1);
 
             if (areas != null)
