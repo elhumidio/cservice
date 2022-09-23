@@ -68,6 +68,10 @@ namespace Application.JobOffer.Commands
                     _logger.LogInformation(info);
                     var offerDto = new OfferResultDto();
                     offerDto = _mapper.Map(jobToUpdate, offerDto);
+                    offerDto.IntegrationData.ApplicationEmail = offerToFile.AppEmail;
+                    offerDto.IntegrationData.ApplicationUrl = offerToFile.Redirection;
+                    offerDto.IntegrationData.ApplicationReference = offerToFile.ExternalId;
+                    offerDto.IntegrationData.IDIntegration = offerToFile.Idintegration;
                     return OfferModificationResult.Success(offerDto);
                 }
                 else
