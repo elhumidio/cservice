@@ -13,14 +13,17 @@ namespace Persistence.Repositories
 
         public bool IsPack(int contractId)
         {
+            bool isPack = false;
             var res = _dataContext.ContractProducts
             .Join(_dataContext.Products, p => new { p.Idproduct }, cp => new { cp.Idproduct },
                 (p, cp) => new { p, cp })
             .Join(_dataContext.ProductLines, ppl => ppl.p.Idproduct, pl => pl.Idproduct, (ppl, pl) => new { ppl, pl })
             .Where(o => o.ppl.p.Idcontract == contractId && o.pl.IdjobVacType != null)
-            .Select(o => o.ppl.cp.ChkPack)
-            .First();
-            return res;
+            .Select(o => o.ppl.cp.ChkPack);
+
+            if(res.Any() && res != null)
+                isPack = res.First();
+            return isPack;
         }
 
         public int GetIdProductByContract(int contractId)

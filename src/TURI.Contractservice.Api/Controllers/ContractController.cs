@@ -56,6 +56,21 @@ namespace API.Controllers
             return HandleResult(result);
         }
 
+        /// <summary>
+        /// Gets assignments given a contract and an Owner
+        /// </summary>
+        /// <param name="companyId"></param>        
+        /// <returns></returns>
+        [HttpGet("{companyId}")]
+        public async Task<IActionResult> GetAvailableUnitsByCompany(int companyId)
+        {
+            var result = await Mediator.Send(new GetUnitsByCompany.Query
+            {
+                 CompanyId = companyId
+            });
+            return HandleResult(result);
+        }
+
         [HttpGet("{companyId}/{type}/{regionid}")]
         public async Task<IActionResult> GetContract(int companyId, VacancyType type, int regionId)
         {

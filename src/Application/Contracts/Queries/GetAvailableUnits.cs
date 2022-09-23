@@ -34,16 +34,7 @@ namespace Application.Contracts.Queries
                 var list = new List<AvailableUnitsDto>();
                 AvailableUnitsDto dto;
                 var isPack = _contractProductRepo.IsPack(request.ContractId);
-                var unitsAssigned = _unitsRepo.GetAssignmentsByContract(request.ContractId).ToList();
-
-                /*  var activeOffers = isPack ? _jobOfferRepo.GetActiveOffersByContract(request.ContractId)
-                  .ProjectTo<JobOfferDto>(_mapper.ConfigurationProvider)
-                  .ToList().GroupBy(g => g.IdjobVacType)
-                  :
-                  _jobOfferRepo.GetActiveOffersByContractNoPack(request.ContractId)
-                  .ProjectTo<JobOfferDto>(_mapper.ConfigurationProvider)
-                  .ToList()
-                  .GroupBy(g => g.IdjobVacType);*/
+                var unitsAssigned = _unitsRepo.GetAssignmentsByContract(request.ContractId).ToList();    
 
                 foreach (var units in unitsAssigned)
                 {
