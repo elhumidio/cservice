@@ -41,7 +41,7 @@ namespace Application.JobOffer.Commands
                 return OfferModificationResult.Failure(new List<string> { "Ats Info is null (maybe reference number is wrong?)" });
 
             var offerToFile = ats.FirstOrDefault();
-            var jobToUpdateUnits = _offerRepo.GetOfferById(offerToFile.IdjobVacancy);
+            var jobToUpdate = _offerRepo.GetOfferById(offerToFile.IdjobVacancy);
             var filed = 0;
             string alreadyFiledMsg = string.Empty;
             bool isActiveOffer = false;
@@ -56,26 +56,23 @@ namespace Application.JobOffer.Commands
                         var ret = _offerRepo.FileOffer(job);
                         if (ret > 0) filed++;
                     }
-                    else
-                    {
-                        alreadyFiledMsg += $"The offer with IDJobVacancy: {job.IdjobVacancy} and reference: {atsInfo.ExternalId} is already filed. Couldn't filed. Please check data. ";
-                    }
+                    
                 }
                 if (filed > 0)
                 {
-                    bool IsPack = _contractProductRepo.IsPack(jobToUpdateUnits.Idcontract);
+                    bool IsPack = _contractProductRepo.IsPack(jobToUpdate.Idcontract);
 
                     if (IsPack)
-                        await _regEnterpriseContractRepository.IncrementAvailableUnits(jobToUpdateUnits.Idcontract, jobToUpdateUnits.IdjobVacType);
-                    var info = $"IDJobVacancy: {jobToUpdateUnits.IdjobVacancy} - IdIntegration: {offer.IDIntegration} - Reference: {offer.Application_reference} - Offer Filed";
+                        await _regEnterpriseContractRepository.IncrementAvailableUnits(jobToUpdate.Idcontract, jobToUpdate.IdjobVacType);
+                    var info = $"IDJobVacancy: {jobToUpdate.IdjobVacancy} - IdIntegration: {offer.IDIntegration} - Reference: {offer.Application_reference} -- Offer Filed";
                     _logger.LogInformation(info);
                     var offerDto = new OfferResultDto();
-                    offerDto = _mapper.Map(jobToUpdateUnits, offerDto);
+                    offerDto = _mapper.Map(jobToUpdate, offerDto);
                     return OfferModificationResult.Success(offerDto);
                 }
                 else
                 {
-                    var err = $"IDJobVacancy: {jobToUpdateUnits.IdjobVacancy} - IdIntegration: {offer.IDIntegration} - Reference: {offer.Application_reference} - Failed to file ats offer / {alreadyFiledMsg}";
+                    var err = $"IDJobVacancy: {jobToUpdate.IdjobVacancy} - IdIntegration: {offer.IDIntegration} - Reference: {offer.Application_reference} -- Offer already filed at: {jobToUpdate.FilledDate}";
                     _logger.LogInformation(err);
                     return OfferModificationResult.Success(new List<string> { err });
                 }
