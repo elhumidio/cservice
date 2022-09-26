@@ -1,4 +1,5 @@
 using Application.JobOffer.Commands;
+using Domain.Enums;
 using Domain.Repositories;
 using FluentValidation;
 
@@ -40,7 +41,7 @@ namespace Application.JobOffer.Validations
 
         private bool IsRightJobVacType(int _jobTypeId)
         {
-            return _jobTypeRepo.IsRightJobVacType(_jobTypeId);
+            return _jobTypeRepo.IsRightJobVacType(_jobTypeId) || _jobTypeId == (int)VacancyType.None;
         }
     }
 }
