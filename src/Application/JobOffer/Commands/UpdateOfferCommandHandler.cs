@@ -2,6 +2,7 @@ using Application.EnterpriseContract.Queries;
 using Application.JobOffer.DTO;
 using Application.JobOffer.Queries;
 using AutoMapper;
+using Domain.Entities;
 using Domain.Enums;
 using Domain.Repositories;
 using MediatR;
@@ -79,16 +80,27 @@ namespace Application.JobOffer.Commands
             var entity = _mapper.Map(offer, existentOffer);
 
             var ret = await _offerRepo.UpdateOffer(existentOffer);
-            var createdOffer = _mediatr.Send(new GetResult.Query
+            var updatedOffer = _mediatr.Send(new GetResult.Query
             {
                 ExternalId = offer.IntegrationData.ApplicationReference,
                 OfferId = offer.IdjobVacancy
-            });
+            }).Result;
+
+            var integration = _regJobVacRepo.GetAtsIntegrationInfoByJobId(existentOffer.IdjobVacancy).Result;
+
+            if (integration != null) {
+
+                updatedOffer.IntegrationData.ApplicationEmail = integration.AppEmail;
+                updatedOffer.IntegrationData.ApplicationReference = integration.ExternalId;
+                updatedOffer.IntegrationData.ApplicationUrl = integration.Redirection;
+                updatedOffer.IntegrationData.IDIntegration = integration.Idintegration;
+
+            }
 
             if (ret < 0)
                 return OfferModificationResult.Failure(new List<string> { "no update" });
             else
-                return OfferModificationResult.Success(createdOffer.Result);
+                return OfferModificationResult.Success(updatedOffer);
         }
     }
 }

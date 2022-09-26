@@ -8,5 +8,6 @@ namespace Domain.Repositories
 
         public Task<RegJobVacMatching> GetAtsIntegrationInfo(string externalId);
         public Task<List<RegJobVacMatching>> GetAtsIntegrationInfoForFile(string externalId);
+        public Task<RegJobVacMatching> GetAtsIntegrationInfoByJobId(int id);
     }
 }
