@@ -1,7 +1,6 @@
 using Application.Contracts.DTO;
 using Application.Contracts.Queries;
 using Application.DTO;
-using AutoMapper;
 using Domain.Enums;
 using Domain.Repositories;
 using MediatR;
@@ -21,12 +20,10 @@ namespace Application.EnterpriseContract.Queries
         {
             private IMediator _mediatr;
             private readonly IContractRepository _contractRepository;
-            private readonly IMapper _mapper;
             private readonly IContractPublicationRegionRepository _contractPublicationRegionRepository;
 
-            public Handler(IMapper mapper, IContractRepository contractRepository, IMediator mediatr, IContractPublicationRegionRepository contractPublicationRegionRepository)
+            public Handler(IContractRepository contractRepository, IMediator mediatr, IContractPublicationRegionRepository contractPublicationRegionRepository)
             {
-                _mapper = mapper;
                 _contractRepository = contractRepository;
                 _mediatr = mediatr;
                 _contractPublicationRegionRepository = contractPublicationRegionRepository;

@@ -36,6 +36,7 @@ namespace Application.JobOffer.Commands
             _regContractRepo = regContractRepo;
             _regJobVacRepo = regJobVacRepo;
             _mediatr = mediatr;
+            _mapper = mapper;
         }
 
         public async Task<OfferModificationResult> Handle(UpdateOfferCommand offer, CancellationToken cancellationToken)
