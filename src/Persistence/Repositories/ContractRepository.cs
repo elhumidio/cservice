@@ -21,14 +21,22 @@ namespace Persistence.Repositories
 
         public IQueryable<Contract> GetContracts(int companyId)
         {
-            var query = _dataContext.Contracts.Where(c => c.Identerprise == companyId && c.ChkApproved && !c.ChkCancel && c.FinishDate >= DateTime.Today).OrderByDescending(con => con.StartDate);
+            var query = _dataContext.Contracts.Where(c => c.Identerprise == companyId
+            && c.ChkApproved
+            && !c.ChkCancel
+            && c.FinishDate >= DateTime.Today
+            && DateTime.Now.Date >= c.StartDate).OrderByDescending(con => con.StartDate);
             return query;
         }
 
         public bool IsValidContract(int contractId)
         {
             var contracts = _dataContext.Contracts
-                .Where(c => c.FinishDate >= DateTime.Today && c.ChkApproved && c.Idcontract == contractId && !c.ChkCancel)
+                .Where(c => c.FinishDate >= DateTime.Today
+                && DateTime.Now.Date >= c.StartDate
+                && c.ChkApproved
+                && c.Idcontract == contractId
+                && !c.ChkCancel)
                 .OrderBy(con => con.FinishDate);
             return contracts != null && contracts.Any();
         }
