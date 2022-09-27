@@ -2,7 +2,6 @@ using Application.EnterpriseContract.Queries;
 using Application.JobOffer.DTO;
 using Application.JobOffer.Queries;
 using AutoMapper;
-using Domain.Entities;
 using Domain.Enums;
 using Domain.Repositories;
 using MediatR;
@@ -14,10 +13,8 @@ namespace Application.JobOffer.Commands
     {
         #region PRIVATE PROPERTIES
 
-        private readonly ILogger<UpdateOfferCommandHandler> _logger;
         private readonly IMapper _mapper;
-        private readonly IJobOfferRepository _offerRepo;
-        private readonly IProductRepository _productRepo;
+        private readonly IJobOfferRepository _offerRepo;        
         private readonly IRegJobVacMatchingRepository _regJobVacRepo;
         private readonly IRegEnterpriseContractRepository _regContractRepo;
         private readonly IContractProductRepository _contractProductRepo;
@@ -36,12 +33,9 @@ namespace Application.JobOffer.Commands
         {
             _contractProductRepo = contractProductRepo;
             _offerRepo = offerRepo;
-            _mapper = mapper;
             _regContractRepo = regContractRepo;
             _regJobVacRepo = regJobVacRepo;
             _mediatr = mediatr;
-
-            _logger = logger;
         }
 
         public async Task<OfferModificationResult> Handle(UpdateOfferCommand offer, CancellationToken cancellationToken)
@@ -59,7 +53,6 @@ namespace Application.JobOffer.Commands
 
             if (IsActivate)
             {
-                //TODO verificar si tiene unidades
                 var result = await _mediatr.Send(new GetContract.Query
                 {
                     CompanyId = offer.Identerprise,
@@ -67,15 +60,18 @@ namespace Application.JobOffer.Commands
                     RegionId = offer.Idregion
                 });
 
-                if (result.Value.Idcontract > 0) {
+                if (result.Value.Idcontract > 0)
+                {
                     offer.FilledDate = null;
                     offer.ChkUpdateDate = existentOffer.ChkUpdateDate;
                     offer.ChkFilled = false;
                     offer.ChkDeleted = false;
                     offer.IdjobVacType = existentOffer.IdjobVacType;
+                    offer.PublicationDate = DateTime.Now;
+                    offer.UpdatingDate = DateTime.Now;  
+                    offer.Idstatus = (int)OfferStatus.Active;
                     await _regContractRepo.UpdateUnits(result.Value.Idcontract, (int)result.Value.IdJobVacType);
                 }
-                
             }
             var entity = _mapper.Map(offer, existentOffer);
 
@@ -88,13 +84,12 @@ namespace Application.JobOffer.Commands
 
             var integration = _regJobVacRepo.GetAtsIntegrationInfoByJobId(existentOffer.IdjobVacancy).Result;
 
-            if (integration != null) {
-
+            if (integration != null)
+            {
                 updatedOffer.IntegrationData.ApplicationEmail = integration.AppEmail;
                 updatedOffer.IntegrationData.ApplicationReference = integration.ExternalId;
                 updatedOffer.IntegrationData.ApplicationUrl = integration.Redirection;
                 updatedOffer.IntegrationData.IDIntegration = integration.Idintegration;
-
             }
 
             if (ret < 0)
