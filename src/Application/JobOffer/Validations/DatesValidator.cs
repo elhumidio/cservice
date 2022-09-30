@@ -79,7 +79,7 @@ namespace Application.JobOffer.Validations
                 OfferId = obj.IdjobVacancy,
             }).Result;
 
-            if (obj.ChkFilled)
+            if (offer.ChkFilled)
             {
                 var finishDate = _mediator.Send(new CalculateFinishDateOffer.Query
                 {
