@@ -753,7 +753,7 @@ namespace Persistence
                 entity.Property(e => e.BaseName).HasMaxLength(50);
             });
 
-            OnModelCreatingPartial(modelBuilder);
+       //     OnModelCreatingPartial(modelBuilder);
             modelBuilder.Entity<Contract>(entity =>
             {
                 entity.HasKey(e => e.Idcontract);
@@ -1474,6 +1474,6 @@ namespace Persistence
             OnModelCreatingPartial(modelBuilder);
         }
 
-        private partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
+        partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
     }
 }
