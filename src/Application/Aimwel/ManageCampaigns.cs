@@ -10,7 +10,6 @@ using Grpc.Core;
 using Grpc.Net.Client;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 
 namespace Application.Aimwel
 {
@@ -41,7 +40,7 @@ namespace Application.Aimwel
             _logoRepo = logoRepo;
             _zipCodeRepo = zipCodeRepo;
             _countryIsoRepo = countryIsoRepo;
-            _jobOfferRepo = jobOfferRepo;   
+            _jobOfferRepo = jobOfferRepo;
         }
 
         /// <summary>
@@ -68,7 +67,7 @@ namespace Application.Aimwel
             using var channel = GrpcChannel.ForAddress(addressChannel, grpcOptions);
             var client = new CampaignManagement.CampaignManagementClient(channel);
             var ans = await client.GetCampaignAsync(request);
-            
+
             return ans;
         }
 
@@ -114,8 +113,8 @@ namespace Application.Aimwel
                     Address = new Address
                     {
                         CountryIso = Country.Nl,
-                        State = geolocation.postalCodes.FirstOrDefault().adminName2, 
-                        City = geolocation.postalCodes.FirstOrDefault().placeName, 
+                        State = geolocation.postalCodes.FirstOrDefault().adminName2,
+                        City = geolocation.postalCodes.FirstOrDefault().placeName,
                         Street = "",
                         Region = geolocation.postalCodes.FirstOrDefault().adminName1,
                         PostalCode = geolocation.postalCodes.FirstOrDefault().postalCode
@@ -141,15 +140,16 @@ namespace Application.Aimwel
                 }
             };
             var ans = await CreateCampaign(client, request, new Metadata());
-           if(!string.IsNullOrEmpty(ans.CampaignId)) {
-               var offer =  _jobOfferRepo.GetOfferById(job.IdjobVacancy);
-                if (offer != null) {
+            if (!string.IsNullOrEmpty(ans.CampaignId))
+            {
+                var offer = _jobOfferRepo.GetOfferById(job.IdjobVacancy);
+                if (offer != null)
+                {
                     offer.AimwelCampaignId = ans.CampaignId;
                     await _jobOfferRepo.UpdateOffer(offer);
                 }
-
             }
-                
+
             return ans;
         }
 

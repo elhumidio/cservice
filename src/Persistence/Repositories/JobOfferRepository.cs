@@ -1,11 +1,8 @@
-using API.DataContext;
 using Domain.Classes;
 using Domain.Entities;
 using Domain.Enums;
 using Domain.Repositories;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System.Diagnostics.Metrics;
 
 namespace Persistence.Repositories
 {
@@ -217,21 +214,21 @@ namespace Persistence.Repositories
                                 && !job.ChkFilled
                                 && job.PublicationDate.AddDays(14) >= DateTime.Now
                                 && job.Idstatus == (int)OfferStatus.Active
-                        select new JobData()
-                        {
-                            Title = job.Title,
-                            CompanyName = brand.Name,
-                            IDCountry = job.Idcountry,
-                            IDRegion = job.Idregion,
-                            IDArea = job.Idarea,
-                            IDJobVacancy = job.IdjobVacancy,
-                            IDBrand = job.Idbrand,
-                            IDEnterprise = job.Identerprise,
-                            ChkBlindVacancy = job.ChkBlindVac,
-                            PublicationDate = job.PublicationDate,
-                            City = job.City,
-                            IDCity = (job.Idcity.HasValue) ? job.Idcity.Value : 0
-                        });
+                         select new JobData()
+                         {
+                             Title = job.Title,
+                             CompanyName = brand.Name,
+                             IDCountry = job.Idcountry,
+                             IDRegion = job.Idregion,
+                             IDArea = job.Idarea,
+                             IDJobVacancy = job.IdjobVacancy,
+                             IDBrand = job.Idbrand,
+                             IDEnterprise = job.Identerprise,
+                             ChkBlindVacancy = job.ChkBlindVac,
+                             PublicationDate = job.PublicationDate,
+                             City = job.City,
+                             IDCity = (job.Idcity.HasValue) ? job.Idcity.Value : 0
+                         });
 
             //LOCATION = job.IDRegion == 61 ? country.BaseName : region.BaseName + ", " + country.BaseName,
             //CATEGORY = area.BaseName,

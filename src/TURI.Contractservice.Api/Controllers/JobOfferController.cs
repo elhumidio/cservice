@@ -255,6 +255,11 @@ namespace API.Controllers
             return HandleResult(result);
         }
 
+
+        /// <summary>
+        /// Test purposes...
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         public async Task<IActionResult> TestAimwelCampaign()
         {
@@ -276,7 +281,7 @@ namespace API.Controllers
         }
 
         /// <summary>
-        ///
+        ///Test purposes...
         /// </summary>
         /// <param name="client"></param>
         /// <param name="campaignId"></param>

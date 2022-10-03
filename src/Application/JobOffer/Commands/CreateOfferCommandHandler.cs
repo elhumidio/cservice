@@ -1,4 +1,3 @@
-using Application.Aimwel;
 using Application.Aimwel.Interfaces;
 using Application.JobOffer.DTO;
 using Application.JobOffer.Queries;
@@ -44,7 +43,7 @@ namespace Application.JobOffer.Commands
             _logger = logger;
             _mediatr = mediatr;
             _manageCampaign = manageCampaign;
-            _config = config;   
+            _config = config;
         }
 
         public async Task<OfferModificationResult> Handle(CreateOfferCommand offer, CancellationToken cancellationToken)
@@ -80,7 +79,6 @@ namespace Application.JobOffer.Commands
                 {
                     try
                     {
-             
                         await _regContractRepo.UpdateUnits(job.Idcontract, job.IdjobVacType);
 
                         if (!string.IsNullOrEmpty(offer.IntegrationData.ApplicationReference))
@@ -101,7 +99,8 @@ namespace Application.JobOffer.Commands
                                 _logger.LogInformation(info);
                                 await _regJobVacRepo.Add(obj);
                             }
-                            else {
+                            else
+                            {
                                 var info = $"IDJobVacancy: {job.IdjobVacancy} - IDEnterprise: {job.Identerprise} - IDContract: {job.Idcontract} - Offer Created";
                                 _logger.LogInformation(info);
                             }
@@ -113,7 +112,7 @@ namespace Application.JobOffer.Commands
                         });
                         _enterpriseRepository.UpdateATS(entity.Identerprise);
                         if (Convert.ToBoolean(_config["Aimwel:EnableAimwel"]))
-                           await _manageCampaign.CreateCampaing(offer);
+                            await _manageCampaign.CreateCampaing(offer);
                         return OfferModificationResult.Success(createdOffer.Result);
                     }
                     catch (Exception ex)

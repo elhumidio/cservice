@@ -6,8 +6,6 @@ namespace Persistence
 {
     public partial class DataContext : DbContext
     {
-
-
         public DataContext(DbContextOptions<DataContext> options)
             : base(options)
         {
@@ -84,7 +82,6 @@ namespace Persistence
                 entity.Property(e => e.Name).HasMaxLength(255);
             });
 
-
             modelBuilder.Entity<Logo>(entity =>
             {
                 entity.HasKey(e => e.Idlogo);
@@ -107,7 +104,6 @@ namespace Persistence
 
                 entity.Property(e => e.UrlImgSmall).HasMaxLength(100);
             });
-
 
             modelBuilder.Entity<EquestCountryState>(entity =>
             {
@@ -1478,6 +1474,6 @@ namespace Persistence
             OnModelCreatingPartial(modelBuilder);
         }
 
-        partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
+        private partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
     }
 }

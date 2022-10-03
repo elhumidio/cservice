@@ -21,17 +21,19 @@ namespace Application.Utils
             }
         }
 
-        public static string GetShortCountryBySite(Sites site) {
-
+        public static string GetShortCountryBySite(Sites site)
+        {
             string country = string.Empty;
-            switch (site) {
-
+            switch (site)
+            {
                 case Sites.SPAIN:
                     country = "sp";
                     break;
+
                 case Sites.PORTUGAL:
                     country = "pt";
                     break;
+
                 case Sites.ITALY:
                     country = "it";
                     break;
