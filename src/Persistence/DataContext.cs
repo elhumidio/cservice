@@ -47,6 +47,7 @@ namespace Persistence
         public virtual DbSet<Enterprise> Enterprises { get; set; } = null!;
         public virtual DbSet<Site> Sites { get; set; } = null!;
         public virtual DbSet<City> Cities { get; set; } = null!;
+        public virtual DbSet<Logo> Logos { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -83,6 +84,29 @@ namespace Persistence
                 entity.Property(e => e.Name).HasMaxLength(255);
             });
 
+
+            modelBuilder.Entity<Logo>(entity =>
+            {
+                entity.HasKey(e => e.Idlogo);
+
+                entity.ToTable("TLogo");
+
+                entity.Property(e => e.Idlogo).HasColumnName("IDLogo");
+
+                entity.Property(e => e.CreationDate)
+                    .HasColumnType("datetime")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.Idbrand).HasColumnName("IDBrand");
+
+                entity.Property(e => e.Identerprise).HasColumnName("IDEnterprise");
+
+                entity.Property(e => e.OldIdlogo).HasColumnName("OLD_IDLogo");
+
+                entity.Property(e => e.UrlImgBig).HasMaxLength(100);
+
+                entity.Property(e => e.UrlImgSmall).HasMaxLength(100);
+            });
 
 
             modelBuilder.Entity<EquestCountryState>(entity =>
