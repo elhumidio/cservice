@@ -1,9 +1,12 @@
+using Application.Aimwel;
+using Application.Aimwel.Interfaces;
 using Application.JobOffer.DTO;
 using Application.JobOffer.Queries;
 using AutoMapper;
 using Domain.Entities;
 using Domain.Repositories;
 using MediatR;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
 namespace Application.JobOffer.Commands
@@ -19,6 +22,8 @@ namespace Application.JobOffer.Commands
         private readonly IRegEnterpriseContractRepository _regContractRepo;
         private readonly IEnterpriseRepository _enterpriseRepository;
         private readonly IMediator _mediatr;
+        private readonly IAimwelCampaign _manageCampaign;
+        private readonly IConfiguration _config;
 
         #endregion PRIVATE PROPERTIES
 
@@ -28,7 +33,8 @@ namespace Application.JobOffer.Commands
             IJobOfferRepository offerRepo,
             IEnterpriseRepository enterpriseRepository,
             ILogger<CreateOfferCommandHandler> logger,
-            IMediator mediatr)
+            IMediator mediatr, IAimwelCampaign manageCampaign,
+            IConfiguration config)
         {
             _offerRepo = offerRepo;
             _mapper = mapper;
@@ -37,6 +43,8 @@ namespace Application.JobOffer.Commands
             _enterpriseRepository = enterpriseRepository;
             _logger = logger;
             _mediatr = mediatr;
+            _manageCampaign = manageCampaign;
+            _config = config;   
         }
 
         public async Task<OfferModificationResult> Handle(CreateOfferCommand offer, CancellationToken cancellationToken)
@@ -104,7 +112,8 @@ namespace Application.JobOffer.Commands
                             OfferId = jobVacancyId
                         });
                         _enterpriseRepository.UpdateATS(entity.Identerprise);
-                        
+                        if (Convert.ToBoolean(_config["Aimwel:EnableAimwel"]))
+                           await _manageCampaign.CreateCampaing(offer);
                         return OfferModificationResult.Success(createdOffer.Result);
                     }
                     catch (Exception ex)

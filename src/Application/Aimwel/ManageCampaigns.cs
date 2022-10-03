@@ -18,35 +18,38 @@ namespace Application.Aimwel
     {
         private readonly IConfiguration _config;
         private readonly IGeoNamesConector _geoNamesConector;
-        private readonly IEnterpriseRepository _enterpriseRepository;
+        private readonly IEnterpriseRepository _enterpriseRepo;
         private readonly ILogger _logger;
-        private readonly IlogoRepository _logoRepository;
-        private readonly IZipCodeRepository _zipCodeRepository;
+        private readonly IlogoRepository _logoRepo;
+        private readonly IZipCodeRepository _zipCodeRepo;
         private readonly ICountryIsoRepository _countryIsoRepo;
+        private readonly IJobOfferRepository _jobOfferRepo;
 
         public ManageCampaigns(IConfiguration config,
             IGeoNamesConector geoNamesConector,
-            IEnterpriseRepository enterpriseRepository,
+            IEnterpriseRepository enterpriseRepo,
             ILogger<ManageCampaigns> logger,
-            IlogoRepository logoRepository,
-            IZipCodeRepository zipCodeRepository,
-            ICountryIsoRepository countryIsoRepository)
+            IlogoRepository logoRepo,
+            IZipCodeRepository zipCodeRepo,
+            ICountryIsoRepository countryIsoRepo,
+            IJobOfferRepository jobOfferRepo)
         {
             _config = config;
             _geoNamesConector = geoNamesConector;
-            _enterpriseRepository = enterpriseRepository;
+            _enterpriseRepo = enterpriseRepo;
             _logger = logger;
-            _logoRepository = logoRepository;
-            _zipCodeRepository = zipCodeRepository;
-            _countryIsoRepo = countryIsoRepository;
+            _logoRepo = logoRepo;
+            _zipCodeRepo = zipCodeRepo;
+            _countryIsoRepo = countryIsoRepo;
+            _jobOfferRepo = jobOfferRepo;   
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <returns></returns>
-        public async Task<GetCampaignResponse> GetCampaign(GetCampaignRequest request) {
-
+        public async Task<GetCampaignResponse> GetCampaign(GetCampaignRequest request)
+        {
             var token = _config["Aimwel:token"].ToString();
             var addressChannel = _config["Aimwel:AddressChannel"];
             var credentials = CallCredentials.FromInterceptor((context, metadata) =>
@@ -63,15 +66,14 @@ namespace Application.Aimwel
                 Credentials = channelCredentials
             };
             using var channel = GrpcChannel.ForAddress(addressChannel, grpcOptions);
-            var client = new CampaignManagement.CampaignManagementClient(channel);            
+            var client = new CampaignManagement.CampaignManagementClient(channel);
             var ans = await client.GetCampaignAsync(request);
-
+            
             return ans;
         }
 
-
         /// <summary>
-        ///
+        /// Creates Aimwel campaign
         /// </summary>
         /// <param name="job"></param>
         /// <returns></returns>
@@ -80,9 +82,14 @@ namespace Application.Aimwel
             GrpcChannel channel;
             CampaignManagement.CampaignManagementClient client;
             GetClient(out channel, out client);
-            string code = _zipCodeRepository.GetZipById((int)job.IdzipCode).Zip;
-
+            string code = _zipCodeRepo.GetZipById((int)job.IdzipCode).Zip;
+            var urlLogo = $"{_config["Aimwel:Portal.urlRootStatics"]}" +
+                        $"{"/img/"}" +
+                        $"{ApiUtils.GetShortCountryBySite((Sites)job.Idsite)}" +
+                        $"{"/logos/"}" +
+                        $"{_logoRepo.GetLogoByBrand(job.Idbrand).UrlImgBig}";
             var geolocation = _geoNamesConector.GetPostalCodesCollection(code, _countryIsoRepo.GetIsobyCountryId(job.Idcountry));
+
             var request = new CreateCampaignRequest
             {
                 JobId = job.IdjobVacancy.ToString(),
@@ -95,25 +102,22 @@ namespace Application.Aimwel
                     PublicationTime = Timestamp.FromDateTime(DateTime.UtcNow),
                     HiringOrganization = new HiringOrganization
                     {
-                        Name = _enterpriseRepository.GetCompanyName(job.Identerprise),
-                        LogoUrl = $"{_config["Aimwel:Portal.urlRootStatics"]}" +
-                        $"{"/img/"}" +
-                        $"{ApiUtils.GetShortCountryBySite((Sites)job.Idsite)}" +
-                        $"{"/logos/"}" +
-                        $"{_logoRepository.GetLogoByBrand(job.Idbrand).UrlImgBig}",
+                        Name = _enterpriseRepo.GetCompanyName(job.Identerprise),
+                        LogoUrl = urlLogo,
                     },
                     Location = new Geolocation
                     {
-                        CountryIso = Country.Nl,
+                        CountryIso = Country.Gb,
                         Latitude = geolocation.postalCodes.FirstOrDefault().lat,
                         Longitude = geolocation.postalCodes.FirstOrDefault().lng,
                     },
                     Address = new Address
                     {
                         CountryIso = Country.Nl,
-                        State = geolocation.postalCodes.FirstOrDefault().adminName2, //TODO Get region name
-                        City = geolocation.postalCodes.FirstOrDefault().placeName, //TODO Get
+                        State = geolocation.postalCodes.FirstOrDefault().adminName2, 
+                        City = geolocation.postalCodes.FirstOrDefault().placeName, 
                         Street = "",
+                        Region = geolocation.postalCodes.FirstOrDefault().adminName1,
                         PostalCode = geolocation.postalCodes.FirstOrDefault().postalCode
                     },
                     JobClassification = {
@@ -136,10 +140,18 @@ namespace Application.Aimwel
                     }
                 }
             };
-            var serrequest = JsonConvert.SerializeObject(request);
-            return await CreateCampaign(client, request, new Metadata());
-        }
+            var ans = await CreateCampaign(client, request, new Metadata());
+           if(!string.IsNullOrEmpty(ans.CampaignId)) {
+               var offer =  _jobOfferRepo.GetOfferById(job.IdjobVacancy);
+                if (offer != null) {
+                    offer.AimwelCampaignId = ans.CampaignId;
+                    await _jobOfferRepo.UpdateOffer(offer);
+                }
 
+            }
+                
+            return ans;
+        }
 
         /// <summary>
         /// Gets client
@@ -176,13 +188,10 @@ namespace Application.Aimwel
         ///// <returns></returns>
         private async Task<CreateCampaignResponse> CreateCampaign(CampaignManagement.CampaignManagementClient client, CreateCampaignRequest request, Grpc.Core.Metadata metadata)
         {
-                // Note that there is also a client.CreateCampaignAsyn(request, metadata); available
-                var reply = await client.CreateCampaignAsync(request, metadata);
-                _logger.LogInformation("Successfully created campaign: " + reply);                
-                return reply;                        
+            // Note that there is also a client.CreateCampaignAsyn(request, metadata); available
+            var reply = await client.CreateCampaignAsync(request, metadata);
+            _logger.LogInformation("Successfully created campaign: " + reply);
+            return reply;
         }
-
-
-
     }
 }

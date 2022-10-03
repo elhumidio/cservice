@@ -27,17 +27,17 @@ namespace Application.Utils
             switch (site) {
 
                 case Sites.SPAIN:
-                    country = "SP";
+                    country = "sp";
                     break;
                 case Sites.PORTUGAL:
-                    country = "PT";
+                    country = "pt";
                     break;
                 case Sites.ITALY:
-                    country = "IT";
+                    country = "it";
                     break;
 
                 case Sites.MEXICO:
-                    country = "MX";
+                    country = "mx";
                     break;
             }
             return country;

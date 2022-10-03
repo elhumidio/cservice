@@ -260,14 +260,15 @@ namespace API.Controllers
         {
             var offer = new CreateOfferCommand
             {
-                IdzipCode = 6030,
+                IdzipCode = 7447,
                 Idcountry = 40,
-                Idregion = 43,
-                Title = "TEST OFFER",
-                Description = "DESCRIPTION",
-                IdjobVacancy = 999999,
-                Idbrand = 24041,
-                Identerprise = 10175
+                Idregion = 33,
+                Title = "TEST OFFER 3",
+                Description = "DESCRIPTION TEST 3",
+                IdjobVacancy = 223230,
+                Idbrand = 2221,
+                Identerprise = 2221,
+                Idsite = 6
             };
 
             var ret = await _aimwelCampaign.CreateCampaing(offer);
@@ -283,7 +284,7 @@ namespace API.Controllers
         [HttpGet]
         public async Task<GetCampaignResponse> GetCampaign()
         {
-            var request = new GetCampaignRequest { CampaignId = "659fed4a-74bc-46ef-a326-fc0c2f196854" };
+            var request = new GetCampaignRequest { CampaignId = "8a39991e-02e7-4036-941e-b9b9f3b3cb62" };
             var ans = await _aimwelCampaign.GetCampaign(request);
             return ans;
         }

@@ -1182,6 +1182,8 @@ namespace Persistence
                 entity.Property(e => e.Title).HasMaxLength(100);
 
                 entity.Property(e => e.UpdatingDate).HasColumnType("datetime");
+
+                entity.Property(e => e.AimwelCampaignId).HasColumnType("AimwelCampaignId");
             });
 
             modelBuilder.Entity<Product>(entity =>
