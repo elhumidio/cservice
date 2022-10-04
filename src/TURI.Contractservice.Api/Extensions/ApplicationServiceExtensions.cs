@@ -1,3 +1,5 @@
+using Application.Aimwel;
+using Application.Aimwel.Interfaces;
 using Application.Behaviors;
 using Application.Interfaces;
 using Application.JobOffer.Commands;
@@ -63,6 +65,8 @@ namespace API.Extensions
             services.AddScoped<IJobVacTypeRepository, JobVacTypeRepository>();
             services.AddScoped<ISiteRepository, SiteRepository>();
             services.AddScoped<ILanguageRepository, LanguageRepository>();
+            services.AddScoped<IAimwelCampaign, ManageCampaigns>();
+            services.AddScoped<IlogoRepository, LogoRepository>();
 
             #endregion MAPPING REPOSITORIES
 

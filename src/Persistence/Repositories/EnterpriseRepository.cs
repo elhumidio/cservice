@@ -40,5 +40,15 @@ namespace Persistence.Repositories
             }
             return site;
         }
+
+        public string GetCompanyName(int companyId)
+        {
+            string CorporateName = string.Empty;
+            var name = _dataContext.Enterprises.Where(c => c.Identerprise == companyId).FirstOrDefault().CorporateName;
+            if (!string.IsNullOrEmpty(name))
+                CorporateName = name;
+            return CorporateName;
+
+        }
     }
 }

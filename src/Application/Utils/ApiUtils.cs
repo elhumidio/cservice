@@ -1,3 +1,4 @@
+using Domain.Enums;
 using System.Text.RegularExpressions;
 
 namespace Application.Utils
@@ -18,6 +19,30 @@ namespace Application.Utils
             {
                 return false;
             }
+        }
+
+        public static string GetShortCountryBySite(Sites site)
+        {
+            string country = string.Empty;
+            switch (site)
+            {
+                case Sites.SPAIN:
+                    country = "sp";
+                    break;
+
+                case Sites.PORTUGAL:
+                    country = "pt";
+                    break;
+
+                case Sites.ITALY:
+                    country = "it";
+                    break;
+
+                case Sites.MEXICO:
+                    country = "mx";
+                    break;
+            }
+            return country;
         }
     }
 }
