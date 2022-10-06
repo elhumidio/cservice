@@ -47,7 +47,7 @@ namespace Application.JobOffer.Validations
             obj.FilledDate = null;
             obj.ModificationDate = DateTime.Now;
             obj.LastVisitorDate = DateTime.Now;
-            return obj.FinishDate > DateTime.Today ? true : false;
+            return obj.FinishDate >= DateTime.Today ? true : false;
         }
     }
 
