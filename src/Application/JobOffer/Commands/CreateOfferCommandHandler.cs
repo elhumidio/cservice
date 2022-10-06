@@ -69,7 +69,7 @@ namespace Application.JobOffer.Commands
                 entity.IntegrationId = offer.IntegrationData.IDIntegration;
                 jobVacancyId = _offerRepo.Add(entity);
 
-                if (jobVacancyId == 0)
+                if (jobVacancyId == -1)
                 {
                     error = "Failed to create offer";
                     _logger.LogError(error);
