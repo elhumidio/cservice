@@ -46,6 +46,7 @@ namespace Persistence
         public virtual DbSet<Site> Sites { get; set; } = null!;
         public virtual DbSet<City> Cities { get; set; } = null!;
         public virtual DbSet<Logo> Logos { get; set; } = null!;
+        public virtual DbSet<JobVacancyLanguage> JobVacancyLanguages { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -1435,6 +1436,24 @@ namespace Persistence
                 entity.Property(e => e.Source).HasMaxLength(100);
 
                 entity.Property(e => e.WordOfPass).HasMaxLength(160);
+            });
+
+            modelBuilder.Entity<JobVacancyLanguage>(entity =>
+            {
+                entity.HasKey(e => new { e.IdjobVacancy, e.Idlanguage })
+                    .HasName("PK__TJobVaca__31F90E4541FFF41D");
+
+                entity.ToTable("TJobVacancyLanguage");
+
+                entity.Property(e => e.IdjobVacancy).HasColumnName("IDJobVacancy");
+
+                entity.Property(e => e.Idlanguage)
+                    .HasColumnName("IDLanguage")
+                    .HasDefaultValueSql("((-1))");
+
+                entity.Property(e => e.IdlangLevel)
+                    .HasColumnName("IDLangLevel")
+                    .HasDefaultValueSql("((-1))");
             });
 
             modelBuilder.Entity<ZipCode>(entity =>

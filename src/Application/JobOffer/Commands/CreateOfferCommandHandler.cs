@@ -23,6 +23,7 @@ namespace Application.JobOffer.Commands
         private readonly IMediator _mediatr;
         private readonly IAimwelCampaign _manageCampaign;
         private readonly IConfiguration _config;
+        private readonly IJobVacancyLanguageRepository _jobVacancyLangRepo;
 
         #endregion PRIVATE PROPERTIES
 
@@ -33,7 +34,8 @@ namespace Application.JobOffer.Commands
             IEnterpriseRepository enterpriseRepository,
             ILogger<CreateOfferCommandHandler> logger,
             IMediator mediatr, IAimwelCampaign manageCampaign,
-            IConfiguration config)
+            IConfiguration config,
+            IJobVacancyLanguageRepository jobVacancyLangRepo)
         {
             _offerRepo = offerRepo;
             _mapper = mapper;
@@ -44,6 +46,7 @@ namespace Application.JobOffer.Commands
             _mediatr = mediatr;
             _manageCampaign = manageCampaign;
             _config = config;
+            _jobVacancyLangRepo = jobVacancyLangRepo;
         }
 
         public async Task<OfferModificationResult> Handle(CreateOfferCommand offer, CancellationToken cancellationToken)
@@ -68,8 +71,18 @@ namespace Application.JobOffer.Commands
                 var entity = _mapper.Map(offer, job);
                 entity.IntegrationId = offer.IntegrationData.IDIntegration;
                 jobVacancyId = _offerRepo.Add(entity);
-
-                if (jobVacancyId == 0)
+                if (jobVacancyId > 0 && offer.JobLanguages.Any())
+                    foreach (var lang in offer.JobLanguages)
+                    {
+                        JobVacancyLanguage language = new JobVacancyLanguage
+                        {
+                            IdjobVacancy = jobVacancyId,
+                            IdlangLevel = lang.IdLangLevel,
+                            Idlanguage = lang.IdLanguage
+                        };
+                        _jobVacancyLangRepo.Add(language);
+                    }
+                if (jobVacancyId == -1)
                 {
                     error = "Failed to create offer";
                     _logger.LogError(error);

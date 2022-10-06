@@ -201,10 +201,20 @@ namespace Application.JobOffer.Commands
         [DataMember]
         public IntegrationData IntegrationData { get; set; }
 
+        [DataMember]
+        public List<JobLanguages> JobLanguages { get; set; }
+
         public CreateOfferCommand()
         {
             IntegrationData = new IntegrationData();
+            JobLanguages = new List<JobLanguages>();
         }
+    }
+
+    public class JobLanguages {
+
+        public int IdLanguage { get; set; }
+        public int IdLangLevel { get; set; }
     }
 
     public class IntegrationData

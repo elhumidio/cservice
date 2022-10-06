@@ -197,10 +197,12 @@ namespace Application.JobOffer.Commands
         public string? ZipCode { get; set; }
 
         public IntegrationData IntegrationData { get; set; }
+        public List<JobLanguages> JobLanguages { get; set; }
 
         public UpdateOfferCommand()
         {
             IntegrationData = new IntegrationData();
+            JobLanguages = new List<JobLanguages>();    
         }
     }
 }

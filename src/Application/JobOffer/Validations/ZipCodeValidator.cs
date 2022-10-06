@@ -33,7 +33,7 @@ namespace Application.JobOffer.Validations
                 var ans = _geoNames.GetPostalCodesCollection(obj.ZipCode, GetCountryIsoByIdCountry(obj.Idcountry));
                 if (ans != null && ans.postalCodes.Any())
                 {
-                    var IdzipCode = _zipCodeRepo.GetZipCodeIdByCodeAndCountry(obj.ZipCode, obj.Idcountry);
+                    var IdzipCode = obj.ZipCode!= null  ? _zipCodeRepo.GetZipCodeIdByCodeAndCountry(obj.ZipCode, obj.Idcountry) : 0;
                     if (IdzipCode != 0)
                         obj.IdzipCode = IdzipCode;
                     else if (IdzipCode == 0)
