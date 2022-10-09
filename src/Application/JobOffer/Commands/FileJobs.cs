@@ -1,6 +1,8 @@
+using Application.Aimwel.Interfaces;
 using Application.Core;
 using Domain.Repositories;
 using MediatR;
+using Microsoft.Extensions.Configuration;
 
 namespace Application.JobOffer.Commands
 {
@@ -15,11 +17,21 @@ namespace Application.JobOffer.Commands
         {
             private readonly IJobOfferRepository _offerRepo;
             private readonly IRegEnterpriseContractRepository _regEnterpriseContractRepository;
+            private readonly IAimwelCampaign _manageCampaign;
+            private readonly IConfiguration _config;
+            private readonly IContractProductRepository _contractProductRepo;
 
-            public Handler(IJobOfferRepository offerRepo, IRegEnterpriseContractRepository regEnterpriseContractRepository)
+            public Handler(IJobOfferRepository offerRepo,
+                IRegEnterpriseContractRepository regEnterpriseContractRepository,
+                IAimwelCampaign aimwelCampaign,
+                IConfiguration config,
+                IContractProductRepository contractProductRepo)
             {
                 _offerRepo = offerRepo;
                 _regEnterpriseContractRepository = regEnterpriseContractRepository;
+                _manageCampaign = aimwelCampaign;
+                _config = config;
+                _contractProductRepo = contractProductRepo;
             }
 
             public async Task<Result<string>> Handle(Command request, CancellationToken cancellationToken)
@@ -31,9 +43,12 @@ namespace Application.JobOffer.Commands
                     var job = _offerRepo.GetOfferById(id);
                     if (job != null)
                     {
+                        if (Convert.ToBoolean(_config["Aimwel:EnableAimwel"]))
+                            await _manageCampaign.StopAimwelCampaign(job.IdjobVacancy);
                         var ret = _offerRepo.FileOffer(job);
                         if (ret == 0)
                         {
+                            var isPack = _contractProductRepo.IsPack(job.Idcontract);
                             await _regEnterpriseContractRepository.IncrementAvailableUnits(job.Idcontract, job.IdjobVacType);
                             msgRight += $"Failed to file offer {id}\n\r";
                         }

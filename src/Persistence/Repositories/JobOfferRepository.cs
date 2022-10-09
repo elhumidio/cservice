@@ -87,6 +87,20 @@ namespace Persistence.Repositories
             return offer;
         }
 
+
+        /// <summary>
+        /// It Returns aimwel id by idjobvacancy
+        /// </summary>
+        /// <param name="jobId"></param>
+        /// <returns></returns>
+        public string AimwelIdByJobId(int jobId) {
+            string aimwelId = string.Empty;
+            var offer = _dataContext.JobVacancies.Where(v => v.IdjobVacancy == jobId).FirstOrDefault();
+            if (offer != null)
+                aimwelId = offer.AimwelCampaignId;
+            return aimwelId;
+        }
+
         public int Add(JobVacancy job)
         {
             try

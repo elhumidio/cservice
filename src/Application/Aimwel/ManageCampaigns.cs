@@ -71,6 +71,21 @@ namespace Application.Aimwel
             return ans;
         }
 
+        public async Task<bool> StopAimwelCampaign(int jobId) {
+            
+            GrpcChannel channel;
+            var campaignId = _jobOfferRepo.AimwelIdByJobId(jobId);
+            var client = GetClient(out channel);
+            var request = new EndCampaignRequest
+            {
+                CampaignId = campaignId                 
+            };
+            var ret = await client.EndCampaignAsync(request);   
+
+
+            return true;
+        }
+
         /// <summary>
         /// Creates Aimwel campaign
         /// </summary>
@@ -78,9 +93,9 @@ namespace Application.Aimwel
         /// <returns></returns>
         public async Task<CreateCampaignResponse> CreateCampaing(CreateOfferCommand job)
         {
-            GrpcChannel channel;
-            CampaignManagement.CampaignManagementClient client;
-            GetClient(out channel, out client);
+            GrpcChannel channel;        
+            var client= GetClient(out channel);
+            
             string code = _zipCodeRepo.GetZipById((int)job.IdzipCode).Zip;
             var urlLogo = $"{_config["Aimwel:Portal.urlRootStatics"]}" +
                         $"{"/img/"}" +
@@ -158,8 +173,9 @@ namespace Application.Aimwel
         /// </summary>
         /// <param name="channel"></param>
         /// <param name="client"></param>
-        private void GetClient(out GrpcChannel channel, out CampaignManagement.CampaignManagementClient client)
+        private CampaignManagement.CampaignManagementClient GetClient(out GrpcChannel channel)
         {
+            CampaignManagement.CampaignManagementClient client;
             var token = _config["Aimwel:token"].ToString();
             var addressChannel = _config["Aimwel:AddressChannel"];
             var credentials = CallCredentials.FromInterceptor((context, metadata) =>
@@ -177,6 +193,7 @@ namespace Application.Aimwel
             };
             channel = GrpcChannel.ForAddress(addressChannel, grpcOptions);
             client = new CampaignManagement.CampaignManagementClient(channel);
+            return client;
         }
 
         ///// <summary>
