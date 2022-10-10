@@ -2,6 +2,7 @@ using Application.Aimwel.Interfaces;
 using Application.Interfaces;
 using Application.JobOffer.Commands;
 using Application.Utils;
+using Domain.Entities;
 using Domain.Enums;
 using Domain.Repositories;
 using DPGRecruitmentCampaignClient;
@@ -71,7 +72,7 @@ namespace Application.Aimwel
             return ans;
         }
 
-        public async Task<bool> StopAimwelCampaign(int jobId) {
+        public async Task<bool> StopCampaign(int jobId) {
             
             GrpcChannel channel;
             var campaignId = _jobOfferRepo.AimwelIdByJobId(jobId);
@@ -91,7 +92,7 @@ namespace Application.Aimwel
         /// </summary>
         /// <param name="job"></param>
         /// <returns></returns>
-        public async Task<CreateCampaignResponse> CreateCampaing(CreateOfferCommand job)
+        public async Task<CreateCampaignResponse> CreateCampaing(JobVacancy job)
         {
             GrpcChannel channel;        
             var client= GetClient(out channel);

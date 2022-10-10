@@ -125,7 +125,7 @@ namespace Application.JobOffer.Commands
                         });
                         _enterpriseRepository.UpdateATS(entity.Identerprise);
                         if (Convert.ToBoolean(_config["Aimwel:EnableAimwel"]))
-                            await _manageCampaign.CreateCampaing(offer);
+                            await _manageCampaign.CreateCampaing(entity);
                         return OfferModificationResult.Success(createdOffer.Result);
                     }
                     catch (Exception ex)

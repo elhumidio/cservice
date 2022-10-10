@@ -3,6 +3,7 @@ using Application.JobOffer.Commands;
 using Application.JobOffer.DTO;
 using Application.JobOffer.Queries;
 using Application.Utils.Queries.Equest;
+using Domain.Entities;
 using DPGRecruitmentCampaignClient;
 using Microsoft.AspNetCore.Mvc;
 
@@ -263,7 +264,7 @@ namespace API.Controllers
         [HttpGet]
         public async Task<IActionResult> TestAimwelCampaign()
         {
-            var offer = new CreateOfferCommand
+            var offer = new JobVacancy
             {
                 IdzipCode = 7447,
                 Idcountry = 40,

@@ -44,7 +44,7 @@ namespace Application.JobOffer.Commands
                     if (job != null)
                     {
                         if (Convert.ToBoolean(_config["Aimwel:EnableAimwel"]))
-                            await _manageCampaign.StopAimwelCampaign(job.IdjobVacancy);
+                            await _manageCampaign.StopCampaign(job.IdjobVacancy);
                         var ret = _offerRepo.FileOffer(job);
                         if (ret == 0)
                         {
