@@ -11,6 +11,7 @@ using Grpc.Core;
 using Grpc.Net.Client;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Country = DPGRecruitmentCampaignClient.Country;
 
 namespace Application.Aimwel
 {
@@ -45,7 +46,7 @@ namespace Application.Aimwel
         }
 
         /// <summary>
-        ///
+        /// It retrieves campaign
         /// </summary>
         /// <returns></returns>
         public async Task<GetCampaignResponse> GetCampaign(GetCampaignRequest request)
