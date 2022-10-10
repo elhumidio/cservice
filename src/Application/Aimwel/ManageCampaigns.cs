@@ -73,19 +73,28 @@ namespace Application.Aimwel
             return ans;
         }
 
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="jobId"></param>
+        /// <returns></returns>
         public async Task<bool> StopCampaign(int jobId) {
             
             GrpcChannel channel;
             var campaignId = _jobOfferRepo.AimwelIdByJobId(jobId);
-            var client = GetClient(out channel);
-            var request = new EndCampaignRequest
-            {
-                CampaignId = campaignId                 
-            };
-            var ret = await client.EndCampaignAsync(request);   
-
-
-            return true;
+            if (string.IsNullOrEmpty(campaignId)) {
+                return false;
+            }
+            else {
+                var client = GetClient(out channel);
+                var request = new EndCampaignRequest
+                {
+                    CampaignId = campaignId
+                };
+                var ret = await client.EndCampaignAsync(request);
+                return true;
+            }
         }
 
         /// <summary>

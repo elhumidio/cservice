@@ -298,11 +298,11 @@ namespace API.Controllers
 
 
         /// <summary>
-        /// 
+        /// It Creates an Aimwel campaign
         /// </summary>
         /// <param name="jobId"></param>
         /// <returns></returns>
-        [HttpPost]
+        [HttpGet("{jobId}")]
         public async Task<CreateCampaignResponse> CreateCampaign(int jobId) {
 
             var response = await Mediator.Send(new Create.Command {
@@ -312,17 +312,20 @@ namespace API.Controllers
 
         }
 
-
+            
         /// <summary>
-        /// 
+        /// It Cancel an Aimway campaign
         /// </summary>
         /// <param name="jobId"></param>
         /// <returns></returns>
-        [HttpPost]
-        public async Task<bool> CancelCampaign(int jobId) {
-
+        [HttpGet("{jobId}")]
+        public async Task<IActionResult> CancelCampaign(int jobId) {
+            try {
+            }
+            catch (Exception ex) {
+                }
             var response = await Mediator.Send(new Cancel.Command {  offerId = jobId});
-            return response.Value;
+            return Ok();
         }
     }
 }
