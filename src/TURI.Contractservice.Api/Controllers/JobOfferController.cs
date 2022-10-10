@@ -1,3 +1,4 @@
+using Application.Aimwel.Commands;
 using Application.Aimwel.Interfaces;
 using Application.JobOffer.Commands;
 using Application.JobOffer.DTO;
@@ -293,6 +294,35 @@ namespace API.Controllers
             var request = new GetCampaignRequest { CampaignId = "8a39991e-02e7-4036-941e-b9b9f3b3cb62" };
             var ans = await _aimwelCampaign.GetCampaign(request);
             return ans;
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="jobId"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public async Task<CreateCampaignResponse> CreateCampaign(int jobId) {
+
+            var response = await Mediator.Send(new Create.Command {
+                 offerId = jobId
+            });
+            return response.Value;
+
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="jobId"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public async Task<bool> CancelCampaign(int jobId) {
+
+            var response = await Mediator.Send(new Cancel.Command {  offerId = jobId});
+            return response.Value;
         }
     }
 }
