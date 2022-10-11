@@ -30,10 +30,12 @@ namespace Application.JobOffer.Validations
             var countryCode = GetCountryIsoByIdCountry(obj.Idcountry);
             if (!string.IsNullOrEmpty(countryCode))
             {
+                
                 var ans = _geoNames.GetPostalCodesCollection(obj.ZipCode, GetCountryIsoByIdCountry(obj.Idcountry));
                 if (ans != null && ans.postalCodes.Any())
                 {
-                    var IdzipCode = obj.ZipCode!= null  ? _zipCodeRepo.GetZipCodeIdByCodeAndCountry(obj.ZipCode, obj.Idcountry) : 0;
+                    var IdzipCode = obj.ZipCode != null ? _zipCodeRepo.GetZipCodeIdByCodeAndCountry(obj.ZipCode, obj.Idcountry) : 0;
+
                     if (IdzipCode != 0)
                         obj.IdzipCode = IdzipCode;
                     else if (IdzipCode == 0)

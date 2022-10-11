@@ -67,7 +67,7 @@ namespace Application.JobOffer.Commands
                     offer.ChkUpdateDate = existentOffer.ChkUpdateDate;
                     offer.ChkFilled = false;
                     offer.ChkDeleted = false;
-                    offer.IdjobVacType = existentOffer.IdjobVacType;
+                    offer.IdjobVacType = (int)result.Value.IdJobVacType;
                     offer.PublicationDate = DateTime.Now;
                     offer.UpdatingDate = DateTime.Now;  
                     offer.Idstatus = (int)OfferStatus.Active;

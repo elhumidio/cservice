@@ -51,7 +51,7 @@ namespace Application.EnterpriseContract.Queries
                     {
                         contractsRegionAllowed.Add(contract);
                     }
-                    else failures.Add("Not allowed region.\n\r");
+                    else failures.Add("Region not allowed, contact to Customer Service.\n\r");
                 }
 
                 if (contractsRegionAllowed.Any())
