@@ -39,7 +39,7 @@ namespace Application.Contracts.Queries
                 foreach (var units in unitsAssigned)
                 {
                     var unitsConsumed = isPack ? _jobOfferRepo.GetActiveOffersByContractOwnerType(request.ContractId, units.IdenterpriseUser, units.IdjobVacType).Count()
-                         : _jobOfferRepo.GetActiveOffersByContractOwnerTypeNoPack(request.ContractId, units.IdenterpriseUser, units.IdjobVacType).Count();
+                         : _jobOfferRepo.GetActiveOffersByContractAndTypeNoPack(request.ContractId, units.IdjobVacType).Count();
                     dto = new AvailableUnitsDto
                     {
                         ContractId = request.ContractId,
