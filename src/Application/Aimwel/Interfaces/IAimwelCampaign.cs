@@ -10,5 +10,8 @@ namespace Application.Aimwel.Interfaces
 
         public Task<GetCampaignResponse> GetCampaign(GetCampaignRequest request);
         public Task<bool> StopCampaign(int jobId);
+        public  Task<bool> PauseCampaign(int jobId);
+        public Task<bool> ResumeCampaign(int jobId);        
+        public Task<GetCampaignResponse> GetCampaignState(int jobId);
     }
 }

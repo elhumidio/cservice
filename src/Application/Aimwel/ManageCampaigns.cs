@@ -75,7 +75,7 @@ namespace Application.Aimwel
 
 
         /// <summary>
-        /// 
+        /// It ends a campaign
         /// </summary>
         /// <param name="jobId"></param>
         /// <returns></returns>
@@ -92,10 +92,94 @@ namespace Application.Aimwel
                 {
                     CampaignId = campaignId
                 };
+                
                 var ret = await client.EndCampaignAsync(request);
                 return true;
             }
         }
+
+        /// <summary>
+        /// It pause a campaign
+        /// </summary>
+        /// <param name="jobId"></param>
+        /// <returns></returns>
+        public async Task<bool> PauseCampaign(int jobId)
+        {
+
+            GrpcChannel channel;
+            var campaignId = _jobOfferRepo.AimwelIdByJobId(jobId);
+            if (string.IsNullOrEmpty(campaignId))
+            {
+                return false;
+            }
+            else
+            {
+                var client = GetClient(out channel);
+                var request = new PauseCampaignRequest
+                {
+                    CampaignId = campaignId
+                };
+
+                var ret = await client.PauseCampaignAsync(request);
+                return true;
+            }
+        }
+
+        /// <summary>
+        /// It resume a campaign
+        /// </summary>
+        /// <param name="jobId"></param>
+        /// <returns></returns>
+        public async Task<bool> ResumeCampaign(int jobId)
+        {
+
+            GrpcChannel channel;
+            var campaignId = _jobOfferRepo.AimwelIdByJobId(jobId);
+            if (string.IsNullOrEmpty(campaignId))
+            {
+                return false;
+            }
+            else
+            {
+                var client = GetClient(out channel);
+                var request = new ResumeCampaignRequest
+                {
+                    CampaignId = campaignId                       
+                };
+
+                var ret = await client.ResumeCampaignAsync(request);
+                return true;
+            }
+        }
+
+
+        /// <summary>
+        /// It Gets Campaign state
+        /// </summary>
+        /// <param name="jobId"></param>
+        /// <returns></returns>
+        public async Task<GetCampaignResponse> GetCampaignState(int jobId)
+        {
+
+            GrpcChannel channel;
+            var campaignId = _jobOfferRepo.AimwelIdByJobId(jobId);
+            if (string.IsNullOrEmpty(campaignId))
+            {
+                return new GetCampaignResponse() { Status= CampaignStatus.Ended };
+            }
+            else
+            {
+                var client = GetClient(out channel);
+                var request = new GetCampaignRequest
+                {
+                       CampaignId= campaignId
+                };
+
+                var ret = await client.GetCampaignAsync(request);
+                return ret;
+            }
+        }
+
 
         /// <summary>
         /// Creates Aimwel campaign

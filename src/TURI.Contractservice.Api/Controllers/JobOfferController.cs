@@ -289,9 +289,13 @@ namespace API.Controllers
         /// <param name="campaignId"></param>
         /// <returns></returns>
         [HttpGet]
-        public async Task<GetCampaignResponse> GetCampaign()
+        public async Task<GetCampaignResponse> GetCampaign(int jobId)
         {
-            var request = new GetCampaignRequest { CampaignId = "8a39991e-02e7-4036-941e-b9b9f3b3cb62" };
+            var offer = Mediator.Send(new Application.JobOffer.Queries.Get.Query
+            {
+                OfferId = jobId
+            });
+            var request = new GetCampaignRequest { offer.Result. };
             var ans = await _aimwelCampaign.GetCampaign(request);
             return ans;
         }
@@ -303,12 +307,20 @@ namespace API.Controllers
         /// <param name="jobId"></param>
         /// <returns></returns>
         [HttpGet("{jobId}")]
-        public async Task<CreateCampaignResponse> CreateCampaign(int jobId) {
+        public async Task<IActionResult> CreateCampaign(int jobId) {
+            try
+            {
+                var response = await Mediator.Send(new Create.Command
+                {
+                    offerId = jobId
+                });
 
-            var response = await Mediator.Send(new Create.Command {
-                 offerId = jobId
-            });
-            return response.Value;
+                return Ok(response);
+            }
+            catch (Exception ex) {
+
+                return Ok(ex.Message);  
+            }
 
         }
 
@@ -321,11 +333,53 @@ namespace API.Controllers
         [HttpGet("{jobId}")]
         public async Task<IActionResult> CancelCampaign(int jobId) {
             try {
+                var response = await Mediator.Send(new Cancel.Command { offerId = jobId });
+                return Ok(response);
             }
             catch (Exception ex) {
+                return Ok(ex.Message);  
                 }
-            var response = await Mediator.Send(new Cancel.Command {  offerId = jobId});
-            return Ok();
+    
+        }
+
+
+        /// <summary>
+        /// It Pauses an Aimway campaign
+        /// </summary>
+        /// <param name="jobId"></param>
+        /// <returns></returns>
+        [HttpGet("{jobId}")]
+        public async Task<IActionResult> PauseCampaign(int jobId)
+        {
+            try
+            {
+                var response = await Mediator.Send(new Pause.Command { offerId = jobId });
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return Ok(ex.Message);
+            }
+        }
+
+
+        /// <summary>
+        /// It resumes an Aimway campaign
+        /// </summary>
+        /// <param name="jobId"></param>
+        /// <returns></returns>
+        [HttpGet("{jobId}")]
+        public async Task<IActionResult> ResumeCampaign(int jobId)
+        {
+            try
+            {
+                var response = await Mediator.Send(new Resume.Command { offerId = jobId });
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return Ok(ex.Message);
+            }
         }
     }
 }
