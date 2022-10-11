@@ -49,7 +49,7 @@ namespace API.Controllers
         }
 
         /// <summary>
-        /// File Ats Offer
+        /// File Offers (from Web)
         /// </summary>
         /// <param name="offer"></param>
         /// <returns></returns>
