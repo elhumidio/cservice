@@ -11,7 +11,7 @@ namespace Application.JobOffer.Commands
     {
         public class Command : IRequest<OfferModificationResult>
         {
-            public List<int> offers { get; set; }
+            public int id { get; set; }
         }
 
         public class Handler : IRequestHandler<Command, OfferModificationResult>
@@ -38,24 +38,23 @@ namespace Application.JobOffer.Commands
             public async Task<OfferModificationResult> Handle(Command request, CancellationToken cancellationToken)
             {
                 string msg = string.Empty;
-                foreach (var id in request.offers)
-                {
-                    var job = _offerRepo.GetOfferById(id);
+                
+                    var job = _offerRepo.GetOfferById(request.id);
                     if (job != null)
                     {
                         //if (Convert.ToBoolean(_config["Aimwel:EnableAimwel"]))
-                         //   await _manageCampaign.StopCampaign(job.IdjobVacancy);
+                        await _manageCampaign.PauseCampaign(job.IdjobVacancy);
                         var ret = _offerRepo.FileOffer(job);
-                        if (ret == 0)
+                        if (ret > 0)
                         {
                             var isPack = _contractProductRepo.IsPack(job.Idcontract);
                             await _regEnterpriseContractRepository.IncrementAvailableUnits(job.Idcontract, job.IdjobVacType);
-                            msg += $"Failed to file offer {id}\n\r";
+                            msg += $"Failed to file offer {request.id}\n\r";
                         }
-                        else msg += $"Offer {id} - Filed Successfully ";
+                        else msg += $"Offer {request.id} - Filed Successfully ";
                     }
-                }
-                return OfferModificationResult.Success(new List<string> {msg});
+                
+                return OfferModificationResult.Success(new List<string> { msg });
             }
         }
     }

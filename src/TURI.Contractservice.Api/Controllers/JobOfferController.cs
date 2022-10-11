@@ -54,12 +54,30 @@ namespace API.Controllers
         /// <param name="offer"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<IActionResult> FileOffers(List<int> _offers)
+        public async Task<IActionResult> FileOffers(List<int> _ids)
         {
             var result = await Mediator.Send(new FileJobs.Command
             {
-                offers = _offers
+                id = _ids.First()
             });
+
+            var ret = HandleResult(result);
+            return ret;
+        }
+
+
+        /// <summary>
+        /// File Offers (from Web)
+        /// </summary>
+        /// <param name="offer"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public async Task<IActionResult> CloseOffers(JobClosingReasonDto _closingOffer)
+        {
+            var result = await Mediator.Send(new CloseJobs.Command
+            {
+                  dto = _closingOffer
+            }); ;
 
             var ret = HandleResult(result);
             return ret;
