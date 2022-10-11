@@ -291,11 +291,11 @@ namespace API.Controllers
         [HttpGet]
         public async Task<GetCampaignResponse> GetCampaign(int jobId)
         {
-            var offer = Mediator.Send(new Application.JobOffer.Queries.Get.Query
+            var offer = Mediator.Send(new Get.Query
             {
                 OfferId = jobId
             });
-            var request = new GetCampaignRequest { offer.Result. };
+            var request = new GetCampaignRequest {  CampaignId = offer.Result.AimwelCampaignId };
             var ans = await _aimwelCampaign.GetCampaign(request);
             return ans;
         }
