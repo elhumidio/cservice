@@ -1,5 +1,6 @@
 using Application.Aimwel.Commands;
 using Application.Aimwel.Interfaces;
+using Application.Aimwel.Queries;
 using Application.JobOffer.Commands;
 using Application.JobOffer.DTO;
 using Application.JobOffer.Queries;
@@ -257,7 +258,6 @@ namespace API.Controllers
             return HandleResult(result);
         }
 
-
         /// <summary>
         /// Test purposes...
         /// </summary>
@@ -295,11 +295,10 @@ namespace API.Controllers
             {
                 OfferId = jobId
             });
-            var request = new GetCampaignRequest {  CampaignId = offer.Result.AimwelCampaignId };
+            var request = new GetCampaignRequest { CampaignId = offer.Result.AimwelCampaignId };
             var ans = await _aimwelCampaign.GetCampaign(request);
             return ans;
         }
-
 
         /// <summary>
         /// It Creates an Aimwel campaign
@@ -307,7 +306,8 @@ namespace API.Controllers
         /// <param name="jobId"></param>
         /// <returns></returns>
         [HttpGet("{jobId}")]
-        public async Task<IActionResult> CreateCampaign(int jobId) {
+        public async Task<IActionResult> CreateCampaign(int jobId)
+        {
             try
             {
                 var response = await Mediator.Send(new Create.Command
@@ -317,31 +317,30 @@ namespace API.Controllers
 
                 return Ok(response);
             }
-            catch (Exception ex) {
-
-                return Ok(ex.Message);  
+            catch (Exception ex)
+            {
+                return Ok(ex.Message);
             }
-
         }
 
-            
         /// <summary>
         /// It Cancel an Aimway campaign
         /// </summary>
         /// <param name="jobId"></param>
         /// <returns></returns>
         [HttpGet("{jobId}")]
-        public async Task<IActionResult> CancelCampaign(int jobId) {
-            try {
+        public async Task<IActionResult> CancelCampaign(int jobId)
+        {
+            try
+            {
                 var response = await Mediator.Send(new Cancel.Command { offerId = jobId });
                 return Ok(response);
             }
-            catch (Exception ex) {
-                return Ok(ex.Message);  
-                }
-    
+            catch (Exception ex)
+            {
+                return Ok(ex.Message);
+            }
         }
-
 
         /// <summary>
         /// It Pauses an Aimway campaign
@@ -362,7 +361,6 @@ namespace API.Controllers
             }
         }
 
-
         /// <summary>
         /// It resumes an Aimway campaign
         /// </summary>
@@ -374,6 +372,28 @@ namespace API.Controllers
             try
             {
                 var response = await Mediator.Send(new Resume.Command { offerId = jobId });
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return Ok(ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// It gets Aimway campaign status
+        /// </summary>
+        /// <param name="jobId"></param>
+        /// <returns></returns>
+        [HttpGet("{jobId}")]
+        public async Task<IActionResult> GetCampaignStatus(int jobId)
+        {
+            try
+            {
+                var response = await Mediator.Send(new GetStatus.Query
+                {
+                    OfferId = jobId
+                });
                 return Ok(response);
             }
             catch (Exception ex)
