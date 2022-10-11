@@ -324,7 +324,7 @@ namespace API.Controllers
         }
 
         /// <summary>
-        /// It Cancel an Aimway campaign
+        /// It Cancel an Aimwel campaign
         /// </summary>
         /// <param name="jobId"></param>
         /// <returns></returns>
@@ -343,7 +343,7 @@ namespace API.Controllers
         }
 
         /// <summary>
-        /// It Pauses an Aimway campaign
+        /// It Pauses an Aimwel campaign
         /// </summary>
         /// <param name="jobId"></param>
         /// <returns></returns>
@@ -362,7 +362,7 @@ namespace API.Controllers
         }
 
         /// <summary>
-        /// It resumes an Aimway campaign
+        /// It resumes an Aimwel campaign
         /// </summary>
         /// <param name="jobId"></param>
         /// <returns></returns>
@@ -381,7 +381,7 @@ namespace API.Controllers
         }
 
         /// <summary>
-        /// It gets Aimway campaign status
+        /// It gets Aimwel campaign status
         /// </summary>
         /// <param name="jobId"></param>
         /// <returns></returns>
