@@ -5,6 +5,7 @@ using Application.JobOffer.Commands;
 using Application.JobOffer.DTO;
 using Application.JobOffer.Queries;
 using Application.Utils.Queries.Equest;
+using Domain.DTO;
 using Domain.Entities;
 using DPGRecruitmentCampaignClient;
 using Microsoft.AspNetCore.Mvc;
@@ -71,12 +72,12 @@ namespace API.Controllers
         /// <param name="offer"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<IActionResult> Activate(int jobId, int ownerId)
+        public async Task<IActionResult> Activate(ActivateJobRequest request)
         {
             var result = await Mediator.Send(new Activate.Command
             {
-                id = jobId,
-                OwnerId = ownerId
+                id = request.JobId,
+                OwnerId = request.OwnerId
             });
 
             var ret = HandleResult(result);

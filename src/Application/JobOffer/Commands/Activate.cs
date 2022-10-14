@@ -46,7 +46,7 @@ namespace Application.JobOffer.Commands
             {
                 string msg = string.Empty;
                 bool aimwelEnabled = Convert.ToBoolean(_config["Aimwel:EnableAimwel"]);
-
+                bool offerUpdated = false;
                 var job = _offerRepo.GetOfferById(request.id);
 
                 if (job == null)
@@ -56,12 +56,16 @@ namespace Application.JobOffer.Commands
 
                 var units = _mediatr.Send(new GetAvailableUnitsByOwner.Query
                 {
-                    ContractId = request.id,
+                    ContractId = job.Idcontract,
                     OwnerId = request.OwnerId
                 }).Result.Value;
                 bool hasUnits = units != null && units.Where(u => u.type == (VacancyType)job.IdjobVacType).FirstOrDefault().Units > 0;
 
-                if (hasUnits)
+                if (!hasUnits)
+                {
+                    msg += "not_enough_units";
+                }
+                else
                 {
                     job.FilledDate = null;
                     job.ChkFilled = false;
@@ -73,37 +77,37 @@ namespace Application.JobOffer.Commands
                     if (isPack)
                         await _regEnterpriseContractRepository.UpdateUnits(job.Idcontract, job.IdjobVacType);
                     msg += $"Activated offer {request.id}";
-                }
-                else {
-                    msg += $"Couldn't activate offer {request.id}, manager has not enough available units";
+                    offerUpdated = true;
                 }
 
-                if (aimwelEnabled)
-                    if (await _manageCampaign.ResumeCampaign(job.IdjobVacancy))
+                if (!aimwelEnabled)
+                {
+                    return OfferModificationResult.Success(new List<string> { msg });
+                }
+
+                if (offerUpdated) {
+                    var campaign = await _mediatr.Send(new GetStatus.Query
                     {
-                        var campaign = await _mediatr.Send(new GetStatus.Query
+                        OfferId = request.id
+                    });
+
+                    if (campaign != null && campaign.Status == CampaignStatus.Paused)
+                    {
+                        var ans = _mediatr.Send(new Resume.Command
                         {
-                            OfferId = request.id
+                            offerId = request.id
                         });
-
-                        if (campaign != null && campaign.Status == CampaignStatus.Paused)
-                        {
-                            var ans = _mediatr.Send(new Resume.Command
-                            {
-                                offerId = request.id
-                            });
-                            msg += $"Campaign: {campaign.CampaignId} /  id: {request.id} - resumed ";
-                        }
-                        else if (campaign != null && campaign.Status == CampaignStatus.Ended)
-                        {
-                            var ans = _mediatr.Send(new Create.Command
-                            {
-                                offerId = request.id
-                            });
-                            msg += $"Campaign: {ans.Result.Value.CampaignId} /  id: {request.id} - created ";
-                        }
+                        msg += $"Campaign: {campaign.CampaignId} /  id: {request.id} - resumed ";
                     }
-
+                    else if (campaign != null && campaign.Status == CampaignStatus.Ended)
+                    {
+                        var ans = _mediatr.Send(new Create.Command
+                        {
+                            offerId = request.id
+                        });
+                        msg += $"Campaign: {ans.Result.Value.CampaignId} /  id: {request.id} - created ";
+                    }
+                }
                 return OfferModificationResult.Success(new List<string> { msg });
             }
         }

@@ -57,7 +57,8 @@ namespace Application.JobOffer.Commands
                 else
                 {
                     var isPack = _contractProductRepo.IsPack(job.Idcontract);
-                    await _regEnterpriseContractRepository.IncrementAvailableUnits(job.Idcontract, job.IdjobVacType);
+                    if(isPack)
+                     await _regEnterpriseContractRepository.IncrementAvailableUnits(job.Idcontract, job.IdjobVacType);
                     msg += $"Offer {request.id} filed.\n\r";
 
                     if (aimwelEnabled)
