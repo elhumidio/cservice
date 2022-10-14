@@ -65,6 +65,23 @@ namespace API.Controllers
             return ret;
         }
 
+        /// <summary>
+        /// It activates offer
+        /// </summary>
+        /// <param name="offer"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public async Task<IActionResult> Activate(int jobId, int ownerId)
+        {
+            var result = await Mediator.Send(new Activate.Command
+            {
+                id = jobId,
+                OwnerId = ownerId
+            });
+
+            var ret = HandleResult(result);
+            return ret;
+        }
 
         /// <summary>
         /// File Offers (from Web)
@@ -76,7 +93,7 @@ namespace API.Controllers
         {
             var result = await Mediator.Send(new CloseJobs.Command
             {
-                  dto = _closingOffer
+                dto = _closingOffer
             }); ;
 
             var ret = HandleResult(result);
