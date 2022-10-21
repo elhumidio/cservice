@@ -60,8 +60,8 @@ namespace Application.JobOffer.Commands
                     type = (VacancyType)offer.IdjobVacType,
                     RegionId = offer.Idregion
                 });
-
-                if (result.Value.Idcontract > 0)
+                bool canActivate = result.Value != null && result.Value.Idcontract > 0;
+                if (canActivate)
                 {
                     offer.FilledDate = null;
                     offer.ChkUpdateDate = existentOffer.ChkUpdateDate;
@@ -73,6 +73,18 @@ namespace Application.JobOffer.Commands
                     offer.Idstatus = (int)OfferStatus.Active;
                     await _regContractRepo.UpdateUnits(result.Value.Idcontract, (int)result.Value.IdJobVacType);
                 }
+                else {
+                    offer.FilledDate = existentOffer.FilledDate;
+                    offer.ChkUpdateDate = existentOffer.ChkUpdateDate;
+                    offer.ChkFilled = existentOffer.ChkFilled;
+                    offer.ChkDeleted = existentOffer.ChkDeleted;
+                    offer.IdjobVacType = existentOffer.IdjobVacType;
+                    offer.PublicationDate = existentOffer.PublicationDate;
+                    offer.UpdatingDate = DateTime.Now;
+                    offer.Idstatus = existentOffer.Idstatus;
+
+                }
+
             }
             var entity = _mapper.Map(offer, existentOffer);
 
