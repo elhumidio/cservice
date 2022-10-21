@@ -1,9 +1,7 @@
 using Application.Aimwel.Commands;
 using Application.Aimwel.Interfaces;
 using Application.Aimwel.Queries;
-using Application.Core;
 using Application.JobOffer.DTO;
-using Domain.Enums;
 using Domain.Repositories;
 using DPGRecruitmentCampaignClient;
 using MediatR;
@@ -38,7 +36,7 @@ namespace Application.JobOffer.Commands
                 _manageCampaign = aimwelCampaign;
                 _config = config;
                 _contractProductRepo = contractProductRepo;
-                _mediatr = mediatr; 
+                _mediatr = mediatr;
             }
 
             public async Task<OfferModificationResult> Handle(Command request, CancellationToken cancellationToken)
@@ -47,7 +45,6 @@ namespace Application.JobOffer.Commands
                 bool aimwelEnabled = Convert.ToBoolean(_config["Aimwel:EnableAimwel"]);
 
                 var job = _offerRepo.GetOfferById(request.dto.id);
-
 
                 if (job == null)
                 {
@@ -59,16 +56,14 @@ namespace Application.JobOffer.Commands
                 await _offerRepo.UpdateOffer(job);
                 var ret = _offerRepo.FileOffer(job);
 
-
                 if (ret <= 0)
                     msg += $"Offer {request.dto.id} - Not Filed ";
                 else
                 {
                     var isPack = _contractProductRepo.IsPack(job.Idcontract);
-                    if(isPack)
+                    if (isPack)
                         await _regEnterpriseContractRepository.IncrementAvailableUnits(job.Idcontract, job.IdjobVacType);
                     msg += $"Filed offer {request.dto.id}\n\r";
-
 
                     if (aimwelEnabled)
                     {

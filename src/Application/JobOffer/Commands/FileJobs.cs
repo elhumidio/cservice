@@ -1,6 +1,5 @@
 using Application.Aimwel.Interfaces;
 using Application.Aimwel.Queries;
-using Application.Core;
 using Application.JobOffer.DTO;
 using Domain.Repositories;
 using DPGRecruitmentCampaignClient;
@@ -49,7 +48,6 @@ namespace Application.JobOffer.Commands
                 if (job == null)
                 {
                     return OfferModificationResult.Success(new List<string> { msg });
-
                 }
                 var ret = _offerRepo.FileOffer(job);
                 if (ret <= 0)
@@ -57,8 +55,8 @@ namespace Application.JobOffer.Commands
                 else
                 {
                     var isPack = _contractProductRepo.IsPack(job.Idcontract);
-                    if(isPack)
-                     await _regEnterpriseContractRepository.IncrementAvailableUnits(job.Idcontract, job.IdjobVacType);
+                    if (isPack)
+                        await _regEnterpriseContractRepository.IncrementAvailableUnits(job.Idcontract, job.IdjobVacType);
                     msg += $"Offer {request.id} filed.\n\r";
 
                     if (aimwelEnabled)
@@ -69,16 +67,13 @@ namespace Application.JobOffer.Commands
                         });
                         if (campaign != null && campaign.Status == CampaignStatus.Active)
                         {
-
                             await _manageCampaign.PauseCampaign(job.IdjobVacancy);
                             msg += $"Campaign {campaign.CampaignId} /  {request.id} - Canceled ";
                         }
                         else
                         {
                             msg += $"Campaign {campaign.CampaignId} not editable  /  {campaign.Status}";
-
                         }
-
                     }
                 }
 

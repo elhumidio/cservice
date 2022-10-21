@@ -17,7 +17,6 @@ namespace Persistence.Repositories
             if (countries != null && countries.Any())
                 return countries.FirstOrDefault().Iso;
             else return string.Empty;
-            
         }
     }
 }

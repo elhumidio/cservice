@@ -1,7 +1,5 @@
 using Application.Core;
-using Application.JobOffer.DTO;
 using AutoMapper;
-using AutoMapper.QueryableExtensions;
 using Domain.Classes;
 using Domain.Repositories;
 using MediatR;

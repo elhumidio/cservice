@@ -59,14 +59,14 @@ namespace API.Controllers
         /// <summary>
         /// Gets assignments given a contract and an Owner
         /// </summary>
-        /// <param name="companyId"></param>        
+        /// <param name="companyId"></param>
         /// <returns></returns>
         [HttpGet("{companyId}")]
         public async Task<IActionResult> GetAvailableUnitsByCompany(int companyId)
         {
             var result = await Mediator.Send(new GetUnitsByCompany.Query
             {
-                 CompanyId = companyId
+                CompanyId = companyId
             });
             return HandleResult(result);
         }
@@ -81,8 +81,6 @@ namespace API.Controllers
                 RegionId = regionId
             });
             return HandleResult(result);
-           
-           
         }
     }
 }

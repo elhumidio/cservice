@@ -30,7 +30,6 @@ namespace Application.JobOffer.Validations
             var countryCode = GetCountryIsoByIdCountry(obj.Idcountry);
             if (!string.IsNullOrEmpty(countryCode))
             {
-                
                 var ans = _geoNames.GetPostalCodesCollection(obj.ZipCode, GetCountryIsoByIdCountry(obj.Idcountry));
                 if (ans != null && ans.postalCodes.Any())
                 {
@@ -46,7 +45,6 @@ namespace Application.JobOffer.Validations
                             obj.IdzipCode = IdzipCode;
                         if (IdzipCode == 0)
                         {
-                        
                             obj.Idcity = _zipCodeRepo.GetCityIdByName(ans.postalCodes.First().placeName);
 
                             ZipCode zip = new ZipCode

@@ -1,14 +1,8 @@
 using Application.Aimwel.Interfaces;
 using Application.JobOffer.DTO;
-using AutoMapper;
 using Domain.Repositories;
 using DPGRecruitmentCampaignClient;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.Aimwel.Queries
 {
@@ -24,7 +18,7 @@ namespace Application.Aimwel.Queries
             private readonly IJobOfferRepository _offerRepo;
             private readonly IAimwelCampaign _manageCampaign;
 
-            public Handler(IJobOfferRepository jobOfferRepository , IAimwelCampaign aimwelCampaign)
+            public Handler(IJobOfferRepository jobOfferRepository, IAimwelCampaign aimwelCampaign)
             {
                 _offerRepo = jobOfferRepository;
                 _manageCampaign = aimwelCampaign;

@@ -7,6 +7,7 @@ namespace Domain.Repositories
         public bool UpdateATS(int enterpriseId);
 
         public int GetSite(int companyId);
+
         public string GetCompanyName(int companyId);
     }
 }

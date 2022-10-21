@@ -14,7 +14,7 @@ namespace Application.JobOffer.Commands
         #region PRIVATE PROPERTIES
 
         private readonly IMapper _mapper;
-        private readonly IJobOfferRepository _offerRepo;        
+        private readonly IJobOfferRepository _offerRepo;
         private readonly IRegJobVacMatchingRepository _regJobVacRepo;
         private readonly IRegEnterpriseContractRepository _regContractRepo;
         private readonly IContractProductRepository _contractProductRepo;
@@ -69,7 +69,7 @@ namespace Application.JobOffer.Commands
                     offer.ChkDeleted = false;
                     offer.IdjobVacType = (int)result.Value.IdJobVacType;
                     offer.PublicationDate = DateTime.Now;
-                    offer.UpdatingDate = DateTime.Now;  
+                    offer.UpdatingDate = DateTime.Now;
                     offer.Idstatus = (int)OfferStatus.Active;
                     await _regContractRepo.UpdateUnits(result.Value.Idcontract, (int)result.Value.IdJobVacType);
                 }

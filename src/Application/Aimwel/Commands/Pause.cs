@@ -1,19 +1,12 @@
 using Application.Aimwel.Interfaces;
-using Application.Core;
 using Domain.Repositories;
 using DPGRecruitmentCampaignClient;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.Aimwel.Commands
 {
     public class Pause
     {
-
         public class Command : IRequest<Response>
         {
             public int offerId { get; set; }

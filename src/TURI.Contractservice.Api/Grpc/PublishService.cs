@@ -148,7 +148,6 @@ namespace GrpcPublish
             GenericMessage res = new()
             {
                 Message = result.Value.ToString()
-
             };
             return res;
         }*/

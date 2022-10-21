@@ -1,10 +1,5 @@
 using Domain.Entities;
 using Domain.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Persistence.Repositories
 {
@@ -18,7 +13,7 @@ namespace Persistence.Repositories
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="brandId"></param>
         /// <returns></returns>
@@ -27,7 +22,6 @@ namespace Persistence.Repositories
         {
             var logo = _dataContext.Logos.Where(l => l.Idbrand == brandId).FirstOrDefault();
             return logo;
-
         }
     }
 }

@@ -1,4 +1,3 @@
-using Application.Aimwel;
 using Application.Aimwel.Interfaces;
 using Application.JobOffer.DTO;
 using AutoMapper;
@@ -39,8 +38,7 @@ namespace Application.JobOffer.Commands
             _mediatr = mediatr;
             _mapper = mapper;
             _config = config;
-            _manageCampaign = aimwelCampaign;   
-                
+            _manageCampaign = aimwelCampaign;
         }
 
         public async Task<OfferModificationResult> Handle(FileAtsOfferCommand offer, CancellationToken cancellationToken)
@@ -55,8 +53,8 @@ namespace Application.JobOffer.Commands
             var filed = 0;
             string alreadyFiledMsg = string.Empty;
             bool isActiveOffer = false;
-            try {
-
+            try
+            {
                 foreach (var atsInfo in ats)
                 {
                     var job = _offerRepo.GetOfferById(atsInfo.IdjobVacancy);
@@ -68,7 +66,6 @@ namespace Application.JobOffer.Commands
                         var ret = _offerRepo.FileOffer(job);
                         if (ret > 0) filed++;
                     }
-                    
                 }
                 if (filed > 0)
                 {
@@ -93,12 +90,12 @@ namespace Application.JobOffer.Commands
                     return OfferModificationResult.Success(new List<string> { err });
                 }
             }
-            catch (Exception ex) {                
+            catch (Exception ex)
+            {
                 var err = $"{ex.Message} / {ex.InnerException} / {ex.StackTrace}";
                 _logger.LogError(err);
                 return OfferModificationResult.Failure(new List<string> { err });
             }
-            
         }
     }
 }

@@ -202,7 +202,7 @@ namespace Application.JobOffer.Commands
         public UpdateOfferCommand()
         {
             IntegrationData = new IntegrationData();
-            JobLanguages = new List<JobLanguages>();    
+            JobLanguages = new List<JobLanguages>();
         }
     }
 }

@@ -61,10 +61,10 @@ namespace Application.JobOffer.Validations
         {
             _mediator = mediator;
             _contractProdRepo = contractProdRepo;
-            _jobOfferRepo = jobOfferRepo;   
+            _jobOfferRepo = jobOfferRepo;
 
             RuleFor(command => command)
-                .Must(HasRightFinishDate)   
+                .Must(HasRightFinishDate)
                 .WithMessage("Couldn't establish right finish date.\n");
         }
 

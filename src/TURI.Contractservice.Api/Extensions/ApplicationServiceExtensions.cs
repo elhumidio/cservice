@@ -30,6 +30,7 @@ namespace API.Extensions
             services.AddAutoMapper(typeof(Application.Core.MappingProfiles).Assembly);
             services.AddControllers().AddNewtonsoftJson();
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
+
             #region MAPPING REPOSITORIES
 
             services.AddScoped<IContractRepository, ContractRepository>();
@@ -67,7 +68,7 @@ namespace API.Extensions
             services.AddScoped<ILanguageRepository, LanguageRepository>();
             services.AddScoped<IAimwelCampaign, ManageCampaigns>();
             services.AddScoped<IlogoRepository, LogoRepository>();
-            services.AddScoped<IJobVacancyLanguageRepository,JobVacancyLanguageRepository>();
+            services.AddScoped<IJobVacancyLanguageRepository, JobVacancyLanguageRepository>();
 
             #endregion MAPPING REPOSITORIES
 

@@ -1,8 +1,6 @@
-using Application.Aimwel;
 using Application.Aimwel.Interfaces;
 using Application.Core;
 using Application.JobOffer.Commands;
-using Application.JobOffer.Queries;
 using AutoMapper;
 using Domain.Repositories;
 using MediatR;
@@ -32,7 +30,6 @@ namespace TURI.Contractservice.Tests.Unit.JobOffer.Commands
             _unitsRepositoryMock = MockIUnitsRepository.GetMockIUnitsRepository(true);
             _regVacMatchingRepositoryMock = MockJobVacMatchingRepository.GetJobVacMatchingRepository(true);
             _enterpriseRepositoryMock = MockEnterpriseRepository.GetEnterpriseRepository(true);
-            
 
             var mapperConfig = new MapperConfiguration(c =>
             {
@@ -49,23 +46,23 @@ namespace TURI.Contractservice.Tests.Unit.JobOffer.Commands
         [Test]
         public async Task CreateOfferCommandHandlerSuccess()
         {
-           /* var _mediatr = new Mock<IMediator>();
-            _mediatr.Setup(m => m.Send(It.IsAny<GetResult.Query>(), It.IsAny<CancellationToken>()));
-            var _loggerMock = new Mock<ILogger<CreateOfferCommandHandler>>();
-            var handler = new CreateOfferCommandHandler(_regEnterpriseContractRepositoryMock.Object,
-                _regVacMatchingRepositoryMock.Object,
-                _mapper,
-                _jobOfferRepositoryMock.Object,
-                 _enterpriseRepositoryMock.Object,
-                 _loggerMock.Object,
-                 _mediatr.Object,_managecampaignMock
+            /* var _mediatr = new Mock<IMediator>();
+             _mediatr.Setup(m => m.Send(It.IsAny<GetResult.Query>(), It.IsAny<CancellationToken>()));
+             var _loggerMock = new Mock<ILogger<CreateOfferCommandHandler>>();
+             var handler = new CreateOfferCommandHandler(_regEnterpriseContractRepositoryMock.Object,
+                 _regVacMatchingRepositoryMock.Object,
+                 _mapper,
+                 _jobOfferRepositoryMock.Object,
+                  _enterpriseRepositoryMock.Object,
+                  _loggerMock.Object,
+                  _mediatr.Object,_managecampaignMock
 
-                );
+                 );
 
-            var result = await handler.Handle(new CreateOfferCommand() { }, CancellationToken.None);*/
+             var result = await handler.Handle(new CreateOfferCommand() { }, CancellationToken.None);*/
             // result.Failures.ShouldNotBeNull();
             // result.Failures..ShouldNotMatch("Failed to create offer");
-         //   Assert.IsNotNull(result);
+            //   Assert.IsNotNull(result);
         }
     }
 }

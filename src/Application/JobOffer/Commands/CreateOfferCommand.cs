@@ -211,8 +211,8 @@ namespace Application.JobOffer.Commands
         }
     }
 
-    public class JobLanguages {
-
+    public class JobLanguages
+    {
         public int IdLanguage { get; set; }
         public int IdLangLevel { get; set; }
     }

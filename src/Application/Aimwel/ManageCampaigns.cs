@@ -1,6 +1,5 @@
 using Application.Aimwel.Interfaces;
 using Application.Interfaces;
-using Application.JobOffer.Commands;
 using Application.Utils;
 using Domain.Entities;
 using Domain.Enums;
@@ -73,26 +72,27 @@ namespace Application.Aimwel
             return ans;
         }
 
-
         /// <summary>
         /// It ends a campaign
         /// </summary>
         /// <param name="jobId"></param>
         /// <returns></returns>
-        public async Task<bool> StopCampaign(int jobId) {
-            
+        public async Task<bool> StopCampaign(int jobId)
+        {
             GrpcChannel channel;
             var campaignId = _jobOfferRepo.AimwelIdByJobId(jobId);
-            if (string.IsNullOrEmpty(campaignId)) {
+            if (string.IsNullOrEmpty(campaignId))
+            {
                 return false;
             }
-            else {
+            else
+            {
                 var client = GetClient(out channel);
                 var request = new EndCampaignRequest
                 {
                     CampaignId = campaignId
                 };
-                
+
                 var ret = await client.EndCampaignAsync(request);
                 return true;
             }
@@ -105,7 +105,6 @@ namespace Application.Aimwel
         /// <returns></returns>
         public async Task<bool> PauseCampaign(int jobId)
         {
-
             GrpcChannel channel;
             var campaignId = _jobOfferRepo.AimwelIdByJobId(jobId);
             if (string.IsNullOrEmpty(campaignId))
@@ -132,7 +131,6 @@ namespace Application.Aimwel
         /// <returns></returns>
         public async Task<bool> ResumeCampaign(int jobId)
         {
-
             GrpcChannel channel;
             var campaignId = _jobOfferRepo.AimwelIdByJobId(jobId);
             if (string.IsNullOrEmpty(campaignId))
@@ -144,14 +142,13 @@ namespace Application.Aimwel
                 var client = GetClient(out channel);
                 var request = new ResumeCampaignRequest
                 {
-                    CampaignId = campaignId                       
+                    CampaignId = campaignId
                 };
 
                 var ret = await client.ResumeCampaignAsync(request);
                 return true;
             }
         }
-
 
         /// <summary>
         /// It Gets Campaign state
@@ -160,26 +157,24 @@ namespace Application.Aimwel
         /// <returns></returns>
         public async Task<GetCampaignResponse> GetCampaignState(int jobId)
         {
-
             GrpcChannel channel;
             var campaignId = _jobOfferRepo.AimwelIdByJobId(jobId);
             if (string.IsNullOrEmpty(campaignId))
             {
-                return new GetCampaignResponse() { Status= CampaignStatus.Ended };
+                return new GetCampaignResponse() { Status = CampaignStatus.Ended };
             }
             else
             {
                 var client = GetClient(out channel);
                 var request = new GetCampaignRequest
                 {
-                       CampaignId= campaignId
+                    CampaignId = campaignId
                 };
 
                 var ret = await client.GetCampaignAsync(request);
                 return ret;
             }
         }
-
 
         /// <summary>
         /// Creates Aimwel campaign
@@ -188,9 +183,9 @@ namespace Application.Aimwel
         /// <returns></returns>
         public async Task<CreateCampaignResponse> CreateCampaing(JobVacancy job)
         {
-            GrpcChannel channel;        
-            var client= GetClient(out channel);
-            
+            GrpcChannel channel;
+            var client = GetClient(out channel);
+
             string code = _zipCodeRepo.GetZipById((int)job.IdzipCode).Zip;
             var urlLogo = $"{_config["Aimwel:Portal.urlRootStatics"]}" +
                         $"{"/img/"}" +

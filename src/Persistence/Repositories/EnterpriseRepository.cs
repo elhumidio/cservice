@@ -48,7 +48,6 @@ namespace Persistence.Repositories
             if (!string.IsNullOrEmpty(name))
                 CorporateName = name;
             return CorporateName;
-
         }
     }
 }

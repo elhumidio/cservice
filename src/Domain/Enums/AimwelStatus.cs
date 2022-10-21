@@ -1,4 +1,4 @@
-﻿namespace Domain.Enums
+namespace Domain.Enums
 {
     public enum AimwelStatus
     {
@@ -6,5 +6,4 @@
         PAUSED = 2,
         CANCELED = 3
     }
-
 }

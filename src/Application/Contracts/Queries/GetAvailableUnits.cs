@@ -34,7 +34,7 @@ namespace Application.Contracts.Queries
                 var list = new List<AvailableUnitsDto>();
                 AvailableUnitsDto dto;
                 var isPack = _contractProductRepo.IsPack(request.ContractId);
-                var unitsAssigned = _unitsRepo.GetAssignmentsByContract(request.ContractId).ToList();    
+                var unitsAssigned = _unitsRepo.GetAssignmentsByContract(request.ContractId).ToList();
 
                 foreach (var units in unitsAssigned)
                 {

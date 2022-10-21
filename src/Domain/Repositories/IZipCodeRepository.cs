@@ -11,8 +11,11 @@ namespace Domain.Repositories
         int GetCityIdByZip(string zipcode);
 
         public ZipCode GetZipCodeEntity(string zipcode, int countryId);
+
         public int Add(ZipCode _zipcode);
+
         public int GetCityIdByName(string _cityName);
+
         public ZipCode GetZipById(int zipcodeId);
     }
 }

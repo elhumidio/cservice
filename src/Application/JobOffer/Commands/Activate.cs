@@ -85,7 +85,8 @@ namespace Application.JobOffer.Commands
                     return OfferModificationResult.Success(new List<string> { msg });
                 }
 
-                if (offerUpdated) {
+                if (offerUpdated)
+                {
                     var campaign = await _mediatr.Send(new GetStatus.Query
                     {
                         OfferId = request.id
