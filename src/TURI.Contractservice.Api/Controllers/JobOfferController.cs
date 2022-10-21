@@ -29,7 +29,7 @@ namespace API.Controllers
         [HttpGet("{contractId}")]
         public async Task<IActionResult> GetActiveOffers(int contractId)
         {
-            var result = await Mediator.Send(new Application.JobOffer.Queries.ListActives.Query
+            var result = await Mediator.Send(new ListActives.Query
             {
                 ContractID = contractId,
             });
