@@ -69,6 +69,7 @@ namespace API.Extensions
             services.AddScoped<IAimwelCampaign, ManageCampaigns>();
             services.AddScoped<IlogoRepository, LogoRepository>();
             services.AddScoped<IJobVacancyLanguageRepository, JobVacancyLanguageRepository>();
+            services.AddScoped<IRegJobVacWorkPermitRepository, RegJobVacWorkPermitRepository>();
 
             #endregion MAPPING REPOSITORIES
 

@@ -46,6 +46,7 @@ namespace Persistence
         public virtual DbSet<Site> Sites { get; set; } = null!;
         public virtual DbSet<City> Cities { get; set; } = null!;
         public virtual DbSet<Logo> Logos { get; set; } = null!;
+        public virtual DbSet<RegJobVacWorkPermit> RegJobVacWorkPermits { get; set; } = null!;
         public virtual DbSet<JobVacancyLanguage> JobVacancyLanguages { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -81,6 +82,18 @@ namespace Persistence
                 entity.Property(e => e.Idregion).HasColumnName("IDRegion");
 
                 entity.Property(e => e.Name).HasMaxLength(255);
+            });
+
+
+            modelBuilder.Entity<RegJobVacWorkPermit>(entity =>
+            {
+                entity.HasKey(e => new { e.IdjobVacancy, e.IdworkPermit });
+
+                entity.ToTable("TRegJobVacWorkPermit");
+
+                entity.Property(e => e.IdjobVacancy).HasColumnName("IDJobVacancy");
+
+                entity.Property(e => e.IdworkPermit).HasColumnName("IDWorkPermit");
             });
 
             modelBuilder.Entity<Logo>(entity =>
@@ -1493,6 +1506,6 @@ namespace Persistence
             OnModelCreatingPartial(modelBuilder);
         }
 
-        private partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
+         partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
     }
 }

@@ -19,10 +19,10 @@ namespace Application.Core
             CreateMap<Contract, ContractDto>();
             CreateMap<RegEnterpriseContract, RegEnterpriseContractDto>();
             CreateMap<ContractProduct, ContractProductDto>();
-            CreateMap<CreateOfferCommand, JobVacancy>().MapOnlyIfChanged().ForMember(a => a.IdjobVacancy, opt => opt.Ignore());
-            CreateMap<JobVacancy, CreateOfferCommand>().MapOnlyIfChanged().ForMember(a => a.IdjobVacancy, opt => opt.Ignore());
-            CreateMap<JobVacancy, UpdateOfferCommand>().MapOnlyIfChanged().ForMember(a => a.IdjobVacancy, opt => opt.Ignore());
-            CreateMap<UpdateOfferCommand, JobVacancy>().MapOnlyIfChanged().ForMember(a => a.IdjobVacancy, opt => opt.Ignore());
+            CreateMap<CreateOfferCommand, JobVacancy>(MemberList.None).MapOnlyIfChanged().ForMember(a => a.IdjobVacancy, opt => opt.Ignore());
+            CreateMap<JobVacancy, CreateOfferCommand>(MemberList.None).MapOnlyIfChanged().ForMember(a => a.IdjobVacancy, opt => opt.Ignore());
+            CreateMap<JobVacancy, UpdateOfferCommand>(MemberList.None).MapOnlyIfChanged().ForMember(a => a.IdjobVacancy, opt => opt.Ignore());
+            CreateMap<UpdateOfferCommand, JobVacancy>(MemberList.None).MapOnlyIfChanged().ForMember(a => a.IdjobVacancy, opt => opt.Ignore());
             CreateMap<RegJobVacMatching, RegJobVacMatchingDto>();
             CreateMap<Area, AreaDTO>();
             CreateMap<Degree, DegreeDTO>();

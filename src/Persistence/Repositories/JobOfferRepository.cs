@@ -81,6 +81,24 @@ namespace Persistence.Repositories
             }
         }
 
+        public int DeleteOffer(JobVacancy job)
+        {
+            try
+            {
+                job.ChkDeleted = true;
+                job.FinishDate = DateTime.Now;
+                job.Idstatus = (int)OfferStatus.Deleted;
+                var ret = _dataContext.SaveChanges();
+                return ret;
+            }
+            catch (Exception ex)
+            {
+                string message = $"Message: {ex.Message} - InnerException: {ex.InnerException} - StackTrace: {ex.StackTrace}";
+                _logger.LogError(message: message);
+                return -1;
+            }
+        }
+
         public JobVacancy GetOfferById(int id)
         {
             var offer = _dataContext.JobVacancies.Where(o => o.IdjobVacancy == id).FirstOrDefault();

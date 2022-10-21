@@ -24,6 +24,7 @@ namespace Application.JobOffer.Commands
         private readonly IAimwelCampaign _manageCampaign;
         private readonly IConfiguration _config;
         private readonly IJobVacancyLanguageRepository _jobVacancyLangRepo;
+        private readonly IRegJobVacWorkPermitRepository _regJobVacWorkPermitRepo;   
 
         #endregion PRIVATE PROPERTIES
 
@@ -35,7 +36,7 @@ namespace Application.JobOffer.Commands
             ILogger<CreateOfferCommandHandler> logger,
             IMediator mediatr, IAimwelCampaign manageCampaign,
             IConfiguration config,
-            IJobVacancyLanguageRepository jobVacancyLangRepo)
+            IJobVacancyLanguageRepository jobVacancyLangRepo,IRegJobVacWorkPermitRepository regJobVacWorkPermitRepository)
         {
             _offerRepo = offerRepo;
             _mapper = mapper;
@@ -47,6 +48,7 @@ namespace Application.JobOffer.Commands
             _manageCampaign = manageCampaign;
             _config = config;
             _jobVacancyLangRepo = jobVacancyLangRepo;
+            _regJobVacWorkPermitRepo = regJobVacWorkPermitRepository;
         }
 
         public async Task<OfferModificationResult> Handle(CreateOfferCommand offer, CancellationToken cancellationToken)
@@ -72,6 +74,7 @@ namespace Application.JobOffer.Commands
                 entity.IntegrationId = offer.IntegrationData.IDIntegration;
                 jobVacancyId = _offerRepo.Add(entity);
                 if (jobVacancyId > 0 && offer.JobLanguages.Any())
+                {
                     foreach (var lang in offer.JobLanguages)
                     {
                         JobVacancyLanguage language = new JobVacancyLanguage
@@ -81,7 +84,15 @@ namespace Application.JobOffer.Commands
                             Idlanguage = lang.IdLanguage
                         };
                         _jobVacancyLangRepo.Add(language);
+
                     }
+                    foreach (var permit in offer.IdworkPermit)
+                    {
+                        var ret = await _regJobVacWorkPermitRepo.Add(new RegJobVacWorkPermit() { IdjobVacancy = jobVacancyId, IdworkPermit = permit });
+                    }
+                }
+                
+
                 if (jobVacancyId == -1)
                 {
                     error = "Failed to create offer";
