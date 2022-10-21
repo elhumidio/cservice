@@ -24,7 +24,7 @@ namespace Application.JobOffer.Commands
         private readonly IAimwelCampaign _manageCampaign;
         private readonly IConfiguration _config;
         private readonly IJobVacancyLanguageRepository _jobVacancyLangRepo;
-        private readonly IRegJobVacWorkPermitRepository _regJobVacWorkPermitRepo;   
+        private readonly IRegJobVacWorkPermitRepository _regJobVacWorkPermitRepo;
 
         #endregion PRIVATE PROPERTIES
 
@@ -36,7 +36,7 @@ namespace Application.JobOffer.Commands
             ILogger<CreateOfferCommandHandler> logger,
             IMediator mediatr, IAimwelCampaign manageCampaign,
             IConfiguration config,
-            IJobVacancyLanguageRepository jobVacancyLangRepo,IRegJobVacWorkPermitRepository regJobVacWorkPermitRepository)
+            IJobVacancyLanguageRepository jobVacancyLangRepo, IRegJobVacWorkPermitRepository regJobVacWorkPermitRepository)
         {
             _offerRepo = offerRepo;
             _mapper = mapper;
@@ -73,7 +73,9 @@ namespace Application.JobOffer.Commands
                 var entity = _mapper.Map(offer, job);
                 entity.IntegrationId = offer.IntegrationData.IDIntegration;
                 jobVacancyId = _offerRepo.Add(entity);
-                if (jobVacancyId > 0 && offer.JobLanguages.Any())
+                bool canSaveLanguages = jobVacancyId > 0 && offer.JobLanguages.Any();
+
+                if (canSaveLanguages)
                 {
                     foreach (var lang in offer.JobLanguages)
                     {
@@ -84,14 +86,16 @@ namespace Application.JobOffer.Commands
                             Idlanguage = lang.IdLanguage
                         };
                         _jobVacancyLangRepo.Add(language);
-
                     }
+                }
+                bool canSaveWorkPermit = jobVacancyId > 0 && offer.IdworkPermit.Any();
+                if (canSaveWorkPermit)
+                {
                     foreach (var permit in offer.IdworkPermit)
                     {
                         var ret = await _regJobVacWorkPermitRepo.Add(new RegJobVacWorkPermit() { IdjobVacancy = jobVacancyId, IdworkPermit = permit });
                     }
                 }
-                
 
                 if (jobVacancyId == -1)
                 {

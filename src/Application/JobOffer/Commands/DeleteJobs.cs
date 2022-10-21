@@ -49,15 +49,15 @@ namespace Application.JobOffer.Commands
                 {
                     return OfferModificationResult.Success(new List<string> { msg });
                 }
-                var ret = _offerRepo.FileOffer(job);
+                var ret = _offerRepo.DeleteOffer(job);
                 if (ret <= 0)
-                    msg += $"Offer {request.id} - Filed Successfully ";
+                    msg += $"Offer {request.id} - Deleted Successfully ";
                 else
                 {
                     var isPack = _contractProductRepo.IsPack(job.Idcontract);
                     if (isPack)
                         await _regEnterpriseContractRepository.IncrementAvailableUnits(job.Idcontract, job.IdjobVacType);
-                    msg += $"Offer {request.id} filed.\n\r";
+                    msg += $"Offer {request.id} Deleted.\n\r";
 
                     if (aimwelEnabled)
                     {
@@ -65,9 +65,9 @@ namespace Application.JobOffer.Commands
                         {
                             OfferId = request.id
                         });
-                        if (campaign != null && campaign.Status == CampaignStatus.Active)
+                        if (campaign != null && campaign.Status != CampaignStatus.Ended)
                         {
-                            await _manageCampaign.PauseCampaign(job.IdjobVacancy);
+                            await _manageCampaign.StopCampaign(job.IdjobVacancy);
                             msg += $"Campaign {campaign.CampaignId} /  {request.id} - Canceled ";
                         }
                         else

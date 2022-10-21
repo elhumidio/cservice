@@ -73,7 +73,8 @@ namespace Application.JobOffer.Commands
                     offer.Idstatus = (int)OfferStatus.Active;
                     await _regContractRepo.UpdateUnits(result.Value.Idcontract, (int)result.Value.IdJobVacType);
                 }
-                else {
+                else
+                {
                     offer.FilledDate = existentOffer.FilledDate;
                     offer.ChkUpdateDate = existentOffer.ChkUpdateDate;
                     offer.ChkFilled = existentOffer.ChkFilled;
@@ -82,9 +83,7 @@ namespace Application.JobOffer.Commands
                     offer.PublicationDate = existentOffer.PublicationDate;
                     offer.UpdatingDate = DateTime.Now;
                     offer.Idstatus = existentOffer.Idstatus;
-
                 }
-
             }
             var entity = _mapper.Map(offer, existentOffer);
 

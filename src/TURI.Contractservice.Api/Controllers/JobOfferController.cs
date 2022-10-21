@@ -66,6 +66,24 @@ namespace API.Controllers
             return ret;
         }
 
+
+        /// <summary>
+        /// Delete Offers (from Web)
+        /// </summary>
+        /// <param name="offer"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public async Task<IActionResult> DeleteOffers(List<int> _ids)
+        {
+            var result = await Mediator.Send(new DeleteJobs.Command
+            {
+                id = _ids.First()
+            });
+
+            var ret = HandleResult(result);
+            return ret;
+        }
+
         /// <summary>
         /// It activates offer
         /// </summary>

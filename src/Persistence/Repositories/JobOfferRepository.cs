@@ -85,6 +85,7 @@ namespace Persistence.Repositories
         {
             try
             {
+                job.ChkFilled = true;
                 job.ChkDeleted = true;
                 job.FinishDate = DateTime.Now;
                 job.Idstatus = (int)OfferStatus.Deleted;
