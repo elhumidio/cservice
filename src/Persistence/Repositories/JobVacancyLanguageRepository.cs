@@ -36,7 +36,12 @@ namespace Persistence.Repositories
             try
             {
                 var jobLang = _dataContext.JobVacancyLanguages.Where(v => v.IdjobVacancy == _idJob).DefaultIfEmpty();
-                _dataContext.Entry(jobLang).State = Microsoft.EntityFrameworkCore.EntityState.Deleted;
+                if (jobLang.Any()) {
+                    foreach (var lang in jobLang)
+                    {
+                        _dataContext.Entry(lang).State = Microsoft.EntityFrameworkCore.EntityState.Deleted;
+                    }
+                }                
                 var ret = _dataContext.SaveChanges();
                 return ret > 0 ? true : false;
             }
