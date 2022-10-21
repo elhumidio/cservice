@@ -1,7 +1,6 @@
 using Application.Aimwel.Interfaces;
 using Application.Aimwel.Queries;
 using Application.JobOffer.DTO;
-using Domain.Entities;
 using Domain.Repositories;
 using DPGRecruitmentCampaignClient;
 using MediatR;
@@ -19,31 +18,25 @@ namespace Application.JobOffer.Commands
         public class Handler : IRequestHandler<Command, OfferModificationResult>
         {
             private readonly IJobOfferRepository _offerRepo;
-            private readonly IRegEnterpriseContractRepository _regEnterpriseContractRepo;
+            private readonly IRegEnterpriseContractRepository _regEnterpriseContractRepository;
             private readonly IAimwelCampaign _manageCampaign;
             private readonly IConfiguration _config;
             private readonly IMediator _mediatr;
             private readonly IContractProductRepository _contractProductRepo;
-            private readonly IJobVacancyLanguageRepository _jobVacancyLanguageRepo;
-            private readonly IRegJobVacWorkPermitRepository _regJobVacWorkPermitRepo;
 
             public Handler(IJobOfferRepository offerRepo,
                 IRegEnterpriseContractRepository regEnterpriseContractRepository,
                 IAimwelCampaign aimwelCampaign,
                 IConfiguration config,
                 IContractProductRepository contractProductRepo,
-                IMediator mediatr,
-                IJobVacancyLanguageRepository jobVacancyLanguageRepository,
-                IRegJobVacWorkPermitRepository regJobVacWorkPermitRepo )
+                IMediator mediatr)
             {
                 _offerRepo = offerRepo;
-                _regEnterpriseContractRepo = regEnterpriseContractRepository;
+                _regEnterpriseContractRepository = regEnterpriseContractRepository;
                 _manageCampaign = aimwelCampaign;
                 _config = config;
                 _contractProductRepo = contractProductRepo;
                 _mediatr = mediatr;
-                _jobVacancyLanguageRepo = jobVacancyLanguageRepository;
-                _regJobVacWorkPermitRepo = regJobVacWorkPermitRepo;
             }
 
             public async Task<OfferModificationResult> Handle(Command request, CancellationToken cancellationToken)
@@ -57,17 +50,13 @@ namespace Application.JobOffer.Commands
                     return OfferModificationResult.Success(new List<string> { msg });
                 }
                 var ret = _offerRepo.DeleteOffer(job);
-                if (ret <= 0) {
-                    msg += $"Offer {request.id} - Could't delete it";
-                }                
+                if (ret <= 0)
+                    msg += $"Offer {request.id} - Deleted Successfully ";
                 else
                 {
-                    msg += $"Offer {request.id} - Deleted Successfully ";
-                    _jobVacancyLanguageRepo.Delete(job.IdjobVacancy);
-                    var ans = await _regJobVacWorkPermitRepo.Delete(job.IdjobVacancy);
                     var isPack = _contractProductRepo.IsPack(job.Idcontract);
                     if (isPack)
-                        await _regEnterpriseContractRepo.IncrementAvailableUnits(job.Idcontract, job.IdjobVacType);
+                        await _regEnterpriseContractRepository.IncrementAvailableUnits(job.Idcontract, job.IdjobVacType);
                     msg += $"Offer {request.id} Deleted.\n\r";
 
                     if (aimwelEnabled)

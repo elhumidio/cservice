@@ -24,16 +24,12 @@ namespace Application.JobOffer.Commands
             private readonly IConfiguration _config;
             private readonly IContractProductRepository _contractProductRepo;
             private readonly IMediator _mediatr;
-            private readonly IJobVacancyLanguageRepository _jobVacancyLanguageRepo;
-            private readonly IRegJobVacWorkPermitRepository _regJobVacWorkPermitRepo;
 
             public Handler(IJobOfferRepository offerRepo,
                 IRegEnterpriseContractRepository regEnterpriseContractRepository,
                 IAimwelCampaign aimwelCampaign,
                 IConfiguration config,
-                IContractProductRepository contractProductRepo, IMediator mediatr,
-                IJobVacancyLanguageRepository jobVacancyLanguageRepo,
-                IRegJobVacWorkPermitRepository regJobVacWorkPermitRepo)
+                IContractProductRepository contractProductRepo, IMediator mediatr)
             {
                 _offerRepo = offerRepo;
                 _regEnterpriseContractRepository = regEnterpriseContractRepository;
@@ -41,8 +37,6 @@ namespace Application.JobOffer.Commands
                 _config = config;
                 _contractProductRepo = contractProductRepo;
                 _mediatr = mediatr;
-                _jobVacancyLanguageRepo = jobVacancyLanguageRepo;
-                _regJobVacWorkPermitRepo = regJobVacWorkPermitRepo;
             }
 
             public async Task<OfferModificationResult> Handle(Command request, CancellationToken cancellationToken)
@@ -63,13 +57,9 @@ namespace Application.JobOffer.Commands
                 var ret = _offerRepo.FileOffer(job);
 
                 if (ret <= 0)
-                {
                     msg += $"Offer {request.dto.id} - Not Filed ";
-                }
                 else
                 {
-                    _jobVacancyLanguageRepo.Delete(job.IdjobVacancy);
-                    var ans = await _regJobVacWorkPermitRepo.Delete(job.IdjobVacancy);
                     var isPack = _contractProductRepo.IsPack(job.Idcontract);
                     if (isPack)
                         await _regEnterpriseContractRepository.IncrementAvailableUnits(job.Idcontract, job.IdjobVacType);
@@ -84,7 +74,7 @@ namespace Application.JobOffer.Commands
 
                         if (campaign != null && campaign.Status == CampaignStatus.Active)
                         {
-                            var canceled = _mediatr.Send(new Cancel.Command
+                            var ans = _mediatr.Send(new Cancel.Command
                             {
                                 offerId = request.dto.id
                             });
