@@ -73,8 +73,8 @@ namespace Application.JobOffer.Commands
                 var entity = _mapper.Map(offer, job);
                 entity.IntegrationId = offer.IntegrationData.IDIntegration;
                 jobVacancyId = _offerRepo.Add(entity);
-                bool canSaveLanguages = jobVacancyId > 0 && offer.JobLanguages.Any();
 
+                bool canSaveLanguages = jobVacancyId > 0 && offer.JobLanguages.Any();
                 if (canSaveLanguages)
                 {
                     foreach (var lang in offer.JobLanguages)

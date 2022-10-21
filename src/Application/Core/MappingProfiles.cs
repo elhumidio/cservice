@@ -20,7 +20,7 @@ namespace Application.Core
             CreateMap<RegEnterpriseContract, RegEnterpriseContractDto>();
             CreateMap<ContractProduct, ContractProductDto>();
             CreateMap<CreateOfferCommand, JobVacancy>().MapOnlyIfChanged().ForMember(a => a.IdjobVacancy, opt => opt.Ignore()).
-                ForMember(a => a.IdworkPermit,opt => opt.MapFrom(src => src.IdworkPermit.FirstOrDefault()));
+                ForMember(a => a.IdworkPermit, opt => opt.MapFrom(src => src.IdworkPermit.FirstOrDefault()));
             CreateMap<JobVacancy, CreateOfferCommand>().MapOnlyIfChanged().ForMember(a => a.IdjobVacancy, opt => opt.Ignore());
             CreateMap<JobVacancy, UpdateOfferCommand>().MapOnlyIfChanged().ForMember(a => a.IdjobVacancy, opt => opt.Ignore());
             CreateMap<UpdateOfferCommand, JobVacancy>().MapOnlyIfChanged().ForMember(a => a.IdjobVacancy, opt => opt.Ignore());
