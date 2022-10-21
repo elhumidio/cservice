@@ -60,8 +60,8 @@ namespace Application.JobOffer.Commands
                     type = (VacancyType)offer.IdjobVacType,
                     RegionId = offer.Idregion
                 });
-
-                if (result.Value.Idcontract > 0)
+                bool canActivate = result.Value != null && result.Value.Idcontract > 0;
+                if (canActivate)
                 {
                     offer.FilledDate = null;
                     offer.ChkUpdateDate = existentOffer.ChkUpdateDate;
