@@ -69,10 +69,22 @@ namespace Application.JobOffer.Commands
                     offer.ChkDeleted = false;
                     offer.IdjobVacType = (int)result.Value.IdJobVacType;
                     offer.PublicationDate = DateTime.Now;
-                    offer.UpdatingDate = DateTime.Now;  
+                    offer.UpdatingDate = DateTime.Now;
                     offer.Idstatus = (int)OfferStatus.Active;
                     await _regContractRepo.UpdateUnits(result.Value.Idcontract, (int)result.Value.IdJobVacType);
                 }
+                else {
+                    offer.FilledDate = existentOffer.FilledDate;
+                    offer.ChkUpdateDate = existentOffer.ChkUpdateDate;
+                    offer.ChkFilled = existentOffer.ChkFilled;
+                    offer.ChkDeleted = existentOffer.ChkDeleted;
+                    offer.IdjobVacType = existentOffer.IdjobVacType;
+                    offer.PublicationDate = existentOffer.PublicationDate;
+                    offer.UpdatingDate = DateTime.Now;
+                    offer.Idstatus = existentOffer.Idstatus;
+
+                }
+
             }
             var entity = _mapper.Map(offer, existentOffer);
 
