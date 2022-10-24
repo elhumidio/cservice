@@ -19,11 +19,11 @@ namespace Application.Contracts.Queries
             private readonly IJobOfferRepository _jobOfferRepo;
             private readonly IContractProductRepository _contractProductRepo;
             private readonly IUnitsRepository _unitsRepo;
-            private readonly IMapper _mapper;
+            
 
-            public Handler(IMapper mapper, IJobOfferRepository jobOfferRepo, IContractProductRepository contractProductRepo, IUnitsRepository unitsRepo)
+            public Handler(IJobOfferRepository jobOfferRepo, IContractProductRepository contractProductRepo, IUnitsRepository unitsRepo)
             {
-                _mapper = mapper;
+            
                 _jobOfferRepo = jobOfferRepo;
                 _contractProductRepo = contractProductRepo;
                 _unitsRepo = unitsRepo;

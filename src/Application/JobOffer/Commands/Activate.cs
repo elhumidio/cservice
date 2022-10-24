@@ -8,6 +8,7 @@ using Domain.Repositories;
 using DPGRecruitmentCampaignClient;
 using MediatR;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 namespace Application.JobOffer.Commands
 {
@@ -26,17 +27,21 @@ namespace Application.JobOffer.Commands
             private readonly IConfiguration _config;
             private readonly IContractProductRepository _contractProductRepo;
             private readonly IMediator _mediatr;
+            private readonly ILogger _logger;
 
             public Handler(IJobOfferRepository offerRepo,
                 IRegEnterpriseContractRepository regEnterpriseContractRepository,                
                 IConfiguration config,
-                IContractProductRepository contractProductRepo, IMediator mediatr)
+                IContractProductRepository contractProductRepo,
+                IMediator mediatr,
+                ILogger logger)
             {
                 _offerRepo = offerRepo;
                 _regEnterpriseContractRepository = regEnterpriseContractRepository;                
                 _config = config;
                 _contractProductRepo = contractProductRepo;
                 _mediatr = mediatr;
+                _logger = logger;
             }
 
             public async Task<OfferModificationResult> Handle(Command request, CancellationToken cancellationToken)
@@ -56,11 +61,13 @@ namespace Application.JobOffer.Commands
                     ContractId = job.Idcontract,
                     OwnerId = request.OwnerId
                 }).Result.Value;
-                bool hasUnits = units != null && units.Where(u => u.type == (VacancyType)job.IdjobVacType).FirstOrDefault().Units > 0;
+                bool hasUnits = units != null && units.FirstOrDefault(u => u.type == (VacancyType)job.IdjobVacType).Units > 0;
 
                 if (!hasUnits)
                 {
                     msg += "not_enough_units";
+                    _logger.LogError(msg);
+                    return OfferModificationResult.Success(new List<string> { msg });
                 }
                 else
                 {
@@ -74,16 +81,15 @@ namespace Application.JobOffer.Commands
                     if (isPack)
                         await _regEnterpriseContractRepository.UpdateUnits(job.Idcontract, job.IdjobVacType);
                     msg += $"Activated offer {request.id}";
+                    _logger.LogInformation(msg);    
                     offerUpdated = true;
                 }
+      
+                bool canModifyCampaign = aimwelEnabled && offerUpdated;
 
-                if (!aimwelEnabled)
+                if (canModifyCampaign)
                 {
-                    return OfferModificationResult.Success(new List<string> { msg });
-                }
 
-                if (offerUpdated)
-                {
                     var campaign = await _mediatr.Send(new GetStatus.Query
                     {
                         OfferId = request.id
@@ -96,6 +102,7 @@ namespace Application.JobOffer.Commands
                             offerId = request.id
                         });
                         msg += $"Campaign: {campaign.CampaignId} /  id: {request.id} - resumed ";
+                        _logger.LogInformation(msg);
                     }
                     else if (campaign != null && campaign.Status == CampaignStatus.Ended)
                     {
@@ -104,9 +111,15 @@ namespace Application.JobOffer.Commands
                             offerId = request.id
                         });
                         msg += $"Campaign: {ans.Result.Value.CampaignId} /  id: {request.id} - created ";
+                        _logger.LogInformation(msg);
                     }
+                    return OfferModificationResult.Success(new List<string> { msg });
                 }
-                return OfferModificationResult.Success(new List<string> { msg });
+                else
+                {
+                    return OfferModificationResult.Success(new List<string> { msg });
+                }
+                
             }
         }
     }

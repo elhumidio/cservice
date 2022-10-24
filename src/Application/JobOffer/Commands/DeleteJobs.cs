@@ -1,11 +1,13 @@
 using Application.Aimwel.Interfaces;
 using Application.Aimwel.Queries;
 using Application.JobOffer.DTO;
+using AutoMapper;
 using Domain.Entities;
 using Domain.Repositories;
 using DPGRecruitmentCampaignClient;
 using MediatR;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 namespace Application.JobOffer.Commands
 {
@@ -26,6 +28,8 @@ namespace Application.JobOffer.Commands
             private readonly IContractProductRepository _contractProductRepo;
             private readonly IJobVacancyLanguageRepository _jobVacancyLanguageRepo;
             private readonly IRegJobVacWorkPermitRepository _regJobVacWorkPermitRepo;
+            private readonly IMapper _mapper;
+            private readonly ILogger _logger;
 
             public Handler(IJobOfferRepository offerRepo,
                 IRegEnterpriseContractRepository regEnterpriseContractRepository,
@@ -34,7 +38,9 @@ namespace Application.JobOffer.Commands
                 IContractProductRepository contractProductRepo,
                 IMediator mediatr,
                 IJobVacancyLanguageRepository jobVacancyLanguageRepository,
-                IRegJobVacWorkPermitRepository regJobVacWorkPermitRepo)
+                IRegJobVacWorkPermitRepository regJobVacWorkPermitRepo,
+                IMapper mapper,
+                ILogger logger)
             {
                 _offerRepo = offerRepo;
                 _regEnterpriseContractRepo = regEnterpriseContractRepository;
@@ -44,6 +50,8 @@ namespace Application.JobOffer.Commands
                 _mediatr = mediatr;
                 _jobVacancyLanguageRepo = jobVacancyLanguageRepository;
                 _regJobVacWorkPermitRepo = regJobVacWorkPermitRepo;
+                _mapper = mapper;
+                _logger = logger;   
             }
 
             public async Task<OfferModificationResult> Handle(Command request, CancellationToken cancellationToken)
@@ -60,6 +68,7 @@ namespace Application.JobOffer.Commands
                 if (ret <= 0)
                 {
                     msg += $"Offer {request.id} - Could't delete it";
+                    _logger.LogError(msg);
                 }
                 else
                 {
@@ -67,9 +76,11 @@ namespace Application.JobOffer.Commands
                     _jobVacancyLanguageRepo.Delete(job.IdjobVacancy);
                     var ans = await _regJobVacWorkPermitRepo.Delete(job.IdjobVacancy);
                     var isPack = _contractProductRepo.IsPack(job.Idcontract);
+
                     if (isPack)
-                        await _regEnterpriseContractRepo.IncrementAvailableUnits(job.Idcontract, job.IdjobVacType);
-                    msg += $"Offer {request.id} Deleted.\n\r";
+                    {
+                        await _regEnterpriseContractRepo.IncrementAvailableUnits(job.Idcontract, job.IdjobVacType);                        
+                    }
 
                     if (aimwelEnabled)
                     {
@@ -81,15 +92,18 @@ namespace Application.JobOffer.Commands
                         {
                             await _manageCampaign.StopCampaign(job.IdjobVacancy);
                             msg += $"Campaign {campaign.CampaignId} /  {request.id} - Canceled ";
+                            _logger.LogInformation(msg);
                         }
                         else if(campaign != null)
                         {
                             msg += $"Campaign {campaign.CampaignId} not editable  /  {campaign.Status}";
+                            _logger.LogInformation(msg);
                         }
                     }
                 }
-
-                return OfferModificationResult.Success(new List<string> { msg });
+                OfferResultDto dto = new();
+                dto = _mapper.Map(job,dto);
+                return OfferModificationResult.Success(dto);
             }
         }
     }

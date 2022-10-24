@@ -6,6 +6,7 @@ using Domain.Repositories;
 using DPGRecruitmentCampaignClient;
 using MediatR;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 namespace Application.JobOffer.Commands
 {
@@ -26,6 +27,7 @@ namespace Application.JobOffer.Commands
             private readonly IMediator _mediatr;
             private readonly IJobVacancyLanguageRepository _jobVacancyLanguageRepo;
             private readonly IRegJobVacWorkPermitRepository _regJobVacWorkPermitRepo;
+            private readonly ILogger _logger;
 
             public Handler(IJobOfferRepository offerRepo,
                 IRegEnterpriseContractRepository regEnterpriseContractRepository,
@@ -33,7 +35,8 @@ namespace Application.JobOffer.Commands
                 IConfiguration config,
                 IContractProductRepository contractProductRepo, IMediator mediatr,
                 IJobVacancyLanguageRepository jobVacancyLanguageRepo,
-                IRegJobVacWorkPermitRepository regJobVacWorkPermitRepo)
+                IRegJobVacWorkPermitRepository regJobVacWorkPermitRepo,
+                ILogger logger)
             {
                 _offerRepo = offerRepo;
                 _regEnterpriseContractRepository = regEnterpriseContractRepository;
@@ -43,6 +46,7 @@ namespace Application.JobOffer.Commands
                 _mediatr = mediatr;
                 _jobVacancyLanguageRepo = jobVacancyLanguageRepo;
                 _regJobVacWorkPermitRepo = regJobVacWorkPermitRepo;
+                _logger = logger;
             }
 
             public async Task<OfferModificationResult> Handle(Command request, CancellationToken cancellationToken)
@@ -65,6 +69,7 @@ namespace Application.JobOffer.Commands
                 if (ret <= 0)
                 {
                     msg += $"Offer {request.dto.id} - Not Filed ";
+                    _logger.LogError(msg);                   
                 }
                 else
                 {
@@ -74,6 +79,7 @@ namespace Application.JobOffer.Commands
                     if (isPack)
                         await _regEnterpriseContractRepository.IncrementAvailableUnits(job.Idcontract, job.IdjobVacType);
                     msg += $"Filed offer {request.dto.id}\n\r";
+                    _logger.LogInformation(msg);
 
                     if (aimwelEnabled)
                     {
@@ -89,6 +95,7 @@ namespace Application.JobOffer.Commands
                                 offerId = request.dto.id
                             });
                             msg += $"Campaign {campaign.CampaignId} /  {request.dto.id} - Canceled ";
+                            _logger.LogInformation(msg);
                         }
                     }
                 }

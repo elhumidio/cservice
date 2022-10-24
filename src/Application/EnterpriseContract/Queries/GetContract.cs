@@ -18,13 +18,11 @@ namespace Application.EnterpriseContract.Queries
 
         public class Handler : IRequestHandler<Query, ContractResult>
         {
-            private readonly  IMediator _mediatr;
-            private readonly IContractRepository _contractRepository;
+            private readonly IMediator _mediatr;
             private readonly IContractPublicationRegionRepository _contractPublicationRegionRepository;
 
-            public Handler(IContractRepository contractRepository, IMediator mediatr, IContractPublicationRegionRepository contractPublicationRegionRepository)
+            public Handler(IMediator mediatr, IContractPublicationRegionRepository contractPublicationRegionRepository)
             {
-                _contractRepository = contractRepository;
                 _mediatr = mediatr;
                 _contractPublicationRegionRepository = contractPublicationRegionRepository;
             }

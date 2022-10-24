@@ -17,13 +17,11 @@ namespace Application.Contracts.Queries
         public class Handler : IRequestHandler<Query, Result<List<UnitsDto>>>
         {
             private readonly IContractRepository _contractRepo;
-            private readonly IRegEnterpriseContractRepository _regEnterpriseContractRepo;
-            private readonly IMapper _mapper;
+            private readonly IRegEnterpriseContractRepository _regEnterpriseContractRepo;            
             private readonly IMediator _mediator;
 
-            public Handler(IMapper mapper, IContractRepository contractRepo, IMediator mediator, IRegEnterpriseContractRepository regEnterpriseContractRepo)
-            {
-                _mapper = mapper;
+            public Handler(IContractRepository contractRepo, IMediator mediator, IRegEnterpriseContractRepository regEnterpriseContractRepo)
+            {                
                 _contractRepo = contractRepo;
                 _mediator = mediator;
                 _regEnterpriseContractRepo = regEnterpriseContractRepo;

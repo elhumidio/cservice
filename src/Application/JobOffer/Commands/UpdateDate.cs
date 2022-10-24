@@ -27,28 +27,27 @@ namespace Application.JobOffer.Commands
             }
 
             public async Task<OfferModificationResult> Handle(Command request, CancellationToken cancellationToken)
-            {
-                
+            {                
                 string msg = string.Empty;
-
                 var job = _offerRepo.GetOfferById(request.id);
+
                 if (job == null)
                 {
                     return OfferModificationResult.Success(new List<string> { $"Offer {request.id} not available"}) ;
                 }
-                var ret = _offerRepo.DeleteOffer(job);
-                if (ret <= 0)
-                {
-                    msg += $"Offer {request.id} - Couldn't update it";
-                }
-                else
-                {
                     job.UpdatingDate = DateTime.Now;    
-                    await _offerRepo.UpdateOffer(job);
-                    msg += $"Offer {request.id} - udpated Successfully ";                                                          
+                    var ret = await _offerRepo.UpdateOffer(job);
+                if (ret > 0)
+                {
+                    msg += $"Offer {request.id} - date udpated successfully ";
+                    return OfferModificationResult.Failure(new List<string> { msg });
                 }
 
-                return OfferModificationResult.Success(new List<string> { msg });
+                else {
+                    msg += $"Offer {request.id} - couldn't update date";
+                    return OfferModificationResult.Success(new List<string> { msg });
+                }
+                
             }
         }
     }
