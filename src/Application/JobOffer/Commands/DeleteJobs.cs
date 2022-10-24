@@ -82,7 +82,7 @@ namespace Application.JobOffer.Commands
                             await _manageCampaign.StopCampaign(job.IdjobVacancy);
                             msg += $"Campaign {campaign.CampaignId} /  {request.id} - Canceled ";
                         }
-                        else
+                        else if(campaign != null)
                         {
                             msg += $"Campaign {campaign.CampaignId} not editable  /  {campaign.Status}";
                         }

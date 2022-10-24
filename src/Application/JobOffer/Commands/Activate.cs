@@ -22,21 +22,18 @@ namespace Application.JobOffer.Commands
         public class Handler : IRequestHandler<Command, OfferModificationResult>
         {
             private readonly IJobOfferRepository _offerRepo;
-            private readonly IRegEnterpriseContractRepository _regEnterpriseContractRepository;
-            private readonly IAimwelCampaign _manageCampaign;
+            private readonly IRegEnterpriseContractRepository _regEnterpriseContractRepository;            
             private readonly IConfiguration _config;
             private readonly IContractProductRepository _contractProductRepo;
             private readonly IMediator _mediatr;
 
             public Handler(IJobOfferRepository offerRepo,
-                IRegEnterpriseContractRepository regEnterpriseContractRepository,
-                IAimwelCampaign aimwelCampaign,
+                IRegEnterpriseContractRepository regEnterpriseContractRepository,                
                 IConfiguration config,
                 IContractProductRepository contractProductRepo, IMediator mediatr)
             {
                 _offerRepo = offerRepo;
-                _regEnterpriseContractRepository = regEnterpriseContractRepository;
-                _manageCampaign = aimwelCampaign;
+                _regEnterpriseContractRepository = regEnterpriseContractRepository;                
                 _config = config;
                 _contractProductRepo = contractProductRepo;
                 _mediatr = mediatr;

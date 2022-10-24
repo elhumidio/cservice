@@ -59,11 +59,11 @@ namespace Application.JobOffer.Validations
         {
             bool IsValidEdit = false;
 
-            var actualOfferAts = _jobmatchAtsRepo.GetAtsIntegrationInfo(offer.IntegrationData.ApplicationReference).Result;
+            var actualOfferAts =  _jobmatchAtsRepo.GetAtsIntegrationInfo(offer.IntegrationData.ApplicationReference).Result;
             if (actualOfferAts != null)
             {
                 var offerDb = _jobRepo.GetOfferById(actualOfferAts.IdjobVacancy);
-                IsValidEdit = actualOfferAts != null || offer.IdjobVacancy > 0 || offerDb != null;
+                IsValidEdit = offer.IdjobVacancy > 0 || offerDb != null;
                 if (IsValidEdit && !offerDb.ChkFilled)
                 {
                     return true;

@@ -36,10 +36,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="JobOffer\Interfaces\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\Domain\Domain.csproj" />
   </ItemGroup>
 
@@ -49,6 +45,13 @@
     <Protobuf Include="Protos\nl\dpgrecruitment\campaign\responses.proto" ProtoRoot="Protos/" GrpcServices="Client" />    
     <Protobuf Include="Protos\nl\dpgrecruitment\campaign\types.proto" ProtoRoot="Protos/" GrpcServices="Client" />    
     <Protobuf Include="Protos/validate/*.proto" ProtoRoot="Protos/" GrpcServices="Client" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="JobOffer\Interfaces\**" />
+    <EmbeddedResource Remove="JobOffer\Interfaces\**" />
+    <None Remove="JobOffer\Interfaces\**" />
+    <Protobuf Remove="JobOffer\Interfaces\**" />
   </ItemGroup>
 
 </Project>

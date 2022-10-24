@@ -18,7 +18,7 @@ namespace Application.EnterpriseContract.Queries
 
         public class Handler : IRequestHandler<Query, ContractResult>
         {
-            private IMediator _mediatr;
+            private readonly  IMediator _mediatr;
             private readonly IContractRepository _contractRepository;
             private readonly IContractPublicationRegionRepository _contractPublicationRegionRepository;
 
@@ -71,7 +71,7 @@ namespace Application.EnterpriseContract.Queries
                             if ((unitsAvailable.Sum(u => u.Units)) > 0)
                             {
                                 contractToUse = contract;
-                                var unitsToUse = unitsAvailable.Where(ua => ua.Units > 0).FirstOrDefault();
+                                var unitsToUse = unitsAvailable.FirstOrDefault(ua => ua.Units > 0);
                                 if (unitsToUse != null)
                                 {
                                     contractToUse.IdJobVacType = (int)unitsToUse.type;

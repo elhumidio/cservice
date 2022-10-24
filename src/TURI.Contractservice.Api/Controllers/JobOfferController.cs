@@ -455,5 +455,30 @@ namespace API.Controllers
                 return Ok(ex.Message);
             }
         }
+
+        /// <summary>
+        /// It update job date
+        /// </summary>
+        /// <param name="jobId"></param>
+        /// <returns></returns>
+        [HttpGet("{jobId}")]
+        public async Task<IActionResult> UpdateDate(int jobId)
+        {
+            try
+            {
+                var response = await Mediator.Send(new UpdateDate.Command
+                {
+                    id = jobId
+                 
+                });
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return Ok(ex.Message);
+            }
+        }
+
+
     }
 }
