@@ -29,7 +29,7 @@ namespace Application.JobOffer.Commands
             private readonly IJobVacancyLanguageRepository _jobVacancyLanguageRepo;
             private readonly IRegJobVacWorkPermitRepository _regJobVacWorkPermitRepo;
             private readonly IMapper _mapper;
-            private readonly ILogger _logger;
+            
 
             public Handler(IJobOfferRepository offerRepo,
                 IRegEnterpriseContractRepository regEnterpriseContractRepository,
@@ -39,8 +39,7 @@ namespace Application.JobOffer.Commands
                 IMediator mediatr,
                 IJobVacancyLanguageRepository jobVacancyLanguageRepository,
                 IRegJobVacWorkPermitRepository regJobVacWorkPermitRepo,
-                IMapper mapper,
-                ILogger logger)
+                IMapper mapper)
             {
                 _offerRepo = offerRepo;
                 _regEnterpriseContractRepo = regEnterpriseContractRepository;
@@ -50,8 +49,7 @@ namespace Application.JobOffer.Commands
                 _mediatr = mediatr;
                 _jobVacancyLanguageRepo = jobVacancyLanguageRepository;
                 _regJobVacWorkPermitRepo = regJobVacWorkPermitRepo;
-                _mapper = mapper;
-                _logger = logger;   
+                _mapper = mapper;                   
             }
 
             public async Task<OfferModificationResult> Handle(Command request, CancellationToken cancellationToken)
@@ -67,8 +65,8 @@ namespace Application.JobOffer.Commands
                 var ret = _offerRepo.DeleteOffer(job);
                 if (ret <= 0)
                 {
-                    msg += $"Offer {request.id} - Could't delete it";
-                    _logger.LogError(msg);
+                    msg += $"Offer {request.id} - Could't delete it";                    
+                    return OfferModificationResult.Success(new List<string> { msg });
                 }
                 else
                 {
@@ -91,13 +89,11 @@ namespace Application.JobOffer.Commands
                         if (campaign != null && campaign.Status != CampaignStatus.Ended)
                         {
                             await _manageCampaign.StopCampaign(job.IdjobVacancy);
-                            msg += $"Campaign {campaign.CampaignId} /  {request.id} - Canceled ";
-                            _logger.LogInformation(msg);
+                            msg += $"Campaign {campaign.CampaignId} /  {request.id} - Canceled ";                            
                         }
                         else if(campaign != null)
                         {
-                            msg += $"Campaign {campaign.CampaignId} not editable  /  {campaign.Status}";
-                            _logger.LogInformation(msg);
+                            msg += $"Campaign {campaign.CampaignId} not editable  /  {campaign.Status}";                            
                         }
                     }
                 }

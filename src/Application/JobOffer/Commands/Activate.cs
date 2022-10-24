@@ -3,6 +3,7 @@ using Application.Aimwel.Interfaces;
 using Application.Aimwel.Queries;
 using Application.Contracts.Queries;
 using Application.JobOffer.DTO;
+using AutoMapper;
 using Domain.Enums;
 using Domain.Repositories;
 using DPGRecruitmentCampaignClient;
@@ -27,21 +28,21 @@ namespace Application.JobOffer.Commands
             private readonly IConfiguration _config;
             private readonly IContractProductRepository _contractProductRepo;
             private readonly IMediator _mediatr;
-            private readonly ILogger _logger;
+            private readonly IMapper _mapper;
 
             public Handler(IJobOfferRepository offerRepo,
                 IRegEnterpriseContractRepository regEnterpriseContractRepository,                
                 IConfiguration config,
                 IContractProductRepository contractProductRepo,
-                IMediator mediatr,
-                ILogger logger)
+                IMediator mediatr,            
+                IMapper mapper)
             {
                 _offerRepo = offerRepo;
                 _regEnterpriseContractRepository = regEnterpriseContractRepository;                
                 _config = config;
                 _contractProductRepo = contractProductRepo;
-                _mediatr = mediatr;
-                _logger = logger;
+                _mediatr = mediatr;                
+                _mapper = mapper;   
             }
 
             public async Task<OfferModificationResult> Handle(Command request, CancellationToken cancellationToken)
@@ -65,8 +66,7 @@ namespace Application.JobOffer.Commands
 
                 if (!hasUnits)
                 {
-                    msg += "not_enough_units";
-                    _logger.LogError(msg);
+                    msg += "not_enough_units";                    
                     return OfferModificationResult.Success(new List<string> { msg });
                 }
                 else
@@ -80,11 +80,11 @@ namespace Application.JobOffer.Commands
                     var isPack = _contractProductRepo.IsPack(job.Idcontract);
                     if (isPack)
                         await _regEnterpriseContractRepository.UpdateUnits(job.Idcontract, job.IdjobVacType);
-                    msg += $"Activated offer {request.id}";
-                    _logger.LogInformation(msg);    
+                    msg += $"Activated offer {request.id}";                        
                     offerUpdated = true;
                 }
-      
+                OfferResultDto dto = new OfferResultDto();
+                dto = _mapper.Map(job, dto);
                 bool canModifyCampaign = aimwelEnabled && offerUpdated;
 
                 if (canModifyCampaign)
@@ -101,8 +101,7 @@ namespace Application.JobOffer.Commands
                         {
                             offerId = request.id
                         });
-                        msg += $"Campaign: {campaign.CampaignId} /  id: {request.id} - resumed ";
-                        _logger.LogInformation(msg);
+                        msg += $"Campaign: {campaign.CampaignId} /  id: {request.id} - resumed ";                        
                     }
                     else if (campaign != null && campaign.Status == CampaignStatus.Ended)
                     {
@@ -110,14 +109,13 @@ namespace Application.JobOffer.Commands
                         {
                             offerId = request.id
                         });
-                        msg += $"Campaign: {ans.Result.Value.CampaignId} /  id: {request.id} - created ";
-                        _logger.LogInformation(msg);
+                        msg += $"Campaign: {ans.Result.Value.CampaignId} /  id: {request.id} - created ";                        
                     }
-                    return OfferModificationResult.Success(new List<string> { msg });
+                    return OfferModificationResult.Success(dto);
                 }
                 else
                 {
-                    return OfferModificationResult.Success(new List<string> { msg });
+                    return OfferModificationResult.Success(dto);
                 }
                 
             }

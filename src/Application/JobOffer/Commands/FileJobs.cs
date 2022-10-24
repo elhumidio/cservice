@@ -25,16 +25,14 @@ namespace Application.JobOffer.Commands
             private readonly IConfiguration _config;
             private readonly IMediator _mediatr;
             private readonly IContractProductRepository _contractProductRepo;
-            private readonly IMapper _mapper;
-            private readonly ILogger _logger;
+            private readonly IMapper _mapper;            
 
             public Handler(IJobOfferRepository offerRepo,
                 IRegEnterpriseContractRepository regEnterpriseContractRepository,
                 IAimwelCampaign aimwelCampaign,
                 IConfiguration config,
                 IContractProductRepository contractProductRepo,
-                IMediator mediatr,IMapper mapper,
-                ILogger logger)
+                IMediator mediatr,IMapper mapper)
             {
                 _offerRepo = offerRepo;
                 _regEnterpriseContractRepository = regEnterpriseContractRepository;
@@ -42,8 +40,7 @@ namespace Application.JobOffer.Commands
                 _config = config;
                 _contractProductRepo = contractProductRepo;
                 _mediatr = mediatr;
-                _mapper = mapper;
-                _logger = logger;   
+                _mapper = mapper;                
             }
 
             public async Task<OfferModificationResult> Handle(Command request, CancellationToken cancellationToken)
@@ -59,16 +56,16 @@ namespace Application.JobOffer.Commands
                 var ret = _offerRepo.FileOffer(job);
                 if (ret <= 0)
                 {
-                    msg += $"Offer {request.id} - Couldn't file job";
-                    _logger.LogError(msg);
+                    msg += $"Offer {request.id} - Couldn't file job";                    
+                    return OfferModificationResult.Success(new List<string> { msg });
                 }
                 else
                 {
                     var isPack = _contractProductRepo.IsPack(job.Idcontract);
                     if (isPack)
                         await _regEnterpriseContractRepository.IncrementAvailableUnits(job.Idcontract, job.IdjobVacType);
-                    msg += $"Offer {request.id} filed.\n\r";
-                    _logger.LogInformation(msg);
+                    msg += $"Offer {request.id} filed.\n\r";                    
+
                     if (aimwelEnabled)
                     {
                         var campaign = await _mediatr.Send(new GetStatus.Query
@@ -78,13 +75,11 @@ namespace Application.JobOffer.Commands
                         if (campaign != null && campaign.Status == CampaignStatus.Active)
                         {
                             await _manageCampaign.PauseCampaign(job.IdjobVacancy);
-                            msg += $"Campaign {campaign.CampaignId} /  {request.id} - Canceled ";
-                            _logger.LogError(msg);
+                            msg += $"Campaign {campaign.CampaignId} /  {request.id} - Canceled ";                    
                         }
                         else if(campaign != null)
                         {
-                            msg += $"Campaign {campaign.CampaignId} not editable  /  {campaign.Status}";
-                            _logger.LogError(msg);
+                            msg += $"Campaign {campaign.CampaignId} not editable  /  {campaign.Status}";                            
                         }
                     }
                 }

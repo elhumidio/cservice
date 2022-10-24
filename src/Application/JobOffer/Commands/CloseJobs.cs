@@ -26,8 +26,7 @@ namespace Application.JobOffer.Commands
             private readonly IContractProductRepository _contractProductRepo;
             private readonly IMediator _mediatr;
             private readonly IJobVacancyLanguageRepository _jobVacancyLanguageRepo;
-            private readonly IRegJobVacWorkPermitRepository _regJobVacWorkPermitRepo;
-            private readonly ILogger _logger;
+            private readonly IRegJobVacWorkPermitRepository _regJobVacWorkPermitRepo;            
 
             public Handler(IJobOfferRepository offerRepo,
                 IRegEnterpriseContractRepository regEnterpriseContractRepository,
@@ -35,8 +34,8 @@ namespace Application.JobOffer.Commands
                 IConfiguration config,
                 IContractProductRepository contractProductRepo, IMediator mediatr,
                 IJobVacancyLanguageRepository jobVacancyLanguageRepo,
-                IRegJobVacWorkPermitRepository regJobVacWorkPermitRepo,
-                ILogger logger)
+                IRegJobVacWorkPermitRepository regJobVacWorkPermitRepo
+                )
             {
                 _offerRepo = offerRepo;
                 _regEnterpriseContractRepository = regEnterpriseContractRepository;
@@ -45,15 +44,13 @@ namespace Application.JobOffer.Commands
                 _contractProductRepo = contractProductRepo;
                 _mediatr = mediatr;
                 _jobVacancyLanguageRepo = jobVacancyLanguageRepo;
-                _regJobVacWorkPermitRepo = regJobVacWorkPermitRepo;
-                _logger = logger;
+                _regJobVacWorkPermitRepo = regJobVacWorkPermitRepo;                
             }
 
             public async Task<OfferModificationResult> Handle(Command request, CancellationToken cancellationToken)
             {
                 string msg = string.Empty;
                 bool aimwelEnabled = Convert.ToBoolean(_config["Aimwel:EnableAimwel"]);
-
                 var job = _offerRepo.GetOfferById(request.dto.id);
 
                 if (job == null)
@@ -68,8 +65,7 @@ namespace Application.JobOffer.Commands
 
                 if (ret <= 0)
                 {
-                    msg += $"Offer {request.dto.id} - Not Filed ";
-                    _logger.LogError(msg);                   
+                    msg += $"Offer {request.dto.id} - Not Filed ";                                       
                 }
                 else
                 {
@@ -78,8 +74,7 @@ namespace Application.JobOffer.Commands
                     var isPack = _contractProductRepo.IsPack(job.Idcontract);
                     if (isPack)
                         await _regEnterpriseContractRepository.IncrementAvailableUnits(job.Idcontract, job.IdjobVacType);
-                    msg += $"Filed offer {request.dto.id}\n\r";
-                    _logger.LogInformation(msg);
+                    msg += $"Filed offer {request.dto.id}\n\r";                    
 
                     if (aimwelEnabled)
                     {
@@ -94,8 +89,7 @@ namespace Application.JobOffer.Commands
                             {
                                 offerId = request.dto.id
                             });
-                            msg += $"Campaign {campaign.CampaignId} /  {request.dto.id} - Canceled ";
-                            _logger.LogInformation(msg);
+                            msg += $"Campaign {campaign.CampaignId} /  {request.dto.id} - Canceled ";                            
                         }
                     }
                 }
