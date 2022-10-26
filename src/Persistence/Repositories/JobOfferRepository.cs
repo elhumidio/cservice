@@ -212,7 +212,7 @@ namespace Persistence.Repositories
                .Where(o => o.jvc.jv.Identerprise == companyId
 
                && (o.cp.Idproduct == 110 || o.cp.Idproduct == 115)
-               && !o.jvc.jv.ChkFilled && !o.jvc.jv.ChkDeleted && o.jvc.jv.Idstatus == 1 && o.jvc.jv.FinishDate >= DateTime.Today
+              // && !o.jvc.jv.ChkFilled && !o.jvc.jv.ChkDeleted && o.jvc.jv.Idstatus == 1 && o.jvc.jv.FinishDate >= DateTime.Today
                )
                .Select(o => o.jvc.jv);
 
