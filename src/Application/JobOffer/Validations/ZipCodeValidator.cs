@@ -26,7 +26,9 @@ namespace Application.JobOffer.Validations
 
         private bool IsRightPostalCode(CreateOfferCommand obj)
         {
-            var ret = false;
+            var ret = false;            
+            var country = _regionRepo.GetCountry(obj.Idregion);
+            obj.Idcountry = country;
             var countryCode = GetCountryIsoByIdCountry(obj.Idcountry);
             if (!string.IsNullOrEmpty(countryCode))
             {

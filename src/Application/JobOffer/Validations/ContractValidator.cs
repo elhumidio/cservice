@@ -75,7 +75,7 @@ namespace Application.JobOffer.Validations
             var units = _mediator.Send(new GetAvailableUnits.Query
             {
                 ContractId = offer.Idcontract,
-            }).Result.Value;
+            }).Result.Value.Where(u => u.OwnerId == offer.IdenterpriseUserG);
             var unitsAvailable = units.Sum(u => u.Units);
 
             if (unitsAvailable > 0)

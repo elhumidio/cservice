@@ -104,7 +104,7 @@ namespace Application.JobOffer.Commands
                 await _regJobVacWorkPermitRepo.Delete(offer.IdjobVacancy);
                 foreach (var permit in offer.IdworkPermit)
                 {
-                    await _regJobVacWorkPermitRepo.Add(new RegJobVacWorkPermit() { IdjobVacancy = offer.IdjobVacancy, IdworkPermit = permit });
+                   await _regJobVacWorkPermitRepo.Add(new RegJobVacWorkPermit() { IdjobVacancy = offer.IdjobVacancy, IdworkPermit = permit });
                 }
             }
 
