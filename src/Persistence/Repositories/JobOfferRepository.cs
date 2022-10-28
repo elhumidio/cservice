@@ -69,7 +69,7 @@ namespace Persistence.Repositories
             {
                 job.ChkFilled = true;
                 job.FilledDate = DateTime.Now;
-                job.ModificationDate = DateTime.Now;
+                job.ModificationDate = DateTime.Now;                
                 var ret = _dataContext.SaveChanges();
                 return ret;
             }
