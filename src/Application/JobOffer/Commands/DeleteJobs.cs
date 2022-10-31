@@ -65,7 +65,7 @@ namespace Application.JobOffer.Commands
                 var ret = _offerRepo.DeleteOffer(job);
                 if (ret <= 0)
                 {
-                    msg += $"Offer {request.id} - Could't delete it";                    
+                    msg += $"Offer {request.id} - Couldn't delete it";                    
                     return OfferModificationResult.Success(new List<string> { msg });
                 }
                 else
