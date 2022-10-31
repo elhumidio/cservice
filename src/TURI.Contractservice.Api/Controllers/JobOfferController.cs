@@ -113,7 +113,7 @@ namespace API.Controllers
             var result = await Mediator.Send(new CloseJobs.Command
             {
                 dto = _closingOffer
-            }); ;
+            }); 
 
             var ret = HandleResult(result);
             return ret;
