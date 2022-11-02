@@ -190,48 +190,35 @@ namespace Persistence.Repositories
             return res;
         }
 
-        /*
-        public IQueryable<JobVacancy> GetAllJobs(int countryId)
+        public Task<List<JobData>> GetAllJobs()
         {
-            var query = _dataContext.JobVacancies.Where(a => a.Identerprise == 28463
-                && !a.ChkDeleted
-                && !a.ChkFilled
-                && a.FinishDate > DateTime.Today.AddDays(-1)
-                && a.Idstatus == (int)OfferStatus.Active);
-
-            return query;
-        }
-        */
-
-        public async Task<IQueryable<JobData>> GetAllJobs()
-        {
-            var semanal = DateTime.Now.AddDays(-7).Date;
             var catstr = "";
             var catstrEn = "";
-            var _enLanguageID = 14;
 
             var query = (from job in _dataContext.JobVacancies
-                         join enterprise in _dataContext.Enterprises on job.Identerprise equals enterprise.Identerprise
                          join brand in _dataContext.Brands on job.Idbrand equals brand.Idbrand
                          where !job.ChkDeleted
                                 && !job.ChkFilled
-                                && job.PublicationDate.AddDays(14) >= DateTime.Now
+                                && job.PublicationDate < DateTime.Now
+                                && job.FinishDate > DateTime.Now
                                 && job.Idstatus == (int)OfferStatus.Active
-                        select new JobData()
-                        {
-                            Title = job.Title,
-                            CompanyName = brand.Name,
-                            IDCountry = job.Idcountry,
-                            IDRegion = job.Idregion,
-                            IDArea = job.Idarea,
-                            IDJobVacancy = job.IdjobVacancy,
-                            IDBrand = job.Idbrand,
-                            IDEnterprise = job.Identerprise,
-                            ChkBlindVacancy = job.ChkBlindVac,
-                            PublicationDate = job.PublicationDate,
-                            City = job.City,
-                            IDCity = (job.Idcity.HasValue) ? job.Idcity.Value : 0
-                        });
+                         select new JobData()
+                         {
+                             Title = job.Title,
+                             CompanyName = brand.Name,
+                             IDCountry = job.Idcountry,
+                             IDRegion = job.Idregion,
+                             IDArea = job.Idarea,
+                             IDJobVacancy = job.IdjobVacancy,
+                             IDBrand = job.Idbrand,
+                             IDEnterprise = job.Identerprise,
+                             ChkBlindVacancy = job.ChkBlindVac,
+                             PublicationDate = job.PublicationDate,
+                             City = job.City,
+                             IDCity = (job.Idcity.HasValue) ? job.Idcity.Value : 0,
+                             Category = job.Idarea.ToString(), //area.BaseName
+                             //CategoryMoreJobs = catstr + area.BaseName,
+                         });
 
             //LOCATION = job.IDRegion == 61 ? country.BaseName : region.BaseName + ", " + country.BaseName,
             //CATEGORY = area.BaseName,
@@ -240,7 +227,15 @@ namespace Persistence.Repositories
             //CATEGORY_MORE_JOBS = catstr + area.BaseName,
             //CATEGORY_MORE_JOBS_EN = catstrEn + areaEn.BaseName,
 
-            return (IQueryable<JobData>)query;
+            return query.ToListAsync();
+        }
+
+        public Task<List<FeaturedJob>> GetFeaturedJobs()
+        {
+            var query = (from featuredJob in _dataContext.FeaturedJobs
+                    select featuredJob);
+
+            return query.ToListAsync();
         }
     }
 }

@@ -175,12 +175,12 @@ namespace API.Controllers
         /// </summary>
         /// <param name="contractId"></param>
         /// <returns></returns>
-        [HttpGet("")]
+        [HttpGet()] //[HttpGet("{daysOld}")]
         public async Task<IActionResult> GetAllJobs()
         {
             var result = await Mediator.Send(new ListAllJobs.Query
             {
-
+                
             });
             return HandleResult(result);
         }
