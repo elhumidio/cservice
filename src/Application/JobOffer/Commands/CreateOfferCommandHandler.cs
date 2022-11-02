@@ -74,7 +74,9 @@ namespace Application.JobOffer.Commands
                 entity.IntegrationId = offer.IntegrationData.IDIntegration;
                 jobVacancyId = _offerRepo.Add(entity);
 
-                bool canSaveLanguages = jobVacancyId > 0 && offer.JobLanguages.Any();
+
+                /*COMMENT OUT UNTIL NEW CHANGES IN WEB BE DEPLOYED*/
+                /*bool canSaveLanguages = jobVacancyId > 0 && offer.JobLanguages.Any();
                 if (canSaveLanguages)
                 {
                     foreach (var lang in offer.JobLanguages)
@@ -95,7 +97,7 @@ namespace Application.JobOffer.Commands
                     {
                         var ret = await _regJobVacWorkPermitRepo.Add(new RegJobVacWorkPermit() { IdjobVacancy = jobVacancyId, IdworkPermit = permit });
                     }
-                }
+                }*/
 
                 if (jobVacancyId == -1)
                 {
