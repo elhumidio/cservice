@@ -1,0 +1,45 @@
+syntax = "proto3";
+
+package nl.dpgrecruitment.campaign;
+option csharp_namespace = "DPGRecruitmentCampaignClient";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+
+import "nl/dpgrecruitment/campaign/types.proto";
+
+message CreateCampaignResponse {
+  string campaign_id = 1; // The unique identifier of the created campaign
+}
+
+message Response {
+  google.protobuf.Empty success = 1;
+}
+
+message Failure {
+  repeated string errors = 1; // List of error messages
+}
+
+message GetCampaignResponse {
+  string campaign_id = 1;
+  string job_id = 2;
+  Advertisement advertisement = 3;
+  JobContent job_content = 4; // Content of the job
+  google.protobuf.Timestamp end_time = 5; // The campaign will be ended at this time.
+  CampaignStatus status = 6; // Current status of the campaign
+  CampaignEndedReason reason_ended = 7;
+  oneof campaign_goal {
+    ConversionTarget conversion_target = 10; // The goal of the campaign with its associated settings (only provide one)
+    BudgetBestEffort budget_best_effort = 11; // The goal of the campaign with its associated settings (only provide one)
+  }
+  repeated string excluded_channels = 12;
+  repeated ChannelType excluded_channel_types = 13;
+  ApplicationType applicationType = 14;
+  Settings settings = 15; // Settings of the Campaign
+}
+
+message GetChannelsResponse {
+  repeated string aggregator = 1;
+  repeated string display = 2;
+  repeated string social = 3;
+}

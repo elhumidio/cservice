@@ -8,18 +8,16 @@ namespace API.Controllers
     {
         public IHostEnvironment _env;
 
-        public UtilInfoController(IHostEnvironment env) {
+        public UtilInfoController(IHostEnvironment env)
+        {
             _env = env;
         }
-
 
         [HttpGet]
         public async Task<IActionResult> GetConfigValuesOther()
         {
-
             var result = Application.Core.Result<string>.Success(_env.EnvironmentName);
             return HandleResult(result);
-
         }
 
         [HttpGet("{email}", Name = "company")]

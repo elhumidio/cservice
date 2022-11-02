@@ -58,7 +58,8 @@ namespace Application.Contracts.Queries
                         ContractId = request.ContractId,
                         IsPack = isPack,
                         OwnerId = units.IdenterpriseUser,
-                        type = Enum.IsDefined(typeof(StandardWiseVacancyType), (StandardWiseVacancyType)units.IdjobVacType) ? 0 : (VacancyType)units.IdjobVacType,
+                        //type = Enum.IsDefined(typeof(StandardWiseVacancyType), (StandardWiseVacancyType)units.IdjobVacType) ? 0 : (VacancyType)units.IdjobVacType,
+                        type = (VacancyType)units.IdjobVacType,
                         Units = units.JobVacUsed - unitsConsumed
                     };
                     list.Add(dto);

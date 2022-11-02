@@ -18,13 +18,10 @@ namespace Application.JobOffer.Queries
             private readonly IEnterpriseUserRepository _enterpriseUserRepository;
             private readonly IBrandRepository _brandRepository;
             private readonly IUserRepository _userRepository;
-            private readonly IEnterpriseRepository _enterpriseRepository;
+            private readonly IEnterpriseRepository _enterpriseRepository;            
 
-            private readonly IMapper _mapper;
-
-            public Handler(IMapper mapper, IEnterpriseUserRepository enterpriseUserRepo, IBrandRepository brandRepo, IUserRepository userRepo, IEnterpriseRepository enterpriseRepository)
-            {
-                _mapper = mapper;
+            public Handler(IEnterpriseUserRepository enterpriseUserRepo, IBrandRepository brandRepo, IUserRepository userRepo, IEnterpriseRepository enterpriseRepository)
+            {                
                 _enterpriseUserRepository = enterpriseUserRepo;
                 _brandRepository = brandRepo;
                 _userRepository = userRepo;

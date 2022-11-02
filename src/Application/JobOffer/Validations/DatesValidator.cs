@@ -47,7 +47,7 @@ namespace Application.JobOffer.Validations
             obj.FilledDate = null;
             obj.ModificationDate = DateTime.Now;
             obj.LastVisitorDate = DateTime.Now;
-            return obj.FinishDate > DateTime.Today ? true : false;
+            return obj.FinishDate >= DateTime.Today ? true : false;
         }
     }
 
@@ -61,10 +61,10 @@ namespace Application.JobOffer.Validations
         {
             _mediator = mediator;
             _contractProdRepo = contractProdRepo;
-            _jobOfferRepo = jobOfferRepo;   
+            _jobOfferRepo = jobOfferRepo;
 
             RuleFor(command => command)
-                .Must(HasRightFinishDate)   
+                .Must(HasRightFinishDate)
                 .WithMessage("Couldn't establish right finish date.\n");
         }
 

@@ -21,7 +21,7 @@ namespace Persistence.Repositories
             .Where(o => o.ppl.p.Idcontract == contractId && o.pl.IdjobVacType != null)
             .Select(o => o.ppl.cp.ChkPack);
 
-            if(res.Any() && res != null)
+            if (res.Any() && res != null)
                 isPack = res.First();
             return isPack;
         }

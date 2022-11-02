@@ -1,0 +1,197 @@
+syntax = "proto3";
+
+package nl.dpgrecruitment.campaign;
+option csharp_namespace = "DPGRecruitmentCampaignClient";
+
+import "google/protobuf/timestamp.proto";
+import "validate/validate.proto";
+
+enum ConversionType {
+  DETAIL_VIEW = 0; // Job detail page view (Default)
+  APPLY_CLICK = 1; // Apply button click
+}
+
+enum Currency {
+  UNDEFINED = 0;
+  EUR = 1; // Default
+  GBP = 2;
+}
+
+message Money {
+  Currency currency = 1;
+
+  // The whole units of the amount.
+  // For example if `currency` is `EUR`, then 1 unit is one euro.
+  int64 units = 2;
+
+  // Number of hundredths of units of the amount.
+  // The value must be between -99 and +99 inclusive.
+  // If `units` is positive, `hundredths` must be positive or zero.
+  // If `units` is zero, `hundredths` can be positive, zero, or negative.
+  // If `units` is negative, `hundredths` must be negative or zero.
+  // For example -1.75 is represented as `units`=-1 and `hundredths`=-75.
+  int32 hundredths = 3;
+}
+
+message ConversionTarget {
+  Money budget = 1; // The total budget for the campaign
+  Money target = 2; // The target budget per conversion
+  ConversionType conversion_type = 3; // The conversion that is being targeted
+}
+
+message BudgetBestEffort {
+  Money budget = 1; // The total budget for the campaign
+}
+
+message JobContent {
+  string job_title = 1 [(validate.rules).string = {min_len: 2, max_len: 128}];
+  string job_description = 2 [(validate.rules).string = {min_len: 5, max_len: 10000}]; // The full text description in HTML
+  Language language = 3; // The language of the job content
+  Address address = 4 [(validate.rules).message.required = true]; // The address of the work location
+  Geolocation location = 5 [(validate.rules).message.required = true]; // The geolocation of the work location
+  google.protobuf.Timestamp publication_time = 6 [(validate.rules).message.required = true]; // The time the job was published (can be in the past)
+  HiringOrganization hiring_organization = 7 [(validate.rules).message.required = true]; // The organization hiring for the job.
+  repeated PerformancePredictingAttributesEntry performance_predicting_attributes = 8; // Any attributes that might be of value when predicting performance. Supply as [key],[value] pairs.
+  Salary salary = 9;
+  string industry = 10;
+  string education_level = 11;
+  EmploymentType employment_type = 12;
+  repeated JobClassificationEntry job_classification = 13 [(validate.rules).repeated = {// An ISCO entry is required
+    unique: true
+    min_items: 1
+  }];
+  repeated AdditionalField additional_fields = 14;
+}
+
+message Geolocation {
+  double latitude = 1;  // The latitude in degrees. It must be in the range [-90.0, +90.0].
+  double longitude = 2;  // The longitude in degrees. It must be in the range [-180.0, +180.0].
+  double radius = 3; // The radius to target around the long/lat coords. Specify in kilometers.
+  Country country_iso = 4; // The country associated with the long/lat coords. For nationwide jobs, set the radius to a large radius and the Country to GB. When country is set to Northern Ireland, people in Ireland will also be targeted (given the radius is large enough.) People from Scotland will not be targeted when Country is set to Northern Ireland.
+}
+
+message Address {
+  Country country_iso = 1;
+  string state = 2; // State or province
+  string city = 3;
+  string street = 4; // Street name with house number
+  string postal_code = 5;
+  string region = 6; // Example: South West England 
+}
+
+enum Country {
+  UNSUPPORTED_COUNTRY = 0; // Please pick a valid country
+  NL = 1;
+  GB = 2;
+  DE = 3;
+  IE = 4;
+  GB_ENG = 5;
+  GB_NIR = 6;
+  GB_SCT = 7;
+  GB_WLS = 8;
+}
+
+enum Language {
+  UNSUPPORTED_LANGUAGE = 0; // Please pick a valid language
+  NL_NL = 1;
+  EN_GB = 2;
+  DE_DE = 3;
+}
+
+message Advertisement {
+  string branding = 1;
+  string uri = 2 [(validate.rules).string = {uri : true}];
+}
+
+message HiringOrganization {
+  string name = 1 [(validate.rules).string = {min_len: 1, max_len: 128}];
+  string logoUrl = 2;
+}
+
+message Salary {
+  Currency currency = 1;
+  string from = 2; // Minimal amount
+  string to = 3; // Maximal amount
+  string full_text = 4; // Example: 1000 to 5000 EUR monthly with yearly bonus
+  string benefits = 5; // Example: yearly bonus
+  SalaryPeriod period = 6; // Period associated with the salary range (from and to)
+}
+
+enum SalaryPeriod {
+  UNDEFINED_SALARY_PERIOD = 0;
+  HOUR = 1;
+  DAY = 2;
+  WEEK = 3;
+  MONTH = 4;
+  YEAR = 5;
+}
+
+enum EmploymentType {
+  UNKNOWN = 0;
+  FULL_TIME = 1;
+  PART_TIME = 2;
+  CONTRACTOR = 3;
+  TEMPORARY = 4;
+  INTERN = 5;
+  VOLUNTEER = 6;
+  PER_DIEM = 7;
+  OTHER = 8;
+}
+
+message PerformancePredictingAttributesEntry {
+  string name = 1  [(validate.rules).string = {min_len: 1, max_len: 1024}];
+  string value = 2  [(validate.rules).string = {min_len: 1, max_len: 1024}];
+}
+
+enum JobClassificationType {
+  UNKNOWN_CLASSIFICATION = 0;
+  ISCO = 1;
+  TK_CLASS = 2;
+  TK_GROUP = 3;
+  TK = 4;
+  ONET = 5;
+}
+
+message JobClassificationEntry {
+  JobClassificationType job_classification_type = 1;
+  string job_classification_value = 2 [(validate.rules).string = {min_len: 1, max_len: 1024}];
+  string job_classification_description = 3 [(validate.rules).string = {max_len: 1024}];
+}
+
+message AdditionalField {
+  string name = 1  [(validate.rules).string = {min_len: 1, max_len: 1024}]; // Name of the field to indicate what the field represents (f.e. 'sector')
+  string value = 2  [(validate.rules).string = {min_len: 1, max_len: 1024}]; // Value associated with the field
+}
+
+enum CampaignStatus {
+  CREATED = 0;
+  ACTIVE = 1;
+  PAUSED = 2;
+  ENDED = 3;
+}
+
+enum CampaignEndedReason {
+  NOT_ENDED = 0;
+  MANUAL = 1;
+  END_TIME_REACHED = 2;
+  GOAL_REACHED = 3;
+}
+
+enum ChannelType {
+  INVALID = 0;
+  AGGREGATOR = 1;
+  DISPLAY = 2;
+  SOCIAL = 3;
+}
+
+enum ApplicationType {
+
+  UNSPECIFIED = 0; // The application type is unspecified
+  INTERNAL = 1; // Indicates the application is made on your website
+  EXTERNAL = 2; // Indicates the application is made on the hiring organization website
+
+}
+
+message Settings {
+  string id = 1;
+}

@@ -1,13 +1,26 @@
+using Application.Aimwel.Commands;
+using Application.Aimwel.Interfaces;
+using Application.Aimwel.Queries;
 using Application.JobOffer.Commands;
 using Application.JobOffer.DTO;
 using Application.JobOffer.Queries;
 using Application.Utils.Queries.Equest;
+using Domain.DTO;
+using Domain.Entities;
+using DPGRecruitmentCampaignClient;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
     public class JobOfferController : BaseApiController
     {
+        private readonly IAimwelCampaign _aimwelCampaign;
+
+        public JobOfferController(IAimwelCampaign aimwelCampaign)
+        {
+            _aimwelCampaign = aimwelCampaign;
+        }
+
         /// <summary>
         /// Get active JobOffers
         /// </summary>
@@ -16,7 +29,7 @@ namespace API.Controllers
         [HttpGet("{contractId}")]
         public async Task<IActionResult> GetActiveOffers(int contractId)
         {
-            var result = await Mediator.Send(new Application.JobOffer.Queries.ListActives.Query
+            var result = await Mediator.Send(new ListActives.Query
             {
                 ContractID = contractId,
             });
@@ -37,18 +50,70 @@ namespace API.Controllers
         }
 
         /// <summary>
-        /// File Ats Offer
+        /// File Offers (from Web)
         /// </summary>
         /// <param name="offer"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<IActionResult> FileOffers(List<int> _offers)
+        public async Task<IActionResult> FileOffers(List<int> _ids)
         {
-
             var result = await Mediator.Send(new FileJobs.Command
             {
-                offers = _offers
+                id = _ids.First()
             });
+
+            var ret = HandleResult(result);
+            return ret;
+        }
+
+
+        /// <summary>
+        /// Delete Offers (from Web)
+        /// </summary>
+        /// <param name="offer"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public async Task<IActionResult> DeleteOffers(List<int> _ids)
+        {
+            var result = await Mediator.Send(new DeleteJobs.Command
+            {
+                id = _ids.First()
+            });
+
+            var ret = HandleResult(result);
+            return ret;
+        }
+
+        /// <summary>
+        /// It activates offer
+        /// </summary>
+        /// <param name="offer"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public async Task<IActionResult> Activate(ActivateJobRequest request)
+        {
+            var result = await Mediator.Send(new Activate.Command
+            {
+                id = request.JobId,
+                OwnerId = request.OwnerId
+            });
+
+            var ret = HandleResult(result);
+            return ret;
+        }
+
+        /// <summary>
+        /// File Offers (from Web)
+        /// </summary>
+        /// <param name="offer"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public async Task<IActionResult> CloseOffers(JobClosingReasonDto _closingOffer)
+        {
+            var result = await Mediator.Send(new CloseJobs.Command
+            {
+                dto = _closingOffer
+            }); 
 
             var ret = HandleResult(result);
             return ret;
@@ -62,13 +127,15 @@ namespace API.Controllers
         [HttpPost]
         public async Task<IActionResult> PublishOffer(CreateOfferCommand createOfferCommand)
         {
-            try {
+            try
+            {
                 var result = await Mediator.Send(createOfferCommand);
                 var ret = HandleResult(result);
-                return ret;            }
-
-            catch (Exception ex) {
-                var ret = HandleResult(OfferModificationResult.Failure(new List<string> { ex.Message}));
+                return ret;
+            }
+            catch (Exception ex)
+            {
+                var ret = HandleResult(OfferModificationResult.Failure(new List<string> { ex.Message }));
                 return ret;
             }
         }
@@ -81,17 +148,17 @@ namespace API.Controllers
         [HttpPost]
         public async Task<IActionResult> UpdateOffer(UpdateOfferCommand updateOfferCommand)
         {
-            try {
-
+            try
+            {
                 var result = await Mediator.Send(updateOfferCommand);
                 var ret = HandleResult(result);
                 return ret;
             }
-            catch (Exception  ex) {
+            catch (Exception ex)
+            {
                 var ret = HandleResult(OfferModificationResult.Failure(new List<string> { ex.Message }));
                 return ret;
             }
-            
         }
 
         /// <summary>
@@ -245,5 +312,174 @@ namespace API.Controllers
             });
             return HandleResult(result);
         }
+
+        /// <summary>
+        /// Test purposes...
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<IActionResult> TestAimwelCampaign()
+        {
+            var offer = new JobVacancy
+            {
+                IdzipCode = 7447,
+                Idcountry = 40,
+                Idregion = 33,
+                Title = "TEST OFFER 3",
+                Description = "DESCRIPTION TEST 3",
+                IdjobVacancy = 223230,
+                Idbrand = 2221,
+                Identerprise = 2221,
+                Idsite = 6
+            };
+
+            var ret = await _aimwelCampaign.CreateCampaing(offer);
+            return Ok();
+        }
+
+        /// <summary>
+        ///Test purposes...
+        /// </summary>
+        /// <param name="client"></param>
+        /// <param name="campaignId"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<GetCampaignResponse> GetCampaign(int jobId)
+        {
+            var offer = Mediator.Send(new Get.Query
+            {
+                OfferId = jobId
+            });
+            var request = new GetCampaignRequest { CampaignId = offer.Result.AimwelCampaignId };
+            var ans = await _aimwelCampaign.GetCampaign(request);
+            return ans;
+        }
+
+        /// <summary>
+        /// It Creates an Aimwel campaign
+        /// </summary>
+        /// <param name="jobId"></param>
+        /// <returns></returns>
+        [HttpGet("{jobId}")]
+        public async Task<IActionResult> CreateCampaign(int jobId)
+        {
+            try
+            {
+                var response = await Mediator.Send(new Create.Command
+                {
+                    offerId = jobId
+                });
+
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return Ok(ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// It Cancel an Aimwel campaign
+        /// </summary>
+        /// <param name="jobId"></param>
+        /// <returns></returns>
+        [HttpGet("{jobId}")]
+        public async Task<IActionResult> CancelCampaign(int jobId)
+        {
+            try
+            {
+                var response = await Mediator.Send(new Cancel.Command { offerId = jobId });
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return Ok(ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// It Pauses an Aimwel campaign
+        /// </summary>
+        /// <param name="jobId"></param>
+        /// <returns></returns>
+        [HttpGet("{jobId}")]
+        public async Task<IActionResult> PauseCampaign(int jobId)
+        {
+            try
+            {
+                var response = await Mediator.Send(new Pause.Command { offerId = jobId });
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return Ok(ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// It resumes an Aimwel campaign
+        /// </summary>
+        /// <param name="jobId"></param>
+        /// <returns></returns>
+        [HttpGet("{jobId}")]
+        public async Task<IActionResult> ResumeCampaign(int jobId)
+        {
+            try
+            {
+                var response = await Mediator.Send(new Resume.Command { offerId = jobId });
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return Ok(ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// It gets Aimwel campaign status
+        /// </summary>
+        /// <param name="jobId"></param>
+        /// <returns></returns>
+        [HttpGet("{jobId}")]
+        public async Task<IActionResult> GetCampaignStatus(int jobId)
+        {
+            try
+            {
+                var response = await Mediator.Send(new GetStatus.Query
+                {
+                    OfferId = jobId
+                });
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return Ok(ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// It update job date
+        /// </summary>
+        /// <param name="jobId"></param>
+        /// <returns></returns>
+        [HttpGet("{jobId}")]
+        public async Task<IActionResult> UpdateDate(int jobId)
+        {
+            try
+            {
+                var response = await Mediator.Send(new UpdateDate.Command
+                {
+                    id = jobId
+                 
+                });
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return Ok(ex.Message);
+            }
+        }
+
+
     }
 }

@@ -1,9 +1,11 @@
+using Application.Aimwel.Interfaces;
 using Application.JobOffer.DTO;
 using Application.JobOffer.Queries;
 using AutoMapper;
 using Domain.Entities;
 using Domain.Repositories;
 using MediatR;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
 namespace Application.JobOffer.Commands
@@ -19,6 +21,10 @@ namespace Application.JobOffer.Commands
         private readonly IRegEnterpriseContractRepository _regContractRepo;
         private readonly IEnterpriseRepository _enterpriseRepository;
         private readonly IMediator _mediatr;
+        private readonly IAimwelCampaign _manageCampaign;
+        private readonly IConfiguration _config;
+        private readonly IJobVacancyLanguageRepository _jobVacancyLangRepo;
+        private readonly IRegJobVacWorkPermitRepository _regJobVacWorkPermitRepo;
 
         #endregion PRIVATE PROPERTIES
 
@@ -28,7 +34,9 @@ namespace Application.JobOffer.Commands
             IJobOfferRepository offerRepo,
             IEnterpriseRepository enterpriseRepository,
             ILogger<CreateOfferCommandHandler> logger,
-            IMediator mediatr)
+            IMediator mediatr, IAimwelCampaign manageCampaign,
+            IConfiguration config,
+            IJobVacancyLanguageRepository jobVacancyLangRepo, IRegJobVacWorkPermitRepository regJobVacWorkPermitRepository)
         {
             _offerRepo = offerRepo;
             _mapper = mapper;
@@ -37,6 +45,10 @@ namespace Application.JobOffer.Commands
             _enterpriseRepository = enterpriseRepository;
             _logger = logger;
             _mediatr = mediatr;
+            _manageCampaign = manageCampaign;
+            _config = config;
+            _jobVacancyLangRepo = jobVacancyLangRepo;
+            _regJobVacWorkPermitRepo = regJobVacWorkPermitRepository;
         }
 
         public async Task<OfferModificationResult> Handle(CreateOfferCommand offer, CancellationToken cancellationToken)
@@ -62,7 +74,30 @@ namespace Application.JobOffer.Commands
                 entity.IntegrationId = offer.IntegrationData.IDIntegration;
                 jobVacancyId = _offerRepo.Add(entity);
 
-                if (jobVacancyId == 0)
+                bool canSaveLanguages = jobVacancyId > 0 && offer.JobLanguages.Any();
+                if (canSaveLanguages)
+                {
+                    foreach (var lang in offer.JobLanguages)
+                    {
+                        JobVacancyLanguage language = new JobVacancyLanguage
+                        {
+                            IdjobVacancy = jobVacancyId,
+                            IdlangLevel = lang.IdLangLevel,
+                            Idlanguage = lang.IdLanguage
+                        };
+                        _jobVacancyLangRepo.Add(language);
+                    }
+                }
+                bool canSaveWorkPermit = jobVacancyId > 0 && offer.IdworkPermit.Any();
+                if (canSaveWorkPermit)
+                {
+                    foreach (var permit in offer.IdworkPermit)
+                    {
+                        var ret = await _regJobVacWorkPermitRepo.Add(new RegJobVacWorkPermit() { IdjobVacancy = jobVacancyId, IdworkPermit = permit });
+                    }
+                }
+
+                if (jobVacancyId == -1)
                 {
                     error = "Failed to create offer";
                     _logger.LogError(error);
@@ -72,7 +107,6 @@ namespace Application.JobOffer.Commands
                 {
                     try
                     {
-             
                         await _regContractRepo.UpdateUnits(job.Idcontract, job.IdjobVacType);
 
                         if (!string.IsNullOrEmpty(offer.IntegrationData.ApplicationReference))
@@ -93,7 +127,8 @@ namespace Application.JobOffer.Commands
                                 _logger.LogInformation(info);
                                 await _regJobVacRepo.Add(obj);
                             }
-                            else {
+                            else
+                            {
                                 var info = $"IDJobVacancy: {job.IdjobVacancy} - IDEnterprise: {job.Identerprise} - IDContract: {job.Idcontract} - Offer Created";
                                 _logger.LogInformation(info);
                             }
@@ -104,7 +139,8 @@ namespace Application.JobOffer.Commands
                             OfferId = jobVacancyId
                         });
                         _enterpriseRepository.UpdateATS(entity.Identerprise);
-                        
+                        if (Convert.ToBoolean(_config["Aimwel:EnableAimwel"]))
+                            await _manageCampaign.CreateCampaing(entity);
                         return OfferModificationResult.Success(createdOffer.Result);
                     }
                     catch (Exception ex)

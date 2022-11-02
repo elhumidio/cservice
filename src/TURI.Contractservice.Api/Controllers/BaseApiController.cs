@@ -34,7 +34,6 @@ namespace API.Controllers
         protected IActionResult HandleResult(ContractResult result)
         {
             return Ok(result);
-            
         }
     }
 }

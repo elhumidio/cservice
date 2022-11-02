@@ -1,3 +1,5 @@
+using Application.Aimwel;
+using Application.Aimwel.Interfaces;
 using Application.Behaviors;
 using Application.Interfaces;
 using Application.JobOffer.Commands;
@@ -22,12 +24,13 @@ namespace API.Extensions
                 opt.UseSqlServer(config.GetConnectionString("DefaultConnection"));
             });
             services.AddFluentValidation(new[] { typeof(CreateOfferCommandHandler).GetTypeInfo().Assembly });
-            services.AddFluentValidation(new[] { typeof(UpdateOfferCommandHandler).GetTypeInfo().Assembly });
+            //services.AddFluentValidation(new[] { typeof(UpdateOfferCommandHandler).GetTypeInfo().Assembly });
             services.AddMediatR(typeof(CreateOfferCommand).Assembly);
             services.AddMediatR(typeof(ListActives.Handler).Assembly);
             services.AddAutoMapper(typeof(Application.Core.MappingProfiles).Assembly);
             services.AddControllers().AddNewtonsoftJson();
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
+
             #region MAPPING REPOSITORIES
 
             services.AddScoped<IContractRepository, ContractRepository>();
@@ -63,6 +66,10 @@ namespace API.Extensions
             services.AddScoped<IJobVacTypeRepository, JobVacTypeRepository>();
             services.AddScoped<ISiteRepository, SiteRepository>();
             services.AddScoped<ILanguageRepository, LanguageRepository>();
+            services.AddScoped<IAimwelCampaign, ManageCampaigns>();
+            services.AddScoped<IlogoRepository, LogoRepository>();
+            services.AddScoped<IJobVacancyLanguageRepository, JobVacancyLanguageRepository>();
+            services.AddScoped<IRegJobVacWorkPermitRepository, RegJobVacWorkPermitRepository>();
 
             #endregion MAPPING REPOSITORIES
 

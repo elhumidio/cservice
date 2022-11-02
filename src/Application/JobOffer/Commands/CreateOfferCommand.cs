@@ -1,4 +1,5 @@
 using Application.JobOffer.DTO;
+using Domain.Enums;
 using MediatR;
 using System.Runtime.Serialization;
 
@@ -38,7 +39,7 @@ namespace Application.JobOffer.Commands
         public int Idregion { get; set; } //table
 
         [DataMember]
-        public int? IdjobVacState { get; set; } //always 1
+        public int? IdjobVacState { get;    set; } //always 1
 
         [DataMember]
         public int IdjobVacType { get; set; } // if empty 0 else incoming one
@@ -53,7 +54,7 @@ namespace Application.JobOffer.Commands
         public int? IdsubArea { get; set; } //table
 
         [DataMember]
-        public int? IdworkPermit { get; set; } //table
+        public List<int> IdworkPermit { get; set; }//table
 
         [DataMember]
         public int IdjobContractType { get; set; } //table
@@ -201,10 +202,20 @@ namespace Application.JobOffer.Commands
         [DataMember]
         public IntegrationData IntegrationData { get; set; }
 
+        [DataMember]
+        public List<JobLanguages> JobLanguages { get; set; }
+
         public CreateOfferCommand()
         {
             IntegrationData = new IntegrationData();
+            JobLanguages = new List<JobLanguages>();
         }
+    }
+
+    public class JobLanguages
+    {
+        public int IdLanguage { get; set; }
+        public int IdLangLevel { get; set; }
     }
 
     public class IntegrationData

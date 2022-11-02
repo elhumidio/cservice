@@ -1,0 +1,46 @@
+syntax = "proto3";
+
+package nl.dpgrecruitment.campaign;
+option csharp_namespace = "DPGRecruitmentCampaignClient";
+
+import "nl/dpgrecruitment/campaign/types.proto";
+import "google/protobuf/timestamp.proto";
+import "validate/validate.proto";
+
+message CreateCampaignRequest {
+  string job_id = 1 [(validate.rules).string.min_len = 1]; // Unique identifier for the job
+  Advertisement advertisement = 2 [(validate.rules).message.required = true];
+  JobContent job_content = 3 [(validate.rules).message.required = true]; // Content of the job
+  google.protobuf.Timestamp end_time = 4 [(validate.rules).timestamp = {
+    gt_now: true
+  }]; // The campaign will be ended at this time.
+  oneof campaign_goal {
+    ConversionTarget conversion_target = 10; // The goal of the campaign with its associated settings (only provide one)
+    BudgetBestEffort budget_best_effort = 11; // The goal of the campaign with its associated settings (only provide one)
+  }
+  repeated string excluded_channels = 12; // Name of channels that you want to exclude from this campaign. Check GetChannels endpoint to retrieve a list of available channels
+  repeated ChannelType excluded_channel_types = 13; // Types of channels you want to exclude from this campaign.
+  ApplicationType applicationType = 14; // the type of application used (internal = with client, external = with hiring org)
+  Settings settings = 15; // Settings of the Campaign
+}
+
+message PauseCampaignRequest {
+  string campaign_id = 1 [(validate.rules).string.uuid = true]; // Unique identifier for the campaign
+}
+
+message ResumeCampaignRequest {
+  string campaign_id = 1 [(validate.rules).string.uuid = true]; // Unique identifier for the campaign
+}
+
+message EndCampaignRequest {
+  string campaign_id = 1 [(validate.rules).string.uuid = true]; // Unique identifier for the campaign
+}
+
+message UpdateJobContentRequest {
+  string campaign_id = 1 [(validate.rules).string.uuid = true]; // Unique identifier for the campaign
+  JobContent job_content = 3 [(validate.rules).message.required = true]; // Content of the job
+}
+
+message GetCampaignRequest {
+  string campaign_id = 1 [(validate.rules).string.uuid = true]; // Unique identifier for the campaign
+}

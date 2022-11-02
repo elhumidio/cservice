@@ -12,5 +12,6 @@ namespace Domain.Repositories
         public bool AssignUnitToManager(int contractId, VacancyType type, int ownerId);
 
         public bool TakeUnitFromManager(int contractId, VacancyType type, int ownerId);
+        public  int GetAssignedUnitsMxPtByCompany(int companyId);
     }
 }

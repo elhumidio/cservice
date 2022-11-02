@@ -6,8 +6,6 @@ namespace Persistence
 {
     public partial class DataContext : DbContext
     {
-
-
         public DataContext(DbContextOptions<DataContext> options)
             : base(options)
         {
@@ -85,6 +83,39 @@ namespace Persistence
             });
 
 
+            modelBuilder.Entity<RegJobVacWorkPermit>(entity =>
+            {
+                entity.HasKey(e => new { e.IdjobVacancy, e.IdworkPermit });
+
+                entity.ToTable("TRegJobVacWorkPermit");
+
+                entity.Property(e => e.IdjobVacancy).HasColumnName("IDJobVacancy");
+
+                entity.Property(e => e.IdworkPermit).HasColumnName("IDWorkPermit");
+            });
+
+            modelBuilder.Entity<Logo>(entity =>
+            {
+                entity.HasKey(e => e.Idlogo);
+
+                entity.ToTable("TLogo");
+
+                entity.Property(e => e.Idlogo).HasColumnName("IDLogo");
+
+                entity.Property(e => e.CreationDate)
+                    .HasColumnType("datetime")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.Idbrand).HasColumnName("IDBrand");
+
+                entity.Property(e => e.Identerprise).HasColumnName("IDEnterprise");
+
+                entity.Property(e => e.OldIdlogo).HasColumnName("OLD_IDLogo");
+
+                entity.Property(e => e.UrlImgBig).HasMaxLength(100);
+
+                entity.Property(e => e.UrlImgSmall).HasMaxLength(100);
+            });
 
             modelBuilder.Entity<EquestCountryState>(entity =>
             {
@@ -734,7 +765,7 @@ namespace Persistence
                 entity.Property(e => e.BaseName).HasMaxLength(50);
             });
 
-            OnModelCreatingPartial(modelBuilder);
+            //     OnModelCreatingPartial(modelBuilder);
             modelBuilder.Entity<Contract>(entity =>
             {
                 entity.HasKey(e => e.Idcontract);
@@ -1159,6 +1190,8 @@ namespace Persistence
                 entity.Property(e => e.Title).HasMaxLength(100);
 
                 entity.Property(e => e.UpdatingDate).HasColumnType("datetime");
+
+                entity.Property(e => e.AimwelCampaignId).HasColumnType("AimwelCampaignId");
             });
 
             modelBuilder.Entity<Product>(entity =>
@@ -1416,6 +1449,24 @@ namespace Persistence
                 entity.Property(e => e.WordOfPass).HasMaxLength(160);
             });
 
+            modelBuilder.Entity<JobVacancyLanguage>(entity =>
+            {
+                entity.HasKey(e => new { e.IdjobVacancy, e.Idlanguage })
+                    .HasName("PK__TJobVaca__31F90E4541FFF41D");
+
+                entity.ToTable("TJobVacancyLanguage");
+
+                entity.Property(e => e.IdjobVacancy).HasColumnName("IDJobVacancy");
+
+                entity.Property(e => e.Idlanguage)
+                    .HasColumnName("IDLanguage")
+                    .HasDefaultValueSql("((-1))");
+
+                entity.Property(e => e.IdlangLevel)
+                    .HasColumnName("IDLangLevel")
+                    .HasDefaultValueSql("((-1))");
+            });
+
             modelBuilder.Entity<ZipCode>(entity =>
             {
                 entity.HasKey(e => e.IdzipCode);
@@ -1462,6 +1513,6 @@ namespace Persistence
             OnModelCreatingPartial(modelBuilder);
         }
 
-        partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
+         partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
     }
 }

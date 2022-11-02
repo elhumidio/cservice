@@ -1,12 +1,9 @@
 using Application.Contracts.DTO;
 using Application.Core;
 using AutoMapper;
-using AutoMapper.QueryableExtensions;
 using Domain.Enums;
 using Domain.Repositories;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json.Linq;
 
 namespace Application.Contracts.Queries
 {
@@ -20,16 +17,14 @@ namespace Application.Contracts.Queries
         public class Handler : IRequestHandler<Query, Result<List<UnitsDto>>>
         {
             private readonly IContractRepository _contractRepo;
-            private readonly IRegEnterpriseContractRepository _regEnterpriseContractRepo;
-            private readonly IMapper _mapper;
+            private readonly IRegEnterpriseContractRepository _regEnterpriseContractRepo;            
             private readonly IMediator _mediator;
 
-            public Handler(IMapper mapper, IContractRepository contractRepo, IMediator mediator,IRegEnterpriseContractRepository regEnterpriseContractRepo )
-            {
-                _mapper = mapper;
+            public Handler(IContractRepository contractRepo, IMediator mediator, IRegEnterpriseContractRepository regEnterpriseContractRepo)
+            {                
                 _contractRepo = contractRepo;
                 _mediator = mediator;
-                _regEnterpriseContractRepo = regEnterpriseContractRepo; 
+                _regEnterpriseContractRepo = regEnterpriseContractRepo;
             }
 
             public async Task<Result<List<UnitsDto>>> Handle(Query request, CancellationToken cancellationToken)
@@ -38,7 +33,7 @@ namespace Application.Contracts.Queries
                 var contracts = _contractRepo.GetContracts(request.CompanyId).ToList();
                 foreach (var contract in contracts)
                 {
-                    var units =  _mediator.Send(new GetAvailableUnits.Query
+                    var units = _mediator.Send(new GetAvailableUnits.Query
                     {
                         ContractId = contract.Idcontract
                     }).Result.Value.GroupBy(u => u.type);
@@ -50,11 +45,11 @@ namespace Application.Contracts.Queries
                         dto.AvailableUnits = unitType.Sum(ut => ut.Units);
                         dto.JobVacTypeId = (int)unitType.First().type;
                         dto.JobVacTypeDesc = Enum.GetName(typeof(VacancyType), unitType.First().type);
-                        dto.TotalUnits =await _regEnterpriseContractRepo.GetUnitsByType(contract.Idcontract, unitType.First().type);
-                        list.Add(dto);  
+                        dto.TotalUnits = await _regEnterpriseContractRepo.GetUnitsByType(contract.Idcontract, unitType.First().type);
+                        list.Add(dto);
                     }
                 }
-                
+
                 return Result<List<UnitsDto>>.Success(list);
             }
         }

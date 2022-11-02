@@ -35,5 +35,8 @@ namespace Domain.Repositories
         public IQueryable<JobVacancy> GetActiveOffersByContractAndType(int contractId, int type);
 
         public IQueryable<JobVacancy> GetActiveOffersByContractAndTypeNoPack(int contractId, int type);
+
+        public string AimwelIdByJobId(int jobId);
+        public int DeleteOffer(JobVacancy job);
     }
 }

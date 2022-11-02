@@ -1,11 +1,8 @@
-using API.DataContext;
 using Domain.Classes;
 using Domain.Entities;
 using Domain.Enums;
 using Domain.Repositories;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System.Diagnostics.Metrics;
 
 namespace Persistence.Repositories
 {
@@ -72,7 +69,26 @@ namespace Persistence.Repositories
             {
                 job.ChkFilled = true;
                 job.FilledDate = DateTime.Now;
-                job.ModificationDate = DateTime.Now;
+                job.ModificationDate = DateTime.Now;                
+                var ret = _dataContext.SaveChanges();
+                return ret;
+            }
+            catch (Exception ex)
+            {
+                string message = $"Message: {ex.Message} - InnerException: {ex.InnerException} - StackTrace: {ex.StackTrace}";
+                _logger.LogError(message: message);
+                return -1;
+            }
+        }
+
+        public int DeleteOffer(JobVacancy job)
+        {
+            try
+            {
+                job.ChkFilled = true;
+                job.ChkDeleted = true;
+                job.FinishDate = DateTime.Now;
+                job.Idstatus = (int)OfferStatus.Deleted;
                 var ret = _dataContext.SaveChanges();
                 return ret;
             }
@@ -88,6 +104,20 @@ namespace Persistence.Repositories
         {
             var offer = _dataContext.JobVacancies.Where(o => o.IdjobVacancy == id).FirstOrDefault();
             return offer;
+        }
+
+        /// <summary>
+        /// It Returns aimwel id by idjobvacancy
+        /// </summary>
+        /// <param name="jobId"></param>
+        /// <returns></returns>
+        public string AimwelIdByJobId(int jobId)
+        {
+            string aimwelId = string.Empty;
+            var offer = _dataContext.JobVacancies.Where(v => v.IdjobVacancy == jobId).FirstOrDefault();
+            if (offer != null)
+                aimwelId = offer.AimwelCampaignId;
+            return aimwelId;
         }
 
         public int Add(JobVacancy job)
@@ -159,7 +189,6 @@ namespace Persistence.Repositories
         {
             var query = _dataContext.JobVacancies.Where(a => a.Idcontract == contractId
             && a.IdjobVacType == type
-            && a.FinishDate >= DateTime.Today
             && a.Idstatus == (int)OfferStatus.Active);
             return query;
         }
@@ -183,7 +212,7 @@ namespace Persistence.Repositories
                .Where(o => o.jvc.jv.Identerprise == companyId
 
                && (o.cp.Idproduct == 110 || o.cp.Idproduct == 115)
-               && !o.jvc.jv.ChkFilled && !o.jvc.jv.ChkDeleted && o.jvc.jv.Idstatus == 1 && o.jvc.jv.FinishDate >= DateTime.Today
+              // && !o.jvc.jv.ChkFilled && !o.jvc.jv.ChkDeleted && o.jvc.jv.Idstatus == 1 && o.jvc.jv.FinishDate >= DateTime.Today
                )
                .Select(o => o.jvc.jv);
 

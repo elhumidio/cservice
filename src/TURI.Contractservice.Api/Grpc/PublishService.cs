@@ -136,21 +136,21 @@ namespace GrpcPublish
         /// <param name="_offers"></param>
         /// <param name="context"></param>
         /// <returns></returns>
-        public override async Task<GenericMessage> FileOffers(ListInt _offers, ServerCallContext context)
+      /*  public override async Task<GenericMessage> FileOffers(ListInt _offers, ServerCallContext context)
         {
             List<int> listIds = new List<int>();
             listIds.AddRange(_offers.Ids);
             var result = await _mediator.Send(new FileJobs.Command
             {
-                offers = listIds
+                id = listIds
             });
 
             GenericMessage res = new()
             {
-                Message = result.Value
+                Message = result.Value.ToString()
             };
             return res;
-        }
+        }*/
 
         /// <summary>
         /// Updates Offer

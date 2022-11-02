@@ -56,17 +56,34 @@ namespace API.Controllers
             return HandleResult(result);
         }
 
+
+
+        /// <summary>
+        /// Gets assigned units Portugal or Mexico by Company
+        /// </summary>
+        /// <param name="companyId"></param>        
+        /// <returns></returns>
+        [HttpGet("{companyId}")]
+        public async Task<IActionResult> GetAvailableUnitsMexicoOrPortugal(int companyId)
+        {
+            var result = await Mediator.Send(new GetAvailableUnitsMexicoOrPortugal.Query
+            {
+               CompanyId = companyId
+            });
+            return HandleResult(result);
+        }
+
         /// <summary>
         /// Gets assignments given a contract and an Owner
         /// </summary>
-        /// <param name="companyId"></param>        
+        /// <param name="companyId"></param>
         /// <returns></returns>
         [HttpGet("{companyId}")]
         public async Task<IActionResult> GetAvailableUnitsByCompany(int companyId)
         {
             var result = await Mediator.Send(new GetUnitsByCompany.Query
             {
-                 CompanyId = companyId
+                CompanyId = companyId
             });
             return HandleResult(result);
         }
@@ -81,8 +98,6 @@ namespace API.Controllers
                 RegionId = regionId
             });
             return HandleResult(result);
-           
-           
         }
     }
 }

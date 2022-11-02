@@ -1,46 +1,91 @@
-using Application.Core;
+using Application.Aimwel.Interfaces;
+using Application.Aimwel.Queries;
+using Application.JobOffer.DTO;
+using AutoMapper;
 using Domain.Repositories;
+using DPGRecruitmentCampaignClient;
 using MediatR;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 namespace Application.JobOffer.Commands
 {
     public class FileJobs
     {
-        public class Command : IRequest<Result<string>>
+        public class Command : IRequest<OfferModificationResult>
         {
-            public List<int> offers { get; set; }
+            public int id { get; set; }
         }
 
-        public class Handler : IRequestHandler<Command, Result<string>>
+        public class Handler : IRequestHandler<Command, OfferModificationResult>
         {
             private readonly IJobOfferRepository _offerRepo;
             private readonly IRegEnterpriseContractRepository _regEnterpriseContractRepository;
+            private readonly IAimwelCampaign _manageCampaign;
+            private readonly IConfiguration _config;
+            private readonly IMediator _mediatr;
+            private readonly IContractProductRepository _contractProductRepo;
+            private readonly IMapper _mapper;            
 
-            public Handler(IJobOfferRepository offerRepo, IRegEnterpriseContractRepository regEnterpriseContractRepository)
+            public Handler(IJobOfferRepository offerRepo,
+                IRegEnterpriseContractRepository regEnterpriseContractRepository,
+                IAimwelCampaign aimwelCampaign,
+                IConfiguration config,
+                IContractProductRepository contractProductRepo,
+                IMediator mediatr,IMapper mapper)
             {
                 _offerRepo = offerRepo;
                 _regEnterpriseContractRepository = regEnterpriseContractRepository;
+                _manageCampaign = aimwelCampaign;
+                _config = config;
+                _contractProductRepo = contractProductRepo;
+                _mediatr = mediatr;
+                _mapper = mapper;                
             }
 
-            public async Task<Result<string>> Handle(Command request, CancellationToken cancellationToken)
+            public async Task<OfferModificationResult> Handle(Command request, CancellationToken cancellationToken)
             {
-                string msgWrong = string.Empty;
-                string msgRight = string.Empty;
-                foreach (var id in request.offers)
+                bool aimwelEnabled = Convert.ToBoolean(_config["Aimwel:EnableAimwel"]);
+                string msg = string.Empty;
+
+                var job = _offerRepo.GetOfferById(request.id);
+                if (job == null)
                 {
-                    var job = _offerRepo.GetOfferById(id);
-                    if (job != null)
+                    return OfferModificationResult.Success( new List<string> { msg });
+                }
+                var ret = _offerRepo.FileOffer(job);
+                if (ret <= 0)
+                {
+                    msg += $"Offer {request.id} - Couldn't file job";                    
+                    return OfferModificationResult.Success(new List<string> { msg });
+                }
+                else
+                {
+                    var isPack = _contractProductRepo.IsPack(job.Idcontract);
+                    if (isPack)
+                        await _regEnterpriseContractRepository.IncrementAvailableUnits(job.Idcontract, job.IdjobVacType);
+                    msg += $"Offer {request.id} filed.\n\r";                    
+
+                    if (aimwelEnabled)
                     {
-                        var ret = _offerRepo.FileOffer(job);
-                        if (ret == 0)
+                        var campaign = await _mediatr.Send(new GetStatus.Query
                         {
-                            await _regEnterpriseContractRepository.IncrementAvailableUnits(job.Idcontract, job.IdjobVacType);
-                            msgRight += $"Failed to file offer {id}\n\r";
+                            OfferId = request.id
+                        });
+                        if (campaign != null && campaign.Status == CampaignStatus.Active)
+                        {
+                            await _manageCampaign.PauseCampaign(job.IdjobVacancy);
+                            msg += $"Campaign {campaign.CampaignId} /  {request.id} - Canceled ";                    
                         }
-                        else msgWrong += $"Offer {id} - Filed Successfully ";
+                        else if(campaign != null)
+                        {
+                            msg += $"Campaign {campaign.CampaignId} not editable  /  {campaign.Status}";                            
+                        }
                     }
                 }
-                return Result<string>.Success($"{msgRight}\n\r{msgWrong}");
+                OfferResultDto dto = new OfferResultDto();
+                dto = _mapper.Map(job, dto);
+                return OfferModificationResult.Success(dto);
             }
         }
     }

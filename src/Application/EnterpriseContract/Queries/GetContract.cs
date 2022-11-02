@@ -18,13 +18,11 @@ namespace Application.EnterpriseContract.Queries
 
         public class Handler : IRequestHandler<Query, ContractResult>
         {
-            private IMediator _mediatr;
-            private readonly IContractRepository _contractRepository;
+            private readonly IMediator _mediatr;
             private readonly IContractPublicationRegionRepository _contractPublicationRegionRepository;
 
-            public Handler(IContractRepository contractRepository, IMediator mediatr, IContractPublicationRegionRepository contractPublicationRegionRepository)
+            public Handler(IMediator mediatr, IContractPublicationRegionRepository contractPublicationRegionRepository)
             {
-                _contractRepository = contractRepository;
                 _mediatr = mediatr;
                 _contractPublicationRegionRepository = contractPublicationRegionRepository;
             }
@@ -51,7 +49,7 @@ namespace Application.EnterpriseContract.Queries
                     {
                         contractsRegionAllowed.Add(contract);
                     }
-                    else failures.Add("Not allowed region.\n\r");
+                    else failures.Add("Region not allowed, contact to Customer Service.\n\r");
                 }
 
                 if (contractsRegionAllowed.Any())
@@ -71,7 +69,7 @@ namespace Application.EnterpriseContract.Queries
                             if ((unitsAvailable.Sum(u => u.Units)) > 0)
                             {
                                 contractToUse = contract;
-                                var unitsToUse = unitsAvailable.Where(ua => ua.Units > 0).FirstOrDefault();
+                                var unitsToUse = unitsAvailable.FirstOrDefault(ua => ua.Units > 0);
                                 if (unitsToUse != null)
                                 {
                                     contractToUse.IdJobVacType = (int)unitsToUse.type;

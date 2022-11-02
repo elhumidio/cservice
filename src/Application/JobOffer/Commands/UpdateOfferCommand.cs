@@ -53,10 +53,11 @@ namespace Application.JobOffer.Commands
         public int? IdsubArea { get; set; } //table
 
         [DataMember]
-        public int? IdworkPermit { get; set; } //table
+        public List<int>? IdworkPermit { get; set; } //table
 
         [DataMember]
         public int IdjobContractType { get; set; } //table
+        
 
         [DataMember]
         public int? IdworkDayType { get; set; } //table
@@ -197,10 +198,13 @@ namespace Application.JobOffer.Commands
         public string? ZipCode { get; set; }
 
         public IntegrationData IntegrationData { get; set; }
+        public List<JobLanguages> JobLanguages { get; set; }
 
         public UpdateOfferCommand()
         {
             IntegrationData = new IntegrationData();
+            JobLanguages = new List<JobLanguages>();
+            IdworkPermit = new List<int>();
         }
     }
 }

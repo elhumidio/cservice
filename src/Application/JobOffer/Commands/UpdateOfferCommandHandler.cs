@@ -2,6 +2,7 @@ using Application.EnterpriseContract.Queries;
 using Application.JobOffer.DTO;
 using Application.JobOffer.Queries;
 using AutoMapper;
+using Domain.Entities;
 using Domain.Enums;
 using Domain.Repositories;
 using MediatR;
@@ -14,11 +15,12 @@ namespace Application.JobOffer.Commands
         #region PRIVATE PROPERTIES
 
         private readonly IMapper _mapper;
-        private readonly IJobOfferRepository _offerRepo;        
+        private readonly IJobOfferRepository _offerRepo;
         private readonly IRegJobVacMatchingRepository _regJobVacRepo;
         private readonly IRegEnterpriseContractRepository _regContractRepo;
         private readonly IContractProductRepository _contractProductRepo;
         private readonly IMediator _mediatr;
+        private readonly IRegJobVacWorkPermitRepository _regJobVacWorkPermitRepo;
 
         #endregion PRIVATE PROPERTIES
 
@@ -29,7 +31,8 @@ namespace Application.JobOffer.Commands
             IEnterpriseRepository enterpriseRepository,
             IContractProductRepository contractProductRepo,
             ILogger<UpdateOfferCommandHandler> logger,
-            IMediator mediatr)
+            IMediator mediatr,
+            IRegJobVacWorkPermitRepository regJobVacWorkPermitRepo)
         {
             _contractProductRepo = contractProductRepo;
             _offerRepo = offerRepo;
@@ -37,6 +40,7 @@ namespace Application.JobOffer.Commands
             _regJobVacRepo = regJobVacRepo;
             _mediatr = mediatr;
             _mapper = mapper;
+            _regJobVacWorkPermitRepo = regJobVacWorkPermitRepo;
         }
 
         public async Task<OfferModificationResult> Handle(UpdateOfferCommand offer, CancellationToken cancellationToken)
@@ -60,8 +64,8 @@ namespace Application.JobOffer.Commands
                     type = (VacancyType)offer.IdjobVacType,
                     RegionId = offer.Idregion
                 });
-
-                if (result.Value.Idcontract > 0)
+                bool canActivate = result.Value != null && result.Value.Idcontract > 0;
+                if (canActivate)
                 {
                     offer.FilledDate = null;
                     offer.ChkUpdateDate = existentOffer.ChkUpdateDate;
@@ -69,19 +73,40 @@ namespace Application.JobOffer.Commands
                     offer.ChkDeleted = false;
                     offer.IdjobVacType = (int)result.Value.IdJobVacType;
                     offer.PublicationDate = DateTime.Now;
-                    offer.UpdatingDate = DateTime.Now;  
+                    offer.UpdatingDate = DateTime.Now;
                     offer.Idstatus = (int)OfferStatus.Active;
                     await _regContractRepo.UpdateUnits(result.Value.Idcontract, (int)result.Value.IdJobVacType);
                 }
+                else
+                {
+                    offer.FilledDate = existentOffer.FilledDate;
+                    offer.ChkUpdateDate = existentOffer.ChkUpdateDate;
+                    offer.ChkFilled = existentOffer.ChkFilled;
+                    offer.ChkDeleted = existentOffer.ChkDeleted;
+                    offer.IdjobVacType = existentOffer.IdjobVacType;
+                    offer.PublicationDate = existentOffer.PublicationDate;
+                    offer.UpdatingDate = DateTime.Now;
+                    offer.Idstatus = existentOffer.Idstatus;
+                }
             }
             var entity = _mapper.Map(offer, existentOffer);
-
             var ret = await _offerRepo.UpdateOffer(existentOffer);
             var updatedOffer = _mediatr.Send(new GetResult.Query
             {
                 ExternalId = offer.IntegrationData.ApplicationReference,
                 OfferId = offer.IdjobVacancy
             }).Result;
+
+            bool canSaveWorkPermit =  offer.IdworkPermit.Any();
+            if (canSaveWorkPermit)
+            {
+                //erase all permits
+                await _regJobVacWorkPermitRepo.Delete(offer.IdjobVacancy);
+                foreach (var permit in offer.IdworkPermit)
+                {
+                   await _regJobVacWorkPermitRepo.Add(new RegJobVacWorkPermit() { IdjobVacancy = offer.IdjobVacancy, IdworkPermit = permit });
+                }
+            }
 
             var integration = _regJobVacRepo.GetAtsIntegrationInfoByJobId(existentOffer.IdjobVacancy).Result;
 

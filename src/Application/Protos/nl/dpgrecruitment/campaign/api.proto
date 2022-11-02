@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+package nl.dpgrecruitment.campaign;
+option csharp_namespace = "DPGRecruitmentCampaignClient";
+
+import "nl/dpgrecruitment/campaign/requests.proto";
+import "nl/dpgrecruitment/campaign/responses.proto";
+import "google/protobuf/empty.proto";
+
+service CampaignManagement {
+  // Create a campaign.
+  rpc CreateCampaign (CreateCampaignRequest) returns (CreateCampaignResponse) {
+  }
+
+  // Pause a campaign
+  rpc PauseCampaign (PauseCampaignRequest) returns (Response) {}
+
+  // Resume a campaign
+  rpc ResumeCampaign (ResumeCampaignRequest) returns (Response) {}
+
+  // End a campaign. The campaign will be automatically ended when its end date is reached.
+  rpc EndCampaign (EndCampaignRequest) returns (Response) {}
+
+  // Update the job content for a campaign. Not yet supported.
+  rpc UpdateJobContent (UpdateJobContentRequest) returns (Response) {}
+
+  // Get the current state of the campaign. This state is eventually consistent.
+  rpc GetCampaign (GetCampaignRequest) returns (GetCampaignResponse) {}
+
+  // Get a list of available channels.
+  rpc GetChannels (google.protobuf.Empty) returns (GetChannelsResponse) {}
+}

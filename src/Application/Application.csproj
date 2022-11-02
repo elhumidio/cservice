@@ -6,9 +6,22 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+
+  <ItemGroup>
+    <Protobuf Include="Protos/campaign/*.proto" GrpcServices="Client" ProtoRoot="Protos\" />
+    
+  </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
     <PackageReference Include="FluentValidation.AspNetCore" Version="11.2.1" />
+    <PackageReference Include="Google.Protobuf" Version="3.21.7" />
+    <PackageReference Include="Grpc.Core.Api" Version="2.49.0" />
+    <PackageReference Include="Grpc.Net.Client" Version="2.49.0" />
+    <PackageReference Include="Grpc.Tools" Version="2.49.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="HtmlAgilityPack" Version="1.11.43" />
     <PackageReference Include="MediatR" Version="10.0.1" />
     <PackageReference Include="MediatR.Extensions.FluentValidation.AspNetCore" Version="3.0.0" />
@@ -23,11 +36,22 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="JobOffer\Interfaces\" />
+    <ProjectReference Include="..\Domain\Domain.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Domain\Domain.csproj" />
+    <Protobuf Include="Protos\nl\dpgrecruitment\campaign\api.proto" ProtoRoot="Protos/" GrpcServices="Client" />    
+    <Protobuf Include="Protos\nl\dpgrecruitment\campaign\requests.proto" ProtoRoot="Protos/" GrpcServices="Client" />    
+    <Protobuf Include="Protos\nl\dpgrecruitment\campaign\responses.proto" ProtoRoot="Protos/" GrpcServices="Client" />    
+    <Protobuf Include="Protos\nl\dpgrecruitment\campaign\types.proto" ProtoRoot="Protos/" GrpcServices="Client" />    
+    <Protobuf Include="Protos/validate/*.proto" ProtoRoot="Protos/" GrpcServices="Client" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="JobOffer\Interfaces\**" />
+    <EmbeddedResource Remove="JobOffer\Interfaces\**" />
+    <None Remove="JobOffer\Interfaces\**" />
+    <Protobuf Remove="JobOffer\Interfaces\**" />
   </ItemGroup>
 
 </Project>

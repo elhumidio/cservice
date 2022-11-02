@@ -25,6 +25,17 @@ namespace Persistence.Repositories
             return query;
         }
 
+        public  int GetAssignedUnitsMxPtByCompany(int companyId)
+        {
+            var res =  _dataContext.EnterpriseUserJobVacs
+          .Join(_dataContext.Contracts, c => new { c.Idcontract }, eujv => new { eujv.Idcontract },
+              (jv, c) => new { jv, c })
+          .Where(o => o.c.Identerprise == companyId
+          && (o.jv.Idproduct == 110 || o.jv.Idproduct == 115) && o.c.FinishDate >= DateTime.Today)
+          .Select(o => o.jv).ToList();
+            return res.Sum(a => a.JobVacUsed);
+        }
+
         public bool AssignUnitToManager(int contractId, VacancyType type, int ownerId)
         {
             var assignment = _dataContext.EnterpriseUserJobVacs.Where(a => a.IdjobVacType == (int)type

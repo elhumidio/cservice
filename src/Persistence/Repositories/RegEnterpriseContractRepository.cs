@@ -30,15 +30,15 @@ namespace Persistence.Repositories
             return Task.FromResult(ret.Result);
         }
 
-
         public Task<int> GetUnitsByType(int contractId, VacancyType type)
         {
             var units = 0;
             var unitsReg = _dataContext.RegEnterpriseContracts.Where(reg => reg.Idcontract == contractId && reg.IdjobVacType == (int)type);
-            if(unitsReg.Any())
+            if (unitsReg.Any())
                 units = unitsReg.First().Units;
             return Task.FromResult(units);
-
         }
+
+        
     }
 }

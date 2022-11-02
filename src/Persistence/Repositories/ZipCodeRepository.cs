@@ -30,6 +30,12 @@ namespace Persistence.Repositories
             return zipCode;
         }
 
+        public ZipCode GetZipById(int zipcodeId)
+        {
+            var zipCode = _dataContext.ZipCodes.Where(z => z.IdzipCode == zipcodeId).FirstOrDefault();
+            return zipCode;
+        }
+
         public int GetCityIdByZip(string zipcode)
         {
             int cityId = 0;
@@ -48,7 +54,6 @@ namespace Persistence.Repositories
                 cityId = (int)code.First().Idcity;
             return cityId;
         }
-
 
         public int Add(ZipCode _zipcode)
         {

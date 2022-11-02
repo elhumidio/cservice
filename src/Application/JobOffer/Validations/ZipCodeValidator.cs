@@ -26,14 +26,17 @@ namespace Application.JobOffer.Validations
 
         private bool IsRightPostalCode(CreateOfferCommand obj)
         {
-            var ret = false;
+            var ret = false;            
+            var country = _regionRepo.GetCountry(obj.Idregion);
+            obj.Idcountry = country;
             var countryCode = GetCountryIsoByIdCountry(obj.Idcountry);
             if (!string.IsNullOrEmpty(countryCode))
             {
                 var ans = _geoNames.GetPostalCodesCollection(obj.ZipCode, GetCountryIsoByIdCountry(obj.Idcountry));
                 if (ans != null && ans.postalCodes.Any())
                 {
-                    var IdzipCode = _zipCodeRepo.GetZipCodeIdByCodeAndCountry(obj.ZipCode, obj.Idcountry);
+                    var IdzipCode = obj.ZipCode != null ? _zipCodeRepo.GetZipCodeIdByCodeAndCountry(obj.ZipCode, obj.Idcountry) : 0;
+
                     if (IdzipCode != 0)
                         obj.IdzipCode = IdzipCode;
                     else if (IdzipCode == 0)
@@ -44,7 +47,6 @@ namespace Application.JobOffer.Validations
                             obj.IdzipCode = IdzipCode;
                         if (IdzipCode == 0)
                         {
-                        
                             obj.Idcity = _zipCodeRepo.GetCityIdByName(ans.postalCodes.First().placeName);
 
                             ZipCode zip = new ZipCode
