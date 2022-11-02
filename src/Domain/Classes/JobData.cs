@@ -14,5 +14,7 @@ namespace Domain.Classes
         public DateTime PublicationDate { get; set; }
         public string City { get; set; }
         public int IDCity { get; set; }
+        public string Category { get; set; }
+        public string CategoryMoreJobs { get; set; }
     }
 }
