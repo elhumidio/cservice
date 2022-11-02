@@ -47,6 +47,7 @@ namespace Persistence
         public virtual DbSet<Enterprise> Enterprises { get; set; } = null!;
         public virtual DbSet<Site> Sites { get; set; } = null!;
         public virtual DbSet<City> Cities { get; set; } = null!;
+        public virtual DbSet<FeaturedJob> FeaturedJobs { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -1447,6 +1448,15 @@ namespace Persistence
                 entity.Property(e => e.Idsite).HasColumnName("IDSite");
 
                 entity.Property(e => e.BaseName).HasMaxLength(20);
+            });
+
+            modelBuilder.Entity<FeaturedJob>(entity =>
+            {
+                entity.ToTable("TFeaturedJob");
+
+                entity.Property(e => e.Idsite).HasColumnName("IDSite");
+
+                entity.Property(e => e.Url).HasColumnName("URL");
             });
 
             OnModelCreatingPartial(modelBuilder);
