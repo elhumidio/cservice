@@ -46,6 +46,11 @@ namespace Persistence
         public virtual DbSet<Site> Sites { get; set; } = null!;
         public virtual DbSet<City> Cities { get; set; } = null!;
         public virtual DbSet<FeaturedJob> FeaturedJobs { get; set; } = null!;
+        public virtual DbSet<Logo> Logos{ get; set; } = null!;
+        public virtual DbSet<RegJobVacWorkPermit> RegJobVacWorkPermits { get; set; } = null!;
+        public virtual DbSet<JobVacancyLanguage> JobVacancyLanguages { get; set; } = null!;
+        
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -1513,6 +1518,6 @@ namespace Persistence
             OnModelCreatingPartial(modelBuilder);
         }
 
-         partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
+        partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
     }
 }

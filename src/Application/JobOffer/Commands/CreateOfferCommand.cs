@@ -203,7 +203,7 @@ namespace Application.JobOffer.Commands
         public IntegrationData IntegrationData { get; set; }
 
         [DataMember]
-        public List<JobLanguages> JobLanguages { get; set; }
+        public List<JobLanguages>? JobLanguages { get; set; }
 
         public CreateOfferCommand()
         {
