@@ -54,7 +54,7 @@ namespace Application.JobOffer.Commands
         public int? IdsubArea { get; set; } //table
 
         [DataMember]
-        public List<int> IdworkPermit { get; set; }//table
+        public List<int>? IdworkPermit { get; set; }//table
 
         [DataMember]
         public int IdjobContractType { get; set; } //table
