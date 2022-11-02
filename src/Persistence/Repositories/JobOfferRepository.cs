@@ -2,6 +2,7 @@ using Domain.Classes;
 using Domain.Entities;
 using Domain.Enums;
 using Domain.Repositories;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace Persistence.Repositories
