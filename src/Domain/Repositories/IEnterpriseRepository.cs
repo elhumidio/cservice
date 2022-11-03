@@ -9,5 +9,6 @@ namespace Domain.Repositories
         public int GetSite(int companyId);
 
         public string GetCompanyName(int companyId);
+        public API.DataContext.Enterprise Get(int companyId);
     }
 }

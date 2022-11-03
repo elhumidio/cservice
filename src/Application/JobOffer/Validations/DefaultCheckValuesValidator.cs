@@ -21,11 +21,11 @@ namespace Application.JobOffer.Validations
         private bool HasDefaultValues(CreateOfferCommand obj)
         {
             var services = _contractRepository.GetServiceTypes(obj.Idcontract).ToList();
-            obj.ChkBlindVac = false;
+            obj.ChkBlindVac = obj.ChkBlindVac == null  ?  false : obj.ChkBlindVac;
             obj.ChkFilled = false;
             obj.ChkDeleted = false;
             obj.ChkEnterpriseVisible = true;
-            obj.ChkBlindSalary = false;
+            obj.ChkBlindSalary = obj.ChkBlindSalary == null ?  false : obj.ChkBlindSalary;
             obj.ChkDisability = false;
             obj.ChkUpdateDate = services.Where(a => a.ServiceType == (int)ServiceTypes.ManualJobRefresh).Any() ? true : false;
             return true;

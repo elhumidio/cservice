@@ -3,6 +3,7 @@ using Application.JobOffer.DTO;
 using Application.JobOffer.Queries;
 using AutoMapper;
 using Domain.Entities;
+using Domain.Enums;
 using Domain.Repositories;
 using MediatR;
 using Microsoft.Extensions.Configuration;
@@ -57,6 +58,11 @@ namespace Application.JobOffer.Commands
             int jobVacancyId = 0;
             var job = new JobVacancy();
             var integrationInfo = await _regJobVacRepo.GetAtsIntegrationInfo(offer.IntegrationData.ApplicationReference);
+            var company = _enterpriseRepository.Get(offer.Identerprise);
+            if (company.Idstatus == (int)EnterpriseStatus.Pending)
+            {
+                offer.Idstatus = (int)EnterpriseStatus.Pending;
+            }
 
             if (integrationInfo != null)
                 error = $"IntegrationId: {offer.IntegrationData.IDIntegration} - Reference: {offer.IntegrationData.ApplicationReference}";
@@ -80,7 +86,7 @@ namespace Application.JobOffer.Commands
 
                 bool canSaveWorkPermit = jobVacancyId > 0
                     && offer.IdworkPermit.Any()
-                    && offer.IntegrationData == null;                  
+                    && offer.IntegrationData == null;
 
                 if (canSaveLanguages)
                 {
@@ -95,7 +101,7 @@ namespace Application.JobOffer.Commands
                         _jobVacancyLangRepo.Add(language);
                     }
                 }
-                
+
                 if (canSaveWorkPermit)
                 {
                     foreach (var permit in offer.IdworkPermit)
