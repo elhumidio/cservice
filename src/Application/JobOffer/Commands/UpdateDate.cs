@@ -40,12 +40,12 @@ namespace Application.JobOffer.Commands
                 if (ret > 0)
                 {
                     msg += $"Offer {request.id} - date udpated successfully ";
-                    return OfferModificationResult.Failure(new List<string> { msg });
+                    return OfferModificationResult.Success();
                 }
 
                 else {
                     msg += $"Offer {request.id} - couldn't update date";
-                    return OfferModificationResult.Success(new List<string> { msg });
+                    return OfferModificationResult.Failure(new List<string> { msg });
                 }
                 
             }

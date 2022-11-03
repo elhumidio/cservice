@@ -7,7 +7,7 @@ namespace Application.JobOffer.DTO
         public List<string> Failures { get; set; }
 
         public static OfferModificationResult Success(OfferResultDto value) => new OfferModificationResult { IsSuccess = true, Value = value };
-
+        public static OfferModificationResult Success() => new OfferModificationResult { IsSuccess = true};
         public static OfferModificationResult Success(List<string> failures) => new OfferModificationResult { IsSuccess = false, Failures = failures };
 
         public static OfferModificationResult Failure(List<string> failures) => new OfferModificationResult { IsSuccess = false, Failures = failures };
