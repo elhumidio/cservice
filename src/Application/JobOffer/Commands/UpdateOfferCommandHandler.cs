@@ -97,14 +97,11 @@ namespace Application.JobOffer.Commands
                 OfferId = offer.IdjobVacancy
             }).Result;
 
-            bool canSaveWorkPermit =  offer.IdworkPermit.Any()
-                && offer.IntegrationData != null
-                && !string.IsNullOrEmpty(offer.IntegrationData.ApplicationReference);
-
-            /*COMMENTED OU UNTIL CHANGES IN WE BE DEPLOYED*/
+            bool canSaveWorkPermit = offer.IdworkPermit.Any()
+                && integrationInfo == null;
+            
             if (canSaveWorkPermit)
-            {
-                //erase all permits
+            {            
                 await _regJobVacWorkPermitRepo.Delete(offer.IdjobVacancy);
                 foreach (var permit in offer.IdworkPermit)
                 {

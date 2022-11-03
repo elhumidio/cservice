@@ -74,16 +74,13 @@ namespace Application.JobOffer.Commands
                 entity.IntegrationId = offer.IntegrationData.IDIntegration;
                 jobVacancyId = _offerRepo.Add(entity);
 
+                bool canSaveLanguages = jobVacancyId > 0
+                     && offer.JobLanguages.Any()
+                     && offer.IntegrationData == null;
 
-                /*COMMENT OUT UNTIL NEW CHANGES IN WEB BE DEPLOYED*/
-               bool canSaveLanguages = jobVacancyId > 0
-                    && offer.JobLanguages.Any()
-                    && integrationInfo == null
-                    && !string.IsNullOrEmpty(integrationInfo.ExternalId);
                 bool canSaveWorkPermit = jobVacancyId > 0
                     && offer.IdworkPermit.Any()
-                    && integrationInfo == null
-                    && !string.IsNullOrEmpty(integrationInfo.ExternalId);
+                    && offer.IntegrationData == null;                  
 
                 if (canSaveLanguages)
                 {
