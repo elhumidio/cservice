@@ -97,10 +97,12 @@ namespace Application.JobOffer.Commands
                 OfferId = offer.IdjobVacancy
             }).Result;
 
-            bool canSaveWorkPermit =  offer.IdworkPermit.Any();
+            bool canSaveWorkPermit =  offer.IdworkPermit.Any()
+                && offer.IntegrationData != null
+                && !string.IsNullOrEmpty(offer.IntegrationData.ApplicationReference);
 
             /*COMMENTED OU UNTIL CHANGES IN WE BE DEPLOYED*/
-           /* if (canSaveWorkPermit)
+            if (canSaveWorkPermit)
             {
                 //erase all permits
                 await _regJobVacWorkPermitRepo.Delete(offer.IdjobVacancy);
@@ -108,7 +110,7 @@ namespace Application.JobOffer.Commands
                 {
                    await _regJobVacWorkPermitRepo.Add(new RegJobVacWorkPermit() { IdjobVacancy = offer.IdjobVacancy, IdworkPermit = permit });
                 }
-            }*/
+            }
 
             var integration = _regJobVacRepo.GetAtsIntegrationInfoByJobId(existentOffer.IdjobVacancy).Result;
 

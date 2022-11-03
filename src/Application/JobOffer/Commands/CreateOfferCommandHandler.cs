@@ -76,7 +76,15 @@ namespace Application.JobOffer.Commands
 
 
                 /*COMMENT OUT UNTIL NEW CHANGES IN WEB BE DEPLOYED*/
-                /*bool canSaveLanguages = jobVacancyId > 0 && offer.JobLanguages.Any();
+               bool canSaveLanguages = jobVacancyId > 0
+                    && offer.JobLanguages.Any()
+                    && integrationInfo == null
+                    && !string.IsNullOrEmpty(integrationInfo.ExternalId);
+                bool canSaveWorkPermit = jobVacancyId > 0
+                    && offer.IdworkPermit.Any()
+                    && integrationInfo == null
+                    && !string.IsNullOrEmpty(integrationInfo.ExternalId);
+
                 if (canSaveLanguages)
                 {
                     foreach (var lang in offer.JobLanguages)
@@ -90,14 +98,14 @@ namespace Application.JobOffer.Commands
                         _jobVacancyLangRepo.Add(language);
                     }
                 }
-                bool canSaveWorkPermit = jobVacancyId > 0 && offer.IdworkPermit.Any();
+                
                 if (canSaveWorkPermit)
                 {
                     foreach (var permit in offer.IdworkPermit)
                     {
                         var ret = await _regJobVacWorkPermitRepo.Add(new RegJobVacWorkPermit() { IdjobVacancy = jobVacancyId, IdworkPermit = permit });
                     }
-                }*/
+                }
 
                 if (jobVacancyId == -1)
                 {
