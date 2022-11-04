@@ -34,8 +34,10 @@ namespace Application.JobOffer.Validations
 
     public class DefaultCheckValuesValidatorUp : AbstractValidator<UpdateOfferCommand>
     {
-        public DefaultCheckValuesValidatorUp(IMediator mediator, IContractProductRepository contractProdRepo)
+        private IContractRepository _contractRepository;
+        public DefaultCheckValuesValidatorUp(IMediator mediator, IContractRepository contractRepository)
         {
+            _contractRepository = contractRepository;
             RuleFor(command => command)
                 .Must(HasDefaultValues)
                 .WithMessage("Couldn't set default values.\n");
@@ -43,13 +45,14 @@ namespace Application.JobOffer.Validations
 
         private bool HasDefaultValues(UpdateOfferCommand obj)
         {
+            var services = _contractRepository.GetServiceTypes(obj.Idcontract).ToList();
             obj.ChkBlindVac = obj.ChkBlindVac == null ? true : obj.ChkBlindVac;
             obj.ChkFilled = obj.ChkFilled == null ? false : obj.ChkFilled;
             obj.ChkDeleted = obj.ChkFilled == null  ? false : obj.ChkDeleted;
             obj.ChkEnterpriseVisible = obj.ChkEnterpriseVisible == null ? true : obj.ChkEnterpriseVisible;
             obj.ChkBlindSalary = obj.ChkBlindSalary == null ? false : obj.ChkBlindSalary;
             obj.ChkDisability = obj.ChkDisability== null ?  false : obj.ChkDisability;
-            obj.ChkUpdateDate = obj.ChkUpdateDate == null ?   true : obj.ChkUpdateDate;
+            obj.ChkUpdateDate = services.Where(a => a.ServiceType == (int)ServiceTypes.ManualJobRefresh).Any() ? true : false;
             return true;
         }
     }
