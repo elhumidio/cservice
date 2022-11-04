@@ -2,11 +2,11 @@ using Application.Aimwel.Commands;
 using Application.Aimwel.Interfaces;
 using Application.Aimwel.Queries;
 using Application.JobOffer.DTO;
+using AutoMapper;
 using Domain.Repositories;
 using DPGRecruitmentCampaignClient;
 using MediatR;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 
 namespace Application.JobOffer.Commands
 {
@@ -26,7 +26,8 @@ namespace Application.JobOffer.Commands
             private readonly IContractProductRepository _contractProductRepo;
             private readonly IMediator _mediatr;
             private readonly IJobVacancyLanguageRepository _jobVacancyLanguageRepo;
-            private readonly IRegJobVacWorkPermitRepository _regJobVacWorkPermitRepo;            
+            private readonly IRegJobVacWorkPermitRepository _regJobVacWorkPermitRepo;
+            private readonly IMapper _mapper;
 
             public Handler(IJobOfferRepository offerRepo,
                 IRegEnterpriseContractRepository regEnterpriseContractRepository,
@@ -34,7 +35,8 @@ namespace Application.JobOffer.Commands
                 IConfiguration config,
                 IContractProductRepository contractProductRepo, IMediator mediatr,
                 IJobVacancyLanguageRepository jobVacancyLanguageRepo,
-                IRegJobVacWorkPermitRepository regJobVacWorkPermitRepo
+                IRegJobVacWorkPermitRepository regJobVacWorkPermitRepo,
+                IMapper mapper
                 )
             {
                 _offerRepo = offerRepo;
@@ -44,7 +46,8 @@ namespace Application.JobOffer.Commands
                 _contractProductRepo = contractProductRepo;
                 _mediatr = mediatr;
                 _jobVacancyLanguageRepo = jobVacancyLanguageRepo;
-                _regJobVacWorkPermitRepo = regJobVacWorkPermitRepo;                
+                _regJobVacWorkPermitRepo = regJobVacWorkPermitRepo;
+                _mapper = mapper;
             }
 
             public async Task<OfferModificationResult> Handle(Command request, CancellationToken cancellationToken)
@@ -55,7 +58,7 @@ namespace Application.JobOffer.Commands
 
                 if (job == null)
                 {
-                    return OfferModificationResult.Success(new List<string> { msg });
+                    return OfferModificationResult.Failure(new List<string> { msg });
                 }
 
                 await _manageCampaign.PauseCampaign(job.IdjobVacancy);
@@ -65,7 +68,8 @@ namespace Application.JobOffer.Commands
 
                 if (ret <= 0)
                 {
-                    msg += $"Offer {request.dto.id} - Not Filed ";                                       
+                    msg += $"Offer {request.dto.id} - Not Filed ";
+                    return OfferModificationResult.Failure(new List<string> { msg });
                 }
                 else
                 {
@@ -74,7 +78,7 @@ namespace Application.JobOffer.Commands
                     var isPack = _contractProductRepo.IsPack(job.Idcontract);
                     if (isPack)
                         await _regEnterpriseContractRepository.IncrementAvailableUnits(job.Idcontract, job.IdjobVacType);
-                    msg += $"Filed offer {request.dto.id}\n\r";                    
+                    msg += $"Filed offer {request.dto.id}\n\r";
 
                     if (aimwelEnabled)
                     {
@@ -89,12 +93,13 @@ namespace Application.JobOffer.Commands
                             {
                                 offerId = request.dto.id
                             });
-                            msg += $"Campaign {campaign.CampaignId} /  {request.dto.id} - Canceled ";                            
+                            msg += $"Campaign {campaign.CampaignId} /  {request.dto.id} - Canceled ";
                         }
                     }
+                    OfferResultDto dto = new OfferResultDto();
+                    dto = _mapper.Map(job, dto);
+                    return OfferModificationResult.Success(dto);
                 }
-
-                return OfferModificationResult.Success(new List<string> { msg });
             }
         }
     }
