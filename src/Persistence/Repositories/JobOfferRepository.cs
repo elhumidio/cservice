@@ -43,7 +43,7 @@ namespace Persistence.Repositories
             return query;
         }
 
-        public Task<int> UpdateOffer(JobVacancy jobUpdated)
+        public async Task<int> UpdateOffer(JobVacancy jobUpdated)
         {
             try
             {
@@ -51,16 +51,16 @@ namespace Persistence.Repositories
                 if (current != null)
                 {
                     current = jobUpdated;
-                    var ret = _dataContext.SaveChangesAsync();
+                    var ret = await _dataContext.SaveChangesAsync();
                     return ret;
                 }
-                else return Task.FromResult(-1);
+                else return -1;
             }
             catch (Exception ex)
             {
                 string message = $"Message: {ex.Message} - InnerException: {ex.InnerException} - StackTrace: {ex.StackTrace}";
                 _logger.LogError(message: message);
-                return Task.FromResult(-1);
+                return -1;
             }
         }
 

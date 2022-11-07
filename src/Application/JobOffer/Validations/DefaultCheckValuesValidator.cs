@@ -21,11 +21,11 @@ namespace Application.JobOffer.Validations
         private bool HasDefaultValues(CreateOfferCommand obj)
         {
             var services = _contractRepository.GetServiceTypes(obj.Idcontract).ToList();
-            obj.ChkBlindVac = false;
+            obj.ChkBlindVac = obj.ChkBlindVac == null  ?  false : obj.ChkBlindVac;
             obj.ChkFilled = false;
             obj.ChkDeleted = false;
             obj.ChkEnterpriseVisible = true;
-            obj.ChkBlindSalary = false;
+            obj.ChkBlindSalary = obj.ChkBlindSalary == null ?  false : obj.ChkBlindSalary;
             obj.ChkDisability = false;
             obj.ChkUpdateDate = services.Where(a => a.ServiceType == (int)ServiceTypes.ManualJobRefresh).Any() ? true : false;
             return true;
@@ -34,8 +34,10 @@ namespace Application.JobOffer.Validations
 
     public class DefaultCheckValuesValidatorUp : AbstractValidator<UpdateOfferCommand>
     {
-        public DefaultCheckValuesValidatorUp(IMediator mediator, IContractProductRepository contractProdRepo)
+        private IContractRepository _contractRepository;
+        public DefaultCheckValuesValidatorUp(IMediator mediator, IContractRepository contractRepository)
         {
+            _contractRepository = contractRepository;
             RuleFor(command => command)
                 .Must(HasDefaultValues)
                 .WithMessage("Couldn't set default values.\n");
@@ -43,13 +45,14 @@ namespace Application.JobOffer.Validations
 
         private bool HasDefaultValues(UpdateOfferCommand obj)
         {
-            obj.ChkBlindVac = false;
-            obj.ChkFilled = false;
-            obj.ChkDeleted = false;
-            obj.ChkEnterpriseVisible = true;
-            obj.ChkBlindSalary = false;
-            obj.ChkDisability = false;
-            obj.ChkUpdateDate = true;
+            var services = _contractRepository.GetServiceTypes(obj.Idcontract).ToList();
+            obj.ChkBlindVac = obj.ChkBlindVac == null ? true : obj.ChkBlindVac;
+            obj.ChkFilled = obj.ChkFilled == null ? false : obj.ChkFilled;
+            obj.ChkDeleted = obj.ChkFilled == null  ? false : obj.ChkDeleted;
+            obj.ChkEnterpriseVisible = obj.ChkEnterpriseVisible == null ? true : obj.ChkEnterpriseVisible;
+            obj.ChkBlindSalary = obj.ChkBlindSalary == null ? false : obj.ChkBlindSalary;
+            obj.ChkDisability = obj.ChkDisability== null ?  false : obj.ChkDisability;
+            obj.ChkUpdateDate = services.Where(a => a.ServiceType == (int)ServiceTypes.ManualJobRefresh).Any() ? true : false;
             return true;
         }
     }

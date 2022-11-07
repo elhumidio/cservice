@@ -3,6 +3,7 @@ using Application.JobOffer.DTO;
 using Application.JobOffer.Queries;
 using AutoMapper;
 using Domain.Entities;
+using Domain.Enums;
 using Domain.Repositories;
 using MediatR;
 using Microsoft.Extensions.Configuration;
@@ -57,6 +58,11 @@ namespace Application.JobOffer.Commands
             int jobVacancyId = 0;
             var job = new JobVacancy();
             var integrationInfo = await _regJobVacRepo.GetAtsIntegrationInfo(offer.IntegrationData.ApplicationReference);
+            var company = _enterpriseRepository.Get(offer.Identerprise);
+            if (company.Idstatus == (int)EnterpriseStatus.Pending)
+            {
+                offer.Idstatus = (int)EnterpriseStatus.Pending;
+            }
 
             if (integrationInfo != null)
                 error = $"IntegrationId: {offer.IntegrationData.IDIntegration} - Reference: {offer.IntegrationData.ApplicationReference}";
@@ -74,21 +80,19 @@ namespace Application.JobOffer.Commands
                 entity.IntegrationId = offer.IntegrationData.IDIntegration;
                 jobVacancyId = _offerRepo.Add(entity);
 
-                bool canSaveLanguages = jobVacancyId > 0 && offer.JobLanguages.Any();
+                bool canSaveLanguages = jobVacancyId > 0
+                     && offer.JobLanguages.Any()
+                     && offer.IntegrationData == null;
+
+                bool canSaveWorkPermit = jobVacancyId > 0
+                    && offer.IdworkPermit.Any()
+                    && offer.IntegrationData == null;
+
                 if (canSaveLanguages)
                 {
-                    foreach (var lang in offer.JobLanguages)
-                    {
-                        JobVacancyLanguage language = new JobVacancyLanguage
-                        {
-                            IdjobVacancy = jobVacancyId,
-                            IdlangLevel = lang.IdLangLevel,
-                            Idlanguage = lang.IdLanguage
-                        };
-                        _jobVacancyLangRepo.Add(language);
-                    }
+                    Savelanguages(offer, jobVacancyId);
                 }
-                bool canSaveWorkPermit = jobVacancyId > 0 && offer.IdworkPermit.Any();
+
                 if (canSaveWorkPermit)
                 {
                     foreach (var permit in offer.IdworkPermit)
@@ -111,27 +115,7 @@ namespace Application.JobOffer.Commands
 
                         if (!string.IsNullOrEmpty(offer.IntegrationData.ApplicationReference))
                         {
-                            RegJobVacMatching obj = new RegJobVacMatching
-                            {
-                                ExternalId = offer.IntegrationData.ApplicationReference,
-                                Idintegration = offer.IntegrationData.IDIntegration,
-                                IdjobVacancy = jobVacancyId,
-                                AppEmail = offer.IntegrationData.ApplicationEmail,
-                                Identerprise = offer.Identerprise,
-                                Redirection = offer.IntegrationData.ApplicationUrl
-                            };
-                            var integration = _regJobVacRepo.GetAtsIntegrationInfo(obj.ExternalId).Result;
-                            if (integration == null)
-                            {
-                                var info = $"IDJobVacancy: {job.IdjobVacancy} - IdIntegration: {offer.IntegrationData.IDIntegration} - Reference: {offer.IntegrationData.ApplicationReference} - Offer ATS Created";
-                                _logger.LogInformation(info);
-                                await _regJobVacRepo.Add(obj);
-                            }
-                            else
-                            {
-                                var info = $"IDJobVacancy: {job.IdjobVacancy} - IDEnterprise: {job.Identerprise} - IDContract: {job.Idcontract} - Offer Created";
-                                _logger.LogInformation(info);
-                            }
+                            await IntegrationActions(offer, jobVacancyId, job);
                         }
                         var createdOffer = _mediatr.Send(new GetResult.Query
                         {
@@ -156,6 +140,60 @@ namespace Application.JobOffer.Commands
                 error = $"Couldn't perform any operations, the offer {offer.IdjobVacancy} already exists.";
                 _logger.LogError(error);
                 return OfferModificationResult.Failure(new List<string> { error });
+            }
+        }
+
+
+
+        /// <summary>
+        /// It saves languages if needed
+        /// </summary>
+        /// <param name="offer"></param>
+        /// <param name="jobVacancyId"></param>
+        private void Savelanguages(CreateOfferCommand offer, int jobVacancyId)
+        {
+            foreach (var lang in offer.JobLanguages)
+            {
+                JobVacancyLanguage language = new JobVacancyLanguage
+                {
+                    IdjobVacancy = jobVacancyId,
+                    IdlangLevel = lang.IdLangLevel,
+                    Idlanguage = lang.IdLanguage
+                };
+                _jobVacancyLangRepo.Add(language);
+            }
+        }
+
+
+        /// <summary>
+        /// Actions regarding integrations
+        /// </summary>
+        /// <param name="offer"></param>
+        /// <param name="jobVacancyId"></param>
+        /// <param name="job"></param>
+        /// <returns></returns>
+        private async Task IntegrationActions(CreateOfferCommand offer, int jobVacancyId, JobVacancy job)
+        {
+            RegJobVacMatching obj = new RegJobVacMatching
+            {
+                ExternalId = offer.IntegrationData.ApplicationReference,
+                Idintegration = offer.IntegrationData.IDIntegration,
+                IdjobVacancy = jobVacancyId,
+                AppEmail = offer.IntegrationData.ApplicationEmail,
+                Identerprise = offer.Identerprise,
+                Redirection = offer.IntegrationData.ApplicationUrl
+            };
+            var integration = _regJobVacRepo.GetAtsIntegrationInfo(obj.ExternalId).Result;
+            if (integration == null)
+            {
+                var info = $"IDJobVacancy: {job.IdjobVacancy} - IdIntegration: {offer.IntegrationData.IDIntegration} - Reference: {offer.IntegrationData.ApplicationReference} - Offer ATS Created";
+                _logger.LogInformation(info);
+                await _regJobVacRepo.Add(obj);
+            }
+            else
+            {
+                var info = $"IDJobVacancy: {job.IdjobVacancy} - IDEnterprise: {job.Identerprise} - IDContract: {job.Idcontract} - Offer Created";
+                _logger.LogInformation(info);
             }
         }
     }

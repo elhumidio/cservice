@@ -13,8 +13,8 @@ namespace Application.JobOffer.Validations
             RuleFor(command => command).NotEmpty().WithMessage("Title is mandatory field.\n").Must(HasNotHtml);
             RuleFor(command => command).NotEmpty().WithMessage("Description is mandatory field.\n")
                 .Must(HasBeCleanHtml)
-                .Must(DescriptionMaxLength)
-                .Must(RequirementsMaxLength);
+                .Must(DescriptionMaxLength);
+                
         }
 
         private bool HasNotHtml(CreateOfferCommand cmd)
@@ -45,18 +45,7 @@ namespace Application.JobOffer.Validations
             return true;
         }
 
-        private bool RequirementsMaxLength(CreateOfferCommand cmd)
-        {
-            htmldoc.LoadHtml(cmd.Requirements);
-            if (cmd.Requirements.Length > 1999)
-            {
-                if (htmldoc.DocumentNode.InnerText.Length <= 1999)
-                    cmd.Requirements = htmldoc.DocumentNode.InnerText;
-                else
-                    cmd.Requirements = htmldoc.DocumentNode.InnerText.Substring(0, 1999);
-            }
-            return true;
-        }
+
     }
 
     public class EmptyStringValidatorUp : AbstractValidator<UpdateOfferCommand>
@@ -68,8 +57,8 @@ namespace Application.JobOffer.Validations
             RuleFor(command => command).NotEmpty().WithMessage("Title is mandatory field.\n").Must(HasNotHtml);
             RuleFor(command => command).NotEmpty().WithMessage("Description is mandatory field.\n")
                 .Must(HasBeCleanHtml)
-                .Must(DescriptionMaxLength)
-                .Must(RequirementsMaxLength);
+                .Must(DescriptionMaxLength);
+                
         }
 
         private bool HasNotHtml(UpdateOfferCommand cmd)
@@ -100,17 +89,5 @@ namespace Application.JobOffer.Validations
             return true;
         }
 
-        private bool RequirementsMaxLength(UpdateOfferCommand cmd)
-        {
-            htmldoc.LoadHtml(cmd.Requirements);
-            if (cmd.Requirements.Length > 1999)
-            {
-                if (htmldoc.DocumentNode.InnerText.Length <= 1999)
-                    cmd.Requirements = htmldoc.DocumentNode.InnerText;
-                else
-                    cmd.Requirements = htmldoc.DocumentNode.InnerText.Substring(0, 1999);
-            }
-            return true;
-        }
     }
 }
