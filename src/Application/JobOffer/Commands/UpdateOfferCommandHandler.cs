@@ -1,3 +1,4 @@
+using Application.DTO;
 using Application.EnterpriseContract.Queries;
 using Application.JobOffer.DTO;
 using Application.JobOffer.Queries;
@@ -58,36 +59,7 @@ namespace Application.JobOffer.Commands
 
             if (IsActivate)
             {
-                var result = await _mediatr.Send(new GetContract.Query
-                {
-                    CompanyId = offer.Identerprise,
-                    type = (VacancyType)offer.IdjobVacType,
-                    RegionId = offer.Idregion
-                });
-                bool canActivate = result.Value != null && result.Value.Idcontract > 0;
-                if (canActivate)
-                {
-                    offer.FilledDate = null;
-                    offer.ChkUpdateDate = existentOffer.ChkUpdateDate;
-                    offer.ChkFilled = false;
-                    offer.ChkDeleted = false;
-                    offer.IdjobVacType = (int)result.Value.IdJobVacType;
-                    offer.PublicationDate = DateTime.Now;
-                    offer.UpdatingDate = DateTime.Now;
-                    offer.Idstatus = (int)OfferStatus.Active;
-                    await _regContractRepo.UpdateUnits(result.Value.Idcontract, (int)result.Value.IdJobVacType);
-                }
-                else
-                {
-                    offer.FilledDate = existentOffer.FilledDate;
-                    offer.ChkUpdateDate = existentOffer.ChkUpdateDate;
-                    offer.ChkFilled = existentOffer.ChkFilled;
-                    offer.ChkDeleted = existentOffer.ChkDeleted;
-                    offer.IdjobVacType = existentOffer.IdjobVacType;
-                    offer.PublicationDate = existentOffer.PublicationDate;
-                    offer.UpdatingDate = DateTime.Now;
-                    offer.Idstatus = existentOffer.Idstatus;
-                }
+                await ActivateActions(offer, existentOffer);
             }
             var entity = _mapper.Map(offer, existentOffer);
             var ret = await _offerRepo.UpdateOffer(existentOffer);
@@ -113,16 +85,69 @@ namespace Application.JobOffer.Commands
 
             if (integration != null)
             {
-                updatedOffer.IntegrationData.ApplicationEmail = integration.AppEmail;
-                updatedOffer.IntegrationData.ApplicationReference = integration.ExternalId;
-                updatedOffer.IntegrationData.ApplicationUrl = integration.Redirection;
-                updatedOffer.IntegrationData.IDIntegration = integration.Idintegration;
+                IntegrationActions(updatedOffer, integration);
             }
 
             if (ret < 0)
                 return OfferModificationResult.Failure(new List<string> { "no update" });
             else
                 return OfferModificationResult.Success(updatedOffer);
+        }
+
+        private static void IntegrationActions(OfferResultDto updatedOffer, RegJobVacMatching integration)
+        {
+            updatedOffer.IntegrationData.ApplicationEmail = integration.AppEmail;
+            updatedOffer.IntegrationData.ApplicationReference = integration.ExternalId;
+            updatedOffer.IntegrationData.ApplicationUrl = integration.Redirection;
+            updatedOffer.IntegrationData.IDIntegration = integration.Idintegration;
+        }
+
+        private async Task ActivateActions(UpdateOfferCommand offer, JobVacancy existentOffer)
+        {
+            var result = await _mediatr.Send(new GetContract.Query
+            {
+                CompanyId = offer.Identerprise,
+                type = (VacancyType)offer.IdjobVacType,
+                RegionId = offer.Idregion
+            });
+            bool canActivate = result.Value != null && result.Value.Idcontract > 0;
+            await ActivateActions(offer, existentOffer, result, canActivate);
+        }
+
+
+        /// <summary>
+        /// It perform actions regarding activate offers
+        /// </summary>
+        /// <param name="offer"></param>
+        /// <param name="existentOffer"></param>
+        /// <param name="result"></param>
+        /// <param name="canActivate"></param>
+        /// <returns></returns>
+        private async Task ActivateActions(UpdateOfferCommand offer, JobVacancy existentOffer, ContractResult result, bool canActivate)
+        {
+            if (canActivate)
+            {
+                offer.FilledDate = null;
+                offer.ChkUpdateDate = existentOffer.ChkUpdateDate;
+                offer.ChkFilled = false;
+                offer.ChkDeleted = false;
+                offer.IdjobVacType = (int)result.Value.IdJobVacType;
+                offer.PublicationDate = DateTime.Now;
+                offer.UpdatingDate = DateTime.Now;
+                offer.Idstatus = (int)OfferStatus.Active;
+                await _regContractRepo.UpdateUnits(result.Value.Idcontract, (int)result.Value.IdJobVacType);
+            }
+            else
+            {
+                offer.FilledDate = existentOffer.FilledDate;
+                offer.ChkUpdateDate = existentOffer.ChkUpdateDate;
+                offer.ChkFilled = existentOffer.ChkFilled;
+                offer.ChkDeleted = existentOffer.ChkDeleted;
+                offer.IdjobVacType = existentOffer.IdjobVacType;
+                offer.PublicationDate = existentOffer.PublicationDate;
+                offer.UpdatingDate = DateTime.Now;
+                offer.Idstatus = existentOffer.Idstatus;
+            }
         }
     }
 }
