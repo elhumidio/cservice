@@ -222,8 +222,7 @@ namespace Persistence.Repositories
 
         public Task<List<JobData>> GetAllJobs()
         {
-            var catstr = "";
-            var catstrEn = "";
+            DateTime DateNow = DateTime.Now;
 
             var query = (from job in _dataContext.JobVacancies
                          join brand in _dataContext.Brands on job.Idbrand equals brand.Idbrand
@@ -246,16 +245,8 @@ namespace Persistence.Repositories
                              PublicationDate = job.PublicationDate,
                              City = job.City,
                              IDCity = (job.Idcity.HasValue) ? job.Idcity.Value : 0,
-                             Category = job.Idarea.ToString(), //area.BaseName
-                             //CategoryMoreJobs = catstr + area.BaseName,
+                             ActiveDays = (int)DateTime.Now.Subtract(job.PublicationDate).TotalDays,
                          });
-
-            //LOCATION = job.IDRegion == 61 ? country.BaseName : region.BaseName + ", " + country.BaseName,
-            //CATEGORY = area.BaseName,
-            //CATEGORY_EN = areaEn.BaseName,
-            //LOCATION_EN = job.IDRegion == 61 ? country.BaseName : regionEn.BaseName + ", " + country.BaseName,
-            //CATEGORY_MORE_JOBS = catstr + area.BaseName,
-            //CATEGORY_MORE_JOBS_EN = catstrEn + areaEn.BaseName,
 
             return query.ToListAsync();
         }
