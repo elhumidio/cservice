@@ -30,7 +30,7 @@ namespace Application.JobOffer.Validations
             if (htmldoc.ParseErrors.Any())
                 cmd.Description = htmldoc.DocumentNode.InnerText;
             return true;
-        }
+        }        
 
         private bool DescriptionMaxLength(CreateOfferCommand cmd)
         {

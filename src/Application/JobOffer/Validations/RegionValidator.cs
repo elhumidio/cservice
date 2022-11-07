@@ -24,6 +24,8 @@ namespace Application.JobOffer.Validations
         }
     }
 
+
+
     public class RegionValidatorUp : AbstractValidator<UpdateOfferCommand>
     {
         private readonly IRegionRepository _regionRepo;
