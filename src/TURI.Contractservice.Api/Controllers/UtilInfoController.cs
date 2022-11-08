@@ -30,16 +30,7 @@ namespace API.Controllers
                 Email = email
             });
             return HandleResult(result);
-        }
-        [HttpGet("{email}", Name = "company")]
-        public async Task<IActionResult> GetCompanyInfo(GetCompanyRequest request)
-        {
-            var result = await Mediator.Send(new GetCompanyInfoManagers.Query
-            {
-                Params = request
-            });
-            return HandleResult(result);
-        }
+        }     
 
 
         [HttpGet("{siteId}/{languageId}", Name = "GetAreas")]
