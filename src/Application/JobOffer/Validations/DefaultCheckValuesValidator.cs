@@ -21,7 +21,7 @@ namespace Application.JobOffer.Validations
             RuleFor(command => command)
                 .Must(HasDefaultValues)
                 .WithMessage("Couldn't set default values.\n")
-                .Must(HasCity);
+                .Must(HasCity).WithMessage("Have to have a city.");
         }
 
         private bool HasDefaultValues(CreateOfferCommand obj)
@@ -60,17 +60,17 @@ namespace Application.JobOffer.Validations
 
             RuleFor(command => command)
                 .Must(HasDefaultValues)
-                .WithMessage("Couldn't set default values.\n").Must(HasCity);
+                .WithMessage("Couldn't set default values.\n").Must(HasCity).WithMessage("Have to have a city.");
         }
 
         private bool HasCity(UpdateOfferCommand obj)
         {
             if (string.IsNullOrEmpty(obj.City))
             {
-                if (obj.Idcity != null)
+                if (obj.Idcity != null && obj.Idcity > 0)
                     obj.City = _cityRepository.GetName((int)obj.Idcity);
             }
-            return !string.IsNullOrEmpty(obj.City);
+            return !string.IsNullOrEmpty(obj.City) || obj.Idcity == 0;
         }
 
         private bool HasDefaultValues(UpdateOfferCommand obj)
