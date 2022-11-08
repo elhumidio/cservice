@@ -140,7 +140,7 @@ namespace Persistence.Repositories
         public IQueryable<JobVacancy> GetActiveOffersByContractAndManagerNoPack(int contractId, int managerId)
         {
             var query = _dataContext.JobVacancies.Where(a => a.Idcontract == contractId
-                 && a.IdenterpriseUserG == managerId && a.Idstatus == (int)OfferStatus.Active);
+                 && a.IdenterpriseUserG == managerId && a.Idstatus != (int)OfferStatus.Deleted);
 
             return query;
         }
@@ -200,7 +200,7 @@ namespace Persistence.Repositories
             && a.IdenterpriseUserG == owner
             && a.IdjobVacType == type
             && a.FinishDate >= DateTime.Today
-            && a.Idstatus == (int)OfferStatus.Active);
+            && a.Idstatus != (int)OfferStatus.Deleted);
             return query;
         }
 
