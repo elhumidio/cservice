@@ -22,18 +22,18 @@ namespace Application.JobOffer.Commands
         private readonly IContractProductRepository _contractProductRepo;
         private readonly IMediator _mediatr;
         private readonly IRegJobVacWorkPermitRepository _regJobVacWorkPermitRepo;
+        private readonly ICityRepository _cityRepository;
 
         #endregion PRIVATE PROPERTIES
 
         public UpdateOfferCommandHandler(IRegEnterpriseContractRepository regContractRepo,
             IRegJobVacMatchingRepository regJobVacRepo,
             IMapper mapper,
-            IJobOfferRepository offerRepo,
-            IEnterpriseRepository enterpriseRepository,
-            IContractProductRepository contractProductRepo,
-            ILogger<UpdateOfferCommandHandler> logger,
+            IJobOfferRepository offerRepo,           
+            IContractProductRepository contractProductRepo,         
             IMediator mediatr,
-            IRegJobVacWorkPermitRepository regJobVacWorkPermitRepo)
+            IRegJobVacWorkPermitRepository regJobVacWorkPermitRepo,
+            ICityRepository cityRepository)
         {
             _contractProductRepo = contractProductRepo;
             _offerRepo = offerRepo;
@@ -42,6 +42,7 @@ namespace Application.JobOffer.Commands
             _mediatr = mediatr;
             _mapper = mapper;
             _regJobVacWorkPermitRepo = regJobVacWorkPermitRepo;
+            _cityRepository = cityRepository;   
         }
 
         public async Task<OfferModificationResult> Handle(UpdateOfferCommand offer, CancellationToken cancellationToken)
@@ -61,6 +62,7 @@ namespace Application.JobOffer.Commands
             {
                 await ActivateActions(offer, existentOffer);
             }
+            CityValidation(offer);
             var entity = _mapper.Map(offer, existentOffer);
             var ret = await _offerRepo.UpdateOffer(existentOffer);
             var updatedOffer = _mediatr.Send(new GetResult.Query
@@ -92,6 +94,20 @@ namespace Application.JobOffer.Commands
                 return OfferModificationResult.Failure(new List<string> { "no update" });
             else
                 return OfferModificationResult.Success(updatedOffer);
+        }
+
+        /// <summary>
+        /// It puts city name
+        /// </summary>
+        /// <param name="offer"></param>
+        private void CityValidation(UpdateOfferCommand offer)
+        {
+            if (string.IsNullOrEmpty(offer.City.Trim()))
+            {
+                if (offer.Idcity != null && offer.Idcity > 0)
+                    offer.City = _cityRepository.GetName((int)offer.Idcity);
+            }
+
         }
 
         private static void IntegrationActions(OfferResultDto updatedOffer, RegJobVacMatching integration)

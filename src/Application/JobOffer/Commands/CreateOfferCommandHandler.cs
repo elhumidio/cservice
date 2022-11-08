@@ -26,6 +26,7 @@ namespace Application.JobOffer.Commands
         private readonly IConfiguration _config;
         private readonly IJobVacancyLanguageRepository _jobVacancyLangRepo;
         private readonly IRegJobVacWorkPermitRepository _regJobVacWorkPermitRepo;
+        private readonly ICityRepository _cityRepository;
 
         #endregion PRIVATE PROPERTIES
 
@@ -37,7 +38,8 @@ namespace Application.JobOffer.Commands
             ILogger<CreateOfferCommandHandler> logger,
             IMediator mediatr, IAimwelCampaign manageCampaign,
             IConfiguration config,
-            IJobVacancyLanguageRepository jobVacancyLangRepo, IRegJobVacWorkPermitRepository regJobVacWorkPermitRepository)
+            IJobVacancyLanguageRepository jobVacancyLangRepo,
+            IRegJobVacWorkPermitRepository regJobVacWorkPermitRepository, ICityRepository cityRepository)
         {
             _offerRepo = offerRepo;
             _mapper = mapper;
@@ -50,6 +52,7 @@ namespace Application.JobOffer.Commands
             _config = config;
             _jobVacancyLangRepo = jobVacancyLangRepo;
             _regJobVacWorkPermitRepo = regJobVacWorkPermitRepository;
+            _cityRepository = cityRepository;   
         }
 
         public async Task<OfferModificationResult> Handle(CreateOfferCommand offer, CancellationToken cancellationToken)
@@ -76,6 +79,7 @@ namespace Application.JobOffer.Commands
             }
             else if (offer.IdjobVacancy == 0)
             {
+                CityValidation(offer);
                 var entity = _mapper.Map(offer, job);
                 entity.IntegrationId = offer.IntegrationData.IDIntegration;
                 jobVacancyId = _offerRepo.Add(entity);
@@ -141,6 +145,19 @@ namespace Application.JobOffer.Commands
                 _logger.LogError(error);
                 return OfferModificationResult.Failure(new List<string> { error });
             }
+        }
+
+        /// <summary>
+        /// It puts city name
+        /// </summary>
+        /// <param name="offer"></param>
+        private void CityValidation(CreateOfferCommand offer)
+        {
+            if (string.IsNullOrEmpty(offer.City.Trim())) {
+                if (offer.Idcity != null && offer.Idcity > 0)
+                    offer.City = _cityRepository.GetName((int)offer.Idcity);
+            }
+                
         }
 
 
