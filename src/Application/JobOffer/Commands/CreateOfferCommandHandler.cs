@@ -52,7 +52,7 @@ namespace Application.JobOffer.Commands
             _config = config;
             _jobVacancyLangRepo = jobVacancyLangRepo;
             _regJobVacWorkPermitRepo = regJobVacWorkPermitRepository;
-            _cityRepository = cityRepository;   
+            _cityRepository = cityRepository;
         }
 
         public async Task<OfferModificationResult> Handle(CreateOfferCommand offer, CancellationToken cancellationToken)
@@ -79,6 +79,22 @@ namespace Application.JobOffer.Commands
             }
             else if (offer.IdjobVacancy == 0)
             {
+                //check managers
+                var managerAts = _mediatr.Send(new EnterpriseContract.Queries.GetCompanyInfoManagers.Query
+                {
+                    Params = new Domain.DTO.GetCompanyRequest
+                    {
+                        ContractId = offer.Idcontract,
+                        CountryId = offer.Idcountry,
+                        IdJobVacType = offer.IdjobVacType,
+                        RegionId = offer.Idregion
+                    }
+                });
+                if (managerAts.Result.Value.ManagerId > 0)
+                {
+                    //asignar valores de manager encontrado
+                }
+
                 CityValidation(offer);
                 var entity = _mapper.Map(offer, job);
                 entity.IntegrationId = offer.IntegrationData.IDIntegration;
@@ -153,14 +169,12 @@ namespace Application.JobOffer.Commands
         /// <param name="offer"></param>
         private void CityValidation(CreateOfferCommand offer)
         {
-            if (string.IsNullOrEmpty(offer.City.Trim())) {
+            if (string.IsNullOrEmpty(offer.City.Trim()))
+            {
                 if (offer.Idcity != null && offer.Idcity > 0)
                     offer.City = _cityRepository.GetName((int)offer.Idcity);
             }
-                
         }
-
-
 
         /// <summary>
         /// It saves languages if needed
@@ -180,7 +194,6 @@ namespace Application.JobOffer.Commands
                 _jobVacancyLangRepo.Add(language);
             }
         }
-
 
         /// <summary>
         /// Actions regarding integrations

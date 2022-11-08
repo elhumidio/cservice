@@ -11,5 +11,7 @@ namespace Domain.DTO
         public int RegionId { get; set; }
         public int CountryId { get; set; }
         public string Email { get; set; }
+        public int ContractId { get; set; }
+        public int IdJobVacType { get; set; }
     }
 }

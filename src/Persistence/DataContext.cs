@@ -49,44 +49,23 @@ namespace Persistence
         public virtual DbSet<Logo> Logos{ get; set; } = null!;
         public virtual DbSet<RegJobVacWorkPermit> RegJobVacWorkPermits { get; set; } = null!;
         public virtual DbSet<JobVacancyLanguage> JobVacancyLanguages { get; set; } = null!;
-        
+        public virtual DbSet<AtsmanagerAdminRegion> AtsmanagerAdminRegions { get; set; } = null!;
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.UseCollation("Modern_Spanish_CI_AS");
 
-            modelBuilder.Entity<AtsmanagerAdmin>(entity =>
-            {
-                entity.HasKey(e => e.ManagerId);
-
-                entity.ToTable("ATSManagerAdmin");
-
-                entity.Property(e => e.ManagerId).ValueGeneratedNever();
-
-                entity.Property(e => e.CompanyId).HasColumnName("CompanyID");
-
-                entity.Property(e => e.Idsuser).HasColumnName("IDSUser");
-            });
-
             modelBuilder.Entity<AtsmanagerAdminRegion>(entity =>
             {
-                entity.HasNoKey();
+                entity.HasKey(e => new { e.CompanyId, e.ManagerId, e.RegionId, e.CountryId });
 
                 entity.ToTable("ATSManagerAdminRegions");
 
                 entity.Property(e => e.ManagerId).HasColumnName("ManagerID");
 
                 entity.Property(e => e.RegionId).HasColumnName("RegionID");
-
-                entity.HasOne(d => d.Manager)
-                    .WithMany()
-                    .HasForeignKey(d => d.ManagerId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_ATSManagerAdminRegions_ATSManagerAdmin");
             });
-
-
 
             modelBuilder.Entity<City>(entity =>
             {
