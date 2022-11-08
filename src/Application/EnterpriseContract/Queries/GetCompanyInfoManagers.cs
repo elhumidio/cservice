@@ -45,9 +45,7 @@ namespace Application.EnterpriseContract.Queries
                 {
                     IDSUser = _userRepository.GetUserIdByEmail(request.Params.Email)
                 };
-                obj.CompanyId = _enterpriseUserRepository.GetCompanyIdByUserId(obj.IDSUser);
-                
-                var managers = _atSManagerAdminRepository.Get(obj.CompanyId);
+                var managers = _atSManagerAdminRepository.Get(request.Params.CompanyId);
                 var ableManagers = new List<AtsmanagerAdminRegion>();
                 var winnerManager = new AtsmanagerAdminRegion();
                 if (managers != null)

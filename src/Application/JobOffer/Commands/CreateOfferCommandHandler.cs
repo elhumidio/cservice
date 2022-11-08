@@ -79,22 +79,7 @@ namespace Application.JobOffer.Commands
             }
             else if (offer.IdjobVacancy == 0)
             {
-                //check managers
-                var managerAts = _mediatr.Send(new EnterpriseContract.Queries.GetCompanyInfoManagers.Query
-                {
-                    Params = new Domain.DTO.GetCompanyRequest
-                    {
-                        ContractId = offer.Idcontract,
-                        CountryId = offer.Idcountry,
-                        IdJobVacType = offer.IdjobVacType,
-                        RegionId = offer.Idregion
-                    }
-                });
-                if (managerAts.Result.Value.ManagerId > 0)
-                {
-                    //asignar valores de manager encontrado
-                }
-
+              
                 CityValidation(offer);
                 var entity = _mapper.Map(offer, job);
                 entity.IntegrationId = offer.IntegrationData.IDIntegration;

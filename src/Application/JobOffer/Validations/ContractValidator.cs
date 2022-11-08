@@ -70,6 +70,27 @@ namespace Application.JobOffer.Validations
                 }
             }
 
+            bool IsAtsOffer = offer.IntegrationData != null && !string.IsNullOrEmpty(offer.IntegrationData.IDIntegration);
+
+            if (IsAtsOffer)
+            {
+                var managerAts = _mediator.Send(new EnterpriseContract.Queries.GetCompanyInfoManagers.Query
+                {
+                    Params = new Domain.DTO.GetCompanyRequest
+                    {
+                        ContractId = offer.Idcontract,
+                        CountryId = offer.Idcountry,
+                        IdJobVacType = offer.IdjobVacType,
+                        RegionId = offer.Idregion,
+                        CompanyId = offer.Identerprise
+                    }
+                });
+                if (managerAts.Result.Value != null && managerAts.Result.Value.ManagerId > 0)
+                {
+                    offer.IdenterpriseUserG = managerAts.Result.Value.ManagerId;
+                }
+            }
+
             int totalunits = 0;
             bool ans = false;
             var units = _mediator.Send(new GetAvailableUnits.Query
