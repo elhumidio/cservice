@@ -1,5 +1,7 @@
 using Application.AuxiliaryData.Queries;
+using Application.EnterpriseContract.Queries;
 using Application.JobOffer.Queries;
+using Domain.DTO;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
@@ -29,6 +31,16 @@ namespace API.Controllers
             });
             return HandleResult(result);
         }
+        [HttpGet("{email}", Name = "company")]
+        public async Task<IActionResult> GetCompanyInfo(GetCompanyRequest request)
+        {
+            var result = await Mediator.Send(new GetCompanyInfoManagers.Query
+            {
+                Params = request
+            });
+            return HandleResult(result);
+        }
+
 
         [HttpGet("{siteId}/{languageId}", Name = "GetAreas")]
         public async Task<IActionResult> GetAreas(int siteId, int languageId)
