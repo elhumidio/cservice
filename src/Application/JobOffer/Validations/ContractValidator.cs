@@ -88,7 +88,8 @@ namespace Application.JobOffer.Validations
                 if (managerAts.Result.Value != null && managerAts.Result.Value.ManagerId > 0)
                 {
                     offer.IdenterpriseUserG = managerAts.Result.Value.ManagerId;
-                }
+                    return true;
+                }                
             }
 
             int totalunits = 0;

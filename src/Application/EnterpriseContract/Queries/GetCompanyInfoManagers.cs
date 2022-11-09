@@ -47,6 +47,7 @@ namespace Application.EnterpriseContract.Queries
                 if (managers != null)
                 {
                     var globalManager = _atSManagerAdminRepository.GetGlobalOwner(request.CompanyData.CompanyId);
+
                     var managersByCriteria = managers.Where(r => r.RegionId == request.CompanyData.RegionId
                     || r.CountryId == request.CompanyData.CountryId).ToList();
                     ableManagers.AddRange(managersByCriteria);
@@ -70,9 +71,18 @@ namespace Application.EnterpriseContract.Queries
                     }
                     else
                     {
-                        if(globalManager.ManagerId > 0)
-                            return new Result<AtsmanagerAdminRegion> { Value = globalManager };
-                        else return new Result<AtsmanagerAdminRegion>();
+                        if (globalManager.ManagerId > 0) {
+                            var result = await _mediatr.Send(new GetAvailableUnitsByOwner.Query
+                            {
+                                ContractId = request.CompanyData.ContractId,
+                                OwnerId = globalManager.ManagerId
+                            });
+                            var available = result.Value.FirstOrDefault(v => (int)v.type == request.CompanyData.IdJobVacType && v.Units > 0);
+                            if (available != null) {
+                                return new Result<AtsmanagerAdminRegion> { Value = globalManager };
+                            }
+                            else return new Result<AtsmanagerAdminRegion>();
+                        }
                     }
                 }
                 return new Result<AtsmanagerAdminRegion>();

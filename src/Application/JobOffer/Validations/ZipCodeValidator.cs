@@ -68,6 +68,7 @@ namespace Application.JobOffer.Validations
                 }
                 else
                 {
+                    var IdzipCode = _zipCodeRepo.GetZipCodeIdByCity(obj.City);
                     var zipCodeEntity = _zipCodeRepo.GetZipCodeEntity(obj.ZipCode, obj.Idcountry);
                     if (zipCodeEntity != null)
                     {
@@ -75,6 +76,14 @@ namespace Application.JobOffer.Validations
                         var region = _regionRepo.Get(zipCodeEntity.Idregion);
                         obj.JobLocation = region != null ? region.BaseName : string.Empty;
                         ret = true;
+                    }
+                    else if (IdzipCode > 0) {
+                        obj.IdzipCode = IdzipCode;
+                        var zip = _zipCodeRepo.GetZipById(IdzipCode);
+                        var region = _regionRepo.Get(zip.Idregion);
+                        obj.JobLocation = region != null ? region.BaseName : string.Empty;
+                        ret = true;
+
                     }
                     else ret = false;
                 }
