@@ -40,7 +40,7 @@ namespace Application.JobOffer.Validations
             }
             else {
                 htmldoc.LoadHtml(cmd.Description);
-                if (cmd.Description.Length > 2499)
+                if (cmd.Description.Length > 2900)
                 {
                     if (htmldoc.DocumentNode.InnerText.Length <= 2900)
                         cmd.Description = htmldoc.DocumentNode.InnerText;
