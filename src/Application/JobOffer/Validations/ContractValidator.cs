@@ -76,7 +76,7 @@ namespace Application.JobOffer.Validations
             {
                 var managerAts = _mediator.Send(new EnterpriseContract.Queries.GetCompanyInfoManagers.Query
                 {
-                    Params = new Domain.DTO.GetCompanyRequest
+                    CompanyData = new Domain.DTO.GetCompanyRequest
                     {
                         ContractId = offer.Idcontract,
                         CountryId = offer.Idcountry,
