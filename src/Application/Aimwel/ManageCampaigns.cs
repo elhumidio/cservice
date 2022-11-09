@@ -193,7 +193,7 @@ namespace Application.Aimwel
                         $"{"/logos/"}" +
                         $"{_logoRepo.GetLogoByBrand(job.Idbrand).UrlImgBig}";
             var geolocation = _geoNamesConector.GetPostalCodesCollection(code, _countryIsoRepo.GetIsobyCountryId(job.Idcountry));
-
+            
             var request = new CreateCampaignRequest
             {
                 JobId = job.IdjobVacancy.ToString(),
@@ -202,7 +202,7 @@ namespace Application.Aimwel
                 {
                     JobTitle = job.Title,
                     JobDescription = job.Description,
-                    Language = Language.EnGb,
+                    Language = Language.EsEs, //todo select language by site
                     PublicationTime = Timestamp.FromDateTime(DateTime.UtcNow),
                     HiringOrganization = new HiringOrganization
                     {
@@ -228,7 +228,7 @@ namespace Application.Aimwel
                     new[] {
                       new JobClassificationEntry {
                         JobClassificationType =JobClassificationType.Isco,
-                        JobClassificationValue = "1122"
+                        JobClassificationValue = "1122" //TODO determine which Isco code put here
                       },
                     }
                   }
@@ -236,6 +236,7 @@ namespace Application.Aimwel
                 EndTime = Timestamp.FromDateTime(DateTime.UtcNow.AddDays(14)),
                 BudgetBestEffort = new BudgetBestEffort
                 {
+                    //TODO generate logic or whatever to edtermine de amount of money invested in each campaign
                     Budget = new Money
                     {
                         Currency = Currency.Eur,

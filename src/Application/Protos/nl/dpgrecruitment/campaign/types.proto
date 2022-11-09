@@ -89,6 +89,10 @@ enum Country {
   GB_NIR = 6;
   GB_SCT = 7;
   GB_WLS = 8;
+  ES = 9;
+  PT = 10;
+  CH = 11;
+  MX = 12;
 }
 
 enum Language {
@@ -96,6 +100,12 @@ enum Language {
   NL_NL = 1;
   EN_GB = 2;
   DE_DE = 3;
+  ES_ES = 4;
+  PT_PT = 5;
+  DE_CH = 6;
+  FR_CH = 7;
+  IT_CH = 8;
+  ES_MX = 9;
 }
 
 message Advertisement {
@@ -104,8 +114,16 @@ message Advertisement {
 }
 
 message HiringOrganization {
+
+  enum HiringOrganizationType {
+    UNKNOWN = 0;
+    AGENCY = 1;
+    DIRECT_EMPLOYER = 2;
+  }
+
   string name = 1 [(validate.rules).string = {min_len: 1, max_len: 128}];
   string logoUrl = 2;
+  HiringOrganizationType hiring_organization_type = 3;
 }
 
 message Salary {
@@ -150,6 +168,7 @@ enum JobClassificationType {
   TK_GROUP = 3;
   TK = 4;
   ONET = 5;
+  CUSTOM = 6;
 }
 
 message JobClassificationEntry {
@@ -194,4 +213,8 @@ enum ApplicationType {
 
 message Settings {
   string id = 1;
+}
+
+message Brand {
+  string name = 1;
 }
