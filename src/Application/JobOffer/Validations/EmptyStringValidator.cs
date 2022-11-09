@@ -38,22 +38,22 @@ namespace Application.JobOffer.Validations
             htmldoc.LoadHtml(cmd.Description);
             if (cmd.Description.Length > 2499)
             {
-                if (htmldoc.DocumentNode.InnerText.Length <= 2450)
+                if (htmldoc.DocumentNode.InnerText.Length <= 2900)
                     cmd.Description = htmldoc.DocumentNode.InnerText;
                 else
-                    cmd.Description = htmldoc.DocumentNode.InnerText.Substring(0, 2450);
+                    cmd.Description = htmldoc.DocumentNode.InnerText.Substring(0, 2900);
             }
             return true;
         }
         private bool RequirementsMaxLength(CreateOfferCommand cmd)
         {
             htmldoc.LoadHtml(cmd.Requirements);
-            if (cmd.Requirements.Length > 2000)
+            if (cmd.Requirements.Length > 2900)
             {
-                if (htmldoc.DocumentNode.InnerText.Length <= 1950)
+                if (htmldoc.DocumentNode.InnerText.Length <= 2900)
                     cmd.Requirements = htmldoc.DocumentNode.InnerText;
                 else
-                    cmd.Requirements = htmldoc.DocumentNode.InnerText.Substring(0, 1950);
+                    cmd.Requirements = htmldoc.DocumentNode.InnerText.Substring(0, 2900);
             }
             return true;
         }
@@ -91,12 +91,12 @@ namespace Application.JobOffer.Validations
         private bool RequirementsMaxLength(UpdateOfferCommand cmd)
         {
             htmldoc.LoadHtml(cmd.Requirements);
-            if (cmd.Requirements.Length > 2000)
+            if (cmd.Requirements.Length > 2900)
             {
-                if (htmldoc.DocumentNode.InnerText.Length <= 1950)
+                if (htmldoc.DocumentNode.InnerText.Length <= 2900)
                     cmd.Requirements = htmldoc.DocumentNode.InnerText;
                 else
-                    cmd.Requirements = htmldoc.DocumentNode.InnerText.Substring(0, 1950);
+                    cmd.Requirements = htmldoc.DocumentNode.InnerText.Substring(0, 2900);
             }
             return true;
         }
@@ -104,12 +104,12 @@ namespace Application.JobOffer.Validations
         private bool DescriptionMaxLength(UpdateOfferCommand cmd)
         {
             htmldoc.LoadHtml(cmd.Description);
-            if (cmd.Description.Length > 2499)
+            if (cmd.Description.Length > 2900)
             {
-                if (htmldoc.DocumentNode.InnerText.Length <= 2450)
+                if (htmldoc.DocumentNode.InnerText.Length <= 2900)
                     cmd.Description = htmldoc.DocumentNode.InnerText;
                 else
-                    cmd.Description = htmldoc.DocumentNode.InnerText.Substring(0, 2450);
+                    cmd.Description = htmldoc.DocumentNode.InnerText.Substring(0, 2900);
             }
             return true;
         }
