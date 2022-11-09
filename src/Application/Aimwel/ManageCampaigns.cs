@@ -202,7 +202,7 @@ namespace Application.Aimwel
                 {
                     JobTitle = job.Title,
                     JobDescription = job.Description,
-                    Language = Language.EsEs, //todo select language by site
+                    Language = ApiUtils.GetLanguageBySite(job.Idsite), //todo select language by site
                     PublicationTime = Timestamp.FromDateTime(DateTime.UtcNow),
                     HiringOrganization = new HiringOrganization
                     {
