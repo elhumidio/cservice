@@ -17,6 +17,7 @@ namespace Application.EnterpriseContract.Queries
 
         public class Handler : IRequestHandler<Query, Result<AtsmanagerAdminRegion>>
         {
+            private const int _globalManager = 999;
             private readonly IEnterpriseUserRepository _enterpriseUserRepository;
             private readonly IUserRepository _userRepository;
             private readonly IATSManagerAdminRepository _atSManagerAdminRepository;
@@ -39,11 +40,13 @@ namespace Application.EnterpriseContract.Queries
                 {
                     IDSUser = _userRepository.GetUserIdByEmail(request.CompanyData.Email)
                 };
+
                 var managers = _atSManagerAdminRepository.Get(request.CompanyData.CompanyId);
                 var ableManagers = new List<AtsmanagerAdminRegion>();
                 var winnerManager = new AtsmanagerAdminRegion();
                 if (managers != null)
                 {
+                    var globalManager = _atSManagerAdminRepository.GetGlobalOwner(request.CompanyData.CompanyId);
                     var managersByCriteria = managers.Where(r => r.RegionId == request.CompanyData.RegionId
                     || r.CountryId == request.CompanyData.CountryId).ToList();
                     ableManagers.AddRange(managersByCriteria);
@@ -67,7 +70,9 @@ namespace Application.EnterpriseContract.Queries
                     }
                     else
                     {
-                        return new Result<AtsmanagerAdminRegion>();
+                        if(globalManager.ManagerId > 0)
+                            return new Result<AtsmanagerAdminRegion> { Value = globalManager };
+                        else return new Result<AtsmanagerAdminRegion>();
                     }
                 }
                 return new Result<AtsmanagerAdminRegion>();

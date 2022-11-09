@@ -10,5 +10,6 @@ namespace Domain.Repositories
     public interface IATSManagerAdminRepository
     {
         public List<AtsmanagerAdminRegion> Get(int companyId);
+        public AtsmanagerAdminRegion GetGlobalOwner(int companyId);
     }
 }
