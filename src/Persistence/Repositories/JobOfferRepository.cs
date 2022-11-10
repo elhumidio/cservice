@@ -140,7 +140,7 @@ namespace Persistence.Repositories
         public IQueryable<JobVacancy> GetActiveOffersByContractAndManagerNoPack(int contractId, int managerId)
         {
             var query = _dataContext.JobVacancies.Where(a => a.Idcontract == contractId
-                 && a.IdenterpriseUserG == managerId && a.Idstatus == (int)OfferStatus.Active);
+                 && a.IdenterpriseUserG == managerId && a.Idstatus != (int)OfferStatus.Deleted);
 
             return query;
         }
@@ -190,7 +190,7 @@ namespace Persistence.Repositories
         {
             var query = _dataContext.JobVacancies.Where(a => a.Idcontract == contractId
             && a.IdjobVacType == type
-            && a.Idstatus == (int)OfferStatus.Active);
+            && a.Idstatus != (int)OfferStatus.Deleted);
             return query;
         }
 
@@ -199,8 +199,7 @@ namespace Persistence.Repositories
             var query = _dataContext.JobVacancies.Where(a => a.Idcontract == contractId
             && a.IdenterpriseUserG == owner
             && a.IdjobVacType == type
-            && a.FinishDate >= DateTime.Today
-            && a.Idstatus == (int)OfferStatus.Active);
+            && a.Idstatus != (int)OfferStatus.Deleted);
             return query;
         }
 
@@ -226,6 +225,7 @@ namespace Persistence.Repositories
 
             var query = (from job in _dataContext.JobVacancies
                          join brand in _dataContext.Brands on job.Idbrand equals brand.Idbrand
+                         join logo in _dataContext.Logos on job.Identerprise equals logo.Identerprise
                          where !job.ChkDeleted
                                 && !job.ChkFilled
                                 && job.PublicationDate < DateTime.Now
@@ -241,11 +241,14 @@ namespace Persistence.Repositories
                              IDJobVacancy = job.IdjobVacancy,
                              IDBrand = job.Idbrand,
                              IDEnterprise = job.Identerprise,
+                             IDSite = job.Idsite,
                              ChkBlindVacancy = job.ChkBlindVac,
                              PublicationDate = job.PublicationDate,
                              City = job.City,
                              IDCity = (job.Idcity.HasValue) ? job.Idcity.Value : 0,
                              ActiveDays = (int)DateTime.Now.Subtract(job.PublicationDate).TotalDays,
+                             Description = job.Description,
+                             Logo = logo.UrlImgBig,
                          });
 
             return query.ToListAsync();

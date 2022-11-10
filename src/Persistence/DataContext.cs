@@ -49,12 +49,23 @@ namespace Persistence
         public virtual DbSet<Logo> Logos{ get; set; } = null!;
         public virtual DbSet<RegJobVacWorkPermit> RegJobVacWorkPermits { get; set; } = null!;
         public virtual DbSet<JobVacancyLanguage> JobVacancyLanguages { get; set; } = null!;
-        
+        public virtual DbSet<AtsmanagerAdminRegion> AtsmanagerAdminRegions { get; set; } = null!;
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.UseCollation("Modern_Spanish_CI_AS");
+
+            modelBuilder.Entity<AtsmanagerAdminRegion>(entity =>
+            {
+                entity.HasKey(e => new { e.CompanyId, e.ManagerId, e.RegionId, e.CountryId });
+
+                entity.ToTable("ATSManagerAdminRegions");
+
+                entity.Property(e => e.ManagerId).HasColumnName("ManagerID");
+
+                entity.Property(e => e.RegionId).HasColumnName("RegionID");
+            });
 
             modelBuilder.Entity<City>(entity =>
             {

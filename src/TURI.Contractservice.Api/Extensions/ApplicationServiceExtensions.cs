@@ -70,6 +70,8 @@ namespace API.Extensions
             services.AddScoped<IlogoRepository, LogoRepository>();
             services.AddScoped<IJobVacancyLanguageRepository, JobVacancyLanguageRepository>();
             services.AddScoped<IRegJobVacWorkPermitRepository, RegJobVacWorkPermitRepository>();
+            services.AddScoped<ICityRepository, CityRepository>();
+            services.AddScoped<IATSManagerAdminRepository, ATSManagerAdminRepository>();
 
             #endregion MAPPING REPOSITORIES
 

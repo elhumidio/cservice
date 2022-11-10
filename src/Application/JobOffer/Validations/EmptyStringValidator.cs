@@ -13,8 +13,8 @@ namespace Application.JobOffer.Validations
             RuleFor(command => command).NotEmpty().WithMessage("Title is mandatory field.\n").Must(HasNotHtml);
             RuleFor(command => command).NotEmpty().WithMessage("Description is mandatory field.\n")
                 .Must(HasBeCleanHtml)
-                .Must(DescriptionMaxLength);
-                
+                .Must(DescriptionMaxLength)
+                .Must(RequirementsMaxLength);
         }
 
         private bool HasNotHtml(CreateOfferCommand cmd)
@@ -34,18 +34,41 @@ namespace Application.JobOffer.Validations
 
         private bool DescriptionMaxLength(CreateOfferCommand cmd)
         {
-            htmldoc.LoadHtml(cmd.Description);
-            if (cmd.Description.Length > 2499)
+            if (string.IsNullOrEmpty(cmd.Description))
             {
-                if (htmldoc.DocumentNode.InnerText.Length <= 2499)
-                    cmd.Description = htmldoc.DocumentNode.InnerText;
-                else
-                    cmd.Description = htmldoc.DocumentNode.InnerText.Substring(0, 2490);
+                return false;
             }
-            return true;
+            else {
+                htmldoc.LoadHtml(cmd.Description);
+                if (cmd.Description.Length > 2900)
+                {
+                    if (htmldoc.DocumentNode.InnerText.Length <= 2900)
+                        cmd.Description = htmldoc.DocumentNode.InnerText;
+                    else
+                        cmd.Description = htmldoc.DocumentNode.InnerText.Substring(0, 2900);
+                }
+                return true;
+            }
+           
         }
 
-
+        private bool RequirementsMaxLength(CreateOfferCommand cmd)
+        {
+            if (string.IsNullOrEmpty(cmd.Requirements))
+                return true;
+            else
+            {
+                htmldoc.LoadHtml(cmd.Requirements);
+                if (cmd.Requirements.Length > 2900)
+                {
+                    if (htmldoc.DocumentNode.InnerText.Length <= 2900)
+                        cmd.Requirements = htmldoc.DocumentNode.InnerText;
+                    else
+                        cmd.Requirements = htmldoc.DocumentNode.InnerText.Substring(0, 2900);
+                }
+                return true;
+            }
+        }
     }
 
     public class EmptyStringValidatorUp : AbstractValidator<UpdateOfferCommand>
@@ -57,8 +80,8 @@ namespace Application.JobOffer.Validations
             RuleFor(command => command).NotEmpty().WithMessage("Title is mandatory field.\n").Must(HasNotHtml);
             RuleFor(command => command).NotEmpty().WithMessage("Description is mandatory field.\n")
                 .Must(HasBeCleanHtml)
-                .Must(DescriptionMaxLength);
-                
+                .Must(DescriptionMaxLength)
+                .Must(RequirementsMaxLength);
         }
 
         private bool HasNotHtml(UpdateOfferCommand cmd)
@@ -76,18 +99,44 @@ namespace Application.JobOffer.Validations
             return true;
         }
 
-        private bool DescriptionMaxLength(UpdateOfferCommand cmd)
+        private bool RequirementsMaxLength(UpdateOfferCommand cmd)
         {
-            htmldoc.LoadHtml(cmd.Description);
-            if (cmd.Description.Length > 2499)
+            if (string.IsNullOrEmpty(cmd.Requirements))
             {
-                if (htmldoc.DocumentNode.InnerText.Length <= 2499)
-                    cmd.Description = htmldoc.DocumentNode.InnerText;
-                else
-                    cmd.Description = htmldoc.DocumentNode.InnerText.Substring(0, 2490);
+                return true;
             }
-            return true;
+            else
+            {
+                htmldoc.LoadHtml(cmd.Requirements);
+                if (cmd.Requirements.Length > 2900)
+                {
+                    if (htmldoc.DocumentNode.InnerText.Length <= 2900)
+                        cmd.Requirements = htmldoc.DocumentNode.InnerText;
+                    else
+                        cmd.Requirements = htmldoc.DocumentNode.InnerText.Substring(0, 2900);
+                }
+                return true;
+            }
         }
 
+        private bool DescriptionMaxLength(UpdateOfferCommand cmd)
+        {
+            if (string.IsNullOrEmpty(cmd.Description))
+            {
+                return false;
+            }
+            else {
+                htmldoc.LoadHtml(cmd.Description);
+                if (cmd.Description.Length > 2900)
+                {
+                    if (htmldoc.DocumentNode.InnerText.Length <= 2900)
+                        cmd.Description = htmldoc.DocumentNode.InnerText;
+                    else
+                        cmd.Description = htmldoc.DocumentNode.InnerText.Substring(0, 2900);
+                }
+                return true;
+            }
+            
+        }
     }
 }

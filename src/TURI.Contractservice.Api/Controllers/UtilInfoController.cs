@@ -1,5 +1,7 @@
 using Application.AuxiliaryData.Queries;
+using Application.EnterpriseContract.Queries;
 using Application.JobOffer.Queries;
+using Domain.DTO;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
@@ -28,7 +30,8 @@ namespace API.Controllers
                 Email = email
             });
             return HandleResult(result);
-        }
+        }     
+
 
         [HttpGet("{siteId}/{languageId}", Name = "GetAreas")]
         public async Task<IActionResult> GetAreas(int siteId, int languageId)
