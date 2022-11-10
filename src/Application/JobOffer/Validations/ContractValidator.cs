@@ -97,14 +97,15 @@ namespace Application.JobOffer.Validations
             var units = _mediator.Send(new GetAvailableUnits.Query
             {
                 ContractId = offer.Idcontract,
-            }).Result.Value.Where(u => u.OwnerId == offer.IdenterpriseUserG);
+            }).Result.Value;
             var unitsAvailable = units.Sum(u => u.Units);
 
-            if (unitsAvailable > 0)
+            if (unitsAvailable != null && unitsAvailable > 0)
             {
                 //el user tiene unidades del mismo tipo
                 var unitsSameTypemanager = units.Where(u => u.OwnerId == offer.IdenterpriseUserG && offer.IdjobVacType == (int)u.type);
                 var unitsAssignedOtherKind = units.Where(u => u.OwnerId == offer.IdenterpriseUserG && offer.IdjobVacType != (int)u.type);
+                var unitsAssignedOtherManager = units.Where(u => u.OwnerId != offer.IdenterpriseUserG && offer.IdjobVacType == (int)u.type);
                 var bestUnits = unitsSameTypemanager.Sum(unit => unit.Units);
 
                 switch (bestUnits)
@@ -122,8 +123,7 @@ namespace Application.JobOffer.Validations
                         }
 
                     case 0:
-                        {
-                            //verificar si alguien tiene del mismo tipo
+                        {                            
 
                             var unitsAssignedAnyKind = units.Where(u => u.Units > 0 && u.type == (VacancyType)offer.IdjobVacType)
                                 .OrderByDescending(d => d.Units);
@@ -137,6 +137,7 @@ namespace Application.JobOffer.Validations
                                 _unitsRepo.AssignUnitToManager(offer.Idcontract, unitsToUse.type, (int)offer.IdenterpriseUserG);
                                 return true;
                             }
+                            
                             else
                             {
                                 if (unitsAssignedOtherKind.Sum(unit => unit.Units) > 0)

@@ -36,7 +36,7 @@ namespace Persistence.Repositories
             try
             {
                 var jobLang = _dataContext.JobVacancyLanguages.Where(v => v.IdjobVacancy == _idJob).DefaultIfEmpty();
-                if (jobLang.Any())
+                if (jobLang != null && jobLang.Any())
                 {
                     foreach (var lang in jobLang)
                     {

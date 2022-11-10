@@ -27,13 +27,17 @@ namespace Application.JobOffer.Validations
         private bool HasDefaultValues(CreateOfferCommand obj)
         {
             var services = _contractRepository.GetServiceTypes(obj.Idcontract).ToList();
+            bool IsCheckUpdate = services.Where(a => a.ServiceType == (int)ServiceTypes.ManualJobRefresh).Any()
+                || obj.IdjobVacType == (int)VacancyType.WelcomeSP
+                || obj.IdjobVacType == (int)VacancyType.WelcomePT;
+            
             obj.ChkBlindVac = obj.ChkBlindVac == null  ?  false : obj.ChkBlindVac;
             obj.ChkFilled = false;
             obj.ChkDeleted = false;
             obj.ChkEnterpriseVisible = true;
             obj.ChkBlindSalary = obj.ChkBlindSalary == null ?  false : obj.ChkBlindSalary;
             obj.ChkDisability = false;
-            obj.ChkUpdateDate = services.Where(a => a.ServiceType == (int)ServiceTypes.ManualJobRefresh).Any() ? true : false;
+            obj.ChkUpdateDate = IsCheckUpdate;
             return true;
         }
 
@@ -76,13 +80,16 @@ namespace Application.JobOffer.Validations
         private bool HasDefaultValues(UpdateOfferCommand obj)
         {
             var services = _contractRepository.GetServiceTypes(obj.Idcontract).ToList();
+            bool IsCheckUpdate = services.Where(a => a.ServiceType == (int)ServiceTypes.ManualJobRefresh).Any()
+              || obj.IdjobVacType == (int)VacancyType.WelcomeSP
+              || obj.IdjobVacType == (int)VacancyType.WelcomePT;
             obj.ChkBlindVac = obj.ChkBlindVac == null ? true : obj.ChkBlindVac;
             obj.ChkFilled = obj.ChkFilled == null ? false : obj.ChkFilled;
             obj.ChkDeleted = obj.ChkFilled == null  ? false : obj.ChkDeleted;
             obj.ChkEnterpriseVisible = obj.ChkEnterpriseVisible == null ? true : obj.ChkEnterpriseVisible;
             obj.ChkBlindSalary = obj.ChkBlindSalary == null ? false : obj.ChkBlindSalary;
             obj.ChkDisability = obj.ChkDisability== null ?  false : obj.ChkDisability;
-            obj.ChkUpdateDate = services.Where(a => a.ServiceType == (int)ServiceTypes.ManualJobRefresh).Any() ? true : false;
+            obj.ChkUpdateDate = IsCheckUpdate;
             return true;
         }
     }
