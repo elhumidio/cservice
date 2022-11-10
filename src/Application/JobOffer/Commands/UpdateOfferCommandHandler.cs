@@ -71,7 +71,7 @@ namespace Application.JobOffer.Commands
                 OfferId = offer.IdjobVacancy
             }).Result;
 
-            bool canSaveWorkPermit = offer.IdworkPermit.Any()
+            bool canSaveWorkPermit = offer.IdworkPermit != null && offer.IdworkPermit.Any()
                 && integrationInfo == null;
             
             if (canSaveWorkPermit)

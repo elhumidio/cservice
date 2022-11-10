@@ -27,6 +27,7 @@ namespace Application.JobOffer.Queries
             {
                 int idJobVacancy = 0;
                 var atsMatching = await _matchingRepo.GetAtsIntegrationInfo(request.ExternalId);
+
                 if (atsMatching != null)
                 {
                     idJobVacancy = atsMatching.IdjobVacancy;

@@ -60,8 +60,8 @@ namespace TURI.Contractservice.Tests.Unit.JobOffer.Commands
                  );
 
              var result = await handler.Handle(new CreateOfferCommand() { }, CancellationToken.None);*/
-            // result.Failures.ShouldNotBeNull();
-            // result.Failures..ShouldNotMatch("Failed to create offer");
+            // result.Errors.ShouldNotBeNull();
+            // result.Errors..ShouldNotMatch("Failed to create offer");
             //   Assert.IsNotNull(result);
         }
     }
