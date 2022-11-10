@@ -61,7 +61,6 @@ namespace Application.JobOffer.Validations
         {
             _contractRepository = contractRepository;
             _cityRepository = cityRepository;
-
             RuleFor(command => command)
                 .Must(HasDefaultValues)
                 .WithMessage("Couldn't set default values.\n").Must(HasCity).WithMessage("Have to have a city.");
