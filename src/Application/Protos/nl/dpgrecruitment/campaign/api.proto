@@ -5,7 +5,6 @@ option csharp_namespace = "DPGRecruitmentCampaignClient";
 
 import "nl/dpgrecruitment/campaign/requests.proto";
 import "nl/dpgrecruitment/campaign/responses.proto";
-import "google/protobuf/empty.proto";
 
 service CampaignManagement {
   // Create a campaign.
@@ -28,5 +27,5 @@ service CampaignManagement {
   rpc GetCampaign (GetCampaignRequest) returns (GetCampaignResponse) {}
 
   // Get a list of available channels.
-  rpc GetChannels (google.protobuf.Empty) returns (GetChannelsResponse) {}
+  rpc GetChannels (GetChannelsRequest) returns (GetChannelsResponse) {}
 }

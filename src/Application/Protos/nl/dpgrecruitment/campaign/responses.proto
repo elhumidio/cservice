@@ -36,6 +36,8 @@ message GetCampaignResponse {
   repeated ChannelType excluded_channel_types = 13;
   ApplicationType applicationType = 14;
   Settings settings = 15; // Settings of the Campaign
+  google.protobuf.Timestamp start_time = 16;
+  Money budget_spent = 17;
 }
 
 message GetChannelsResponse {

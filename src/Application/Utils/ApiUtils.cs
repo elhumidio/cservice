@@ -1,5 +1,7 @@
 using Domain.Enums;
+using DPGRecruitmentCampaignClient;
 using System.Text.RegularExpressions;
+
 
 namespace Application.Utils
 {
@@ -19,6 +21,26 @@ namespace Application.Utils
             {
                 return false;
             }
+        }
+
+        public static Language GetLanguageBySite(int siteId)
+        {
+
+            switch (siteId) {
+                case (int)Sites.SPAIN:
+                    return Language.EsEs;
+                    
+                    case (int)Sites.PORTUGAL:
+                    return Language.PtPt;
+                    
+                case (int)Sites.ITALY:
+                    return Language.ItCh;
+                    
+                case (int)Sites.MEXICO:
+                    return Language.EsMx;
+                    default:return Language.EsEs;
+            }
+
         }
 
         public static string GetShortCountryBySite(Sites site)
