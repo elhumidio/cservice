@@ -123,6 +123,8 @@ namespace Application.JobOffer.Validations
 
         private bool IsRightPostalCode(UpdateOfferCommand obj)
         {
+            if (obj.IdzipCode == null)
+                return true;
             bool ret = false;
             var ans = _geoNames.GetPostalCodesCollection(obj.ZipCode, GetCountryIsoByIdCountry(obj.Idcountry));
             if (ans != null && ans.postalCodes.Any())
