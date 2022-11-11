@@ -23,8 +23,7 @@ namespace API.Extensions
             {
                 opt.UseSqlServer(config.GetConnectionString("DefaultConnection"));
             });
-            services.AddFluentValidation(new[] { typeof(CreateOfferCommandHandler).GetTypeInfo().Assembly });
-            //services.AddFluentValidation(new[] { typeof(UpdateOfferCommandHandler).GetTypeInfo().Assembly });
+            services.AddFluentValidation(new[] { typeof(CreateOfferCommandHandler).GetTypeInfo().Assembly });            
             services.AddMediatR(typeof(CreateOfferCommand).Assembly);
             services.AddMediatR(typeof(ListActives.Handler).Assembly);
             services.AddAutoMapper(typeof(Application.Core.MappingProfiles).Assembly);

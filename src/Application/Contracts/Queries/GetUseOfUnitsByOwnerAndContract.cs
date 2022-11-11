@@ -15,12 +15,12 @@ namespace Application.Contracts.Queries
 {
     public class GetUseOfUnitsByOwnerAndContract
     {
-        public class Query : IRequest<Result<AssignationsDto>>
+        public class Query : IRequest<Result<List<AssignationsDto>>>
         {
-            public int ContractId { get; set; }
-            public int OwnerId { get; set; }
+            public List<int> ContractIds { get; set; }
+            public List<int> OwnerIds { get; set; }
         }
-        public class Handler : IRequestHandler<Query, Result<AssignationsDto>>
+        public class Handler : IRequestHandler<Query, Result<List<AssignationsDto>>>
         {
             private readonly IUnitsRepository _unitsRepo;
             private readonly IMapper _mapper;
@@ -33,33 +33,42 @@ namespace Application.Contracts.Queries
                 _mediator = mediator;   
             }
 
-            public async Task<Result<AssignationsDto>> Handle(Query request, CancellationToken cancellationToken)
+            public async Task<Result<List<AssignationsDto>>> Handle(Query request, CancellationToken cancellationToken)
             {
-                
-                var assignments = _unitsRepo.GetAssignmentsByContractAndManager(request.ContractId, request.OwnerId)
-                  .ProjectTo<UnitsAssignmentDto>(_mapper.ConfigurationProvider).AsQueryable();
+                List<AssignationsDto> assignationList = new();
 
-                var unitsConsumed = await _mediator.Send(new ListActivesByManager.Query
+                foreach (var contract in request.ContractIds)
                 {
-                    ContractID = request.ContractId,
-                    OwnerID = request.OwnerId
-                });
+                    foreach (var owner in request.OwnerIds)
+                    {
+                        var unitsAssignment = await _mediator.Send(new GetAssignedUnitsByOwner.Query
+                        {
+                            ContractId = contract,
+                            OwnerId = owner
+                        });
 
-                var unitsAssignment = await _mediator.Send(new GetAssignedUnitsByOwner.Query
-                { 
-                    ContractId = request.ContractId,
-                    OwnerId = request.OwnerId
-                });
+                        var unitsConsumed = await _mediator.Send(new ListActivesByManager.Query
+                        {
+                            ContractID = contract,
+                            OwnerID = owner
+                        });
+                        AssignationsDto dto = new AssignationsDto
+                        {
+                            OwnerId = owner,    
+                            ContractId = contract,  
+                            UnitsConsumed = unitsConsumed.Value,
+                            UnitsAssigned = unitsAssignment.Value
+                        };
+                        assignationList.Add(dto);
 
-                AssignationsDto dto = new AssignationsDto
-                {
-                    ContractId = request.ContractId,
-                    UnitsConsumed = unitsConsumed.Value,
-                    UnitsAssigned = unitsAssignment.Value
-                };
+                    }
+                }
 
-                return Result<AssignationsDto>.Success(dto);
+                return Result<List<AssignationsDto>>.Success(assignationList);
             }
+
+
+            
         }
     }
 }
