@@ -48,9 +48,17 @@ namespace Application.EnterpriseContract.Queries
                 {
                     var globalManager = _atSManagerAdminRepository.GetGlobalOwner(request.CompanyData.CompanyId);
 
-                    var managersByCriteria = managers.Where(r => r.RegionId == request.CompanyData.RegionId
-                    || r.CountryId == request.CompanyData.CountryId).ToList();
-                    ableManagers.AddRange(managersByCriteria);
+                    var managersByRegion = managers.Where(r => r.RegionId == request.CompanyData.RegionId).ToList();
+
+                    if (managersByRegion != null && managersByRegion.Any())
+                    {
+                        ableManagers.AddRange(managersByRegion);
+                    }
+                    else {
+                        var managersByCountry = managers.Where(r => r.CountryId == request.CompanyData.CountryId).ToList();
+                        ableManagers.AddRange(managersByCountry);
+                    }
+                    
                    
                     if (ableManagers.Any())
                     {
