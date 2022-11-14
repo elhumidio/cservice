@@ -62,9 +62,18 @@ namespace Application.JobOffer.Commands
             {
                 await ActivateActions(offer, existentOffer);
             }
-            CityValidation(offer);
+            //CityValidation(offer);
+            if (integrationInfo == null)
+            {
+                offer.Idcity = existentOffer.Idcity;
+                offer.Idregion = existentOffer.Idregion;
+                offer.Idcountry = existentOffer.Idcountry;
+                offer.City = existentOffer.City;
+                offer.IdzipCode= existentOffer.IdzipCode;
+            }
             var entity = _mapper.Map(offer, existentOffer);
-            var ret = await _offerRepo.UpdateOffer(existentOffer);
+            
+                var ret = await _offerRepo.UpdateOffer(existentOffer);
             var updatedOffer = _mediatr.Send(new GetResult.Query
             {
                 ExternalId = offer.IntegrationData.ApplicationReference,
