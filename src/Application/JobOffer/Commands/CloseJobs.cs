@@ -53,8 +53,12 @@ namespace Application.JobOffer.Commands
             public async Task<OfferModificationResult> Handle(Command request, CancellationToken cancellationToken)
             {
                 string msg = string.Empty;
-                bool aimwelEnabled = Convert.ToBoolean(_config["Aimwel:EnableAimwel"]);
                 var job = _offerRepo.GetOfferById(request.dto.id);
+
+                bool aimwelEnabled = Convert.ToBoolean(_config["Aimwel:EnableAimwel"]);
+                int[] aimwelEnabledSites = _config["Aimwel:EnabledSites"].Split(',').Select(h => Int32.Parse(h)).ToArray();
+                aimwelEnabled = aimwelEnabled && aimwelEnabledSites.Contains(job.Idsite);
+
 
                 if (job == null)
                 {

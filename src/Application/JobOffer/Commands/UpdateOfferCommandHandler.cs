@@ -1,3 +1,5 @@
+using Application.Aimwel.Commands;
+using Application.Aimwel.Queries;
 using Application.DTO;
 using Application.EnterpriseContract.Queries;
 using Application.JobOffer.DTO;
@@ -6,7 +8,9 @@ using AutoMapper;
 using Domain.Entities;
 using Domain.Enums;
 using Domain.Repositories;
+using DPGRecruitmentCampaignClient;
 using MediatR;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
 namespace Application.JobOffer.Commands
@@ -23,6 +27,7 @@ namespace Application.JobOffer.Commands
         private readonly IMediator _mediatr;
         private readonly IRegJobVacWorkPermitRepository _regJobVacWorkPermitRepo;
         private readonly ICityRepository _cityRepository;
+        private readonly IConfiguration _config;
 
         #endregion PRIVATE PROPERTIES
 
@@ -33,7 +38,8 @@ namespace Application.JobOffer.Commands
             IContractProductRepository contractProductRepo,         
             IMediator mediatr,
             IRegJobVacWorkPermitRepository regJobVacWorkPermitRepo,
-            ICityRepository cityRepository)
+            ICityRepository cityRepository,
+            IConfiguration config)
         {
             _contractProductRepo = contractProductRepo;
             _offerRepo = offerRepo;
@@ -42,7 +48,8 @@ namespace Application.JobOffer.Commands
             _mediatr = mediatr;
             _mapper = mapper;
             _regJobVacWorkPermitRepo = regJobVacWorkPermitRepo;
-            _cityRepository = cityRepository;   
+            _cityRepository = cityRepository;
+            _config = config;
         }
 
         public async Task<OfferModificationResult> Handle(UpdateOfferCommand offer, CancellationToken cancellationToken)
@@ -160,6 +167,33 @@ namespace Application.JobOffer.Commands
                 offer.PublicationDate = DateTime.Now;
                 offer.UpdatingDate = DateTime.Now;
                 offer.Idstatus = (int)OfferStatus.Active;
+                bool aimwelEnabled = Convert.ToBoolean(_config["Aimwel:EnableAimwel"]);
+                int[] aimwelEnabledSites = _config["Aimwel:EnabledSites"].Split(',').Select(h => Int32.Parse(h)).ToArray();
+                aimwelEnabled = aimwelEnabled && aimwelEnabledSites.Contains(offer.Idsite);
+
+                if (aimwelEnabled) {
+                    var campaign = await _mediatr.Send(new GetStatus.Query
+                    {
+                        OfferId = offer.IdjobVacancy
+                    });
+
+                    if (campaign != null && campaign.Status == CampaignStatus.Paused)
+                    {
+                        var ans = _mediatr.Send(new Resume.Command
+                        {
+                            offerId = offer.IdjobVacancy
+                        });
+                        
+                    }
+                    else if (campaign != null && campaign.Status == CampaignStatus.Ended)
+                    {
+                        var ans = _mediatr.Send(new Create.Command
+                        {
+                            offerId = offer.IdjobVacancy
+                        });                        
+                    }
+                }
+
                 await _regContractRepo.UpdateUnits(result.Value.Idcontract, (int)result.Value.IdJobVacType);
             }
             else
