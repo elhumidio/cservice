@@ -25,7 +25,7 @@ namespace API.Extensions
             });
             services.AddFluentValidation(new[] { typeof(CreateOfferCommandHandler).GetTypeInfo().Assembly });            
             services.AddMediatR(typeof(CreateOfferCommand).Assembly);
-            services.AddMediatR(typeof(ListActives.Handler).Assembly);
+            services.AddMediatR(typeof(ListActives.Handler).Assembly);      
             services.AddAutoMapper(typeof(Application.Core.MappingProfiles).Assembly);
             services.AddControllers().AddNewtonsoftJson();
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));

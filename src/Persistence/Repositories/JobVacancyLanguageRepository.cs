@@ -56,7 +56,10 @@ namespace Persistence.Repositories
 
         public IQueryable<JobVacancyLanguage> Get(int _idJob)
         {
-            throw new NotImplementedException();
+            var jobLang = _dataContext.JobVacancyLanguages.Where(v => v.IdjobVacancy == _idJob);
+            if (jobLang.Any())
+                return jobLang;
+            else return null;
         }
     }
 }

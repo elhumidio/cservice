@@ -75,7 +75,9 @@ namespace Application.JobOffer.Commands
                 else
                 {
                     msg += $"Offer {request.id} - Deleted Successfully ";
-                    _jobVacancyLanguageRepo.Delete(job.IdjobVacancy);
+                    var langs = _jobVacancyLanguageRepo.Get(job.IdjobVacancy);
+                    if (langs != null && langs.Any())
+                        _jobVacancyLanguageRepo.Delete(job.IdjobVacancy);
                     var ans = await _regJobVacWorkPermitRepo.Delete(job.IdjobVacancy);
                     var isPack = _contractProductRepo.IsPack(job.Idcontract);
 
