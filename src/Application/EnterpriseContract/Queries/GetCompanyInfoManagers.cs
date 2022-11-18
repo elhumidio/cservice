@@ -44,7 +44,7 @@ namespace Application.EnterpriseContract.Queries
                 var managers = _atSManagerAdminRepository.Get(request.CompanyData.CompanyId);
                 var ableManagers = new List<AtsmanagerAdminRegion>();
                 var winnerManager = new AtsmanagerAdminRegion();
-                if (managers != null)
+                if (managers != null && managers.Any())
                 {
                     var globalManager = _atSManagerAdminRepository.GetGlobalOwner(request.CompanyData.CompanyId);
 

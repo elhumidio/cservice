@@ -59,7 +59,7 @@ namespace Application.JobOffer.Validations
         {
             bool IsValidEdit = false;
 
-            var actualOfferAts =  _jobmatchAtsRepo.GetAtsIntegrationInfo(offer.IntegrationData.ApplicationReference).Result;
+            var actualOfferAts = _jobmatchAtsRepo.GetAtsIntegrationInfo(offer.IntegrationData.ApplicationReference).Result;
             if (actualOfferAts != null)
             {
                 var offerDb = _jobRepo.GetOfferById(actualOfferAts.IdjobVacancy);
@@ -89,7 +89,8 @@ namespace Application.JobOffer.Validations
                 {
                     offer.IdenterpriseUserG = managerAts.Result.Value.ManagerId;
                     return true;
-                }                
+                }
+                
             }
 
             int totalunits = 0;
@@ -123,8 +124,7 @@ namespace Application.JobOffer.Validations
                         }
 
                     case 0:
-                        {                            
-
+                        {
                             var unitsAssignedAnyKind = units.Where(u => u.Units > 0 && u.type == (VacancyType)offer.IdjobVacType)
                                 .OrderByDescending(d => d.Units);
                             if (unitsAssignedAnyKind != null && unitsAssignedAnyKind.Any())
@@ -137,7 +137,6 @@ namespace Application.JobOffer.Validations
                                 _unitsRepo.AssignUnitToManager(offer.Idcontract, unitsToUse.type, (int)offer.IdenterpriseUserG);
                                 return true;
                             }
-                            
                             else
                             {
                                 if (unitsAssignedOtherKind.Sum(unit => unit.Units) > 0)
