@@ -51,10 +51,68 @@ namespace Persistence
         public virtual DbSet<JobVacancyLanguage> JobVacancyLanguages { get; set; } = null!;
         public virtual DbSet<AtsmanagerAdminRegion> AtsmanagerAdminRegions { get; set; } = null!;
 
+        public virtual DbSet<Title> Titles { get; set; } = null!;
+        public virtual DbSet<TitleLang> TitleLangs { get; set; } = null!;
+        public virtual DbSet<TitlesRelationship> TitlesRelationships { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.UseCollation("Modern_Spanish_CI_AS");
+
+
+
+
+            modelBuilder.Entity<TitlesRelationship>(entity =>
+            {
+                entity.Property(e => e.Id).HasColumnName("Id");
+                entity.Property(e => e.JobTitleId).HasColumnName("JobTitleId");
+                entity.Property(e => e.JobTitleEquivalentId).HasColumnName("JobTitleEquivalentId");
+                entity.Property(e => e.Weight).HasColumnName("Weight");
+                
+            });
+
+
+            modelBuilder.Entity<Title>(entity =>
+            {
+                entity.ToTable("Titles");
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.Description).HasMaxLength(100);
+
+                entity.Property(e => e.Isco08)
+                    .HasMaxLength(20)
+                    .HasColumnName("ISCO-08")
+                    .IsFixedLength();
+                
+                entity.Property(e => e.Isco88)
+                    .HasMaxLength(20)
+                    .HasColumnName("ISCO-88")
+                    .IsFixedLength();
+            });
+
+            modelBuilder.Entity<TitleLang>(entity =>
+            {
+                
+                entity.ToTable("TitleLangs");
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Id).ValueGeneratedOnAdd();
+
+                entity.Property(e => e.Label)
+                    .HasMaxLength(100)
+                    .IsUnicode(false)
+                    .HasColumnName("LABEL");
+                
+                entity.Property(e => e.LanguageId).HasColumnName("LANGUAGE_ID");
+
+                entity.Property(e => e.TitleId).HasColumnName("TITLE_ID");
+
+                entity.HasOne(d => d.Title)
+                    .WithMany()
+                    .HasForeignKey(d => d.TitleId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_TitleLangs_Titles");
+            });
 
             modelBuilder.Entity<AtsmanagerAdminRegion>(entity =>
             {

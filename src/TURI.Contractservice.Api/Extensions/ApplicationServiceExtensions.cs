@@ -71,7 +71,7 @@ namespace API.Extensions
             services.AddScoped<IRegJobVacWorkPermitRepository, RegJobVacWorkPermitRepository>();
             services.AddScoped<ICityRepository, CityRepository>();
             services.AddScoped<IATSManagerAdminRepository, ATSManagerAdminRepository>();
-
+            services.AddScoped<ITitleRepository, TitleRepository>();
             #endregion MAPPING REPOSITORIES
 
             services.AddScoped<IGeoNamesConector, GeoNamesConector>();
