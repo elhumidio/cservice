@@ -31,10 +31,8 @@ namespace Application.AuxiliaryData.Queries
 
             public async Task<Result<List<TitleLang>>> Handle(Query request, CancellationToken cancellationToken)
             {
-                var brands = await _title.GetByLanguage(request.LangId);
-                List<BrandDTO> result = new List<BrandDTO>();
-                var a = _mapper.Map(brands, result);
-                return Result<List<BrandDTO>>.Success(a);
+                var titles = await _title.GetByLanguage(request.LangId);
+                return Result<List<TitleLang>>.Success(titles);
             }
         }
     }

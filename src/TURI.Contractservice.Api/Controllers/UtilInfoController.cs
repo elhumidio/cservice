@@ -153,12 +153,17 @@ namespace API.Controllers
             
         }
 
-        /*[HttpGet]
+        [HttpGet]
         public async Task<IActionResult> GetTitles(int langId) {
 
+            var result = await Mediator.Send(new ListTitles.Query
+            {
+               LangId = langId
+                
+            });
+            return HandleResult(result);
 
-
-        }*/
+        }
 
         [HttpGet("{siteId}/{languageId}", Name = "GetSalaries")]
         public async Task<IActionResult> GetSalaries(int siteId, int languageId)
