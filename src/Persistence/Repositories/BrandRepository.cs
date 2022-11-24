@@ -18,7 +18,7 @@ namespace Persistence.Repositories
             var brandsList = _dataContext.Brands
                 .Join(_dataContext.Enterprises, b => new { b.Identerprise }, e => new { e.Identerprise }, (b, e) => new { b, e })
                 .Join(_dataContext.Contracts, c => c.e.Identerprise, pl => pl.Identerprise, (c, pl) => new { c, pl })
-                .Where(ent => (bool)ent.c.e.ChkActive && ent.pl.ChkApproved && ent.pl.FinishDate > DateTime.Now.AddDays(-120))         
+                .Where(ent => (bool)ent.c.e.ChkActive && ent.c.e.Idstatus == 1 && ent.pl.ChkApproved && ent.pl.FinishDate > DateTime.Now.AddDays(-180))         
                 .Select(be => be.c.b).ToListAsync();
 
             var result = await brandsList;
