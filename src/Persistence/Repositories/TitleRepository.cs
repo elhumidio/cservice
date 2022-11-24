@@ -20,8 +20,8 @@ namespace Persistence.Repositories
 
         public async Task<List<TitleLang>> GetByLanguage(int langId)
         {
-            var titles = _dataContext.TitleLangs.Include("Titles").Where(a => a.LanguageId == langId).ToListAsync();
-            return titles.Result;
+            var titles = await _dataContext.TitleLangs.Include("Title").Where(a => a.LanguageId == langId).ToListAsync();
+            return titles;
 
              
         }
