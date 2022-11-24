@@ -6,6 +6,8 @@ using Application.EnterpriseContract.Queries;
 using Application.JobOffer.Queries;
 using Application.Utils;
 using Domain.DTO;
+using Domain.Entities;
+using DPGRecruitmentCampaignClient;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 
@@ -156,12 +158,30 @@ namespace API.Controllers
         [HttpGet]
         public async Task<IActionResult> GetTitles(int langId) {
 
-            var result = await Mediator.Send(new ListTitles.Query
+            List<TitleLang> titles = new List<TitleLang>();
+            CacheKeys.Titles = langId.ToString();
+            var cachedTitles = _cache.TryGetValue(CacheKeys.Titles, out titles);
+
+            if (!cachedTitles)
             {
-               LangId = langId
-                
-            });
-            return HandleResult(result);
+                var result = await Mediator.Send(new ListTitles.Query
+                {
+                    LangId = langId
+
+                });
+                var cacheEntryOptions = new MemoryCacheEntryOptions
+                {
+                    Priority = CacheItemPriority.High
+                };
+                _cache.Set(CacheKeys.Titles, result.Value, cacheEntryOptions);
+                return HandleResult(result);
+
+            }
+            else {
+                return HandleResult(new Result<List<TitleLang>> { Value = titles, IsSuccess = true });
+            }
+            
+            
 
         }
 
