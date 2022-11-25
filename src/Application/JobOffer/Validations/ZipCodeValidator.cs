@@ -75,6 +75,7 @@ namespace Application.JobOffer.Validations
                         obj.IdzipCode = zipCodeEntity.IdzipCode;
                         var region = _regionRepo.Get(zipCodeEntity.Idregion);
                         obj.JobLocation = region != null ? region.BaseName : string.Empty;
+                        obj.Idcity = zipCodeEntity.Idcity;
                         ret = true;
                     }
                     else if (IdzipCode > 0) {
@@ -82,6 +83,7 @@ namespace Application.JobOffer.Validations
                         var zip = _zipCodeRepo.GetZipById(IdzipCode);
                         var region = _regionRepo.Get(zip.Idregion);
                         obj.JobLocation = region != null ? region.BaseName : string.Empty;
+                        obj.Idcity = zip.Idcity;
                         ret = true;
 
                     }
