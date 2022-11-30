@@ -58,10 +58,15 @@ namespace Application.JobOffer.Commands
                 foreach (var atsInfo in ats)
                 {
                     var job = _offerRepo.GetOfferById(atsInfo.IdjobVacancy);
+                    bool aimwelEnabled = Convert.ToBoolean(_config["Aimwel:EnableAimwel"]);
+                    int[] aimwelEnabledSites = _config["Aimwel:EnabledSites"].Split(',').Select(h => Int32.Parse(h)).ToArray();
+                    aimwelEnabled = aimwelEnabled && aimwelEnabledSites.Contains(job.Idsite);
+
+
                     isActiveOffer = !job.ChkFilled && !job.ChkDeleted && job.FinishDate.Date >= DateTime.Now.Date && job.Idstatus == (int)OfferStatus.Active;
                     if (isActiveOffer)
                     {
-                        if (Convert.ToBoolean(_config["Aimwel:EnableAimwel"]))
+                        if (aimwelEnabled)
                             await _manageCampaign.StopCampaign(job.IdjobVacancy);
                         var ret = _offerRepo.FileOffer(job);
                         if (ret > 0) filed++;

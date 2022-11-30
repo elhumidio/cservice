@@ -13,6 +13,8 @@ namespace Domain.Enums
         StandardPT = 7,
         Classic = 8,
         SuperiorPT = 9,
-        StandardCredit = 10
+        StandardCredit = 10,
+        WelcomePT = 115
+
     }
 }

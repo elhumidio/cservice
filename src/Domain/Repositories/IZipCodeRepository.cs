@@ -17,5 +17,6 @@ namespace Domain.Repositories
         public int GetCityIdByName(string _cityName);
 
         public ZipCode GetZipById(int zipcodeId);
+        public int GetIdCityByZipCodeAnCountry(string zipcode, int countryId);
     }
 }

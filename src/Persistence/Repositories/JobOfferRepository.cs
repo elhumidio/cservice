@@ -247,7 +247,7 @@ namespace Persistence.Repositories
                              City = job.City,
                              IDCity = (job.Idcity.HasValue) ? job.Idcity.Value : 0,
                              ActiveDays = (int)DateTime.Now.Subtract(job.PublicationDate).TotalDays,
-                             Description = job.Description,
+                             Description = "",
                              Logo = logo.UrlImgBig,
                          });
 

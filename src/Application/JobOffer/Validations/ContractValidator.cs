@@ -59,7 +59,7 @@ namespace Application.JobOffer.Validations
         {
             bool IsValidEdit = false;
 
-            var actualOfferAts =  _jobmatchAtsRepo.GetAtsIntegrationInfo(offer.IntegrationData.ApplicationReference).Result;
+            var actualOfferAts = _jobmatchAtsRepo.GetAtsIntegrationInfo(offer.IntegrationData.ApplicationReference).Result;
             if (actualOfferAts != null)
             {
                 var offerDb = _jobRepo.GetOfferById(actualOfferAts.IdjobVacancy);
@@ -89,7 +89,8 @@ namespace Application.JobOffer.Validations
                 {
                     offer.IdenterpriseUserG = managerAts.Result.Value.ManagerId;
                     return true;
-                }                
+                }
+                
             }
 
             int totalunits = 0;
@@ -97,14 +98,15 @@ namespace Application.JobOffer.Validations
             var units = _mediator.Send(new GetAvailableUnits.Query
             {
                 ContractId = offer.Idcontract,
-            }).Result.Value.Where(u => u.OwnerId == offer.IdenterpriseUserG);
+            }).Result.Value;
             var unitsAvailable = units.Sum(u => u.Units);
 
-            if (unitsAvailable > 0)
+            if (unitsAvailable != null && unitsAvailable > 0)
             {
                 //el user tiene unidades del mismo tipo
                 var unitsSameTypemanager = units.Where(u => u.OwnerId == offer.IdenterpriseUserG && offer.IdjobVacType == (int)u.type);
                 var unitsAssignedOtherKind = units.Where(u => u.OwnerId == offer.IdenterpriseUserG && offer.IdjobVacType != (int)u.type);
+                var unitsAssignedOtherManager = units.Where(u => u.OwnerId != offer.IdenterpriseUserG && offer.IdjobVacType == (int)u.type);
                 var bestUnits = unitsSameTypemanager.Sum(unit => unit.Units);
 
                 switch (bestUnits)
@@ -123,8 +125,6 @@ namespace Application.JobOffer.Validations
 
                     case 0:
                         {
-                            //verificar si alguien tiene del mismo tipo
-
                             var unitsAssignedAnyKind = units.Where(u => u.Units > 0 && u.type == (VacancyType)offer.IdjobVacType)
                                 .OrderByDescending(d => d.Units);
                             if (unitsAssignedAnyKind != null && unitsAssignedAnyKind.Any())

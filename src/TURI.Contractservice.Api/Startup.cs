@@ -57,6 +57,7 @@ namespace TURI.Contractservice.Api
             services.ConfigureSwagger();
             services.ConfigureForwardedHeaders();
             services.AddApplicationServices(config);
+            services.AddMemoryCache();
             services.AddApplicationInsightsTelemetry();
         }
 

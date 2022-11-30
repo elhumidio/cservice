@@ -23,10 +23,9 @@ namespace API.Extensions
             {
                 opt.UseSqlServer(config.GetConnectionString("DefaultConnection"));
             });
-            services.AddFluentValidation(new[] { typeof(CreateOfferCommandHandler).GetTypeInfo().Assembly });
-            //services.AddFluentValidation(new[] { typeof(UpdateOfferCommandHandler).GetTypeInfo().Assembly });
+            services.AddFluentValidation(new[] { typeof(CreateOfferCommandHandler).GetTypeInfo().Assembly });            
             services.AddMediatR(typeof(CreateOfferCommand).Assembly);
-            services.AddMediatR(typeof(ListActives.Handler).Assembly);
+            services.AddMediatR(typeof(ListActives.Handler).Assembly);      
             services.AddAutoMapper(typeof(Application.Core.MappingProfiles).Assembly);
             services.AddControllers().AddNewtonsoftJson();
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
@@ -72,7 +71,7 @@ namespace API.Extensions
             services.AddScoped<IRegJobVacWorkPermitRepository, RegJobVacWorkPermitRepository>();
             services.AddScoped<ICityRepository, CityRepository>();
             services.AddScoped<IATSManagerAdminRepository, ATSManagerAdminRepository>();
-
+            services.AddScoped<ITitleRepository, TitleRepository>();
             #endregion MAPPING REPOSITORIES
 
             services.AddScoped<IGeoNamesConector, GeoNamesConector>();

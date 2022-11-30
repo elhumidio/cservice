@@ -122,7 +122,7 @@ namespace GrpcPublish
             else
             {
                 var msg = string.Empty;
-                foreach (string failure in result.Failures)
+                foreach (string failure in result.Errors)
                 {
                     res.Message += $"{failure} \n\r";
                 }
@@ -169,7 +169,7 @@ namespace GrpcPublish
             else
             {
                 var msg = string.Empty;
-                foreach (string failure in result.Failures)
+                foreach (string failure in result.Errors)
                 {
                     res.Message += $"{failure} \n\r";
                 }

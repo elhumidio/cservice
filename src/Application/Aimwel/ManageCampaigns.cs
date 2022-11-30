@@ -197,12 +197,13 @@ namespace Application.Aimwel
             var request = new CreateCampaignRequest
             {
                 JobId = job.IdjobVacancy.ToString(),
-                Advertisement = new Advertisement { Branding = "turijobs", Uri = _config["Aimwel:UrlTurijobs"] },
+
+                Advertisement = new Advertisement { Branding = ApiUtils.GetBrandBySite(job.Idsite), Uri = ApiUtils.GetUriBySite(job.Idsite).AbsoluteUri },
                 JobContent = new JobContent
                 {
                     JobTitle = job.Title,
                     JobDescription = job.Description,
-                    Language = ApiUtils.GetLanguageBySite(job.Idsite), //todo select language by site
+                    Language = ApiUtils.GetLanguageBySite(job.Idsite),
                     PublicationTime = Timestamp.FromDateTime(DateTime.UtcNow),
                     HiringOrganization = new HiringOrganization
                     {
@@ -236,7 +237,7 @@ namespace Application.Aimwel
                 EndTime = Timestamp.FromDateTime(DateTime.UtcNow.AddDays(14)),
                 BudgetBestEffort = new BudgetBestEffort
                 {
-                    //TODO generate logic or whatever to edtermine de amount of money invested in each campaign
+                    //TODO generate logic or whatever to determine the amount of money invested in each campaign
                     Budget = new Money
                     {
                         Currency = Currency.Eur,

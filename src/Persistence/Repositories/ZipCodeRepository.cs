@@ -70,5 +70,13 @@ namespace Persistence.Repositories
                 zipCodeId = code.IdzipCode;
             return zipCodeId;
         }
+
+        public int GetIdCityByZipCodeAnCountry(string zipcode, int countryId) {
+            int cityId = -1;
+            var code = _dataContext.ZipCodes.Where(z => z.Zip == zipcode && z.Idcountry == countryId).FirstOrDefault();
+            if (code != null)
+                cityId = (int)code.Idcity;
+            return cityId;
+        }
     }
 }

@@ -128,8 +128,15 @@ namespace Application.JobOffer.Commands
                             OfferId = jobVacancyId
                         });
                         _enterpriseRepository.UpdateATS(entity.Identerprise);
-                        if (Convert.ToBoolean(_config["Aimwel:EnableAimwel"]))
+
+                        bool aimwelEnabled = Convert.ToBoolean(_config["Aimwel:EnableAimwel"]);
+                        var sites = _config["Aimwel:EnabledSites"];
+                        int[] aimwelEnabledSites = sites.Split(',').Select(h => Int32.Parse(h)).ToArray();
+                        aimwelEnabled = aimwelEnabled && aimwelEnabledSites.Contains(job.Idsite);
+
+                        if (aimwelEnabled)
                             await _manageCampaign.CreateCampaing(entity);
+
                         return OfferModificationResult.Success(createdOffer.Result);
                     }
                     catch (Exception ex)

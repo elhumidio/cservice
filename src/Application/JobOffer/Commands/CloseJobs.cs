@@ -53,8 +53,12 @@ namespace Application.JobOffer.Commands
             public async Task<OfferModificationResult> Handle(Command request, CancellationToken cancellationToken)
             {
                 string msg = string.Empty;
-                bool aimwelEnabled = Convert.ToBoolean(_config["Aimwel:EnableAimwel"]);
                 var job = _offerRepo.GetOfferById(request.dto.id);
+
+                bool aimwelEnabled = Convert.ToBoolean(_config["Aimwel:EnableAimwel"]);
+                int[] aimwelEnabledSites = _config["Aimwel:EnabledSites"].Split(',').Select(h => Int32.Parse(h)).ToArray();
+                aimwelEnabled = aimwelEnabled && aimwelEnabledSites.Contains(job.Idsite);
+
 
                 if (job == null)
                 {
@@ -73,7 +77,9 @@ namespace Application.JobOffer.Commands
                 }
                 else
                 {
-                    _jobVacancyLanguageRepo.Delete(job.IdjobVacancy);
+                    var langs = _jobVacancyLanguageRepo.Get(job.IdjobVacancy);
+                    if (langs != null && langs.Any())
+                        _jobVacancyLanguageRepo.Delete(job.IdjobVacancy);
                     var ans = await _regJobVacWorkPermitRepo.Delete(job.IdjobVacancy);
                     var isPack = _contractProductRepo.IsPack(job.Idcontract);
                     if (isPack)

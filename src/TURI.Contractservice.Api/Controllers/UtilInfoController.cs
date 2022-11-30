@@ -1,18 +1,28 @@
+using Amazon.Runtime.Internal.Util;
+using Application.AuxiliaryData.DTO;
 using Application.AuxiliaryData.Queries;
+using Application.Core;
 using Application.EnterpriseContract.Queries;
 using Application.JobOffer.Queries;
+using Application.Utils;
 using Domain.DTO;
+using Domain.Entities;
+using DPGRecruitmentCampaignClient;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace API.Controllers
 {
     public class UtilInfoController : BaseApiController
     {
+
+        private readonly IMemoryCache _cache;           
         public IHostEnvironment _env;
 
-        public UtilInfoController(IHostEnvironment env)
+        public UtilInfoController(IHostEnvironment env, IMemoryCache memoryCache)
         {
             _env = env;
+            _cache = memoryCache; 
         }
 
         [HttpGet]
@@ -118,6 +128,61 @@ namespace API.Controllers
                 siteID = siteId
             });
             return HandleResult(result);
+        }
+        [HttpGet]
+        public async Task<IActionResult> GetCompanies() {
+
+            List<BrandDTO> brands = new List<BrandDTO>();
+            var cachedBrands = _cache.TryGetValue(CacheKeys.Brands, out brands);
+
+            if (!cachedBrands)
+            {
+                var result = await Mediator.Send(new ListAllBrands.Query
+                {
+
+                });
+                var cacheEntryOptions = new MemoryCacheEntryOptions
+                {
+                    Priority = CacheItemPriority.High
+                };
+                _cache.Set(CacheKeys.Brands, result.Value, cacheEntryOptions);
+                return HandleResult(result);
+            }
+            else {
+
+                return HandleResult(new Result<List<BrandDTO>>{ Value = brands, IsSuccess =true});                
+            }           
+            
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetTitles(int langId) {
+
+            List<TitleLang> titles = new List<TitleLang>();
+            CacheKeys.Titles = langId.ToString();
+            var cachedTitles = _cache.TryGetValue(CacheKeys.Titles, out titles);
+
+            if (!cachedTitles)
+            {
+                var result = await Mediator.Send(new ListTitles.Query
+                {
+                    LangId = langId
+
+                });
+                var cacheEntryOptions = new MemoryCacheEntryOptions
+                {
+                    Priority = CacheItemPriority.High
+                };
+                _cache.Set(CacheKeys.Titles, result.Value, cacheEntryOptions);
+                return HandleResult(result);
+
+            }
+            else {
+                return HandleResult(new Result<List<TitleLang>> { Value = titles, IsSuccess = true });
+            }
+            
+            
+
         }
 
         [HttpGet("{siteId}/{languageId}", Name = "GetSalaries")]

@@ -1,7 +1,9 @@
+using Application.Contracts.DTO;
 using Application.Contracts.Queries;
 using Application.EnterpriseContract.Queries;
 using Domain.Enums;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Formatters;
 
 namespace API.Controllers
 {
@@ -22,6 +24,21 @@ namespace API.Controllers
             return HandleResult(result);
         }
 
+        /// <summary>
+        /// It gets assignations by contract and owner
+        /// </summary>
+        /// <param name="info"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public async Task<IActionResult> GetCompanyOwnersAssignmentsByContract(OwnersAssignmentsRequestDto info) {
+
+            var result = await Mediator.Send(new GetUseOfUnitsByOwnerAndContract.Query {
+
+                 ContractIds = info.ContractsList,
+                 OwnerIds = info.OwnersList
+            });
+            return HandleResult(result);
+        }
         /// <summary>
         /// Gets available units, given a contract and an owner (verifies consumed units and assignments)
         /// </summary>
