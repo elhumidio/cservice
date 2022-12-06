@@ -10,6 +10,7 @@ using Domain.Entities;
 using DPGRecruitmentCampaignClient;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
+using System.Diagnostics;
 
 namespace API.Controllers
 {
@@ -143,7 +144,7 @@ namespace API.Controllers
                 });
                 var cacheEntryOptions = new MemoryCacheEntryOptions
                 {
-                    Priority = CacheItemPriority.High
+                    Priority = CacheItemPriority.NeverRemove
                 };
                 _cache.Set(CacheKeys.Brands, result.Value, cacheEntryOptions);
                 return HandleResult(result);

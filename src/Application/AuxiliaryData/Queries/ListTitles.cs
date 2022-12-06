@@ -31,8 +31,15 @@ namespace Application.AuxiliaryData.Queries
 
             public async Task<Result<List<TitleLang>>> Handle(Query request, CancellationToken cancellationToken)
             {
-                var titles = await _title.GetByLanguage(request.LangId);
-                return Result<List<TitleLang>>.Success(titles);
+                try {
+                    var titles = await _title.GetByLanguage(request.LangId);
+                    return Result<List<TitleLang>>.Success(titles);
+                }
+                catch(Exception ex) {
+                    var a = ex;
+                    return null;
+                }
+                
             }
         }
     }

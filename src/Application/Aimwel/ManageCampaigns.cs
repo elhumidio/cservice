@@ -90,7 +90,7 @@ namespace Application.Aimwel
                 var client = GetClient(out channel);
                 var request = new EndCampaignRequest
                 {
-                    CampaignId = campaignId
+                    CampaignId = campaignId                      
                 };
 
                 var ret = await client.EndCampaignAsync(request);
