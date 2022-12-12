@@ -24,6 +24,7 @@ namespace Application.Aimwel
         private readonly IZipCodeRepository _zipCodeRepo;
         private readonly ICountryIsoRepository _countryIsoRepo;
         private readonly IJobOfferRepository _jobOfferRepo;
+        private readonly ICampaignsManagementRepository _campaignsManagementRepo;
 
         public ManageCampaigns(IConfiguration config,
             IGeoNamesConector geoNamesConector,
@@ -32,7 +33,8 @@ namespace Application.Aimwel
             IlogoRepository logoRepo,
             IZipCodeRepository zipCodeRepo,
             ICountryIsoRepository countryIsoRepo,
-            IJobOfferRepository jobOfferRepo)
+            IJobOfferRepository jobOfferRepo,
+            ICampaignsManagementRepository campaignsManagementRepo)
         {
             _config = config;
             _geoNamesConector = geoNamesConector;
@@ -42,6 +44,7 @@ namespace Application.Aimwel
             _zipCodeRepo = zipCodeRepo;
             _countryIsoRepo = countryIsoRepo;
             _jobOfferRepo = jobOfferRepo;
+            _campaignsManagementRepo = campaignsManagementRepo; 
         }
 
         /// <summary>
@@ -183,6 +186,9 @@ namespace Application.Aimwel
         /// <returns></returns>
         public async Task<CreateCampaignResponse> CreateCampaing(JobVacancy job)
         {
+            var settings = await _campaignsManagementRepo.GetCampaignSetting(job);
+            
+
             GrpcChannel channel;
             var client = GetClient(out channel);
 
@@ -193,7 +199,7 @@ namespace Application.Aimwel
                         $"{"/logos/"}" +
                         $"{_logoRepo.GetLogoByBrand(job.Idbrand).UrlImgBig}";
             var geolocation = _geoNamesConector.GetPostalCodesCollection(code, _countryIsoRepo.GetIsobyCountryId(job.Idcountry));
-            
+
             var request = new CreateCampaignRequest
             {
                 JobId = job.IdjobVacancy.ToString(),
@@ -226,29 +232,44 @@ namespace Application.Aimwel
                         PostalCode = geolocation.postalCodes.FirstOrDefault().postalCode
                     },
                     JobClassification = {
-                    new[] {
-                      new JobClassificationEntry {
-                        JobClassificationType =JobClassificationType.Isco,
-                        JobClassificationValue = "1122" //TODO determine which Isco code put here
-                      },
+                        new[] {
+                            new JobClassificationEntry {
+                                JobClassificationType = JobClassificationType.Isco,
+                                JobClassificationValue = settings.Isco88.ToString() //TODO determine which Isco code put here
+                            },
+                        }
                     }
-                  }
                 },
                 EndTime = Timestamp.FromDateTime(DateTime.UtcNow.AddDays(14)),
+
                 BudgetBestEffort = new BudgetBestEffort
                 {
                     //TODO generate logic or whatever to determine the amount of money invested in each campaign
                     Budget = new Money
                     {
                         Currency = Currency.Eur,
-                        Units = 300,
-                        Hundredths = 82
+                        Units = Convert.ToInt64(decimal.Truncate(settings.Budget)),
+                        Hundredths = ReminderDigits(Convert.ToDouble(settings.Budget),3)
                     }
                 }
             };
             var ans = await CreateCampaign(client, request, new Metadata());
             if (!string.IsNullOrEmpty(ans.CampaignId))
-            {
+            { //TODO change load campaign managements
+                CampaignsManagement campaign = new()
+                {
+                    Isco88 = 1,
+                    Isco08 = 0,
+                    Status = (int)AimwelStatus.ACTIVE,
+                    Goal = settings.Goal,
+                    IdjobVacancy = job.IdjobVacancy,
+                    Budget = 0,
+                    ExternalCampaignId = ans.CampaignId,
+                    LastModificationDate = DateTime.Now,
+                    Provider = "Aimwell"
+                };
+
+                await _campaignsManagementRepo.Add(campaign);
                 var offer = _jobOfferRepo.GetOfferById(job.IdjobVacancy);
                 if (offer != null)
                 {
@@ -258,6 +279,11 @@ namespace Application.Aimwel
             }
 
             return ans;
+        }
+
+        public  int ReminderDigits(this Double number, int count)
+        {
+            return Convert.ToInt32((number - Math.Truncate(number)).ToString().Substring(2, count));
         }
 
         /// <summary>

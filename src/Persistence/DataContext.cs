@@ -50,17 +50,46 @@ namespace Persistence
         public virtual DbSet<RegJobVacWorkPermit> RegJobVacWorkPermits { get; set; } = null!;
         public virtual DbSet<JobVacancyLanguage> JobVacancyLanguages { get; set; } = null!;
         public virtual DbSet<AtsmanagerAdminRegion> AtsmanagerAdminRegions { get; set; } = null!;
-
         public virtual DbSet<Title> Titles { get; set; } = null!;
         public virtual DbSet<TitleLang> TitleLangs { get; set; } = null!;
         public virtual DbSet<TitlesRelationship> TitlesRelationships { get; set; } = null!;
+        public virtual DbSet<CampaignsManagement> CampaignManagements { get; set; } = null!;
+        public virtual DbSet<CampaignSetting> CampaignSettings { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.UseCollation("Modern_Spanish_CI_AS");
 
 
+            modelBuilder.Entity<CampaignsManagement>(entity =>
+            {
+                entity.ToTable("CampaignManagement");
 
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.Budget).HasColumnType("decimal(18, 0)");
+
+                entity.Property(e => e.ExternalCampaignId).HasMaxLength(150);
+
+                entity.Property(e => e.IdjobVacancy).HasColumnName("IDjobVacancy");
+
+                entity.Property(e => e.Isco08).HasColumnName("ISCO08");
+
+                entity.Property(e => e.Isco88).HasColumnName("ISCO88");
+
+                entity.Property(e => e.LastModificationDate).HasColumnType("datetime");
+
+                entity.Property(e => e.Provider).HasMaxLength(50);
+            });
+
+            modelBuilder.Entity<CampaignSetting>(entity =>
+            {
+                entity.Property(e => e.Budget).HasColumnType("decimal(18, 0)");
+
+                entity.Property(e => e.Isco08).HasColumnName("ISCO08");
+
+                entity.Property(e => e.Isco88).HasColumnName("ISCO88");
+            });
 
             modelBuilder.Entity<TitlesRelationship>(entity =>
             {

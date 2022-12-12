@@ -25,6 +25,20 @@ namespace Persistence.Repositories
             return region;
         }
 
+        public async Task<int> Add(Region _region)
+        {
+            try
+            {
+                var a = _dataContext.Add(_region).Entity;
+                var ret = await _dataContext.SaveChangesAsync();
+                return ret;
+            }
+            catch (Exception ex)
+            {   
+                return -1;
+            }
+        }
+
         public int GetCountry(int _regionId)
         {
             var country = _dataContext.Regions.FirstOrDefault(r => r.Idregion == _regionId && r.ChkActive == 1).Idcountry;
