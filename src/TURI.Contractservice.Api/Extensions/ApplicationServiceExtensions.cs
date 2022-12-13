@@ -72,6 +72,7 @@ namespace API.Extensions
             services.AddScoped<ICityRepository, CityRepository>();
             services.AddScoped<IATSManagerAdminRepository, ATSManagerAdminRepository>();
             services.AddScoped<ITitleRepository, TitleRepository>();
+            services.AddScoped<ICampaignsManagementRepository, CampaignsManagementRepository>();
             #endregion MAPPING REPOSITORIES
 
             services.AddScoped<IGeoNamesConector, GeoNamesConector>();

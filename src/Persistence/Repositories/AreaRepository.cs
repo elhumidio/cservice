@@ -19,9 +19,9 @@ namespace Persistence.Repositories
             return area.Any();
         }
 
-        public async Task<int> GetIscoDefaultFromArea(int _area)
+        public int GetIscoDefaultFromArea(int _area)
         {
-            var area = await _dataContext.Areas.Where(a => a.Idarea == _area).FirstOrDefaultAsync();
+            var area = _dataContext.Areas.Where(a => a.Idarea == _area).FirstOrDefault();
             return area.IscoDefault;      
         } 
 

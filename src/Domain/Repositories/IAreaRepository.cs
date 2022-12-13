@@ -7,6 +7,6 @@ namespace Domain.Repositories
         public bool IsRightArea(int? areaId);
 
         public IQueryable<Area> GetAreas(int siteId, int languageId);
-        public Task<int> GetIscoDefaultFromArea(int _area);
+        public int GetIscoDefaultFromArea(int _area);
     }
 }

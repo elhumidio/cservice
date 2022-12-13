@@ -202,7 +202,8 @@ namespace Application.Aimwel
             var settings = await _campaignsManagementRepo.GetCampaignSetting(job);           
             GrpcChannel channel;
             var client = GetClient(out channel);
-
+            long units = Convert.ToInt64(decimal.Truncate(settings.Budget));
+            int hundredths = ReminderDigits(Convert.ToDouble(settings.Budget), 3);
             string code = _zipCodeRepo.GetZipById((int)job.IdzipCode).Zip;
             var urlLogo = $"{_config["Aimwel:Portal.urlRootStatics"]}" +
                         $"{"/img/"}" +
@@ -259,8 +260,8 @@ namespace Application.Aimwel
                     Budget = new Money
                     {
                         Currency = Currency.Eur,
-                        Units = Convert.ToInt64(decimal.Truncate(settings.Budget)),
-                        Hundredths = ReminderDigits(Convert.ToDouble(settings.Budget),3)
+                        Units = units,
+                        Hundredths = hundredths
                     }
                 }
             };
