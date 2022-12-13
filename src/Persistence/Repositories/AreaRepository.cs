@@ -1,5 +1,6 @@
 using Domain.Entities;
 using Domain.Repositories;
+using Microsoft.EntityFrameworkCore;
 
 namespace Persistence.Repositories
 {
@@ -18,9 +19,10 @@ namespace Persistence.Repositories
             return area.Any();
         }
 
-        public int GetIscoDefaultFromArea(int _area)
+        public async Task<int> GetIscoDefaultFromArea(int _area)
         {
-            var isco = _dataContext.Areas.Where(a => a.Idarea == _area).FirstOrDefault().;    
+            var area = await _dataContext.Areas.Where(a => a.Idarea == _area).FirstOrDefaultAsync();
+            return area.IscoDefault;      
         } 
 
         public IQueryable<Area> GetAreas(int siteId, int languageId)
