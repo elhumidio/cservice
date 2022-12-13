@@ -44,6 +44,12 @@ namespace Persistence.Repositories
             return settings.ExternalCampaignId;
         }
 
+        public async Task<CampaignsManagement> GetCampaignManagement(int _jobId)
+        {
+            var campaign = await _dataContext.CampaignManagements.Where(j => j.IdjobVacancy == _jobId).OrderByDescending(d => d.LastModificationDate).FirstOrDefaultAsync();
+            return campaign;
+        }
+
         public async Task<bool> Update(CampaignsManagement _campaign)
         {
             try

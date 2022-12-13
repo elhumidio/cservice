@@ -83,10 +83,13 @@ namespace Application.Aimwel
         public async Task<bool> StopCampaign(int jobId)
         {
             GrpcChannel channel;
+            var campaign = await _campaignsManagementRepo.GetCampaignManagement(jobId);
+            campaign.Status = (int)AimwelStatus.CANCELED;
+            campaign.LastModificationDate = DateTime.UtcNow;
+            campaign.ModificationReason = (int)CampaignModificationReason.FILED;
+            await _campaignsManagementRepo.Update(campaign);           
 
-            var campaignId = await _campaignsManagementRepo.GetAimwellIdByJobId(jobId);
-            //var campaignId = _jobOfferRepo.AimwelIdByJobId(jobId);
-            if (string.IsNullOrEmpty(campaignId))
+            if (string.IsNullOrEmpty(campaign.ExternalCampaignId))
             {
                 return false;
             }
@@ -95,7 +98,7 @@ namespace Application.Aimwel
                 var client = GetClient(out channel);
                 var request = new EndCampaignRequest
                 {
-                    CampaignId = campaignId                      
+                    CampaignId = campaign.ExternalCampaignId                      
                 };
 
                 var ret = await client.EndCampaignAsync(request);
@@ -111,8 +114,12 @@ namespace Application.Aimwel
         public async Task<bool> PauseCampaign(int jobId)
         {
             GrpcChannel channel;
-            var campaignId =await _campaignsManagementRepo.GetAimwellIdByJobId(jobId);            
-            if (string.IsNullOrEmpty(campaignId))
+            var campaign = await _campaignsManagementRepo.GetCampaignManagement(jobId);
+            campaign.Status = (int)AimwelStatus.PAUSED;
+            campaign.LastModificationDate = DateTime.UtcNow;
+            campaign.ModificationReason = (int)CampaignModificationReason.FILED;
+            await _campaignsManagementRepo.Update(campaign);
+            if (string.IsNullOrEmpty(campaign.ExternalCampaignId))
             {
                 return false;
             }
@@ -121,7 +128,7 @@ namespace Application.Aimwel
                 var client = GetClient(out channel);
                 var request = new PauseCampaignRequest
                 {
-                    CampaignId = campaignId
+                    CampaignId = campaign.ExternalCampaignId
                 };
 
                 var ret = await client.PauseCampaignAsync(request);
@@ -136,10 +143,13 @@ namespace Application.Aimwel
         /// <returns></returns>
         public async Task<bool> ResumeCampaign(int jobId)
         {
-            GrpcChannel channel;
-            var campaignId = await _campaignsManagementRepo.GetAimwellIdByJobId(jobId);
-            
-            if (string.IsNullOrEmpty(campaignId))
+            GrpcChannel channel;            
+            var campaign = await _campaignsManagementRepo.GetCampaignManagement(jobId);
+            campaign.Status = (int)AimwelStatus.ACTIVE;
+            campaign.LastModificationDate = DateTime.UtcNow;
+            campaign.ModificationReason = (int)CampaignModificationReason.MANUAL;
+            await _campaignsManagementRepo.Update(campaign);
+            if (string.IsNullOrEmpty(campaign.ExternalCampaignId))
             {
                 return false;
             }
@@ -148,7 +158,7 @@ namespace Application.Aimwel
                 var client = GetClient(out channel);
                 var request = new ResumeCampaignRequest
                 {
-                    CampaignId = campaignId
+                    CampaignId = campaign.ExternalCampaignId
                 };
 
                 var ret = await client.ResumeCampaignAsync(request);
@@ -189,9 +199,7 @@ namespace Application.Aimwel
         /// <returns></returns>
         public async Task<CreateCampaignResponse> CreateCampaing(JobVacancy job)
         {
-            var settings = await _campaignsManagementRepo.GetCampaignSetting(job);
-            
-
+            var settings = await _campaignsManagementRepo.GetCampaignSetting(job);           
             GrpcChannel channel;
             var client = GetClient(out channel);
 

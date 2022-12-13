@@ -274,6 +274,7 @@ namespace Persistence
                 entity.Property(e => e.BaseName).HasMaxLength(50);
 
                 entity.Property(e => e.ChkActive).HasColumnName("chkActive");
+                entity.Property(e => e.IscoDefault).HasColumnName("IscoDefault");
 
                 entity.Property(e => e.Subdomain).HasMaxLength(50);
 

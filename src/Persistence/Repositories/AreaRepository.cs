@@ -18,6 +18,11 @@ namespace Persistence.Repositories
             return area.Any();
         }
 
+        public int GetIscoDefaultFromArea(int _area)
+        {
+            var isco = _dataContext.Areas.Where(a => a.Idarea == _area).FirstOrDefault().;    
+        } 
+
         public IQueryable<Area> GetAreas(int siteId, int languageId)
         {
             var areas = _dataContext.Areas

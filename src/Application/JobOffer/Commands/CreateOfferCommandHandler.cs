@@ -27,6 +27,7 @@ namespace Application.JobOffer.Commands
         private readonly IJobVacancyLanguageRepository _jobVacancyLangRepo;
         private readonly IRegJobVacWorkPermitRepository _regJobVacWorkPermitRepo;
         private readonly ICityRepository _cityRepository;
+        private readonly IAreaRepository _areaRepository;
 
         #endregion PRIVATE PROPERTIES
 
@@ -39,7 +40,9 @@ namespace Application.JobOffer.Commands
             IMediator mediatr, IAimwelCampaign manageCampaign,
             IConfiguration config,
             IJobVacancyLanguageRepository jobVacancyLangRepo,
-            IRegJobVacWorkPermitRepository regJobVacWorkPermitRepository, ICityRepository cityRepository)
+            IRegJobVacWorkPermitRepository regJobVacWorkPermitRepository,
+            ICityRepository cityRepository,
+            IAreaRepository areaRepository)
         {
             _offerRepo = offerRepo;
             _mapper = mapper;
@@ -53,6 +56,7 @@ namespace Application.JobOffer.Commands
             _jobVacancyLangRepo = jobVacancyLangRepo;
             _regJobVacWorkPermitRepo = regJobVacWorkPermitRepository;
             _cityRepository = cityRepository;
+            _areaRepository = areaRepository;   
         }
 
         public async Task<OfferModificationResult> Handle(CreateOfferCommand offer, CancellationToken cancellationToken)
@@ -205,6 +209,8 @@ namespace Application.JobOffer.Commands
                 Identerprise = offer.Identerprise,
                 Redirection = offer.IntegrationData.ApplicationUrl
             };
+
+            job.Isco = _areaRepository.GetIscoDefaultFromArea(job.Idarea).ToString();
             var integration = _regJobVacRepo.GetAtsIntegrationInfo(obj.ExternalId).Result;
             if (integration == null)
             {
