@@ -126,7 +126,7 @@ namespace Application.JobOffer.Commands
                         {
                             await IntegrationActions(offer, jobVacancyId, job);
                         }
-                        var createdOffer = _mediatr.Send(new GetResult.Query
+                        var createdOffer = await _mediatr.Send(new GetResult.Query
                         {
                             ExternalId = offer.IntegrationData.ApplicationReference,
                             OfferId = jobVacancyId
@@ -141,7 +141,7 @@ namespace Application.JobOffer.Commands
                         if (aimwelEnabled)
                             await _manageCampaign.CreateCampaing(entity);
 
-                        return OfferModificationResult.Success(createdOffer.Result);
+                        return OfferModificationResult.Success(createdOffer);
                     }
                     catch (Exception ex)
                     {

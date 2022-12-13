@@ -203,7 +203,7 @@ namespace Application.Aimwel
             GrpcChannel channel;
             var client = GetClient(out channel);
             long units = Convert.ToInt64(decimal.Truncate(settings.Budget));
-            int hundredths = ReminderDigits(Convert.ToDouble(settings.Budget), 3);
+            int hundredths = ReminderDigits(Convert.ToDouble(settings.Budget), 2);
             string code = _zipCodeRepo.GetZipById((int)job.IdzipCode).Zip;
             var urlLogo = $"{_config["Aimwel:Portal.urlRootStatics"]}" +
                         $"{"/img/"}" +
@@ -267,7 +267,7 @@ namespace Application.Aimwel
             };
             var ans = await CreateCampaign(client, request, new Metadata());
             if (!string.IsNullOrEmpty(ans.CampaignId))
-            { //TODO change load campaign managements
+            { 
                 CampaignsManagement campaign = new()
                 {   
                     Status = (int)AimwelStatus.ACTIVE,
@@ -280,7 +280,7 @@ namespace Application.Aimwel
                 };
 
                 await _campaignsManagementRepo.Add(campaign);
-                var offer = _jobOfferRepo.GetOfferById(job.IdjobVacancy);
+                
                 
             }
 
