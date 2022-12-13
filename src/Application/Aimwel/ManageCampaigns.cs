@@ -238,7 +238,7 @@ namespace Application.Aimwel
                         new[] {
                             new JobClassificationEntry {
                                 JobClassificationType = JobClassificationType.Isco,
-                                JobClassificationValue = settings.Isco88.ToString() //TODO determine which Isco code put here
+                                JobClassificationValue = job.Isco //TODO determine which Isco code put here
                             },
                         }
                     }
@@ -247,7 +247,7 @@ namespace Application.Aimwel
 
                 BudgetBestEffort = new BudgetBestEffort
                 {
-                    //TODO generate logic or whatever to determine the amount of money invested in each campaign
+                    
                     Budget = new Money
                     {
                         Currency = Currency.Eur,
@@ -260,13 +260,11 @@ namespace Application.Aimwel
             if (!string.IsNullOrEmpty(ans.CampaignId))
             { //TODO change load campaign managements
                 CampaignsManagement campaign = new()
-                {
-                    Isco88 = Convert.ToInt32(job.Isco),
-                    Isco08 = 0,
+                {   
                     Status = (int)AimwelStatus.ACTIVE,
                     Goal = settings.Goal,
                     IdjobVacancy = job.IdjobVacancy,
-                    Budget = 0,
+                    Budget = settings.Budget,
                     ExternalCampaignId = ans.CampaignId,
                     LastModificationDate = DateTime.Now,
                     Provider = "Aimwell"
@@ -274,12 +272,7 @@ namespace Application.Aimwel
 
                 await _campaignsManagementRepo.Add(campaign);
                 var offer = _jobOfferRepo.GetOfferById(job.IdjobVacancy);
-                if (offer != null)
-                {
-                    //TODO update CampaignManagement instead
-                   // offer.AimwelCampaignId = ans.CampaignId;
-                  //  await _jobOfferRepo.UpdateOffer(offer);
-                }
+                
             }
 
             return ans;

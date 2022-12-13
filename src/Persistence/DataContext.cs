@@ -71,11 +71,7 @@ namespace Persistence
 
                 entity.Property(e => e.ExternalCampaignId).HasMaxLength(150);
 
-                entity.Property(e => e.IdjobVacancy).HasColumnName("IDjobVacancy");
-
-                entity.Property(e => e.Isco08).HasColumnName("ISCO08");
-
-                entity.Property(e => e.Isco88).HasColumnName("ISCO88");
+                entity.Property(e => e.IdjobVacancy).HasColumnName("IDjobVacancy");                
 
                 entity.Property(e => e.LastModificationDate).HasColumnType("datetime");
 
@@ -84,11 +80,8 @@ namespace Persistence
 
             modelBuilder.Entity<CampaignSetting>(entity =>
             {
-                entity.Property(e => e.Budget).HasColumnType("decimal(18, 0)");
-
-                entity.Property(e => e.Isco08).HasColumnName("ISCO08");
-
-                entity.Property(e => e.Isco88).HasColumnName("ISCO88");
+                entity.Property(e => e.Budget).HasColumnType("decimal(18, 0)"); 
+                
             });
 
             modelBuilder.Entity<TitlesRelationship>(entity =>

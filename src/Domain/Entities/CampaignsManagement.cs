@@ -14,7 +14,6 @@ namespace Domain.Entities
         public decimal? Budget { get; set; }
         public int? Goal { get; set; }
         public string? Provider { get; set; }
-        public int? Isco08 { get; set; }
-        public int? Isco88 { get; set; }
+        
     }
 }
