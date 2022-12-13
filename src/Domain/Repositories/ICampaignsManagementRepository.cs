@@ -12,6 +12,7 @@ namespace Domain.Repositories
         public Task<int> Add(CampaignsManagement campaign);
         public Task<bool> Update(CampaignsManagement _campaign);
         public Task<CampaignSetting> GetCampaignSetting(JobVacancy job);
+        public Task<string> GetAimwellIdByJobId(int _jobId);
     }
 }
 

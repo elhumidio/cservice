@@ -1294,7 +1294,8 @@ namespace Persistence
 
                 entity.Property(e => e.UpdatingDate).HasColumnType("datetime");
 
-                entity.Property(e => e.AimwelCampaignId).HasColumnType("AimwelCampaignId");
+                entity.Property(e => e.Isco).HasColumnName("Isco");
+                entity.Property(e => e.TitleId).HasColumnName("TitleId");
             });
 
             modelBuilder.Entity<Product>(entity =>

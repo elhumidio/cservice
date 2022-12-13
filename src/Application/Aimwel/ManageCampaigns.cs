@@ -83,7 +83,9 @@ namespace Application.Aimwel
         public async Task<bool> StopCampaign(int jobId)
         {
             GrpcChannel channel;
-            var campaignId = _jobOfferRepo.AimwelIdByJobId(jobId);
+
+            var campaignId = await _campaignsManagementRepo.GetAimwellIdByJobId(jobId);
+            //var campaignId = _jobOfferRepo.AimwelIdByJobId(jobId);
             if (string.IsNullOrEmpty(campaignId))
             {
                 return false;
@@ -109,7 +111,7 @@ namespace Application.Aimwel
         public async Task<bool> PauseCampaign(int jobId)
         {
             GrpcChannel channel;
-            var campaignId = _jobOfferRepo.AimwelIdByJobId(jobId);
+            var campaignId =await _campaignsManagementRepo.GetAimwellIdByJobId(jobId);            
             if (string.IsNullOrEmpty(campaignId))
             {
                 return false;
@@ -135,7 +137,8 @@ namespace Application.Aimwel
         public async Task<bool> ResumeCampaign(int jobId)
         {
             GrpcChannel channel;
-            var campaignId = _jobOfferRepo.AimwelIdByJobId(jobId);
+            var campaignId = await _campaignsManagementRepo.GetAimwellIdByJobId(jobId);
+            
             if (string.IsNullOrEmpty(campaignId))
             {
                 return false;
@@ -161,7 +164,7 @@ namespace Application.Aimwel
         public async Task<GetCampaignResponse> GetCampaignState(int jobId)
         {
             GrpcChannel channel;
-            var campaignId = _jobOfferRepo.AimwelIdByJobId(jobId);
+            var campaignId = await _campaignsManagementRepo.GetAimwellIdByJobId(jobId);              
             if (string.IsNullOrEmpty(campaignId))
             {
                 return new GetCampaignResponse() { Status = CampaignStatus.Ended };
@@ -258,7 +261,7 @@ namespace Application.Aimwel
             { //TODO change load campaign managements
                 CampaignsManagement campaign = new()
                 {
-                    Isco88 = 1,
+                    Isco88 = Convert.ToInt32(job.Isco),
                     Isco08 = 0,
                     Status = (int)AimwelStatus.ACTIVE,
                     Goal = settings.Goal,
@@ -273,15 +276,16 @@ namespace Application.Aimwel
                 var offer = _jobOfferRepo.GetOfferById(job.IdjobVacancy);
                 if (offer != null)
                 {
-                    offer.AimwelCampaignId = ans.CampaignId;
-                    await _jobOfferRepo.UpdateOffer(offer);
+                    //TODO update CampaignManagement instead
+                   // offer.AimwelCampaignId = ans.CampaignId;
+                  //  await _jobOfferRepo.UpdateOffer(offer);
                 }
             }
 
             return ans;
         }
 
-        public  int ReminderDigits(this Double number, int count)
+        public int ReminderDigits(Double number, int count)
         {
             return Convert.ToInt32((number - Math.Truncate(number)).ToString().Substring(2, count));
         }

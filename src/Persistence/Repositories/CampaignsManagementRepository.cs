@@ -1,5 +1,7 @@
 using Domain.Entities;
+using Domain.Enums;
 using Domain.Repositories;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,6 +36,12 @@ namespace Persistence.Repositories
         {
             var settings = _dataContext.CampaignSettings.FirstOrDefault(j => j.AreaId == job.Idarea && j.RegionId == job.Idregion);
             return settings;
+        }
+
+        public async Task<string> GetAimwellIdByJobId(int _jobId)
+        {
+            var settings = await _dataContext.CampaignManagements.Where(j => j.IdjobVacancy == _jobId).OrderByDescending(d => d.LastModificationDate).FirstOrDefaultAsync();
+            return settings.ExternalCampaignId;
         }
 
         public async Task<bool> Update(CampaignsManagement _campaign)
