@@ -18,7 +18,6 @@ namespace Domain.Entities
         public int? ChkActive { get; set; }
         public int? NumVacancies { get; set; }
         public int? Threshold { get; set; }
-
         public int IscoDefault { get; set; }
 
         public virtual TsturijobsLang Ids { get; set; } = null!;

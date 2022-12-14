@@ -69,7 +69,7 @@ namespace Application.JobOffer.Commands
             {
                 await ActivateActions(offer, existentOffer);
             }
-            //CityValidation(offer);
+            
             if (integrationInfo == null)
             {
                 offer.Idcity = existentOffer.Idcity;

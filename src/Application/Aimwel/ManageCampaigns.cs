@@ -247,7 +247,7 @@ namespace Application.Aimwel
                         new[] {
                             new JobClassificationEntry {
                                 JobClassificationType = JobClassificationType.Isco,
-                                JobClassificationValue = job.Isco //TODO determine which Isco code put here
+                                JobClassificationValue = job.Isco.ToString() //TODO determine which Isco code put here
                             },
                         }
                     }

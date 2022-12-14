@@ -120,23 +120,23 @@ namespace Application.JobOffer.Commands
                 {
                     try
                     {
+                        bool aimwelEnabled = Convert.ToBoolean(_config["Aimwel:EnableAimwel"]);
+                        var sites = _config["Aimwel:EnabledSites"];
+                        int[] aimwelEnabledSites = sites.Split(',').Select(h => Int32.Parse(h)).ToArray();
+                        aimwelEnabled = aimwelEnabled && aimwelEnabledSites.Contains(job.Idsite);
+
                         await _regContractRepo.UpdateUnits(job.Idcontract, job.IdjobVacType);
 
                         if (!string.IsNullOrEmpty(offer.IntegrationData.ApplicationReference))
                         {
-                            await IntegrationActions(offer, jobVacancyId, job);
+                            await IntegrationActions(offer, job, aimwelEnabled);
                         }
                         var createdOffer = await _mediatr.Send(new GetResult.Query
                         {
                             ExternalId = offer.IntegrationData.ApplicationReference,
                             OfferId = jobVacancyId
                         });
-                        _enterpriseRepository.UpdateATS(entity.Identerprise);
-
-                        bool aimwelEnabled = Convert.ToBoolean(_config["Aimwel:EnableAimwel"]);
-                        var sites = _config["Aimwel:EnabledSites"];
-                        int[] aimwelEnabledSites = sites.Split(',').Select(h => Int32.Parse(h)).ToArray();
-                        aimwelEnabled = aimwelEnabled && aimwelEnabledSites.Contains(job.Idsite);
+                        _enterpriseRepository.UpdateATS(entity.Identerprise);                        
 
                         if (aimwelEnabled)
                             await _manageCampaign.CreateCampaing(entity);
@@ -198,19 +198,19 @@ namespace Application.JobOffer.Commands
         /// <param name="jobVacancyId"></param>
         /// <param name="job"></param>
         /// <returns></returns>
-        private async Task IntegrationActions(CreateOfferCommand offer, int jobVacancyId, JobVacancy job)
+        private async Task IntegrationActions(CreateOfferCommand offer,JobVacancy job, bool aimwelEnabled)
         {
             RegJobVacMatching obj = new RegJobVacMatching
             {
                 ExternalId = offer.IntegrationData.ApplicationReference,
                 Idintegration = offer.IntegrationData.IDIntegration,
-                IdjobVacancy = jobVacancyId,
+                IdjobVacancy = job.IdjobVacancy,
                 AppEmail = offer.IntegrationData.ApplicationEmail,
                 Identerprise = offer.Identerprise,
                 Redirection = offer.IntegrationData.ApplicationUrl
             };
-
-            job.Isco = _areaRepository.GetIscoDefaultFromArea(job.Idarea).ToString();
+            if(aimwelEnabled)
+                job.Isco = _areaRepository.GetIscoDefaultFromArea(job.Idarea);
             var integration = _regJobVacRepo.GetAtsIntegrationInfo(obj.ExternalId).Result;
             if (integration == null)
             {
