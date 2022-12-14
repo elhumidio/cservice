@@ -378,11 +378,11 @@ namespace API.Controllers
         [HttpGet]
         public async Task<GetCampaignResponse> GetCampaign(int jobId)
         {
-            var offer = Mediator.Send(new Get.Query
+            var management = await Mediator.Send(new Application.JobOffer.Queries.CampaignsQueries.GetCampaignManagement.Query
             {
-                OfferId = jobId
+                IDJobVacancy= jobId
             });
-            var request = new GetCampaignRequest { CampaignId = offer.Result.AimwelCampaignId };
+            var request = new GetCampaignRequest { CampaignId = management.Value.ExternalCampaignId};
             var ans = await _aimwelCampaign.GetCampaign(request);
             return ans;
         }

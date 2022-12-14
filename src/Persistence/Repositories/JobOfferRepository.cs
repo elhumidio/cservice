@@ -103,8 +103,16 @@ namespace Persistence.Repositories
 
         public JobVacancy GetOfferById(int id)
         {
-            var offer = _dataContext.JobVacancies.Where(o => o.IdjobVacancy == id).FirstOrDefault();
-            return offer;
+            try {
+                var offer = _dataContext.JobVacancies.FirstOrDefault(o => o.IdjobVacancy == id);
+                if (offer == null)
+                    return new JobVacancy();
+                else return offer;
+            }
+            catch (Exception ex) {
+                return new JobVacancy();
+            }
+            
         }
 
 

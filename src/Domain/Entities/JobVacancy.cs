@@ -73,6 +73,6 @@ namespace Domain.Entities
         public DateTime? LastVisitorDate { get; set; }
         public string? IntegrationId { get; set; }
         public string? Isco { get; set; }
-        public int TitleId { get; set; }
+        public int? TitleId { get; set; }
     }
 }

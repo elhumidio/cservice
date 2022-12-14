@@ -279,8 +279,7 @@ namespace Application.Aimwel
                     Provider = "Aimwell"
                 };
 
-                await _campaignsManagementRepo.Add(campaign);
-                
+                await _campaignsManagementRepo.Add(campaign);              
                 
             }
 
