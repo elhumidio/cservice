@@ -77,7 +77,7 @@ namespace Application.JobOffer.Commands
                         });
                         if (campaign != null && campaign.Status == CampaignStatus.Active)
                         {
-                            await _manageCampaign.PauseCampaign(job.IdjobVacancy);
+                            await _manageCampaign.StopCampaign(job.IdjobVacancy);
                             msg += $"Campaign {campaign.CampaignId} /  {request.id} - Canceled ";                    
                         }
                         else if(campaign != null)

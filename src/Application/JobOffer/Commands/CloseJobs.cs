@@ -65,7 +65,7 @@ namespace Application.JobOffer.Commands
                     return OfferModificationResult.Failure(new List<string> { msg });
                 }
 
-                await _manageCampaign.PauseCampaign(job.IdjobVacancy);
+             //   await _manageCampaign.StopCampaign(job.IdjobVacancy);
                 job.IdClosingReason = request.dto.ClosingReasonId;
                 await _offerRepo.UpdateOffer(job);
                 var ret = _offerRepo.FileOffer(job);
@@ -93,14 +93,13 @@ namespace Application.JobOffer.Commands
                             OfferId = request.dto.id
                         });
 
-                        if (campaign != null && campaign.Status == CampaignStatus.Active)
-                        {
+                        
                             var canceled = _mediatr.Send(new Cancel.Command
                             {
                                 offerId = request.dto.id
                             });
                             msg += $"Campaign {campaign.CampaignId} /  {request.dto.id} - Canceled ";
-                        }
+                        
                     }
                     OfferResultDto dto = new OfferResultDto();
                     dto = _mapper.Map(job, dto);
