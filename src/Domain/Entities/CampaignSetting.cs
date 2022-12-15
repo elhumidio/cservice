@@ -6,6 +6,7 @@ namespace Domain.Entities
     public partial class CampaignSetting
     {
         public int Id { get; set; }
+        public int SiteId { get; set; }
         public int AreaId { get; set; }
         public int RegionId { get; set; }
         public decimal Budget { get; set; }

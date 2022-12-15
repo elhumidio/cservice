@@ -34,7 +34,7 @@ namespace Persistence.Repositories
 
         public async Task<CampaignSetting> GetCampaignSetting(JobVacancy job)
         {
-            var settings = _dataContext.CampaignSettings.FirstOrDefault(j => j.AreaId == job.Idarea && j.RegionId == job.Idregion);
+            var settings = _dataContext.CampaignSettings.FirstOrDefault(j => j.AreaId == job.Idarea && j.RegionId == job.Idregion && j.SiteId == job.Idsite);
             return settings;
         }
 
