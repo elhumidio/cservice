@@ -23,8 +23,8 @@ namespace Application.Aimwel
         private readonly IlogoRepository _logoRepo;
         private readonly IZipCodeRepository _zipCodeRepo;
         private readonly ICountryIsoRepository _countryIsoRepo;
-        private readonly IJobOfferRepository _jobOfferRepo;
         private readonly ICampaignsManagementRepository _campaignsManagementRepo;
+        private readonly IAreaRepository _areaRepository;
 
         public ManageCampaigns(IConfiguration config,
             IGeoNamesConector geoNamesConector,
@@ -33,8 +33,8 @@ namespace Application.Aimwel
             IlogoRepository logoRepo,
             IZipCodeRepository zipCodeRepo,
             ICountryIsoRepository countryIsoRepo,
-            IJobOfferRepository jobOfferRepo,
-            ICampaignsManagementRepository campaignsManagementRepo)
+            ICampaignsManagementRepository campaignsManagementRepo,
+            IAreaRepository areaRepository)
         {
             _config = config;
             _geoNamesConector = geoNamesConector;
@@ -43,8 +43,8 @@ namespace Application.Aimwel
             _logoRepo = logoRepo;
             _zipCodeRepo = zipCodeRepo;
             _countryIsoRepo = countryIsoRepo;
-            _jobOfferRepo = jobOfferRepo;
-            _campaignsManagementRepo = campaignsManagementRepo; 
+            _campaignsManagementRepo = campaignsManagementRepo;
+            _areaRepository = areaRepository;
         }
 
         /// <summary>
@@ -87,7 +87,7 @@ namespace Application.Aimwel
             campaign.Status = (int)AimwelStatus.CANCELED;
             campaign.LastModificationDate = DateTime.UtcNow;
             campaign.ModificationReason = (int)CampaignModificationReason.FILED;
-            await _campaignsManagementRepo.Update(campaign);           
+            await _campaignsManagementRepo.Update(campaign);
 
             if (string.IsNullOrEmpty(campaign.ExternalCampaignId))
             {
@@ -98,7 +98,7 @@ namespace Application.Aimwel
                 var client = GetClient(out channel);
                 var request = new EndCampaignRequest
                 {
-                    CampaignId = campaign.ExternalCampaignId                      
+                    CampaignId = campaign.ExternalCampaignId
                 };
 
                 var ret = await client.EndCampaignAsync(request);
@@ -143,7 +143,7 @@ namespace Application.Aimwel
         /// <returns></returns>
         public async Task<bool> ResumeCampaign(int jobId)
         {
-            GrpcChannel channel;            
+            GrpcChannel channel;
             var campaign = await _campaignsManagementRepo.GetCampaignManagement(jobId);
             campaign.Status = (int)AimwelStatus.ACTIVE;
             campaign.LastModificationDate = DateTime.UtcNow;
@@ -174,7 +174,7 @@ namespace Application.Aimwel
         public async Task<GetCampaignResponse> GetCampaignState(int jobId)
         {
             GrpcChannel channel;
-            var campaignId = await _campaignsManagementRepo.GetAimwellIdByJobId(jobId);              
+            var campaignId = await _campaignsManagementRepo.GetAimwellIdByJobId(jobId);
             if (string.IsNullOrEmpty(campaignId))
             {
                 return new GetCampaignResponse() { Status = CampaignStatus.Ended };
@@ -199,11 +199,22 @@ namespace Application.Aimwel
         /// <returns></returns>
         public async Task<CreateCampaignResponse> CreateCampaing(JobVacancy job)
         {
-            var settings = await _campaignsManagementRepo.GetCampaignSetting(job);           
+            CampaignSetting settings;
+            settings = await _campaignsManagementRepo.GetCampaignSetting(job);
+            if (settings == null)
+            {
+                settings = new CampaignSetting();
+                settings.Goal = 100;
+                settings.Budget = 0.000m;
+                if (job.Isco == null)
+                {
+                    job.Isco = _areaRepository.GetIscoDefaultFromArea(job.Idarea);
+                }
+            }
             GrpcChannel channel;
             var client = GetClient(out channel);
             long units = Convert.ToInt64(decimal.Truncate(settings.Budget));
-            int hundredths = ReminderDigits(Convert.ToDouble(settings.Budget), 2);
+            int hundredths = settings.Budget == 0.00m ? 0 : ReminderDigits(Convert.ToDouble(settings.Budget), 2);
             string code = _zipCodeRepo.GetZipById((int)job.IdzipCode).Zip;
             var urlLogo = $"{_config["Aimwel:Portal.urlRootStatics"]}" +
                         $"{"/img/"}" +
@@ -212,38 +223,40 @@ namespace Application.Aimwel
                         $"{_logoRepo.GetLogoByBrand(job.Idbrand).UrlImgBig}";
             var geolocation = _geoNamesConector.GetPostalCodesCollection(code, _countryIsoRepo.GetIsobyCountryId(job.Idcountry));
 
-            var request = new CreateCampaignRequest
+            try
             {
-                JobId = job.IdjobVacancy.ToString(),
-
-                Advertisement = new Advertisement { Branding = ApiUtils.GetBrandBySite(job.Idsite), Uri = ApiUtils.GetUriBySite(job.Idsite).AbsoluteUri },
-                JobContent = new JobContent
+                var request = new CreateCampaignRequest
                 {
-                    JobTitle = job.Title,
-                    JobDescription = job.Description,
-                    Language = ApiUtils.GetLanguageBySite(job.Idsite),
-                    PublicationTime = Timestamp.FromDateTime(DateTime.UtcNow),
-                    HiringOrganization = new HiringOrganization
+                    JobId = job.IdjobVacancy.ToString(),
+
+                    Advertisement = new Advertisement { Branding = ApiUtils.GetBrandBySite(job.Idsite), Uri = ApiUtils.GetUriBySite(job.Idsite).AbsoluteUri },
+                    JobContent = new JobContent
                     {
-                        Name = _enterpriseRepo.GetCompanyName(job.Identerprise),
-                        LogoUrl = urlLogo,
-                    },
-                    Location = new Geolocation
-                    {
-                        CountryIso = Country.Gb,
-                        Latitude = geolocation.postalCodes.FirstOrDefault().lat,
-                        Longitude = geolocation.postalCodes.FirstOrDefault().lng,
-                    },
-                    Address = new Address
-                    {
-                        CountryIso = Country.Nl,
-                        State = geolocation.postalCodes.FirstOrDefault().adminName2,
-                        City = geolocation.postalCodes.FirstOrDefault().placeName,
-                        Street = "",
-                        Region = geolocation.postalCodes.FirstOrDefault().adminName1,
-                        PostalCode = geolocation.postalCodes.FirstOrDefault().postalCode
-                    },
-                    JobClassification = {
+                        JobTitle = job.Title,
+                        JobDescription = job.Description,
+                        Language = ApiUtils.GetLanguageBySite(job.Idsite),
+                        PublicationTime = Timestamp.FromDateTime(DateTime.UtcNow),
+                        HiringOrganization = new HiringOrganization
+                        {
+                            Name = _enterpriseRepo.GetCompanyName(job.Identerprise),
+                            LogoUrl = urlLogo,
+                        },
+                        Location = new Geolocation
+                        {
+                            CountryIso = Country.Gb,
+                            Latitude = geolocation.postalCodes.FirstOrDefault().lat,
+                            Longitude = geolocation.postalCodes.FirstOrDefault().lng,
+                        },
+                        Address = new Address
+                        {
+                            CountryIso = Country.Nl,
+                            State = geolocation.postalCodes.FirstOrDefault().adminName2,
+                            City = geolocation.postalCodes.FirstOrDefault().placeName,
+                            Street = "",
+                            Region = geolocation.postalCodes.FirstOrDefault().adminName1,
+                            PostalCode = geolocation.postalCodes.FirstOrDefault().postalCode
+                        },
+                        JobClassification = {
                         new[] {
                             new JobClassificationEntry {
                                 JobClassificationType = JobClassificationType.Isco,
@@ -251,39 +264,44 @@ namespace Application.Aimwel
                             },
                         }
                     }
-                },
-                EndTime = Timestamp.FromDateTime(DateTime.UtcNow.AddDays(14)),
+                    },
+                    EndTime = Timestamp.FromDateTime(DateTime.UtcNow.AddDays(14)),
 
-                BudgetBestEffort = new BudgetBestEffort
-                {
-                    
-                    Budget = new Money
+                    BudgetBestEffort = new BudgetBestEffort
                     {
-                        Currency = Currency.Eur,
-                        Units = units,
-                        Hundredths = hundredths
+                        Budget = new Money
+                        {
+                            Currency = Currency.Eur,
+                            Units = units,
+                            Hundredths = hundredths
+                        }
                     }
-                }
-            };
-            var ans = await CreateCampaign(client, request, new Metadata());
-            if (!string.IsNullOrEmpty(ans.CampaignId))
-            { 
-                CampaignsManagement campaign = new()
-                {   
-                    Status = (int)AimwelStatus.ACTIVE,
-                    Goal = settings.Goal,
-                    IdjobVacancy = job.IdjobVacancy,
-                    Budget = settings.Budget,
-                    ExternalCampaignId = ans.CampaignId,
-                    LastModificationDate = DateTime.Now,
-                    Provider = "Aimwell"
                 };
+                var ans = await CreateCampaign(client, request, new Metadata());
+                if (!string.IsNullOrEmpty(ans.CampaignId))
+                {
+                    CampaignsManagement campaign = new()
+                    {
+                        Status = (int)AimwelStatus.ACTIVE,
+                        Goal = settings.Goal,
+                        IdjobVacancy = job.IdjobVacancy,
+                        Budget = settings.Budget,
+                        ExternalCampaignId = ans.CampaignId,
+                        LastModificationDate = DateTime.Now,
+                        ModificationReason = (int)CampaignModificationReason.CREATED,
+                        Provider = "Aimwell"
+                    };
 
-                await _campaignsManagementRepo.Add(campaign);              
-                
+                    await _campaignsManagementRepo.Add(campaign);
+                }
+
+                return ans;
             }
-
-            return ans;
+            catch (Exception ex)
+            {
+                var msg = ex.Message;
+                return new CreateCampaignResponse { CampaignId = msg };
+            }
         }
 
         public int ReminderDigits(Double number, int count)

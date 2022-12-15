@@ -43,7 +43,7 @@ namespace Application.JobOffer.Commands
                 _contractProductRepo = contractProductRepo;
                 _mediatr = mediatr;                
                 _mapper = mapper;   
-            }
+            }   
 
             public async Task<OfferModificationResult> Handle(Command request, CancellationToken cancellationToken)
             {
