@@ -1,4 +1,5 @@
 using Application.JobOffer.Commands;
+using Domain.Entities;
 using Domain.Enums;
 using Domain.Repositories;
 using FluentValidation;
@@ -9,47 +10,85 @@ namespace Application.JobOffer.Validations
     public class DefaultCheckValuesValidator : AbstractValidator<CreateOfferCommand>
     {
         private IContractRepository _contractRepository;
+        private ICityRepository _cityRepository;    
 
-        public DefaultCheckValuesValidator(IMediator mediator, IContractProductRepository contractProdRepo, IContractRepository contractRepository)
+        public DefaultCheckValuesValidator(IContractRepository contractRepository,
+            ICityRepository cityRepository)
         {
             _contractRepository = contractRepository;
+            _cityRepository = cityRepository;
+
             RuleFor(command => command)
                 .Must(HasDefaultValues)
-                .WithMessage("Couldn't set default values.\n");
+                .WithMessage("Couldn't set default values.\n")
+                .Must(HasCity).WithMessage("Have to have a city.");
         }
 
         private bool HasDefaultValues(CreateOfferCommand obj)
         {
             var services = _contractRepository.GetServiceTypes(obj.Idcontract).ToList();
-            obj.ChkBlindVac = false;
+            bool IsCheckUpdate = services.Where(a => a.ServiceType == (int)ServiceTypes.ManualJobRefresh).Any()
+                || obj.IdjobVacType == (int)VacancyType.WelcomeSP
+                || obj.IdjobVacType == (int)VacancyType.WelcomePT;
+            
+            obj.ChkBlindVac = obj.ChkBlindVac == null  ?  false : obj.ChkBlindVac;
             obj.ChkFilled = false;
             obj.ChkDeleted = false;
             obj.ChkEnterpriseVisible = true;
-            obj.ChkBlindSalary = false;
+            obj.ChkBlindSalary = obj.ChkBlindSalary == null ?  false : obj.ChkBlindSalary;
             obj.ChkDisability = false;
-            obj.ChkUpdateDate = services.Where(a => a.ServiceType == (int)ServiceTypes.ManualJobRefresh).Any() ? true : false;
+            obj.ChkUpdateDate = IsCheckUpdate;
             return true;
+        }
+
+        private bool HasCity(CreateOfferCommand obj)
+        {
+            if (string.IsNullOrEmpty(obj.City))
+            {
+                if(obj.Idcity != null)
+                    obj.City = _cityRepository.GetName((int)obj.Idcity);
+                
+            }
+            return !string.IsNullOrEmpty(obj.City);
         }
     }
 
     public class DefaultCheckValuesValidatorUp : AbstractValidator<UpdateOfferCommand>
     {
-        public DefaultCheckValuesValidatorUp(IMediator mediator, IContractProductRepository contractProdRepo)
+        private IContractRepository _contractRepository;
+        private ICityRepository _cityRepository;
+        public DefaultCheckValuesValidatorUp(IContractRepository contractRepository, ICityRepository cityRepository)
         {
+            _contractRepository = contractRepository;
+            _cityRepository = cityRepository;
             RuleFor(command => command)
                 .Must(HasDefaultValues)
-                .WithMessage("Couldn't set default values.\n");
+                .WithMessage("Couldn't set default values.\n").Must(HasCity).WithMessage("Have to have a city.");
+        }
+
+        private bool HasCity(UpdateOfferCommand obj)
+        {
+            if (string.IsNullOrEmpty(obj.City))
+            {
+                if (obj.Idcity != null && obj.Idcity > 0)
+                    obj.City = _cityRepository.GetName((int)obj.Idcity);
+            }
+            return !string.IsNullOrEmpty(obj.City) || obj.Idcity == 0;
         }
 
         private bool HasDefaultValues(UpdateOfferCommand obj)
         {
-            obj.ChkBlindVac = false;
-            obj.ChkFilled = false;
-            obj.ChkDeleted = false;
-            obj.ChkEnterpriseVisible = true;
-            obj.ChkBlindSalary = false;
-            obj.ChkDisability = false;
-            obj.ChkUpdateDate = true;
+            var services = _contractRepository.GetServiceTypes(obj.Idcontract).ToList();
+            bool IsCheckUpdate = services.Where(a => a.ServiceType == (int)ServiceTypes.ManualJobRefresh).Any()
+              || obj.IdjobVacType == (int)VacancyType.WelcomeSP
+              || obj.IdjobVacType == (int)VacancyType.WelcomePT;
+            obj.ChkBlindVac = obj.ChkBlindVac == null ? true : obj.ChkBlindVac;
+            obj.ChkFilled = obj.ChkFilled == null ? false : obj.ChkFilled;
+            obj.ChkDeleted = obj.ChkFilled == null  ? false : obj.ChkDeleted;
+            obj.ChkEnterpriseVisible = obj.ChkEnterpriseVisible == null ? true : obj.ChkEnterpriseVisible;
+            obj.ChkBlindSalary = obj.ChkBlindSalary == null ? false : obj.ChkBlindSalary;
+            obj.ChkDisability = obj.ChkDisability== null ?  false : obj.ChkDisability;
+            obj.ChkUpdateDate = IsCheckUpdate;
             return true;
         }
     }

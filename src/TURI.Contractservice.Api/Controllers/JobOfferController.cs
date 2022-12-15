@@ -169,9 +169,25 @@ namespace API.Controllers
         [HttpGet("{contractId}")]
         public async Task<IActionResult> GetAllConsumedJobOffers(int contractId)
         {
-            var result = await Mediator.Send(new Application.JobOffer.Queries.List.Query
+            var result = await Mediator.Send(new List.Query
             {
                 ContractID = contractId,
+            });
+            return HandleResult(result);
+        }
+
+
+        /// <summary>
+        /// It gets consumed units grouped by contract
+        /// </summary>
+        /// <param name="contractIds"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public async Task<IActionResult> GetConsumedUnitsGroupedByContracts(List<int> contractIds)
+        {
+            var result = await Mediator.Send(new ListAutoFilteredGroupByContracts.Query
+            {
+                 ContractIDs = contractIds
             });
             return HandleResult(result);
         }
@@ -191,6 +207,22 @@ namespace API.Controllers
             });
             return HandleResult(result);
         }
+
+        /// <summary>   
+        /// Get Consumed JobOffers Pack or not pack by Company 
+        /// </summary>
+        /// <param name="dto"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public async Task<IActionResult> GetConsumedJobOffersByCompany(ContractOwnerRequestDto dto)
+        {
+            var result = await Mediator.Send(new ListActivesByManagerList.Query
+            {
+             Dto = dto
+            });
+            return HandleResult(result);
+        }
+
 
         /// <summary>
         /// Get Consumed JobOffers Pack or not pack all managers By Contract
@@ -346,11 +378,11 @@ namespace API.Controllers
         [HttpGet]
         public async Task<GetCampaignResponse> GetCampaign(int jobId)
         {
-            var offer = Mediator.Send(new Get.Query
+            var management = await Mediator.Send(new Application.JobOffer.Queries.CampaignsQueries.GetCampaignManagement.Query
             {
-                OfferId = jobId
+                IDJobVacancy= jobId
             });
-            var request = new GetCampaignRequest { CampaignId = offer.Result.AimwelCampaignId };
+            var request = new GetCampaignRequest { CampaignId = management.Value.ExternalCampaignId};
             var ans = await _aimwelCampaign.GetCampaign(request);
             return ans;
         }

@@ -30,6 +30,10 @@ namespace Application.JobOffer.Validations
             var country = _regionRepo.GetCountry(obj.Idregion);
             obj.Idcountry = country;
             var countryCode = GetCountryIsoByIdCountry(obj.Idcountry);
+
+            //TODO get idcity by zipcode and country
+
+
             if (!string.IsNullOrEmpty(countryCode))
             {
                 var ans = _geoNames.GetPostalCodesCollection(obj.ZipCode, GetCountryIsoByIdCountry(obj.Idcountry));
@@ -68,15 +72,31 @@ namespace Application.JobOffer.Validations
                 }
                 else
                 {
+                    var IdzipCode = _zipCodeRepo.GetZipCodeIdByCity(obj.City);
                     var zipCodeEntity = _zipCodeRepo.GetZipCodeEntity(obj.ZipCode, obj.Idcountry);
                     if (zipCodeEntity != null)
                     {
                         obj.IdzipCode = zipCodeEntity.IdzipCode;
                         var region = _regionRepo.Get(zipCodeEntity.Idregion);
                         obj.JobLocation = region != null ? region.BaseName : string.Empty;
+                        obj.Idcity = zipCodeEntity.Idcity;
                         ret = true;
                     }
+                    else if (IdzipCode > 0) {
+                        obj.IdzipCode = IdzipCode;
+                        var zip = _zipCodeRepo.GetZipById(IdzipCode);
+                        var region = _regionRepo.Get(zip.Idregion);
+                        obj.JobLocation = region != null ? region.BaseName : string.Empty;
+                        obj.Idcity = zip.Idcity;
+                        ret = true;
+
+                    }
                     else ret = false;
+                }
+                if (obj.Idcity == null || obj.Idcity < 1) {
+
+                    var cityId = _zipCodeRepo.GetIdCityByZipCodeAnCountry(obj.ZipCode, obj.Idcountry);
+                    obj.Idcity = cityId;
                 }
             }
             else
@@ -114,6 +134,8 @@ namespace Application.JobOffer.Validations
 
         private bool IsRightPostalCode(UpdateOfferCommand obj)
         {
+            if (obj.IdzipCode == null)
+                return true;
             bool ret = false;
             var ans = _geoNames.GetPostalCodesCollection(obj.ZipCode, GetCountryIsoByIdCountry(obj.Idcountry));
             if (ans != null && ans.postalCodes.Any())
@@ -135,7 +157,7 @@ namespace Application.JobOffer.Validations
                 }
 
                 //Get cityId based on Postal code
-                obj.Idcity = _zipCodeRepo.GetCityIdByZip(obj.ZipCode);
+                obj.Idcity = _zipCodeRepo.GetIdCityByZipCodeAnCountry(obj.ZipCode, obj.Idcountry);
 
                 ret = true;
             }

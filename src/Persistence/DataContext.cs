@@ -49,12 +49,103 @@ namespace Persistence
         public virtual DbSet<Logo> Logos{ get; set; } = null!;
         public virtual DbSet<RegJobVacWorkPermit> RegJobVacWorkPermits { get; set; } = null!;
         public virtual DbSet<JobVacancyLanguage> JobVacancyLanguages { get; set; } = null!;
-        
-
+        public virtual DbSet<AtsmanagerAdminRegion> AtsmanagerAdminRegions { get; set; } = null!;
+        public virtual DbSet<Title> Titles { get; set; } = null!;
+        public virtual DbSet<TitleLang> TitleLangs { get; set; } = null!;
+        public virtual DbSet<TitlesRelationship> TitlesRelationships { get; set; } = null!;
+        public virtual DbSet<CampaignsManagement> CampaignManagements { get; set; } = null!;
+        public virtual DbSet<CampaignSetting> CampaignSettings { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.UseCollation("Modern_Spanish_CI_AS");
+
+
+            modelBuilder.Entity<CampaignsManagement>(entity =>
+            {
+                entity.ToTable("CampaignManagement");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.Budget).HasColumnType("decimal(18, 0)");
+
+                entity.Property(e => e.ExternalCampaignId).HasMaxLength(150);
+
+                entity.Property(e => e.IdjobVacancy).HasColumnName("IDjobVacancy");                
+
+                entity.Property(e => e.LastModificationDate).HasColumnType("datetime");
+
+                entity.Property(e => e.Provider).HasMaxLength(50);
+            });
+
+            modelBuilder.Entity<CampaignSetting>(entity =>
+            {
+                entity.Property(e => e.Budget).HasColumnType("decimal(18, 0)"); 
+                
+            });
+
+            modelBuilder.Entity<TitlesRelationship>(entity =>
+            {
+                entity.Property(e => e.Id).HasColumnName("Id");
+                entity.Property(e => e.JobTitleId).HasColumnName("JobTitleId");
+                entity.Property(e => e.JobTitleEquivalentId).HasColumnName("JobTitleEquivalentId");
+                entity.Property(e => e.Weight).HasColumnName("Weight");
+                
+            });
+
+
+            modelBuilder.Entity<Title>(entity =>
+            {
+                entity.ToTable("Titles");
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.Description).HasMaxLength(100);
+
+                entity.Property(e => e.Isco08)
+                    .HasMaxLength(20)
+                    .HasColumnName("ISCO-08")
+                    .IsFixedLength();
+                
+                entity.Property(e => e.Isco88)
+                    .HasMaxLength(20)
+                    .HasColumnName("ISCO-88")
+                    .IsFixedLength();
+            });
+
+            modelBuilder.Entity<TitleLang>(entity =>
+            {
+                
+                entity.ToTable("TitleLangs");
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Id).ValueGeneratedOnAdd();
+
+                entity.Property(e => e.Label)
+                    .HasMaxLength(100)
+                    .IsUnicode(false)
+                    .HasColumnName("LABEL");
+                
+                entity.Property(e => e.LanguageId).HasColumnName("LANGUAGE_ID");
+
+                entity.Property(e => e.TitleId).HasColumnName("TITLE_ID");
+
+                entity.HasOne(d => d.Title)
+                    .WithMany()
+                    .HasForeignKey(d => d.TitleId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_TitleLangs_Titles");
+            });
+
+            modelBuilder.Entity<AtsmanagerAdminRegion>(entity =>
+            {
+                entity.HasKey(e => new { e.CompanyId, e.ManagerId, e.RegionId, e.CountryId });
+
+                entity.ToTable("ATSManagerAdminRegions");
+
+                entity.Property(e => e.ManagerId).HasColumnName("ManagerID");
+
+                entity.Property(e => e.RegionId).HasColumnName("RegionID");
+            });
 
             modelBuilder.Entity<City>(entity =>
             {
@@ -183,6 +274,7 @@ namespace Persistence
                 entity.Property(e => e.BaseName).HasMaxLength(50);
 
                 entity.Property(e => e.ChkActive).HasColumnName("chkActive");
+                entity.Property(e => e.IscoDefault).HasColumnName("IscoDefault");
 
                 entity.Property(e => e.Subdomain).HasMaxLength(50);
 
@@ -1196,7 +1288,8 @@ namespace Persistence
 
                 entity.Property(e => e.UpdatingDate).HasColumnType("datetime");
 
-                entity.Property(e => e.AimwelCampaignId).HasColumnType("AimwelCampaignId");
+                entity.Property(e => e.Isco).HasColumnName("Isco");
+                entity.Property(e => e.TitleId).HasColumnName("TitleId");
             });
 
             modelBuilder.Entity<Product>(entity =>

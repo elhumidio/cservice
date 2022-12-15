@@ -1,10 +1,14 @@
 using Domain.Enums;
+using DPGRecruitmentCampaignClient;
+using Microsoft.Extensions.Configuration;
 using System.Text.RegularExpressions;
+
 
 namespace Application.Utils
 {
     public class ApiUtils
     {
+        
         public static bool IsValidEmail(string _email)
         {
             var regex = @"^[a-z0-9!#$%&' * +/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$";
@@ -19,6 +23,78 @@ namespace Application.Utils
             {
                 return false;
             }
+        }
+        public static Uri GetUriBySite(int siteId) {
+
+            Uri Uri = new Uri("https://www.turijobs.com");
+            
+            switch (siteId)
+            {
+                case (int)Sites.SPAIN:
+                    Uri = new Uri("https://www.turijobs.com");
+                    break;
+                case (int)Sites.PORTUGAL:
+                    Uri = new Uri("https://www.turijobs.pt") ;
+                    break;
+                case (int)Sites.ITALY:
+                    Uri = new Uri("https://www.turijobs.it");
+                    break;
+
+                case (int)Sites.MEXICO:
+                    Uri = new Uri("https://www.turijobs.com.mx");
+                    break;
+                default:
+                    Uri = new Uri("https://www.turijobs.com");                    
+                    break;
+            }
+            return Uri;
+
+        }
+
+        public static string GetBrandBySite(int siteId)
+        {
+            string brand = string.Empty;
+            switch (siteId)
+            {
+                case (int)Sites.SPAIN:
+                    brand = "turijobs-spain";
+                    break;
+                case (int)Sites.PORTUGAL:
+                    brand  = "turijobs-portugal";
+                    break;
+                case (int)Sites.ITALY:
+                    brand =  "turijobs-italy";
+                    break;  
+
+                case (int)Sites.MEXICO:
+                    brand =  "turijobs-mexico";
+                    break;
+                default:
+                    brand = "turijobs-spain";
+                    break;
+            }
+            return brand;
+
+        }
+
+        public static Language GetLanguageBySite(int siteId)
+        {
+
+            switch (siteId) {
+                case (int)Sites.SPAIN:
+                    return Language.EsEs;
+                    
+                    case (int)Sites.PORTUGAL:
+                    return Language.PtPt;
+                    
+                case (int)Sites.ITALY:
+                    return Language.ItCh;
+                    
+                case (int)Sites.MEXICO:
+                    return Language.EsMx;
+                    default:return Language.EsEs;
+            }
+
         }
 
         public static string GetShortCountryBySite(Sites site)

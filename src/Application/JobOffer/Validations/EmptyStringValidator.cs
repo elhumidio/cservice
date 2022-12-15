@@ -34,28 +34,40 @@ namespace Application.JobOffer.Validations
 
         private bool DescriptionMaxLength(CreateOfferCommand cmd)
         {
-            htmldoc.LoadHtml(cmd.Description);
-            if (cmd.Description.Length > 2499)
+            if (string.IsNullOrEmpty(cmd.Description))
             {
-                if (htmldoc.DocumentNode.InnerText.Length <= 2499)
-                    cmd.Description = htmldoc.DocumentNode.InnerText;
-                else
-                    cmd.Description = htmldoc.DocumentNode.InnerText.Substring(0, 2490);
+                return false;
             }
-            return true;
+            else {
+                htmldoc.LoadHtml(cmd.Description);
+                if (cmd.Description.Length > 2900)
+                {
+                    if (htmldoc.DocumentNode.InnerText.Length <= 2900)
+                        cmd.Description = htmldoc.DocumentNode.InnerText;
+                    else
+                        cmd.Description = htmldoc.DocumentNode.InnerText.Substring(0, 2900);
+                }
+                return true;
+            }
+           
         }
 
         private bool RequirementsMaxLength(CreateOfferCommand cmd)
         {
-            htmldoc.LoadHtml(cmd.Requirements);
-            if (cmd.Requirements.Length > 1999)
+            if (string.IsNullOrEmpty(cmd.Requirements))
+                return true;
+            else
             {
-                if (htmldoc.DocumentNode.InnerText.Length <= 1999)
-                    cmd.Requirements = htmldoc.DocumentNode.InnerText;
-                else
-                    cmd.Requirements = htmldoc.DocumentNode.InnerText.Substring(0, 1999);
+                htmldoc.LoadHtml(cmd.Requirements);
+                if (cmd.Requirements.Length > 2900)
+                {
+                    if (htmldoc.DocumentNode.InnerText.Length <= 2900)
+                        cmd.Requirements = htmldoc.DocumentNode.InnerText;
+                    else
+                        cmd.Requirements = htmldoc.DocumentNode.InnerText.Substring(0, 2900);
+                }
+                return true;
             }
-            return true;
         }
     }
 
@@ -87,30 +99,44 @@ namespace Application.JobOffer.Validations
             return true;
         }
 
-        private bool DescriptionMaxLength(UpdateOfferCommand cmd)
-        {
-            htmldoc.LoadHtml(cmd.Description);
-            if (cmd.Description.Length > 2499)
-            {
-                if (htmldoc.DocumentNode.InnerText.Length <= 2499)
-                    cmd.Description = htmldoc.DocumentNode.InnerText;
-                else
-                    cmd.Description = htmldoc.DocumentNode.InnerText.Substring(0, 2490);
-            }
-            return true;
-        }
-
         private bool RequirementsMaxLength(UpdateOfferCommand cmd)
         {
-            htmldoc.LoadHtml(cmd.Requirements);
-            if (cmd.Requirements.Length > 1999)
+            if (string.IsNullOrEmpty(cmd.Requirements))
             {
-                if (htmldoc.DocumentNode.InnerText.Length <= 1999)
-                    cmd.Requirements = htmldoc.DocumentNode.InnerText;
-                else
-                    cmd.Requirements = htmldoc.DocumentNode.InnerText.Substring(0, 1999);
+                return true;
             }
-            return true;
+            else
+            {
+                htmldoc.LoadHtml(cmd.Requirements);
+                if (cmd.Requirements.Length > 2900)
+                {
+                    if (htmldoc.DocumentNode.InnerText.Length <= 2900)
+                        cmd.Requirements = htmldoc.DocumentNode.InnerText;
+                    else
+                        cmd.Requirements = htmldoc.DocumentNode.InnerText.Substring(0, 2900);
+                }
+                return true;
+            }
+        }
+
+        private bool DescriptionMaxLength(UpdateOfferCommand cmd)
+        {
+            if (string.IsNullOrEmpty(cmd.Description))
+            {
+                return false;
+            }
+            else {
+                htmldoc.LoadHtml(cmd.Description);
+                if (cmd.Description.Length > 2900)
+                {
+                    if (htmldoc.DocumentNode.InnerText.Length <= 2900)
+                        cmd.Description = htmldoc.DocumentNode.InnerText;
+                    else
+                        cmd.Description = htmldoc.DocumentNode.InnerText.Substring(0, 2900);
+                }
+                return true;
+            }
+            
         }
     }
 }

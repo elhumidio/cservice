@@ -72,6 +72,7 @@ namespace Domain.Entities
         public int? IdClosingReason { get; set; }
         public DateTime? LastVisitorDate { get; set; }
         public string? IntegrationId { get; set; }
-        public string? AimwelCampaignId { get; set; }
+        public int? Isco { get; set; }
+        public int? TitleId { get; set; }
     }
 }

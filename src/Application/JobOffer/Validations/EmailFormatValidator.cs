@@ -8,8 +8,7 @@ namespace Application.JobOffer.Validations
     {
         public EmailFormatValidator()
         {
-            RuleFor(command => command.IntegrationData.ApplicationEmail).Must(IsRightFormat).WithMessage("ApplicationEmail is wrongly formatted.\n");
-            RuleFor(command => command.IntegrationData.ApplicationEmail).EmailAddress().WithMessage("ApplicationEmail is wrongly formatted.\n");
+            RuleFor(command => command.IntegrationData.ApplicationEmail).Must(IsRightFormat).WithMessage("ApplicationEmail is wrongly formatted.\n");            
         }
 
         private static bool IsRightFormat(string _email)

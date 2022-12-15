@@ -1,5 +1,7 @@
+using Domain.DTO;
 using Domain.Entities;
 using Domain.Repositories;
+using Microsoft.EntityFrameworkCore;
 
 namespace Persistence.Repositories
 {
@@ -10,6 +12,19 @@ namespace Persistence.Repositories
         public BrandRepository(DataContext dataContext)
         {
             _dataContext = dataContext;
+        }
+
+        public async Task<List<BrandDto>> GetAllBrands()
+        {
+            var brandsList = _dataContext.Brands
+                .Join(_dataContext.Enterprises, b => new { b.Identerprise }, e => new { e.Identerprise }, (b, e) => new { b, e })
+                .Join(_dataContext.Contracts, c => c.e.Identerprise, pl => pl.Identerprise, (c, pl) => new { c, pl })
+                .Where(ent => (bool)ent.c.e.ChkActive && ent.c.e.Idstatus == 1 && ent.pl.ChkApproved && ent.pl.FinishDate > DateTime.Now.AddDays(-180))         
+                .Select(a => new BrandDto {IDBrand = a.c.b.Idbrand, IDEnterprise = a.c.e.Identerprise,Name = a.c.b.Name} ).ToListAsync();
+
+            var result = await brandsList;
+            var distincted = result.DistinctBy(a => a.IDEnterprise).ToList();
+            return distincted;
         }
 
         public List<int> GetBrands(int companyId)

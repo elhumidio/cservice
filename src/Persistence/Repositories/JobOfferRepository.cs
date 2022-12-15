@@ -43,7 +43,7 @@ namespace Persistence.Repositories
             return query;
         }
 
-        public Task<int> UpdateOffer(JobVacancy jobUpdated)
+        public async Task<int> UpdateOffer(JobVacancy jobUpdated)
         {
             try
             {
@@ -51,16 +51,16 @@ namespace Persistence.Repositories
                 if (current != null)
                 {
                     current = jobUpdated;
-                    var ret = _dataContext.SaveChangesAsync();
+                    var ret = await _dataContext.SaveChangesAsync();
                     return ret;
                 }
-                else return Task.FromResult(-1);
+                else return -1;
             }
             catch (Exception ex)
             {
                 string message = $"Message: {ex.Message} - InnerException: {ex.InnerException} - StackTrace: {ex.StackTrace}";
                 _logger.LogError(message: message);
-                return Task.FromResult(-1);
+                return -1;
             }
         }
 
@@ -103,23 +103,18 @@ namespace Persistence.Repositories
 
         public JobVacancy GetOfferById(int id)
         {
-            var offer = _dataContext.JobVacancies.Where(o => o.IdjobVacancy == id).FirstOrDefault();
-            return offer;
+            try {
+                var offer = _dataContext.JobVacancies.FirstOrDefault(o => o.IdjobVacancy == id);
+                if (offer == null)
+                    return new JobVacancy();
+                else return offer;
+            }
+            catch (Exception ex) {
+                return new JobVacancy();
+            }
+            
         }
 
-        /// <summary>
-        /// It Returns aimwel id by idjobvacancy
-        /// </summary>
-        /// <param name="jobId"></param>
-        /// <returns></returns>
-        public string AimwelIdByJobId(int jobId)
-        {
-            string aimwelId = string.Empty;
-            var offer = _dataContext.JobVacancies.Where(v => v.IdjobVacancy == jobId).FirstOrDefault();
-            if (offer != null)
-                aimwelId = offer.AimwelCampaignId;
-            return aimwelId;
-        }
 
         public int Add(JobVacancy job)
         {
@@ -140,7 +135,7 @@ namespace Persistence.Repositories
         public IQueryable<JobVacancy> GetActiveOffersByContractAndManagerNoPack(int contractId, int managerId)
         {
             var query = _dataContext.JobVacancies.Where(a => a.Idcontract == contractId
-                 && a.IdenterpriseUserG == managerId && a.Idstatus == (int)OfferStatus.Active);
+                 && a.IdenterpriseUserG == managerId && a.Idstatus != (int)OfferStatus.Deleted);
 
             return query;
         }
@@ -190,7 +185,7 @@ namespace Persistence.Repositories
         {
             var query = _dataContext.JobVacancies.Where(a => a.Idcontract == contractId
             && a.IdjobVacType == type
-            && a.Idstatus == (int)OfferStatus.Active);
+            && a.Idstatus != (int)OfferStatus.Deleted);
             return query;
         }
 
@@ -199,8 +194,7 @@ namespace Persistence.Repositories
             var query = _dataContext.JobVacancies.Where(a => a.Idcontract == contractId
             && a.IdenterpriseUserG == owner
             && a.IdjobVacType == type
-            && a.FinishDate >= DateTime.Today
-            && a.Idstatus == (int)OfferStatus.Active);
+            && a.Idstatus != (int)OfferStatus.Deleted);
             return query;
         }
 
@@ -222,11 +216,11 @@ namespace Persistence.Repositories
 
         public Task<List<JobData>> GetAllJobs()
         {
-            var catstr = "";
-            var catstrEn = "";
+            DateTime DateNow = DateTime.Now;
 
             var query = (from job in _dataContext.JobVacancies
                          join brand in _dataContext.Brands on job.Idbrand equals brand.Idbrand
+                         join logo in _dataContext.Logos on job.Identerprise equals logo.Identerprise
                          where !job.ChkDeleted
                                 && !job.ChkFilled
                                 && job.PublicationDate < DateTime.Now
@@ -242,20 +236,15 @@ namespace Persistence.Repositories
                              IDJobVacancy = job.IdjobVacancy,
                              IDBrand = job.Idbrand,
                              IDEnterprise = job.Identerprise,
+                             IDSite = job.Idsite,
                              ChkBlindVacancy = job.ChkBlindVac,
                              PublicationDate = job.PublicationDate,
                              City = job.City,
                              IDCity = (job.Idcity.HasValue) ? job.Idcity.Value : 0,
-                             Category = job.Idarea.ToString(), //area.BaseName
-                             //CategoryMoreJobs = catstr + area.BaseName,
+                             ActiveDays = (int)DateTime.Now.Subtract(job.PublicationDate).TotalDays,
+                             Description = "",
+                             Logo = logo.UrlImgBig,
                          });
-
-            //LOCATION = job.IDRegion == 61 ? country.BaseName : region.BaseName + ", " + country.BaseName,
-            //CATEGORY = area.BaseName,
-            //CATEGORY_EN = areaEn.BaseName,
-            //LOCATION_EN = job.IDRegion == 61 ? country.BaseName : regionEn.BaseName + ", " + country.BaseName,
-            //CATEGORY_MORE_JOBS = catstr + area.BaseName,
-            //CATEGORY_MORE_JOBS_EN = catstrEn + areaEn.BaseName,
 
             return query.ToListAsync();
         }

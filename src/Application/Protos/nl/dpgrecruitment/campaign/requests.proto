@@ -15,8 +15,7 @@ message CreateCampaignRequest {
     gt_now: true
   }]; // The campaign will be ended at this time.
   oneof campaign_goal {
-    ConversionTarget conversion_target = 10; // The goal of the campaign with its associated settings (only provide one)
-    BudgetBestEffort budget_best_effort = 11; // The goal of the campaign with its associated settings (only provide one)
+    BudgetBestEffort budget_best_effort = 11; // The goal of the campaign with its associated settings (only one option supported for now)
   }
   repeated string excluded_channels = 12; // Name of channels that you want to exclude from this campaign. Check GetChannels endpoint to retrieve a list of available channels
   repeated ChannelType excluded_channel_types = 13; // Types of channels you want to exclude from this campaign.
@@ -43,4 +42,9 @@ message UpdateJobContentRequest {
 
 message GetCampaignRequest {
   string campaign_id = 1 [(validate.rules).string.uuid = true]; // Unique identifier for the campaign
+}
+
+message GetChannelsRequest {
+  Brand brand = 1; // optional brand
+  Settings settings = 2; // optional settings, only allowed to have a value if brand is given
 }

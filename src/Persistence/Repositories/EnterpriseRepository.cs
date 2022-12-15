@@ -1,5 +1,6 @@
 using Domain.Enums;
 using Domain.Repositories;
+using API.DataContext;
 
 namespace Persistence.Repositories
 {
@@ -16,8 +17,8 @@ namespace Persistence.Repositories
         {
             var enterprises = _dataContext.Enterprises.Where(e => e.Identerprise == enterpriseId
             && e.ChkActive != null
-            && e.ChkActive == true
-            && e.Idstatus == (int)EnterpriseStatus.Active);
+            && e.ChkActive == true);
+            //&& e.Idstatus == (int)EnterpriseStatus.Active);
             return enterprises != null && enterprises.Any();
         }
 
@@ -39,6 +40,14 @@ namespace Persistence.Repositories
                 site = (int)company.SiteId;
             }
             return site;
+        }
+
+        public API.DataContext.Enterprise Get(int companyId) {
+
+            var company = _dataContext.Enterprises.FirstOrDefault(c => c.Identerprise == companyId);
+            if (company != null)
+                return company;
+            else return null;
         }
 
         public string GetCompanyName(int companyId)

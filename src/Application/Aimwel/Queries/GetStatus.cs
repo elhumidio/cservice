@@ -26,9 +26,7 @@ namespace Application.Aimwel.Queries
 
             public async Task<GetCampaignResponse> Handle(Query request, CancellationToken cancellationToken)
             {
-                var jobdto = new JobOfferDto();
-                var job = _offerRepo.GetOfferById(request.OfferId);
-                var response = await _manageCampaign.GetCampaignState(job.IdjobVacancy);
+                var response = await _manageCampaign.GetCampaignState(request.OfferId);
                 return response;
             }
         }

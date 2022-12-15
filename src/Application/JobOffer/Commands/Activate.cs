@@ -43,12 +43,14 @@ namespace Application.JobOffer.Commands
                 _contractProductRepo = contractProductRepo;
                 _mediatr = mediatr;                
                 _mapper = mapper;   
-            }
+            }   
 
             public async Task<OfferModificationResult> Handle(Command request, CancellationToken cancellationToken)
             {
+
                 string msg = string.Empty;
-                bool aimwelEnabled = Convert.ToBoolean(_config["Aimwel:EnableAimwel"]);
+                bool aimwelEnabled = Convert.ToBoolean(_config["Aimwel:EnableAimwel"]);                
+                int[] aimwelEnabledSites = _config["Aimwel:EnabledSites"].Split(',').Select(h => Int32.Parse(h)).ToArray();
                 bool offerUpdated = false;
                 var job = _offerRepo.GetOfferById(request.id);
 
@@ -86,7 +88,7 @@ namespace Application.JobOffer.Commands
                 }
                 OfferResultDto dto = new OfferResultDto();
                 dto = _mapper.Map(job, dto);
-                bool canModifyCampaign = aimwelEnabled && offerUpdated;
+                bool canModifyCampaign = aimwelEnabled && offerUpdated && aimwelEnabledSites.Contains(job.Idsite);
 
                 if (canModifyCampaign)
                 {
