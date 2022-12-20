@@ -15,6 +15,11 @@ enum Currency {
   UNDEFINED = 0;
   EUR = 1; // Default
   GBP = 2;
+  USD = 3;
+  NZD = 4;
+  TRY = 5;
+  ARS = 6;
+  CHF = 7;
 }
 
 message Money {
@@ -93,6 +98,10 @@ enum Country {
   PT = 10;
   CH = 11;
   MX = 12;
+  NZ = 13;
+  IT = 14;
+  AR = 15;
+  TR = 16;
 }
 
 enum Language {
@@ -106,6 +115,10 @@ enum Language {
   FR_CH = 7;
   IT_CH = 8;
   ES_MX = 9;
+  EN_NZ = 10;
+  IT_IT = 11;
+  ES_AR = 12;
+  TR_TR = 13;
 }
 
 message Advertisement {
