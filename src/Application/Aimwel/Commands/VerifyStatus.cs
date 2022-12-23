@@ -16,24 +16,24 @@ namespace Application.Aimwel.Commands
 {
     public class VerifyStatus
     {
-        public class Command : IRequest<Result<bool>>
+        public class Query : IRequest<Result<bool>>
         {
             
         }
 
-        public class Handler : IRequestHandler<Command, Result<bool>>
+        public class Handler : IRequestHandler<Query, Result<bool>>
         {
             private readonly IAimwelCampaign _manageCampaign;
             private readonly IJobOfferRepository _jobOfferRepository;
             private readonly ICampaignsManagementRepository _campaignsManagementRepository;
             private readonly IApplicationService _applicationService;
-            private readonly ILogger _logger;
+            private readonly ILogger<Handler> _logger;
 
 
             public Handler(IAimwelCampaign aimwelCampaign,
                 IJobOfferRepository jobOfferRepository,
                 ICampaignsManagementRepository campaignsManagementRepository,
-                IApplicationService applicationService, ILogger logger)
+                IApplicationService applicationService, ILogger<Handler> logger)
             {
                 _manageCampaign = aimwelCampaign;
                 _jobOfferRepository = jobOfferRepository;
@@ -42,7 +42,7 @@ namespace Application.Aimwel.Commands
                 _logger = logger;
             }
 
-            public async Task<Result<bool>> Handle(Command request, CancellationToken cancellationToken)
+            public async Task<Result<bool>> Handle(Query request, CancellationToken cancellationToken)
             {
                 var offers = await _jobOfferRepository.GetOffersCreatedLastFortnight();
                 

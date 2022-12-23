@@ -164,9 +164,10 @@ namespace TURI.Contractservice.Controllers
         [HttpGet]
         public async Task<IActionResult> VerifyCampaignsStatus()
         {
+            var response = await Mediator.Send(new VerifyStatus.Query {
+            });
 
-
-            return Ok();    
+            return Ok(response);    
         }
     }
 }

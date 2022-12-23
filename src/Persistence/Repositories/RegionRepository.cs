@@ -25,6 +25,21 @@ namespace Persistence.Repositories
             return region;
         }
 
+        public int GetLastRegionId()
+        {
+            try
+            {
+                var id = _dataContext.Regions.OrderBy(r => r.Idregion).Last().Idregion;
+                return id;
+
+            }
+            catch (Exception ex)
+            {
+                return -1;
+            }
+
+        }
+
         public async Task<int> Add(Region _region)
         {
             try

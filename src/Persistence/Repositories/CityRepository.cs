@@ -1,3 +1,4 @@
+using Domain.Entities;
 using Domain.Repositories;
 using System;
 using System.Collections.Generic;
@@ -24,5 +25,20 @@ namespace Persistence.Repositories
                 cityName = city.Name;
             return cityName;
         }
+        public async Task<int> Add(City _city)
+        {
+
+            try
+            {
+                var a = _dataContext.Add(_city).Entity;
+                var ret = await _dataContext.SaveChangesAsync();
+                return _city.Idcity;
+            }
+            catch (Exception ex)
+            {
+                return -1;
+            }
+        }
+
     }
 }

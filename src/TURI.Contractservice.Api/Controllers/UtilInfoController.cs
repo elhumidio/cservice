@@ -41,7 +41,22 @@ namespace API.Controllers
                 Email = email
             });
             return HandleResult(result);
-        }     
+        }
+
+        [HttpGet("{companyId}", Name = "GetCompanyInfoById")]
+        public async Task<IActionResult> GetCompanyByCompanyId(int companyId)
+        {
+            var result = await Mediator.Send(new GetCompanyInfoById.Query
+            {
+                 CompanyId  = companyId
+            });
+            return HandleResult(result);
+        }
+
+        public async Task<IActionResult> GetIdsbyZipCode(string ZipCode)
+        {
+
+        }
 
 
         [HttpGet("{siteId}/{languageId}", Name = "GetAreas")]

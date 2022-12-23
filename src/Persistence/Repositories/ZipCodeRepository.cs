@@ -78,5 +78,12 @@ namespace Persistence.Repositories
                 cityId = (int)code.Idcity;
             return cityId;
         }
+
+        public async Task<ZipCode> GetZipCodeByZipAndCountry(string zip, int country)
+        {
+            var zipcode = _dataContext.ZipCodes.FirstOrDefault(z => z.Zip == zip && z.Idcountry == country);
+            return zipcode;
+        }
+
     }
 }

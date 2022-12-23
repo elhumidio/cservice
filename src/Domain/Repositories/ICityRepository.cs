@@ -1,3 +1,4 @@
+using Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,5 +10,6 @@ namespace Domain.Repositories
     public interface ICityRepository
     {
         public string GetName(int cityId);
+        public Task<int> Add(City _zip);
     }
 }

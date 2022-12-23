@@ -18,5 +18,6 @@ namespace Domain.Repositories
 
         public ZipCode GetZipById(int zipcodeId);
         public int GetIdCityByZipCodeAnCountry(string zipcode, int countryId);
+        public Task<ZipCode> GetZipCodeByZipAndCountry(string zip, int country);
     }
 }
