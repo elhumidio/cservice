@@ -11,7 +11,7 @@ namespace Domain.Repositories
         public int GetCountryByRegion(int regionId);
 
         public IQueryable<Region> GetRegions(int siteId, int languageId);
-
+        public int GetLastRegionId();
         public int GetCountry(int _region);
         public Task<int> Add(Region _region);
     }

@@ -80,8 +80,9 @@ namespace Persistence
 
             modelBuilder.Entity<CampaignSetting>(entity =>
             {
-                entity.Property(e => e.Budget).HasColumnType("decimal(18, 0)"); 
-                
+                entity.Property(e => e.Budget).HasColumnType("decimal(18, 0)");
+                entity.Property(e => e.SiteId).HasColumnName("SiteId");
+
             });
 
             modelBuilder.Entity<TitlesRelationship>(entity =>

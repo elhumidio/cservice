@@ -243,13 +243,13 @@ namespace Application.Aimwel
                         },
                         Location = new Geolocation
                         {
-                            CountryIso = Country.Gb,
+                            CountryIso = Country.Es,
                             Latitude = geolocation.postalCodes.FirstOrDefault().lat,
                             Longitude = geolocation.postalCodes.FirstOrDefault().lng,
                         },
                         Address = new Address
                         {
-                            CountryIso = Country.Nl,
+                            CountryIso = Country.Es,
                             State = geolocation.postalCodes.FirstOrDefault().adminName2,
                             City = geolocation.postalCodes.FirstOrDefault().placeName,
                             Street = "",

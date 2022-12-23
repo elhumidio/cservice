@@ -6,6 +6,7 @@ using Application.JobOffer.Commands;
 using Application.JobOffer.Queries;
 using Domain.Repositories;
 using FluentValidation.AspNetCore;
+using Infraestructure;
 using Infraestructure.Integrations;
 using MediatR;
 using MediatR.Extensions.FluentValidation.AspNetCore;
@@ -73,6 +74,7 @@ namespace API.Extensions
             services.AddScoped<IATSManagerAdminRepository, ATSManagerAdminRepository>();
             services.AddScoped<ITitleRepository, TitleRepository>();
             services.AddScoped<ICampaignsManagementRepository, CampaignsManagementRepository>();
+            services.AddScoped<IApplicationService, ApplicationService>();
             #endregion MAPPING REPOSITORIES
 
             services.AddScoped<IGeoNamesConector, GeoNamesConector>();
