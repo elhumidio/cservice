@@ -19,7 +19,7 @@ namespace Infraestructure
 
             _config = configuration;
         }
-       /* public async Task<GoogleLocation> GetGooglelocationByPlace(string place, string country)
+        /*public async Task<GoogleLocation> GetGooglelocationByPlace(string place, string country)
         {
             var serviceURL = _config["InternalService:GetLocationByPlace"];
             Uri serviceUri = GetURL(serviceURL, $"GetGoogleLocationByPlace");

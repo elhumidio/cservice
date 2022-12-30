@@ -1,4 +1,5 @@
 using Domain.Repositories;
+using Microsoft.Data.SqlClient.DataClassification;
 
 namespace Persistence.Repositories
 {
@@ -18,5 +19,10 @@ namespace Persistence.Repositories
                 return countries.FirstOrDefault().Iso;
             else return string.Empty;
         }
+
+        /*public string GetCountryNameByCountryId(int countryId)
+        {
+            var countries = _dataContext.CountryIsos.Where(c => c.Idcountry == countryId);
+        }*/
     }
 }

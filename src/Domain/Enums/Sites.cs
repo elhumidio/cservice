@@ -1,6 +1,6 @@
 namespace Domain.Enums
 {
-    public enum Sites
+    public enum Sites :int 
     {
         SPAIN = 6,
         PORTUGAL = 8,
