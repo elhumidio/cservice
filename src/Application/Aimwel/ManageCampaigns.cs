@@ -84,26 +84,31 @@ namespace Application.Aimwel
         {
             GrpcChannel channel;
             var campaign = await _campaignsManagementRepo.GetCampaignManagement(jobId);
-            campaign.Status = (int)AimwelStatus.CANCELED;
-            campaign.LastModificationDate = DateTime.UtcNow;
-            campaign.ModificationReason = (int)CampaignModificationReason.FILED;
-            await _campaignsManagementRepo.Update(campaign);
-
-            if (string.IsNullOrEmpty(campaign.ExternalCampaignId))
+            if (campaign != null)
             {
-                return false;
+                campaign.Status = (int)AimwelStatus.CANCELED;
+                campaign.LastModificationDate = DateTime.UtcNow;
+                campaign.ModificationReason = (int)CampaignModificationReason.FILED;
+                await _campaignsManagementRepo.Update(campaign);
+
+                if (string.IsNullOrEmpty(campaign.ExternalCampaignId))
+                {
+                    return false;
+                }
+                else
+                {
+                    var client = GetClient(out channel);
+                    var request = new EndCampaignRequest
+                    {
+                        CampaignId = campaign.ExternalCampaignId
+                    };
+
+                    var ret = await client.EndCampaignAsync(request);
+                    return true;
+                }
             }
             else
-            {
-                var client = GetClient(out channel);
-                var request = new EndCampaignRequest
-                {
-                    CampaignId = campaign.ExternalCampaignId
-                };
-
-                var ret = await client.EndCampaignAsync(request);
                 return true;
-            }
         }
 
         /// <summary>

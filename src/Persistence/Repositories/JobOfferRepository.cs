@@ -132,6 +132,17 @@ namespace Persistence.Repositories
             }
         }
 
+
+        public IQueryable<JobVacancy> GetActiveOffers()
+        {
+            var query = _dataContext.JobVacancies.Where(a => !a.ChkDeleted
+            && !a.ChkFilled
+            && a.FinishDate >= DateTime.Today
+            && a.Idstatus == (int)OfferStatus.Active);
+            return query;
+        }
+
+
         public IQueryable<JobVacancy> GetActiveOffersByContractAndManagerNoPack(int contractId, int managerId)
         {
             var query = _dataContext.JobVacancies.Where(a => a.Idcontract == contractId
@@ -213,6 +224,7 @@ namespace Persistence.Repositories
 
             return res;
         }
+
 
         public Task<List<JobData>> GetAllJobs()
         {

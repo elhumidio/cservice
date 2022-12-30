@@ -169,5 +169,25 @@ namespace TURI.Contractservice.Controllers
 
             return Ok(response);    
         }
+
+
+        /// <summary>
+        /// Actualiza el estado de las campañas
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet()]
+        public async Task<IActionResult> CampaignStatusUpdater()
+        {
+            try
+            {
+                var response = await Mediator.Send(new Updater.Command { });
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return Ok(ex.Message);
+            }
+        }
+
     }
 }
