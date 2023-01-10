@@ -21,15 +21,14 @@ namespace Application.EnterpriseContract.Queries
         public class Handler : IRequestHandler<Query, Result<CompanyinfoDto>>
         {
             private readonly IEnterpriseUserRepository _enterpriseUserRepository;
-            private readonly IBrandRepository _brandRepository;
-            private readonly IUserRepository _userRepository;
+            private readonly IBrandRepository _brandRepository;            
             private readonly IEnterpriseRepository _enterpriseRepository;
 
-            public Handler(IEnterpriseUserRepository enterpriseUserRepo, IBrandRepository brandRepo, IUserRepository userRepo, IEnterpriseRepository enterpriseRepository)
+            public Handler(IEnterpriseUserRepository enterpriseUserRepo, IBrandRepository brandRepo, IEnterpriseRepository enterpriseRepository)
             {
                 _enterpriseUserRepository = enterpriseUserRepo;
                 _brandRepository = brandRepo;
-                _userRepository = userRepo;
+                
                 _enterpriseRepository = enterpriseRepository;
             }
 
@@ -40,12 +39,16 @@ namespace Application.EnterpriseContract.Queries
                      CompanyId = request.CompanyId, 
                 };
                 UserInfoDto user = _enterpriseUserRepository.GetIDSUserByCompanyId(obj.CompanyId);
-                obj.IDSUser = user.IDSUser;
-                obj.IDEnterpriseUser = _enterpriseUserRepository.GetCompanyUserIdByUserId(obj.IDSUser);
-                obj.Brands = _brandRepository.GetBrands(obj.CompanyId);
-                obj.UserEmail = user.Email;
-                obj.SiteId = _enterpriseRepository.GetSite(obj.CompanyId);
-                return Result<CompanyinfoDto>.Success(await Task.FromResult(obj));
+                if (user != null) {
+                    obj.IDSUser = user.IDSUser;
+                    obj.IDEnterpriseUser = _enterpriseUserRepository.GetCompanyUserIdByUserId(obj.IDSUser);
+                    obj.Brands = _brandRepository.GetBrands(obj.CompanyId);
+                    obj.UserEmail = user.Email;
+                    obj.SiteId = _enterpriseRepository.GetSite(obj.CompanyId);
+                    return Result<CompanyinfoDto>.Success(await Task.FromResult(obj));
+                }
+                else return Result<CompanyinfoDto>.Failure("Such company doesn't exists");
+
             }
         }
     }

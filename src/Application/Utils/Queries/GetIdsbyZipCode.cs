@@ -1,16 +1,8 @@
 using Application.Core;
 using Application.Interfaces;
 using Domain.DTO;
-using Domain.Entities;
 using Domain.Repositories;
-using DPGRecruitmentCampaignClient;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics.Metrics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.Utils.Queries
 {
@@ -21,6 +13,7 @@ namespace Application.Utils.Queries
             public string ZipCode { get; set; }
             public int CountryId { get; set; }
         }
+
         public class Handler : IRequestHandler<GetIds, Result<IdsDto>>
         {
             private readonly IZipCodeRepository _zipCodeRepository;
@@ -45,7 +38,7 @@ namespace Application.Utils.Queries
                 _regionRepo = regionRepository;
                 _cityRepo = cityRepository;
                 _zipCodeRepo = zipCodeRepo;
-                _internalService = internalService; 
+                _internalService = internalService;
             }
 
             public async Task<Result<IdsDto>> Handle(GetIds request, CancellationToken cancellationToken)
@@ -59,9 +52,10 @@ namespace Application.Utils.Queries
                     dto.CountryId = request.CountryId;
                     dto.CityId = (int)zip.Idcity;
                     dto.City = zip.City;
-                
+                    dto.RegionId = zip.Idregion;
                 }
-                else {
+                else
+                {
                     var datacode = _geoNamesConector.GetPostalCodesCollection(request.ZipCode, _countryIsoRepository.GetIsobyCountryId(request.CountryId));
 
                     //Probably useful in the future...
@@ -88,7 +82,7 @@ namespace Application.Utils.Queries
                         {
                             Idregion = regionEnt.Idregion,
                             Idcountry = request.CountryId,
-                            
+
                             //buscar lo de google
                             GoogleId = datacode.postalCodes.First().adminName3,
                             Coordinates = request.GoogleLocationObject.Coordinates,
@@ -110,7 +104,6 @@ namespace Application.Utils.Queries
                         };
                         var idzipcode =  _zipCodeRepo.Add(zip);
                     }*/
-                    
                 }
                 return Result<IdsDto>.Success(dto);
             }

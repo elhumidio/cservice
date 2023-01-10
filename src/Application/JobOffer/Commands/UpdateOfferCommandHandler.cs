@@ -79,7 +79,7 @@ namespace Application.JobOffer.Commands
                 offer.IdzipCode= existentOffer.IdzipCode;
             }
             var entity = _mapper.Map(offer, existentOffer);
-            
+            CityValidation(offer);
                 var ret = await _offerRepo.UpdateOffer(existentOffer);
             var updatedOffer = _mediatr.Send(new GetResult.Query
             {
@@ -120,8 +120,7 @@ namespace Application.JobOffer.Commands
         {
             if (string.IsNullOrEmpty(offer.City.Trim()))
             {
-                if (offer.Idcity != null && offer.Idcity > 0)
-                    offer.City = _cityRepository.GetName((int)offer.Idcity);
+                offer.City = string.Empty;
             }
 
         }

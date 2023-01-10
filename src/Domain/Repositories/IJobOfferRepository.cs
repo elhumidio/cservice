@@ -26,6 +26,8 @@ namespace Domain.Repositories
 
         public int Add(JobVacancy job);
 
+        public IQueryable<JobVacancy> GetActiveOffers();
+                
         public JobVacancy GetOfferById(int id);
 
         Task<int> UpdateOffer(JobVacancy jobUpdated);

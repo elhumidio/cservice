@@ -169,6 +169,7 @@ namespace Application.JobOffer.Commands
             {
                 if (offer.Idcity != null && offer.Idcity > 0)
                     offer.City = _cityRepository.GetName((int)offer.Idcity);
+                else offer.City = string.Empty;
             }
         }
 

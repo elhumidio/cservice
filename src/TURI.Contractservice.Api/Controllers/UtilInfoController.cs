@@ -5,6 +5,7 @@ using Application.Core;
 using Application.EnterpriseContract.Queries;
 using Application.JobOffer.Queries;
 using Application.Utils;
+using Application.Utils.Queries;
 using Domain.DTO;
 using Domain.Entities;
 using DPGRecruitmentCampaignClient;
@@ -17,13 +18,13 @@ namespace API.Controllers
     public class UtilInfoController : BaseApiController
     {
 
-        private readonly IMemoryCache _cache;           
+        private readonly IMemoryCache _cache;
         public IHostEnvironment _env;
 
         public UtilInfoController(IHostEnvironment env, IMemoryCache memoryCache)
         {
             _env = env;
-            _cache = memoryCache; 
+            _cache = memoryCache;
         }
 
         [HttpGet]
@@ -48,14 +49,20 @@ namespace API.Controllers
         {
             var result = await Mediator.Send(new GetCompanyInfoById.Query
             {
-                 CompanyId  = companyId
+                CompanyId = companyId
             });
             return HandleResult(result);
         }
 
-        public async Task<IActionResult> GetIdsbyZipCode(string ZipCode)
-        {
 
+        [HttpGet("{zipCode}/{countryId}")] 
+        public async Task<IActionResult> GetIdsbyZipCodeAndCountry(string zipCode,int countryId)
+        {
+            var result = await Mediator.Send(new GetIdsbyZipCode.GetIds {
+                 CountryId = countryId,
+                  ZipCode = zipCode
+            });
+            return HandleResult(result);
         }
 
 

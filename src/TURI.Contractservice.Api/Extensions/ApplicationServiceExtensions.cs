@@ -75,8 +75,9 @@ namespace API.Extensions
             services.AddScoped<ITitleRepository, TitleRepository>();
             services.AddScoped<ICampaignsManagementRepository, CampaignsManagementRepository>();
             services.AddScoped<IApplicationService, ApplicationService>();
+            services.AddScoped<IinternalService, InternalService>();
             #endregion MAPPING REPOSITORIES
-
+            
             services.AddScoped<IGeoNamesConector, GeoNamesConector>();
             return services;
         }

@@ -1,4 +1,5 @@
 using Application.Aimwel.Interfaces;
+using Application.DTO.GeoNames;
 using Application.Interfaces;
 using Application.Utils;
 using Domain.Entities;
@@ -25,6 +26,9 @@ namespace Application.Aimwel
         private readonly ICountryIsoRepository _countryIsoRepo;
         private readonly ICampaignsManagementRepository _campaignsManagementRepo;
         private readonly IAreaRepository _areaRepository;
+        private readonly IRegionRepository _regionRepo;
+
+        private readonly ICountryRepository _countryRepo;
 
         public ManageCampaigns(IConfiguration config,
             IGeoNamesConector geoNamesConector,
@@ -34,7 +38,10 @@ namespace Application.Aimwel
             IZipCodeRepository zipCodeRepo,
             ICountryIsoRepository countryIsoRepo,
             ICampaignsManagementRepository campaignsManagementRepo,
-            IAreaRepository areaRepository)
+            IAreaRepository areaRepository,
+            IRegionRepository regionRepository,
+
+            ICountryRepository countryRepository)
         {
             _config = config;
             _geoNamesConector = geoNamesConector;
@@ -45,6 +52,9 @@ namespace Application.Aimwel
             _countryIsoRepo = countryIsoRepo;
             _campaignsManagementRepo = campaignsManagementRepo;
             _areaRepository = areaRepository;
+            _regionRepo = regionRepository;
+
+            _countryRepo = countryRepository;
         }
 
         /// <summary>
@@ -84,26 +94,31 @@ namespace Application.Aimwel
         {
             GrpcChannel channel;
             var campaign = await _campaignsManagementRepo.GetCampaignManagement(jobId);
-            campaign.Status = (int)AimwelStatus.CANCELED;
-            campaign.LastModificationDate = DateTime.UtcNow;
-            campaign.ModificationReason = (int)CampaignModificationReason.FILED;
-            await _campaignsManagementRepo.Update(campaign);
-
-            if (string.IsNullOrEmpty(campaign.ExternalCampaignId))
+            if (campaign != null)
             {
-                return false;
+                campaign.Status = (int)AimwelStatus.CANCELED;
+                campaign.LastModificationDate = DateTime.UtcNow;
+                campaign.ModificationReason = (int)CampaignModificationReason.FILED;
+                await _campaignsManagementRepo.Update(campaign);
+
+                if (string.IsNullOrEmpty(campaign.ExternalCampaignId))
+                {
+                    return false;
+                }
+                else
+                {
+                    var client = GetClient(out channel);
+                    var request = new EndCampaignRequest
+                    {
+                        CampaignId = campaign.ExternalCampaignId
+                    };
+
+                    var ret = await client.EndCampaignAsync(request);
+                    return true;
+                }
             }
             else
-            {
-                var client = GetClient(out channel);
-                var request = new EndCampaignRequest
-                {
-                    CampaignId = campaign.ExternalCampaignId
-                };
-
-                var ret = await client.EndCampaignAsync(request);
                 return true;
-            }
         }
 
         /// <summary>
@@ -199,32 +214,131 @@ namespace Application.Aimwel
         /// <returns></returns>
         public async Task<CreateCampaignResponse> CreateCampaing(JobVacancy job)
         {
-            CampaignSetting settings;
-            settings = await _campaignsManagementRepo.GetCampaignSetting(job);
-            if (settings == null)
+            if (job.Idsite == (int)Sites.ITALY || job.Idsite == (int)Sites.MEXICO)
             {
-                settings = new CampaignSetting();
-                settings.Goal = 100;
-                settings.Budget = 0.000m;
-                if (job.Isco == null)
-                {
-                    job.Isco = _areaRepository.GetIscoDefaultFromArea(job.Idarea);
-                }
+                return new CreateCampaignResponse() { CampaignId = String.Empty };
             }
-            GrpcChannel channel;
-            var client = GetClient(out channel);
-            long units = Convert.ToInt64(decimal.Truncate(settings.Budget));
-            int hundredths = settings.Budget == 0.00m ? 0 : ReminderDigits(Convert.ToDouble(settings.Budget), 2);
-            string code = _zipCodeRepo.GetZipById((int)job.IdzipCode).Zip;
-            var urlLogo = $"{_config["Aimwel:Portal.urlRootStatics"]}" +
-                        $"{"/img/"}" +
-                        $"{ApiUtils.GetShortCountryBySite((Sites)job.Idsite)}" +
-                        $"{"/logos/"}" +
-                        $"{_logoRepo.GetLogoByBrand(job.Idbrand).UrlImgBig}";
-            var geolocation = _geoNamesConector.GetPostalCodesCollection(code, _countryIsoRepo.GetIsobyCountryId(job.Idcountry));
-
+            CampaignSetting settings;
             try
             {
+                settings = await _campaignsManagementRepo.GetCampaignSetting(job);
+                if (settings == null)
+                {
+                    settings = new CampaignSetting();
+                    settings.Goal = 100;
+                    settings.Budget = 0.000m;
+                    job.Isco ??= _areaRepository.GetIscoDefaultFromArea(job.Idarea);
+                }
+                GrpcChannel channel;
+                string logo = string.Empty;
+                string urlLogo = string.Empty;
+                var client = GetClient(out channel);
+                double latitude = 0d;
+                double longitude = 0d;
+                string PostalCode = string.Empty;
+                string countryISO = string.Empty;
+                var regionId = _enterpriseRepo.GetCompanyRegion(job.Identerprise);
+                var companyRegion = _regionRepo.Get(regionId);
+                GeoNamesDto geolocation = null;
+                var region = _regionRepo.Get(job.Idregion);
+                long units = Convert.ToInt64(decimal.Truncate(settings.Budget));
+                int hundredths = settings.Budget == 0.00m ? 0 : ReminderDigits(Convert.ToDouble(settings.Budget), 2);
+                var countryName = _countryRepo.GetCountryById(job.Idcountry).BaseName;
+                if (job.IdzipCode == null || job.IdzipCode == -1 || job.IdzipCode == 0)
+                {
+                    if (job.Idcountry == 226)
+                    {
+                        latitude = Convert.ToDouble("40.60704563565361");
+                        longitude = Convert.ToDouble("-4.049663543701172");
+                        PostalCode = "28292";
+                    }
+                    else
+                    {
+                        //TODO get pais by idcountry
+
+                        if (!string.IsNullOrEmpty(job.City))
+                        {
+                            //TODO busqueda por ciudad
+                            countryISO = _countryIsoRepo.GetIsobyCountryId(job.Idcountry);
+                            geolocation = _geoNamesConector.GetPostalCodesCollectionByPlaceName(job.City, countryISO);
+
+                            //if geolocation not GOOGLE will be
+                            if (geolocation != null && geolocation.postalCodes.Any())
+                            {
+                                latitude = geolocation.postalCodes.FirstOrDefault().lat;
+                                longitude = geolocation.postalCodes.FirstOrDefault().lng;
+                                PostalCode = geolocation.postalCodes.FirstOrDefault().postalCode;
+                            }
+                            else
+                            {
+                                countryISO = _countryIsoRepo.GetIsobyCountryId(job.Idcountry);
+                                geolocation = _geoNamesConector.GetPostalCodesCollectionByPlaceName(companyRegion.BaseName.ToLower(), countryISO);
+                                //if geolocation not GOOGLE will be
+                                if (geolocation != null && geolocation.postalCodes.Any())
+                                {
+                                    latitude = geolocation.postalCodes.FirstOrDefault().lat;
+                                    longitude = geolocation.postalCodes.FirstOrDefault().lng;
+                                    PostalCode = geolocation.postalCodes.FirstOrDefault().postalCode;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (job.Idregion == 60)
+                            {
+                                if (regionId != 61)
+                                {
+                                    //TODO get name
+                                    countryISO = _countryIsoRepo.GetIsobyCountryId(job.Idcountry);
+                                    geolocation = _geoNamesConector.GetPostalCodesCollectionByPlaceName(companyRegion.BaseName.ToLower(), countryISO);
+                                    //if geolocation not GOOGLE will be
+                                    if (geolocation != null && geolocation.postalCodes.Any())
+                                    {
+                                        latitude = geolocation.postalCodes.FirstOrDefault().lat;
+                                        longitude = geolocation.postalCodes.FirstOrDefault().lng;
+                                        PostalCode = geolocation.postalCodes.FirstOrDefault().postalCode;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    var code = _zipCodeRepo.GetZipById((int)job.IdzipCode);
+                    latitude = Convert.ToDouble(code.Latitude);
+                    longitude = Convert.ToDouble((code.Longitude));
+                    PostalCode = code.Zip;
+                }
+                var logoEntity = _logoRepo.GetLogoByBrand(job.Idbrand);
+                if (logoEntity == null)
+                {
+                    urlLogo = "https://www.turijobs.com/static/img/global/nologo.png";
+                }
+                else
+                {
+                    logo = logoEntity.UrlImgBig;
+                    urlLogo = $"{_config["Aimwel:Portal.urlRootStatics"]}" +
+                  $"{"/img/"}" +
+                  $"{ApiUtils.GetShortCountryBySite((Sites)job.Idsite)}" +
+                  $"{"/logos/"}" +
+                  $"{logo}";
+                }
+
+                var address = new Address
+                {
+                    CountryIso = job.Idsite == 6
+                           ? Country.Es : job.Idsite == 8
+                           ? Country.Pt : job.Idsite == 11
+                           ? Country.Mx : job.Idsite == 39
+                           ? Country.It : Country.Es,
+                    State = region == null ? companyRegion.Ccaa : region.Ccaa == null ? region.BaseName : region.Ccaa,
+                    City = job.City ?? geolocation.postalCodes.First().adminName3,
+                    Street = "",
+                    Region = region == null ? companyRegion.BaseName : region.BaseName,
+                    PostalCode = PostalCode
+                };
+
                 var request = new CreateCampaignRequest
                 {
                     JobId = job.IdjobVacancy.ToString(),
@@ -244,18 +358,10 @@ namespace Application.Aimwel
                         Location = new Geolocation
                         {
                             CountryIso = Country.Es,
-                            Latitude = geolocation.postalCodes.FirstOrDefault().lat,
-                            Longitude = geolocation.postalCodes.FirstOrDefault().lng,
+                            Latitude = latitude,
+                            Longitude = longitude,
                         },
-                        Address = new Address
-                        {
-                            CountryIso = Country.Es,
-                            State = geolocation.postalCodes.FirstOrDefault().adminName2,
-                            City = geolocation.postalCodes.FirstOrDefault().placeName,
-                            Street = "",
-                            Region = geolocation.postalCodes.FirstOrDefault().adminName1,
-                            PostalCode = geolocation.postalCodes.FirstOrDefault().postalCode
-                        },
+                        Address = address,
                         JobClassification = {
                         new[] {
                             new JobClassificationEntry {

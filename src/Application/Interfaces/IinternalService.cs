@@ -9,6 +9,6 @@ namespace Application.Interfaces
 {
     public interface IinternalService
     {
-        public Task<GoogleLocation> GetGooglelocationByPlace(string place, string country);
+        //public Task<GoogleLocation> GetGooglelocationByPlace(string place, string country);
     }
 }

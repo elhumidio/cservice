@@ -58,5 +58,11 @@ namespace Persistence.Repositories
                 CorporateName = name;
             return CorporateName;
         }
+
+        public int GetCompanyRegion(int companyId)
+        {
+            var region = _dataContext.Enterprises.Where(c => c.Identerprise == companyId).FirstOrDefault().Idregion;
+            return region;
+        }
     }
 }

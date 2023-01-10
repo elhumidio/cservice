@@ -33,5 +33,11 @@ namespace Persistence.Repositories
                 return null;
             }
         }
+
+        public Country GetCountryById(int countryId)
+        {
+            var country = _dataContext.Countries.Where(c => c.Idcountry == countryId && c.Idsite ==6 && c.Idslanguage == 7).ToList().FirstOrDefault();
+            return country;
+        }
     }
 }

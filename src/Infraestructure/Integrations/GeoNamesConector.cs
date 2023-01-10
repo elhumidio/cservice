@@ -27,5 +27,18 @@ namespace Infraestructure.Integrations
 
             return geoNames;
         }
+
+        public GeoNamesDto GetPostalCodesCollectionByPlaceName(string placename, string country)
+        {
+            GeoNamesDto geoNames = new();
+            string url = $"{_geoNamesUrl}?placename={placename}&country={country}&maxRows=100&username=turijobs";
+
+            using (var httpClient = new HttpClient())
+            {
+                geoNames = JsonConvert.DeserializeObject<GeoNamesDto>(httpClient.GetStringAsync(new Uri(url)).Result);
+            }
+
+            return geoNames;
+        }
     }
 }
