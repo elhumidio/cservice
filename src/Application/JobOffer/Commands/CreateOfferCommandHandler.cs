@@ -91,7 +91,7 @@ namespace Application.JobOffer.Commands
 
                 bool canSaveLanguages = jobVacancyId > 0
                      && offer.JobLanguages.Any()
-                     && offer.IntegrationData == null;
+                     && (offer.IntegrationData == null || string.IsNullOrEmpty(offer.IntegrationData.ApplicationReference)) ;
 
                 bool canSaveWorkPermit = jobVacancyId > 0
                     && offer.IdworkPermit.Any()
