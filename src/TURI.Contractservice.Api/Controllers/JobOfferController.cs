@@ -285,6 +285,21 @@ namespace API.Controllers
         }
 
         /// <summary>
+        /// Get Count JobOffers published since days
+        /// </summary>
+        /// <param name="days"></param>
+        /// <returns></returns>
+        [HttpGet("{days}")]
+        public async Task<IActionResult> CountOffersPublished(int days)
+        {
+            var result = await Mediator.Send(new CountOffersPublished.Query
+            {
+                Days = days,
+            });
+            return HandleResult(result);
+        }
+
+        /// <summary>
         /// Gets Turijobs - Equest equivalent degree
         /// </summary>
         /// <param name="eqDegreeId"></param>

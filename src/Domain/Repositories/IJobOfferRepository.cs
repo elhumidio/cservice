@@ -40,5 +40,6 @@ namespace Domain.Repositories
 
         public Task<List<JobVacancy>> GetOffersCreatedLastFortnight(); 
         public int DeleteOffer(JobVacancy job);
+        public Task<int> CountOffersPublished(int days);
     }
 }

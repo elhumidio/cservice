@@ -1,6 +1,7 @@
 using Domain.Enums;
 using Domain.Repositories;
 using API.DataContext;
+using Microsoft.EntityFrameworkCore;
 
 namespace Persistence.Repositories
 {
@@ -63,6 +64,12 @@ namespace Persistence.Repositories
         {
             var region = _dataContext.Enterprises.Where(c => c.Identerprise == companyId).FirstOrDefault().Idregion;
             return region;
+        }
+
+        public Task<int> GetCountCompaniesActive()
+        {
+            var query = _dataContext.Enterprises.Where(e => e.ChkActive == true).CountAsync();
+            return query;
         }
     }
 }
