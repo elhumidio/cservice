@@ -30,5 +30,6 @@ namespace Domain.Entities
         public int? SiteId { get; set; }
         public int? OldIdsuser { get; set; }
         public string? EncryptionAlgorithm { get; set; }
+        public string? GrcontactId { get; set; }
     }
 }
