@@ -50,6 +50,9 @@ namespace Persistence
         public virtual DbSet<RegJobVacWorkPermit> RegJobVacWorkPermits { get; set; } = null!;
         public virtual DbSet<JobVacancyLanguage> JobVacancyLanguages { get; set; } = null!;
         public virtual DbSet<AtsmanagerAdminRegion> AtsmanagerAdminRegions { get; set; } = null!;
+
+        public virtual DbSet<TypeUser> TypeUsers { get; set; } = null!;
+
         public virtual DbSet<Title> Titles { get; set; } = null!;
         public virtual DbSet<TitleLang> TitleLangs { get; set; } = null!;
         public virtual DbSet<TitlesRelationship> TitlesRelationships { get; set; } = null!;
@@ -60,6 +63,25 @@ namespace Persistence
         {
             modelBuilder.UseCollation("Modern_Spanish_CI_AS");
 
+
+            modelBuilder.Entity<TypeUser>(entity =>
+            {
+                entity.HasKey(e => new { e.IdstypeUser, e.Idsite, e.Idslanguage });
+
+                entity.ToTable("TSTypeUser");
+
+                entity.Property(e => e.IdstypeUser).HasColumnName("IDSTypeUser");
+
+                entity.Property(e => e.Idsite).HasColumnName("IDSite");
+
+                entity.Property(e => e.Idslanguage).HasColumnName("IDSLanguage");
+
+                entity.Property(e => e.BaseName).HasMaxLength(50);
+
+                entity.Property(e => e.Idbduser)
+                    .HasMaxLength(7)
+                    .HasColumnName("IDBDUser");
+            });
 
             modelBuilder.Entity<CampaignsManagement>(entity =>
             {

@@ -1,10 +1,9 @@
 using Application.Core;
 using Application.EnterpriseContract.DTO;
-using AutoMapper;
 using Domain.Repositories;
 using MediatR;
 
-namespace Application.JobOffer.Queries
+namespace Application.GetCompanyInfo.Queries
 {
     public class GetCompanyInfo
     {
