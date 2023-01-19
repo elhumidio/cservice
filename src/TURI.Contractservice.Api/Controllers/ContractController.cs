@@ -1,6 +1,7 @@
 using Application.Contracts.DTO;
 using Application.Contracts.Queries;
 using Application.EnterpriseContract.Queries;
+using Domain.Entities;
 using Domain.Enums;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Formatters;
@@ -113,6 +114,49 @@ namespace API.Controllers
                 CompanyId = companyId,
                 type = type,
                 RegionId = regionId
+            });
+            return HandleResult(result);
+        }
+
+        /// <summary>
+        /// Get users that contrats expire soon
+        /// </summary>
+        /// <param name="days"></param>
+        /// <returns></returns>
+        [HttpGet("{days}")]
+        public async Task<IActionResult> GetUsersContractExpireSoon(int days)
+        {
+            var result = await Mediator.Send(new GetUsersContractExpireSoon.Query
+            {
+                Days = days
+            });
+            return HandleResult(result);
+        }
+
+        /// <summary>
+        /// Get users that contrats expire soon
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet()]
+        public async Task<IActionResult> GetUsersContractAvailableUnits()
+        {
+            var result = await Mediator.Send(new GetUsersContractAvailableUnits.Query
+            {
+                
+            });
+            return HandleResult(result);
+        }
+
+        /// <summary>
+        /// Get users that contrat begin today
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet()]
+        public async Task<IActionResult> GetUsersContractBegin()
+        {
+            var result = await Mediator.Send(new GetUsersContractBegin.Query
+            {
+                
             });
             return HandleResult(result);
         }

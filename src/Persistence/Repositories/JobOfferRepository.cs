@@ -132,6 +132,17 @@ namespace Persistence.Repositories
             }
         }
 
+
+        public IQueryable<JobVacancy> GetActiveOffers()
+        {
+            var query = _dataContext.JobVacancies.Where(a => !a.ChkDeleted
+            && !a.ChkFilled
+            && a.FinishDate >= DateTime.Today.Date
+            && a.Idstatus == (int)OfferStatus.Active);
+            return query;
+        }
+
+
         public IQueryable<JobVacancy> GetActiveOffersByContractAndManagerNoPack(int contractId, int managerId)
         {
             var query = _dataContext.JobVacancies.Where(a => a.Idcontract == contractId
@@ -214,6 +225,7 @@ namespace Persistence.Repositories
             return res;
         }
 
+
         public Task<List<JobData>> GetAllJobs()
         {
             DateTime DateNow = DateTime.Now;
@@ -257,12 +269,20 @@ namespace Persistence.Repositories
             return query.ToListAsync();
         }
 
-        public async  Task<List<JobVacancy>> GetOffersCreatedLastFortnight()
+        public async Task<List<JobVacancy>> GetOffersCreatedLastFortnight()
         {
             var offers =await _dataContext.JobVacancies
                 .Where( o => o.Idstatus == 1 && o.PublicationDate  > DateTime.Today.AddDays(-15))
                 .ToListAsync();
             return offers;
+        }
+
+        public Task<int> CountOffersPublished(int days)
+        {
+            var lastLogin = DateTime.Now.AddDays(-days).Date;
+
+            var query = _dataContext.JobVacancies.Where(a => a.PublicationDate >= lastLogin).CountAsync();
+            return query;
         }
     }
 }

@@ -1,3 +1,6 @@
+using Domain.Classes;
+using Domain.Entities;
+
 namespace Domain.Repositories
 {
     public interface IUserRepository
@@ -5,5 +8,11 @@ namespace Domain.Repositories
         public int GetUserIdByEmail(string email);
 
         bool IsAdmin(int userId);
+
+        public Task<List<UserContractExpireSoonData>> GetUsersContractExpireSoon(int days);
+        public Task<List<UserContractAvailableUnitsData>> GetUsersContractAvailableUnits();
+        public Task<List<UserContractBegin>> GetUsersContractBegin();
+        public Task<List<UserGetResponseData>> ListUsersEmptyGetResponse();
+        public bool UpdateUserGetResponse(User request);
     }
 }

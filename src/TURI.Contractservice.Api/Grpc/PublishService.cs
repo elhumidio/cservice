@@ -1,5 +1,6 @@
 using Application.Contracts.Queries;
 using Application.EnterpriseContract.Queries;
+using Application.GetCompanyInfo.Queries;
 using Application.JobOffer.Commands;
 using Application.JobOffer.Queries;
 using Application.Utils.Queries.Equest;

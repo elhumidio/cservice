@@ -3,6 +3,7 @@ using Application.AuxiliaryData.DTO;
 using Application.AuxiliaryData.Queries;
 using Application.Core;
 using Application.EnterpriseContract.Queries;
+using Application.GetCompanyInfo.Queries;
 using Application.JobOffer.Queries;
 using Application.Utils;
 using Application.Utils.Queries;

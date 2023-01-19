@@ -3,11 +3,6 @@ using Application.EnterpriseContract.DTO;
 using Domain.DTO;
 using Domain.Repositories;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.EnterpriseContract.Queries
 {

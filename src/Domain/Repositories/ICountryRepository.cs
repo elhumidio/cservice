@@ -7,5 +7,6 @@ namespace Domain.Repositories
         public bool IsRightCountry(int countryId);
 
         public IQueryable<Country> GetCountries(int siteId, int languageId);
+        public Country GetCountryById(int countryId);
     }
 }
