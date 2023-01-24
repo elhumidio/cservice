@@ -28,6 +28,7 @@ namespace Application.JobOffer.Commands
         private readonly IRegJobVacWorkPermitRepository _regJobVacWorkPermitRepo;
         private readonly ICityRepository _cityRepository;
         private readonly IConfiguration _config;
+        private readonly IEnterpriseRepository _enterpriseRepository;
 
         #endregion PRIVATE PROPERTIES
 
@@ -39,7 +40,8 @@ namespace Application.JobOffer.Commands
             IMediator mediatr,
             IRegJobVacWorkPermitRepository regJobVacWorkPermitRepo,
             ICityRepository cityRepository,
-            IConfiguration config)
+            IConfiguration config,
+            IEnterpriseRepository enterpriseRepository)
         {
             _contractProductRepo = contractProductRepo;
             _offerRepo = offerRepo;
@@ -50,6 +52,7 @@ namespace Application.JobOffer.Commands
             _regJobVacWorkPermitRepo = regJobVacWorkPermitRepo;
             _cityRepository = cityRepository;
             _config = config;
+            _enterpriseRepository = enterpriseRepository;
         }
 
         public async Task<OfferModificationResult> Handle(UpdateOfferCommand offer, CancellationToken cancellationToken)
@@ -80,7 +83,13 @@ namespace Application.JobOffer.Commands
             }
             var entity = _mapper.Map(offer, existentOffer);
             CityValidation(offer);
-                var ret = await _offerRepo.UpdateOffer(existentOffer);
+            var company = _enterpriseRepository.Get(offer.Identerprise);
+
+            if (company.Idstatus == (int)EnterpriseStatus.Pending)
+            {
+                offer.Idstatus = (int)EnterpriseStatus.Pending;
+            }
+            var ret = await _offerRepo.UpdateOffer(existentOffer);
             var updatedOffer = _mediatr.Send(new GetResult.Query
             {
                 ExternalId = offer.IntegrationData.ApplicationReference,

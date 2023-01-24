@@ -261,6 +261,79 @@ namespace Persistence.Repositories
             return query.ToListAsync();
         }
 
+
+        public Task<int> CountAllJobs()
+        {
+            DateTime DateNow = DateTime.Now;
+
+            var query = (from job in _dataContext.JobVacancies
+                         join brand in _dataContext.Brands on job.Idbrand equals brand.Idbrand
+                         join logo in _dataContext.Logos on job.Identerprise equals logo.Identerprise
+                         where !job.ChkDeleted
+                                && !job.ChkFilled
+                                && job.PublicationDate < DateTime.Now
+                                && job.FinishDate > DateTime.Now
+                                && job.Idstatus == (int)OfferStatus.Active
+                         select new JobData()
+                         {
+                             Title = job.Title,
+                             CompanyName = brand.Name,
+                             IDCountry = job.Idcountry,
+                             IDRegion = job.Idregion,
+                             IDArea = job.Idarea,
+                             IDJobVacancy = job.IdjobVacancy,
+                             IDBrand = job.Idbrand,
+                             IDEnterprise = job.Identerprise,
+                             IDSite = job.Idsite,
+                             ChkBlindVacancy = job.ChkBlindVac,
+                             PublicationDate = job.PublicationDate,
+                             City = job.City,
+                             IDCity = (job.Idcity.HasValue) ? job.Idcity.Value : 0,
+                             ActiveDays = (int)DateTime.Now.Subtract(job.PublicationDate).TotalDays,
+                             Description = "",
+                             Logo = logo.UrlImgBig,
+                         });
+
+            return query.CountAsync();
+        }
+
+
+        public Task<List<JobData>> ListAllJobsPaged(int page, int pageSize)
+        {
+            DateTime DateNow = DateTime.Now;
+
+            var query = (from job in _dataContext.JobVacancies
+                         join brand in _dataContext.Brands on job.Idbrand equals brand.Idbrand
+                         join logo in _dataContext.Logos on job.Identerprise equals logo.Identerprise
+                         where !job.ChkDeleted
+                                && !job.ChkFilled
+                                && job.PublicationDate < DateTime.Now
+                                && job.FinishDate > DateTime.Now
+                                && job.Idstatus == (int)OfferStatus.Active
+                         select new JobData()
+                         {
+                             Title = job.Title,
+                             CompanyName = brand.Name,
+                             IDCountry = job.Idcountry,
+                             IDRegion = job.Idregion,
+                             IDArea = job.Idarea,
+                             IDJobVacancy = job.IdjobVacancy,
+                             IDBrand = job.Idbrand,
+                             IDEnterprise = job.Identerprise,
+                             IDSite = job.Idsite,
+                             ChkBlindVacancy = job.ChkBlindVac,
+                             PublicationDate = job.PublicationDate,
+                             City = job.City,
+                             IDCity = (job.Idcity.HasValue) ? job.Idcity.Value : 0,
+                             ActiveDays = (int)DateTime.Now.Subtract(job.PublicationDate).TotalDays,
+                             Description = "",
+                             Logo = logo.UrlImgBig,
+                         }).Skip((page - 1) * pageSize)
+                                .Take(pageSize);
+
+            return query.ToListAsync();
+        }
+
         public Task<List<FeaturedJob>> GetFeaturedJobs()
         {
             var query = (from featuredJob in _dataContext.FeaturedJobs
