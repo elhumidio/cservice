@@ -269,17 +269,33 @@ namespace API.Controllers
             return HandleResult(result);
         }
 
-        /// <summary>
-        /// Get Consumed JobOffers Pack or not pack by company
-        /// </summary>
-        /// <param name="contractId"></param>
-        /// <returns></returns>
-        [HttpGet()] //[HttpGet("{daysOld}")]
+        [HttpGet()]
         public async Task<IActionResult> GetAllJobs()
         {
             var result = await Mediator.Send(new ListAllJobs.Query
             {
                 
+            });
+            return HandleResult(result);
+        }
+
+        [HttpGet()]
+        public async Task<IActionResult> CountAllJobs()
+        {
+            var result = await Mediator.Send(new CountAllJobs.Query
+            {
+
+            });
+            return HandleResult(result);
+        }
+
+        [HttpGet("{page}/{pageSize}")]
+        public async Task<IActionResult> ListAllJobsPaged(int page, int pageSize)
+        {
+            var result = await Mediator.Send(new ListAllJobsPaged.Query
+            {
+                Page = page,
+                PageSize = pageSize
             });
             return HandleResult(result);
         }
