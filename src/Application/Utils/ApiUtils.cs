@@ -96,6 +96,26 @@ namespace Application.Utils
             }
 
         }
+        public static int GetTuriLanguageBySite(int siteId)
+        {
+
+            switch (siteId)
+            {
+                case (int)Sites.SPAIN:
+                    return 7;
+
+                case (int)Sites.PORTUGAL:
+                    return 17;
+
+                case (int)Sites.ITALY:
+                    return 15;
+
+                case (int)Sites.MEXICO:
+                    return 7;
+                default: return 7;
+            }
+
+        }
 
         public static string GetShortCountryBySite(Sites site)
         {

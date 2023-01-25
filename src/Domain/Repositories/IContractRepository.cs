@@ -12,5 +12,8 @@ namespace Domain.Repositories
         bool IsValidContract(int contractId);
 
         public IQueryable<ServiceTypeDto> GetServiceTypes(int contractId);
+        public Task<List<ContractsDistDto>> GetValidContracts(int companyId,int siteId, int langId);
+
+        public Task<List<RegEnterpriseContract>> GetWithReg(int contractId);
     }
 }

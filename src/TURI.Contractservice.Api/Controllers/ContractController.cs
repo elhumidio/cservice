@@ -118,6 +118,17 @@ namespace API.Controllers
             return HandleResult(result);
         }
 
+
+        [HttpGet("{companyId}")]
+        public async Task<IActionResult> GetValidContractsByCompany(int companyId)
+        {
+            var contracts = await Mediator.Send(new GetValidContractsByCompany.Get {
+
+                 CompanyId = companyId
+            });
+            return HandleResult(contracts);
+        }
+
         /// <summary>
         /// Get users that contrats expire soon
         /// </summary>
