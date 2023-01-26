@@ -32,18 +32,19 @@ namespace Persistence.Repositories
 
         public async Task<List<RegEnterpriseContract>> GetWithReg(int contractId)
         {
-            try {
+            try
+            {
                 var contracts = await _dataContext.Contracts
-                    .Join(_dataContext.RegEnterpriseContracts,reg => new {reg.Idcontract },c=> new {c.Idcontract },(reg,c)=> new {reg,c })
+                    .Join(_dataContext.RegEnterpriseContracts, reg => new { reg.Idcontract }, c => new { c.Idcontract }, (reg, c) => new { reg, c })
                     .Where(creg => creg.c.Idcontract == contractId)
                     .Select(res => res.c).ToListAsync();
                 return contracts;
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 var a = ex;
                 return null;
             }
-            
         }
 
         public bool IsValidContract(int contractId)
@@ -58,7 +59,7 @@ namespace Persistence.Repositories
             return contracts != null && contracts.Any();
         }
 
-        public async Task<List<ContractsDistDto>> GetValidContracts(int companyId,int siteId,int langId)
+        public async Task<List<ContractsDistDto>> GetValidContracts(int companyId, int siteId, int langId)
         {
             bool isPack = false;
             var list = await _dataContext.Contracts
@@ -70,14 +71,15 @@ namespace Persistence.Repositories
                 && a.pl.p.c.ChkApproved
                 && a.pl.p.c.FinishDate >= DateTime.Now.Date
                 && a.pl.p.c.StartDate <= DateTime.Now.Date
-                && a.ppl.Idsite == siteId && a.ppl.Idslanguage==langId
+                && a.ppl.Idsite == siteId && a.ppl.Idslanguage == langId
                 && a.pl.pr.Idsite == siteId && a.pl.pr.Idslanguage == langId
                 && a.pl.p.c.SalesforceId != null)
                 .Select(res => new ContractsDistDto
                 {
-                    BaseName = res.pl.pr.BaseName,                    
-                    ContractId = res.pl.p.c.Idcontract,                                                            
-                    ProductId = res.pl.pr.Idproduct
+                    BaseName = res.pl.pr.BaseName,
+                    ContractId = res.pl.p.c.Idcontract,
+                    ProductId = res.pl.pr.Idproduct,
+                    FinishDate = res.pl.p.c.FinishDate != null ? Convert.ToDateTime(res.pl.p.c.FinishDate).ToString("dd/MM/yyyy") : string.Empty,
                 }).Distinct().ToListAsync();
 
             return list;

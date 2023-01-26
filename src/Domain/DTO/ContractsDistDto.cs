@@ -16,5 +16,8 @@ namespace Domain.DTO
         public int TotalAvailablestandard { get; set; }
         public int TotalFeaturedUnits { get; set; }
         public int TotalStandardUnits { get; set; }
+        public string FinishDate { get; set; }
+        public bool IsRegionRestricted { get; set; }
+
     }
 }
