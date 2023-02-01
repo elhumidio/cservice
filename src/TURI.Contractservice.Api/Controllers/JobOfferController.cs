@@ -59,6 +59,7 @@ namespace API.Controllers
         {
             var result = await Mediator.Send(new FileJobs.Command
             {
+                
                 id = _ids.First()
             });
 
@@ -117,7 +118,7 @@ namespace API.Controllers
 
             var ret = HandleResult(result);
             return ret;
-        }
+        }   
 
         /// <summary>
         /// Publish an offer

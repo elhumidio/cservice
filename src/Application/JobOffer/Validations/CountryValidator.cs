@@ -35,6 +35,12 @@ namespace Application.JobOffer.Validations
 
             var country = _regionRepo.GetCountryByRegion(obj.Idregion);
             bool canSetCountry = country != -1 && obj.Idregion != (int)Regions.AllCountry && obj.Idregion != (int)Regions.Abroad;
+            if (obj.Idcountry > 1   && obj.Idcountry != country)
+            {
+                obj.Idcountry = obj.Idcountry;
+                return true;
+            }
+            
 
             if (canSetCountry)
                 obj.Idcountry = country;
@@ -65,7 +71,11 @@ namespace Application.JobOffer.Validations
 
             var country = _regionRepo.GetCountryByRegion(obj.Idregion);
             bool canSetCountry = country != -1 && obj.Idregion != (int)Regions.AllCountry && obj.Idregion != (int)Regions.Abroad;
-
+            if (obj.Idcountry > 1 && obj.Idcountry != country)
+            {
+                obj.Idcountry = obj.Idcountry;
+                return true;
+            }
             if (canSetCountry)
                 obj.Idcountry = country;
             return true;
