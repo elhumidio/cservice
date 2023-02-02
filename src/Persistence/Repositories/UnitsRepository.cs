@@ -25,9 +25,9 @@ namespace Persistence.Repositories
             return query;
         }
 
-        public  int GetAssignedUnitsMxPtByCompany(int companyId)
+        public int GetAssignedUnitsMxPtByCompany(int companyId)
         {
-            var res =  _dataContext.EnterpriseUserJobVacs
+            var res = _dataContext.EnterpriseUserJobVacs
           .Join(_dataContext.Contracts, c => new { c.Idcontract }, eujv => new { eujv.Idcontract },
               (jv, c) => new { jv, c })
           .Where(o => o.c.Identerprise == companyId
@@ -36,20 +36,20 @@ namespace Persistence.Repositories
             return res.Sum(a => a.JobVacUsed);
         }
 
+        public async Task<Dictionary<int, List<int>>> GetAssignedContractsForManagers(List<int> managers)
+        {
+            Dictionary<int, List<int>> dic = new();
 
-        public async  Task<Dictionary<int, List<int>>> GetAssignedContractsForManagers(List<int> managers) {
+            foreach (var manager in managers)
+            {
+                var res = _dataContext.Contracts
+                .Join(_dataContext.EnterpriseUserJobVacs, p => new { p.Idcontract }, cp => new { cp.Idcontract },
+                   (p, cp) => new { p, cp })
+               .Join(_dataContext.ManagersVisibilities, ppl => ppl.p.Idcontract, pl => pl.ContractId, (ppl, pl) => new { ppl, pl })
+               .Where(o => o.ppl.p.IdenterpriseUser == manager && o.pl.ContractId == o.ppl.cp.Idcontract && o.pl.IsVisible == true)
+               .Select(o => o.pl.ContractId);
+            }
 
-            Dictionary<int, List<int>> dic = new ();
-
-
-         /*   var res = _dataContext.Contracts
-            .Join(_dataContext.EnterpriseUserJobVacs, p => new { p.Idcontract }, cp => new { cp.Idcontract },
-                (p, cp) => new { p, cp })
-            .Join(_dataContext, ppl => ppl.p.Idproduct, pl => pl.Idproduct, (ppl, pl) => new { ppl, pl })
-            .Where(o => o.ppl.p.Idcontract == contractId && o.pl.IdjobVacType != null)
-            .Select(o => o.ppl.cp.Idproduct)
-            .First();
-            return res;*/
             return dic;
         }
 
