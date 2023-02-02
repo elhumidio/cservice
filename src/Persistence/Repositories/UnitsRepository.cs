@@ -36,6 +36,23 @@ namespace Persistence.Repositories
             return res.Sum(a => a.JobVacUsed);
         }
 
+
+        public async  Task<Dictionary<int, List<int>>> GetAssignedContractsForManagers(List<int> managers) {
+
+            Dictionary<int, List<int>> dic = new ();
+
+
+         /*   var res = _dataContext.Contracts
+            .Join(_dataContext.EnterpriseUserJobVacs, p => new { p.Idcontract }, cp => new { cp.Idcontract },
+                (p, cp) => new { p, cp })
+            .Join(_dataContext, ppl => ppl.p.Idproduct, pl => pl.Idproduct, (ppl, pl) => new { ppl, pl })
+            .Where(o => o.ppl.p.Idcontract == contractId && o.pl.IdjobVacType != null)
+            .Select(o => o.ppl.cp.Idproduct)
+            .First();
+            return res;*/
+            return dic;
+        }
+
         public bool AssignUnitToManager(int contractId, VacancyType type, int ownerId)
         {
             var assignment = _dataContext.EnterpriseUserJobVacs.Where(a => a.IdjobVacType == (int)type
