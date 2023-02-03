@@ -1,6 +1,7 @@
 using Domain.Entities;
 using Domain.Enums;
 using Domain.Repositories;
+using Microsoft.EntityFrameworkCore;
 
 namespace Persistence.Repositories
 {
@@ -42,14 +43,15 @@ namespace Persistence.Repositories
 
             foreach (var manager in managers)
             {
-                var res = _dataContext.Contracts
-                .Join(_dataContext.EnterpriseUserJobVacs, p => new { p.Idcontract }, cp => new { cp.Idcontract },
-                   (p, cp) => new { p, cp })
-               .Join(_dataContext.ManagersVisibilities, ppl => ppl.p.Idcontract, pl => pl.ContractId, (ppl, pl) => new { ppl, pl })
-               .Where(o => o.ppl.p.IdenterpriseUser == manager && o.pl.ContractId == o.ppl.cp.Idcontract && o.pl.IsVisible == true)
-               .Select(o => o.pl.ContractId);
+                var res =await _dataContext.ManagersVisibilities.Where(m => m.EnterpriseUserId == manager).ToListAsync();
+                List<int> listContracts = new List<int>();
+                foreach (var visibilities in res)
+                {
+                    if (!listContracts.Contains(visibilities.ContractId))
+                        listContracts.Add(visibilities.ContractId);
+                }
+                dic.Add(manager, listContracts);                
             }
-
             return dic;
         }
 

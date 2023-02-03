@@ -1,6 +1,7 @@
 using Application.Contracts.DTO;
 using Application.Contracts.Queries;
 using Application.EnterpriseContract.Queries;
+using Application.Managers.Queries;
 using Domain.Entities;
 using Domain.Enums;
 using Microsoft.AspNetCore.Mvc;
@@ -170,6 +171,17 @@ namespace API.Controllers
                 
             });
             return HandleResult(result);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> GetContractsAddedsByManager(List<int> managers)
+        {
+            var result = await Mediator.Send(new GetContractsAddedsByManagers.Get {
+
+                Managers = managers
+            });
+            return HandleResult(result);
+
         }
     }
 }
