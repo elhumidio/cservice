@@ -24,35 +24,39 @@ namespace Application.JobOffer.Commands
         public class Handler : IRequestHandler<Command, OfferModificationResult>
         {
             private readonly IJobOfferRepository _offerRepo;
-            private readonly IRegEnterpriseContractRepository _regEnterpriseContractRepository;            
+            private readonly IRegEnterpriseContractRepository _regEnterpriseContractRepository;
             private readonly IConfiguration _config;
             private readonly IContractProductRepository _contractProductRepo;
             private readonly IMediator _mediatr;
             private readonly IMapper _mapper;
+            private readonly IEnterpriseRepository _enterpriseRepository;
 
             public Handler(IJobOfferRepository offerRepo,
-                IRegEnterpriseContractRepository regEnterpriseContractRepository,                
+                IRegEnterpriseContractRepository regEnterpriseContractRepository,
                 IConfiguration config,
                 IContractProductRepository contractProductRepo,
-                IMediator mediatr,            
-                IMapper mapper)
+                IMediator mediatr,
+                IMapper mapper,
+                IEnterpriseRepository enterpriseRepository)
             {
                 _offerRepo = offerRepo;
-                _regEnterpriseContractRepository = regEnterpriseContractRepository;                
+                _regEnterpriseContractRepository = regEnterpriseContractRepository;
                 _config = config;
                 _contractProductRepo = contractProductRepo;
-                _mediatr = mediatr;                
-                _mapper = mapper;   
-            }   
+                _mediatr = mediatr;
+                _mapper = mapper;
+                _enterpriseRepository = enterpriseRepository;
+            }
 
             public async Task<OfferModificationResult> Handle(Command request, CancellationToken cancellationToken)
             {
 
                 string msg = string.Empty;
-                bool aimwelEnabled = Convert.ToBoolean(_config["Aimwel:EnableAimwel"]);                
+                bool aimwelEnabled = Convert.ToBoolean(_config["Aimwel:EnableAimwel"]);
                 int[] aimwelEnabledSites = _config["Aimwel:EnabledSites"].Split(',').Select(h => Int32.Parse(h)).ToArray();
                 bool offerUpdated = false;
                 var job = _offerRepo.GetOfferById(request.id);
+                var company = _enterpriseRepository.Get(job.Identerprise);
 
                 if (job == null)
                 {
@@ -68,7 +72,7 @@ namespace Application.JobOffer.Commands
 
                 if (!hasUnits)
                 {
-                    msg += "not_enough_units";                    
+                    msg += "not_enough_units";
                     return OfferModificationResult.Success(new List<string> { msg });
                 }
                 else
@@ -77,13 +81,18 @@ namespace Application.JobOffer.Commands
                     job.ChkFilled = false;
                     job.ChkDeleted = false;
                     job.ModificationDate = DateTime.Now;
-                    job.Idstatus = (int)OfferStatus.Active;
+
+                    if (company.Idstatus == (int)EnterpriseStatus.Pending)
+                        job.Idstatus = (int)OfferStatus.Pending;
+                    else
+                        job.Idstatus = (int)OfferStatus.Active;
+
                     var ret = await _offerRepo.UpdateOffer(job);
 
                     var isPack = _contractProductRepo.IsPack(job.Idcontract);
                     if (isPack)
                         await _regEnterpriseContractRepository.UpdateUnits(job.Idcontract, job.IdjobVacType);
-                    msg += $"Activated offer {request.id}";                        
+                    msg += $"Activated offer {request.id}";
                     offerUpdated = true;
                 }
                 OfferResultDto dto = new OfferResultDto();
@@ -104,7 +113,7 @@ namespace Application.JobOffer.Commands
                         {
                             offerId = request.id
                         });
-                        msg += $"Campaign: {campaign.CampaignId} /  id: {request.id} - resumed ";                        
+                        msg += $"Campaign: {campaign.CampaignId} /  id: {request.id} - resumed ";
                     }
                     else if (campaign != null && campaign.Status == CampaignStatus.Ended)
                     {
@@ -112,7 +121,7 @@ namespace Application.JobOffer.Commands
                         {
                             offerId = request.id
                         });
-                        msg += $"Campaign: {ans.Result.Value.CampaignId} /  id: {request.id} - created ";                        
+                        msg += $"Campaign: {ans.Result.Value.CampaignId} /  id: {request.id} - created ";
                     }
                     return OfferModificationResult.Success(dto);
                 }
@@ -120,7 +129,7 @@ namespace Application.JobOffer.Commands
                 {
                     return OfferModificationResult.Success(dto);
                 }
-                
+
             }
         }
     }
