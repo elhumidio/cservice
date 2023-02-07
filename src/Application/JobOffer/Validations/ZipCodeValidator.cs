@@ -28,11 +28,13 @@ namespace Application.JobOffer.Validations
         {
             var ret = false;            
             var country = _regionRepo.GetCountry(obj.Idregion);
-            obj.Idcountry = country;
-            var countryCode = GetCountryIsoByIdCountry(obj.Idcountry);
+            if (obj.Idcountry <= 1)
+            {
+                obj.Idcountry = country;
+            }
+            else obj.Idcountry = obj.Idcountry;
 
-            //TODO get idcity by zipcode and country
-
+            var countryCode = GetCountryIsoByIdCountry(obj.Idcountry);            
 
             if (!string.IsNullOrEmpty(countryCode))
             {

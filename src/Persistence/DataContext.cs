@@ -58,6 +58,7 @@ namespace Persistence
         public virtual DbSet<TitlesRelationship> TitlesRelationships { get; set; } = null!;
         public virtual DbSet<CampaignsManagement> CampaignManagements { get; set; } = null!;
         public virtual DbSet<CampaignSetting> CampaignSettings { get; set; } = null!;
+        public virtual DbSet<ManagersVisibility> ManagersVisibilities { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -1057,6 +1058,11 @@ namespace Persistence
                 entity.Property(e => e.Sftimestamp)
                     .HasColumnType("datetime")
                     .HasColumnName("SFTimestamp");
+            });
+
+            modelBuilder.Entity<ManagersVisibility>(entity =>
+            {
+                entity.ToTable("ManagersVisibility");
             });
 
             modelBuilder.Entity<EnterpriseUserJobVac>(entity =>

@@ -106,6 +106,7 @@ namespace TURI.Contractservice.Api
             app.UsePing();
             app.UseSwagger();
             app.UseSwaggerUI();
+            app.UseSwaggerUI(c => c.EnableDeepLinking());
         }
     }
 }
