@@ -15,5 +15,6 @@ namespace Domain.Repositories
         public Task<List<ContractsDistDto>> GetValidContracts(int companyId,int siteId, int langId);
 
         public Task<List<RegEnterpriseContract>> GetWithReg(int contractId);
+        public Task<List<ContractProductShortDto>> GetAllProductsByContract(int contractId, int lang, int site);
     }
 }

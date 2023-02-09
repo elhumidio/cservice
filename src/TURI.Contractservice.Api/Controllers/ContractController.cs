@@ -2,10 +2,8 @@ using Application.Contracts.DTO;
 using Application.Contracts.Queries;
 using Application.EnterpriseContract.Queries;
 using Application.Managers.Queries;
-using Domain.Entities;
 using Domain.Enums;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Formatters;
 
 namespace API.Controllers
 {
@@ -32,15 +30,16 @@ namespace API.Controllers
         /// <param name="info"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<IActionResult> GetCompanyOwnersAssignmentsByContract(OwnersAssignmentsRequestDto info) {
-
-            var result = await Mediator.Send(new GetUseOfUnitsByOwnerAndContract.Query {
-
-                 ContractIds = info.ContractsList,
-                 OwnerIds = info.OwnersList
+        public async Task<IActionResult> GetCompanyOwnersAssignmentsByContract(OwnersAssignmentsRequestDto info)
+        {
+            var result = await Mediator.Send(new GetUseOfUnitsByOwnerAndContract.Query
+            {
+                ContractIds = info.ContractsList,
+                OwnerIds = info.OwnersList
             });
             return HandleResult(result);
         }
+
         /// <summary>
         /// Gets available units, given a contract and an owner (verifies consumed units and assignments)
         /// </summary>
@@ -75,19 +74,17 @@ namespace API.Controllers
             return HandleResult(result);
         }
 
-
-
         /// <summary>
         /// Gets assigned units Portugal or Mexico by Company
         /// </summary>
-        /// <param name="companyId"></param>        
+        /// <param name="companyId"></param>
         /// <returns></returns>
         [HttpGet("{companyId}")]
         public async Task<IActionResult> GetAvailableUnitsMexicoOrPortugal(int companyId)
         {
             var result = await Mediator.Send(new GetAvailableUnitsMexicoOrPortugal.Query
             {
-               CompanyId = companyId
+                CompanyId = companyId
             });
             return HandleResult(result);
         }
@@ -119,13 +116,12 @@ namespace API.Controllers
             return HandleResult(result);
         }
 
-
         [HttpGet("{companyId}")]
         public async Task<IActionResult> GetValidContractsByCompany(int companyId)
         {
-            var contracts = await Mediator.Send(new GetValidContractsByCompany.Get {
-
-                 CompanyId = companyId
+            var contracts = await Mediator.Send(new GetValidContractsByCompany.Get
+            {
+                CompanyId = companyId
             });
             return HandleResult(contracts);
         }
@@ -154,7 +150,6 @@ namespace API.Controllers
         {
             var result = await Mediator.Send(new GetUsersContractAvailableUnits.Query
             {
-                
             });
             return HandleResult(result);
         }
@@ -168,7 +163,6 @@ namespace API.Controllers
         {
             var result = await Mediator.Send(new GetUsersContractBegin.Query
             {
-                
             });
             return HandleResult(result);
         }
@@ -176,12 +170,23 @@ namespace API.Controllers
         [HttpPost]
         public async Task<IActionResult> GetContractsAddedsByManager(List<int> managers)
         {
-            var result = await Mediator.Send(new GetContractsAddedsByManagers.Get {
-
+            var result = await Mediator.Send(new GetContractsAddedsByManagers.Get
+            {
                 Managers = managers
             });
             return HandleResult(result);
+        }
 
+        [HttpGet("{contractId}/{siteId}/{lang}")]
+        public async Task<IActionResult> GetAllProductsbyContract(int contractId, int siteId, int lang)
+        {
+            var result = await Mediator.Send(new GetAllProductsByContract.GetProducts
+            {
+                ContractId = contractId,
+                SiteId = siteId,
+                LanguageID = lang
+            });
+            return HandleResult(result);
         }
     }
 }
