@@ -188,5 +188,17 @@ namespace API.Controllers
             });
             return HandleResult(result);
         }
+
+
+        [HttpGet("{contractId}")]
+        public async Task<IActionResult> GetRegionsAllowed(int contractId)
+        {
+            var result = await Mediator.Send(new GetRegionsAllowed.GetRegions
+            {
+                ContractId = contractId
+                
+            });
+            return HandleResult(result);
+        }
     }
 }
