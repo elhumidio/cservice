@@ -34,7 +34,7 @@ namespace API.Controllers
                     return NotFound();
                 else
                 {
-                    var response = result.Value.Select(alert => alert.ToResponseModel()).ToArray();
+                    var response = result.Value.Select(alert => alert.ToModel()).ToArray();
                     return Ok(response);
                 }
             }

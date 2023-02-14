@@ -5,7 +5,7 @@ namespace API.Converters
 {
     public static class ContractConverter
     {
-        public static AvailableUnitsResponse ToResponseModel(this AvailableUnitsDto item)
+        public static AvailableUnitsResponse ToModel(this AvailableUnitsDto item)
         {
             return new AvailableUnitsResponse
             {

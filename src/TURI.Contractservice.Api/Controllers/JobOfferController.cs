@@ -1,14 +1,12 @@
-using Application.Aimwel.Commands;
+using API.Converters;
 using Application.Aimwel.Interfaces;
-using Application.Aimwel.Queries;
 using Application.JobOffer.Commands;
 using Application.JobOffer.DTO;
 using Application.JobOffer.Queries;
 using Application.Utils.Queries.Equest;
 using Domain.DTO;
-using Domain.Entities;
-using DPGRecruitmentCampaignClient;
 using Microsoft.AspNetCore.Mvc;
+using TURI.ContractService.Contract.Models;
 
 namespace API.Controllers
 {
@@ -273,26 +271,25 @@ namespace API.Controllers
         /// <summary>
         /// Get Active JobOffers
         /// </summary>
-        /// <param name="contractId"></param>
         /// <returns></returns>
-        //[HttpGet]
-        //[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(JobOfferApplicationResponseModel[]))]
-        //[ProducesResponseType(StatusCodes.Status404NotFound)]
-        //public async Task<IActionResult> GetActiveJobs()
-        //{
-        //    var result = await Mediator.Send(new ListActiveJobs.Query { });
+        [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(JobOfferResponse[]))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetActiveJobs()
+        {
+            var result = await Mediator.Send(new ListActiveJobs.Query { });
 
-        //    if (result.IsSuccess)
-        //    {
-        //        if (result.Value == null)
-        //            return NotFound();
+            if (result.IsSuccess)
+            {
+                if (result.Value == null)
+                    return NotFound();
 
-        //        var response = result.Value.Select(jobOffer => jobOffer.ToJobOfferApplicationResponseModel()).ToArray();
-        //        return Ok(response);
-        //    }
+                var response = result.Value.Select(jobOffer => jobOffer.ToModel()).ToArray();
+                return Ok(response);
+            }
 
-        //    return BadRequest(result.Error);
-        //}
+            return BadRequest(result.Error);
+        }
 
         /// <summary>
         /// Get Count JobOffers published since days
