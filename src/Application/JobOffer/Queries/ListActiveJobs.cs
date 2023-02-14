@@ -5,14 +5,14 @@ using MediatR;
 
 namespace Application.JobOffer.Queries
 {
-    public class CountAllJobs
+    public class ListActiveJobs
     {
-        public class Query : IRequest<Result<int>>
+        public class Query : IRequest<Result<IReadOnlyList<JobDataDefinition>>>
         {
             //public int DaysOld { get; set; }
         }
 
-        public class Handler : IRequestHandler<Query, Result<int>>
+        public class Handler : IRequestHandler<Query, Result<IReadOnlyList<JobDataDefinition>>>
         {
             private readonly IJobOfferRepository _jobOffer;
 
@@ -21,9 +21,9 @@ namespace Application.JobOffer.Queries
                 _jobOffer = jobOffer;
             }
 
-            public async Task<Result<int>> Handle(Query request, CancellationToken cancellationToken)
+            public async Task<Result<IReadOnlyList<JobDataDefinition>>> Handle(Query request, CancellationToken cancellationToken)
             {
-                return Result<int>.Success(await _jobOffer.CountAllJobs());
+                return Result<IReadOnlyList<JobDataDefinition>>.Success(await _jobOffer.GetActiveJobs());
             }
         }
     }

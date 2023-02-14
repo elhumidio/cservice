@@ -270,36 +270,29 @@ namespace API.Controllers
             return HandleResult(result);
         }
 
-        [HttpGet()]
-        public async Task<IActionResult> GetAllJobs()
-        {
-            var result = await Mediator.Send(new ListAllJobs.Query
-            {
-                
-            });
-            return HandleResult(result);
-        }
+        /// <summary>
+        /// Get Active JobOffers
+        /// </summary>
+        /// <param name="contractId"></param>
+        /// <returns></returns>
+        //[HttpGet]
+        //[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(JobOfferApplicationResponseModel[]))]
+        //[ProducesResponseType(StatusCodes.Status404NotFound)]
+        //public async Task<IActionResult> GetActiveJobs()
+        //{
+        //    var result = await Mediator.Send(new ListActiveJobs.Query { });
 
-        [HttpGet()]
-        public async Task<IActionResult> CountAllJobs()
-        {
-            var result = await Mediator.Send(new CountAllJobs.Query
-            {
+        //    if (result.IsSuccess)
+        //    {
+        //        if (result.Value == null)
+        //            return NotFound();
 
-            });
-            return HandleResult(result);
-        }
+        //        var response = result.Value.Select(jobOffer => jobOffer.ToJobOfferApplicationResponseModel()).ToArray();
+        //        return Ok(response);
+        //    }
 
-        [HttpGet("{page}/{pageSize}")]
-        public async Task<IActionResult> ListAllJobsPaged(int page, int pageSize)
-        {
-            var result = await Mediator.Send(new ListAllJobsPaged.Query
-            {
-                Page = page,
-                PageSize = pageSize
-            });
-            return HandleResult(result);
-        }
+        //    return BadRequest(result.Error);
+        //}
 
         /// <summary>
         /// Get Count JobOffers published since days
