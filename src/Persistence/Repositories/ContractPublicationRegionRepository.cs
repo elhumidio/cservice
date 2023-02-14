@@ -1,4 +1,6 @@
+using Domain.DTO;
 using Domain.Repositories;
+using Microsoft.EntityFrameworkCore;
 
 namespace Persistence.Repositories
 {
@@ -23,5 +25,22 @@ namespace Persistence.Repositories
 
             return regionsAllowed;
         }
+
+        public async Task<List<RegionsAllowedDto>> GetAllowedRegionsNamesByContract(int contractId)
+        {
+            var res = await _dataContext.ContractPublicationRegions
+                .Join(_dataContext.Regions, p => new { p.Idregion }, cp => new { cp.Idregion },
+                    (p, cp) => new { p, cp })
+
+                .Where(o => o.p.Idcontract == contractId && o.cp.Idslanguage == 7)
+                .Select(o => new RegionsAllowedDto
+                {
+                    RegionId = o.p.Idregion,
+                    RegionName = o.cp.BaseName
+                })
+                .ToListAsync();
+            return res;
+        }
     }
 }
+

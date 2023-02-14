@@ -59,6 +59,21 @@ namespace Persistence.Repositories
             return contracts != null && contracts.Any();
         }
 
+        public async Task<List<ContractProductShortDto>> GetAllProductsByContract(int contractId, int lang, int site)
+        {
+            var list = await _dataContext.Contracts
+                .Join(_dataContext.ContractProducts, c => new { c.Idcontract }, cp => new { cp.Idcontract }, (c, cp) => new { c, cp })
+                .Join(_dataContext.Products, p => p.cp.Idproduct, pr => pr.Idproduct, (p, pr) => new { p, pr })
+                .Where(p => p.p.cp.Idcontract == contractId && p.pr.Idslanguage == lang && p.pr.Idsite == site)
+                .Select(res => new ContractProductShortDto
+                {
+                    ProductId = res.p.cp.Idproduct,
+                    ProductName = res.pr.BaseName
+                }).ToListAsync();
+
+            return list;
+        }
+
         public async Task<List<ContractsDistDto>> GetValidContracts(int companyId, int siteId, int langId)
         {
             bool isPack = false;

@@ -9,7 +9,7 @@ namespace Application.JobOffer.Commands
     {
         [DataMember]
         public int IdjobVacancy { get; set; }
-
+            
         [DataMember]
         public int Idcontract { get; set; }
 
