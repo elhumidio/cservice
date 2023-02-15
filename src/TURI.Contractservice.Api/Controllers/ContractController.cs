@@ -1,9 +1,11 @@
+using API.Converters;
 using Application.Contracts.DTO;
 using Application.Contracts.Queries;
 using Application.EnterpriseContract.Queries;
 using Application.Managers.Queries;
 using Domain.Enums;
 using Microsoft.AspNetCore.Mvc;
+using TURI.ContractService.Contract.Models;
 
 namespace API.Controllers
 {
@@ -14,14 +16,30 @@ namespace API.Controllers
         /// </summary>
         /// <param name="contractId"></param>
         /// <returns></returns>
-        [HttpGet("{contractId}")]
+        [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AvailableUnitsResponse[]))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetAvailableUnits(int contractId)
         {
-            var result = await Mediator.Send(new GetAvailableUnits.Query
+            var query = new GetAvailableUnits.Query
             {
                 ContractId = contractId
-            });
-            return HandleResult(result);
+            };
+
+            var result = await Mediator.Send(query);
+
+            if (result.IsSuccess)
+            {
+                if (result.Value == null)
+                    return NotFound();
+                else
+                {
+                    var response = result.Value.Select(alert => alert.ToModel()).ToArray();
+                    return Ok(response);
+                }
+            }
+
+            return BadRequest(result.Error);
         }
 
         /// <summary>
