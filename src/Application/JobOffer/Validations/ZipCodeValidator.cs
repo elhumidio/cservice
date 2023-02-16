@@ -90,7 +90,7 @@ namespace Application.JobOffer.Validations
                         obj.JobLocation = region != null ? region.BaseName : string.Empty;
                         obj.Idcity = zip.Idcity;
                     }
-                    else ret = true;
+                    ret = true;
                 }
                 if (obj.Idcity == null || obj.Idcity < 1) {
 
