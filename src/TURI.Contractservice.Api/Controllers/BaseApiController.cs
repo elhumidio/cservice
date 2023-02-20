@@ -25,20 +25,6 @@ namespace API.Controllers
 
             return BadRequest(result.Error);
         }
-        protected IActionResult HandleResult<Tin, Tout>(Result<Tin> result, Func<Tin, Tout> converter)
-        {
-            if (result == null ||
-                (result.IsSuccess && result.Value == null))
-                return NotFound();
-
-            if (result.IsSuccess && result != null)
-            {
-                var resultValue = converter(result.Value);
-                return Ok(resultValue);
-            }
-
-            return BadRequest(result.Error);
-        }
 
         protected IActionResult HandleResult(OfferModificationResult result)
         {
