@@ -43,7 +43,7 @@ namespace Persistence.Repositories
 
             foreach (var manager in managers)
             {
-                var res =await _dataContext.ManagersVisibilities.Where(m => m.EnterpriseUserId == manager).ToListAsync();
+                var res =await _dataContext.ManagersVisibilities.Where(m => m.EnterpriseUserId == manager && m.IsVisible == true).ToListAsync();
                 List<int> listContracts = new List<int>();
                 foreach (var visibilities in res)
                 {
