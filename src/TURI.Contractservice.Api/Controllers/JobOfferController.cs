@@ -1,14 +1,12 @@
-using Application.Aimwel.Commands;
+using API.Converters;
 using Application.Aimwel.Interfaces;
-using Application.Aimwel.Queries;
 using Application.JobOffer.Commands;
 using Application.JobOffer.DTO;
 using Application.JobOffer.Queries;
 using Application.Utils.Queries.Equest;
 using Domain.DTO;
-using Domain.Entities;
-using DPGRecruitmentCampaignClient;
 using Microsoft.AspNetCore.Mvc;
+using TURI.ContractService.Contract.Models;
 
 namespace API.Controllers
 {
@@ -270,35 +268,27 @@ namespace API.Controllers
             return HandleResult(result);
         }
 
-        [HttpGet()]
-        public async Task<IActionResult> GetAllJobs()
+        /// <summary>
+        /// Get Active JobOffers
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(JobOfferResponse[]))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetActiveJobs()
         {
-            var result = await Mediator.Send(new ListAllJobs.Query
-            {
-                
-            });
-            return HandleResult(result);
-        }
+            var result = await Mediator.Send(new ListActiveJobs.Query { });
 
-        [HttpGet()]
-        public async Task<IActionResult> CountAllJobs()
-        {
-            var result = await Mediator.Send(new CountAllJobs.Query
+            if (result.IsSuccess)
             {
+                if (result.Value == null)
+                    return NotFound();
 
-            });
-            return HandleResult(result);
-        }
+                var response = result.Value.Select(jobOffer => jobOffer.ToModel()).ToArray();
+                return Ok(response);
+            }
 
-        [HttpGet("{page}/{pageSize}")]
-        public async Task<IActionResult> ListAllJobsPaged(int page, int pageSize)
-        {
-            var result = await Mediator.Send(new ListAllJobsPaged.Query
-            {
-                Page = page,
-                PageSize = pageSize
-            });
-            return HandleResult(result);
+            return BadRequest(result.Error);
         }
 
         /// <summary>
