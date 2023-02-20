@@ -16,31 +16,40 @@ namespace API.Controllers
         /// </summary>
         /// <param name="contractId"></param>
         /// <returns></returns>
-        [HttpGet]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AvailableUnitsResponse[]))]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [HttpGet("{contractId}")]
         public async Task<IActionResult> GetAvailableUnits(int contractId)
         {
-            var query = new GetAvailableUnits.Query
+            var result = await Mediator.Send(new GetAvailableUnits.Query
             {
                 ContractId = contractId
-            };
-
-            var result = await Mediator.Send(query);
-
-            if (result.IsSuccess)
-            {
-                if (result.Value == null)
-                    return NotFound();
-                else
-                {
-                    var response = result.Value.Select(alert => alert.ToModel()).ToArray();
-                    return Ok(response);
-                }
-            }
-
-            return BadRequest(result.Error);
+            });
+            return HandleResult(result);
         }
+        //[HttpGet]
+        //[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AvailableUnitsResponse[]))]
+        //[ProducesResponseType(StatusCodes.Status404NotFound)]
+        //public async Task<IActionResult> GetAvailableUnits(int contractId)
+        //{
+        //    var query = new GetAvailableUnits.Query
+        //    {
+        //        ContractId = contractId
+        //    };
+
+        //    var result = await Mediator.Send(query);
+
+        //    if (result.IsSuccess)
+        //    {
+        //        if (result.Value == null)
+        //            return NotFound();
+        //        else
+        //        {
+        //            var response = result.Value.Select(alert => alert.ToModel()).ToArray();
+        //            return Ok(response);
+        //        }
+        //    }
+
+        //    return BadRequest(result.Error);
+        //}
 
         /// <summary>
         /// It gets assignations by contract and owner
