@@ -66,10 +66,8 @@ namespace Application.JobOffer.Commands
             var job = new JobVacancy();
             var integrationInfo = await _regJobVacRepo.GetAtsIntegrationInfo(offer.IntegrationData.ApplicationReference);
             var company = _enterpriseRepository.Get(offer.Identerprise);
-            if (company.Idstatus == (int)EnterpriseStatus.Pending)
-            {
-                offer.Idstatus = (int)EnterpriseStatus.Pending;
-            }
+            offer.Idstatus = company.Idstatus;
+            
 
             if (integrationInfo != null)
                 error = $"IntegrationId: {offer.IntegrationData.IDIntegration} - Reference: {offer.IntegrationData.ApplicationReference}";
