@@ -81,12 +81,7 @@ namespace Application.JobOffer.Commands
                     job.ChkFilled = false;
                     job.ChkDeleted = false;
                     job.ModificationDate = DateTime.Now;
-
-                    if (company.Idstatus == (int)EnterpriseStatus.Pending)
-                        job.Idstatus = (int)OfferStatus.Pending;
-                    else
-                        job.Idstatus = (int)OfferStatus.Active;
-
+                    job.Idstatus = company.Idstatus;                    
                     var ret = await _offerRepo.UpdateOffer(job);
 
                     var isPack = _contractProductRepo.IsPack(job.Idcontract);
