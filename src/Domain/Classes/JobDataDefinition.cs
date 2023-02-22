@@ -1,6 +1,6 @@
 namespace Domain.Classes
 {
-    public class JobData
+    public class JobDataDefinition
     {
         public string Title { get; set; }
         public string CompanyName { get; set; }
