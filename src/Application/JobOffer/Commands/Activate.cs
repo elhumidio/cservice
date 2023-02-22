@@ -82,7 +82,7 @@ namespace Application.JobOffer.Commands
                     job.ChkDeleted = false;
                     job.ModificationDate = DateTime.Now;
 
-                    if (company.Idstatus == (int)EnterpriseStatus.Pending)
+                    if (company.Idstatus != (int)EnterpriseStatus.Active)
                         job.Idstatus = (int)OfferStatus.Pending;
                     else
                         job.Idstatus = (int)OfferStatus.Active;

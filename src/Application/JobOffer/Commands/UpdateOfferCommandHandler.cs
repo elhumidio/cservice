@@ -85,7 +85,7 @@ namespace Application.JobOffer.Commands
             CityValidation(offer);
             var company = _enterpriseRepository.Get(offer.Identerprise);
 
-            if (company.Idstatus == (int)EnterpriseStatus.Pending)
+            if (company.Idstatus != (int)EnterpriseStatus.Active)
             {
                 offer.Idstatus = (int)EnterpriseStatus.Pending;
             }
