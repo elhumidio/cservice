@@ -83,8 +83,12 @@ namespace Application.JobOffer.Commands
             }
             var entity = _mapper.Map(offer, existentOffer);
             CityValidation(offer);
-            var company = _enterpriseRepository.Get(offer.Identerprise);            
-            offer.Idstatus = company.Idstatus;            
+            var company = _enterpriseRepository.Get(offer.Identerprise);
+
+            if (company.Idstatus != (int)EnterpriseStatus.Active)
+            {
+                offer.Idstatus = (int)EnterpriseStatus.Pending;
+            }
             var ret = await _offerRepo.UpdateOffer(existentOffer);
             var updatedOffer = _mediatr.Send(new GetResult.Query
             {
