@@ -6,6 +6,7 @@
 #@ load("/deployment/_templates/dotnet/api/template.lib.yaml", "deployment_api_dotnet")
 #@ load("/plan-permissions/_templates/dotnet/api/template.lib.yaml", "plan_permissions_api_dotnet")
 #@ load("/deployment-permissions/_templates/dotnet/api/template.lib.yaml", "deployment_permissions_api_dotnet")
+#@ load("/values.lib.yaml", "values")
 
 #@ config = {
 #@   "project_key": "TURI",
@@ -16,11 +17,53 @@
 #@ }
 
 #@ def build_plan_overrides():
-variables: 	
+variables:
     postDeploymentTestsTrigger: "True"
 #@ end
 
 #@ def deployment_overrides():
+#@ for team in values("dotnet", "worker", "deployment")["teams"]:
+#@ for/end suffix in ["", "-destroy"]:
+#@yaml/text-templated-strings
+Int-(@= team @)(@= suffix @):
+    variables:
+        #! Add an additional variable
+        props.AWS_ECS_CPU: 8
+        props.AWS_ECS_RAM: 256
+        props.AWS_ECS_RAM_HARD: 256
+#@ end
+
+#@ for type in ["Plan", "Apply"]:
+#@ for/end suffix in ["", "-destroy"]:
+#@yaml/text-templated-strings
+Preprod-(@= type @)(@= suffix @):
+    variables:
+        #! Add an additional variable
+        props.AWS_ECS_CPU: 8
+        props.AWS_ECS_RAM: 256
+        props.AWS_ECS_RAM_HARD: 512
+#@ end
+Preprod-Apply-Infrastructure:
+    variables:
+        props.AWS_ECS_CPU: 8
+        props.AWS_ECS_RAM: 256
+        props.AWS_ECS_RAM_HARD: 512
+
+#@ for type in ["Plan", "Apply"]:
+#@ for/end suffix in ["", "-destroy"]:
+#@yaml/text-templated-strings
+Prod-(@= type @)(@= suffix @):
+    variables:
+        #! Add an additional variable
+        props.AWS_ECS_CPU: 8
+        props.AWS_ECS_RAM: 256
+        props.AWS_ECS_RAM_HARD: 512
+#@ end
+Prod-Apply-Infrastructure:
+    variables:
+        props.AWS_ECS_CPU: 8
+        props.AWS_ECS_RAM: 256
+        props.AWS_ECS_RAM_HARD: 512
 #@ end
 
 #@ def release_tests_overrides():
