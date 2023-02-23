@@ -14,7 +14,6 @@ namespace Domain.Classes
         public DateTime PublicationDate { get; set; }
         public string City { get; set; }
         public int IDCity { get; set; }
-        public int ActiveDays { get; set; }
         public string Description { get; set; }
         public string Logo { get; set; }
         public int IDSite { get; set; }

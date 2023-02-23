@@ -22,7 +22,6 @@ namespace API.Converters
                 PublicationDate = item.PublicationDate,
                 City = item.City,
                 IDCity = item.IDCity,
-                ActiveDays = item.ActiveDays,
                 Description = item.Description,
                 Logo = item.Logo,
                 IDSite = item.IDSite,

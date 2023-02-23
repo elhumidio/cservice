@@ -226,7 +226,7 @@ namespace Persistence.Repositories
         }
 
 
-        public async Task<IReadOnlyList<JobDataDefinition>> GetActiveJobs()
+        public async Task<IReadOnlyList<JobDataDefinition>> GetActiveJobs(int maxActiveDays)
         {
             DateTime DateNow = DateTime.Now;
 
@@ -238,6 +238,7 @@ namespace Persistence.Repositories
                                 && job.PublicationDate < DateTime.Now
                                 && job.FinishDate > DateTime.Now
                                 && job.Idstatus == (int)OfferStatus.Active
+                                && (int)DateTime.Now.Subtract(job.PublicationDate).TotalDays < maxActiveDays 
                          select new JobDataDefinition()
                          {
                              Title = job.Title,
@@ -253,7 +254,6 @@ namespace Persistence.Repositories
                              PublicationDate = job.PublicationDate,
                              City = job.City,
                              IDCity = (job.Idcity.HasValue) ? job.Idcity.Value : 0,
-                             ActiveDays = (int)DateTime.Now.Subtract(job.PublicationDate).TotalDays,
                              Description = "",
                              Logo = logo.UrlImgBig,
                          });
