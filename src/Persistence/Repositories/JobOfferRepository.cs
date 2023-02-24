@@ -228,7 +228,7 @@ namespace Persistence.Repositories
 
         public async Task<IReadOnlyList<JobDataDefinition>> GetActiveJobs(int maxActiveDays)
         {
-            DateTime DateNow = DateTime.Now;
+            var maxActiveDaysDate = DateTime.Now.AddDays(-maxActiveDays).Date;
 
             var query = (from job in _dataContext.JobVacancies
                          join brand in _dataContext.Brands on job.Idbrand equals brand.Idbrand
@@ -238,7 +238,7 @@ namespace Persistence.Repositories
                                 && job.PublicationDate < DateTime.Now
                                 && job.FinishDate > DateTime.Now
                                 && job.Idstatus == (int)OfferStatus.Active
-                                && (int)DateTime.Now.Subtract(job.PublicationDate).TotalDays < maxActiveDays 
+                                && job.PublicationDate > maxActiveDaysDate
                          select new JobDataDefinition()
                          {
                              Title = job.Title,
