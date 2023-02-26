@@ -1,4 +1,3 @@
-using Application.Contracts.DTO;
 using Domain.Classes;
 using TURI.ContractService.Contract.Models;
 
