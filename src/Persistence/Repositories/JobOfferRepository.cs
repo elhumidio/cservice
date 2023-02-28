@@ -226,18 +226,18 @@ namespace Persistence.Repositories
         }
 
 
-        public async Task<IReadOnlyList<JobDataDefinition>> GetActiveJobs()
+        public async Task<IReadOnlyList<JobDataDefinition>> GetActiveJobs(int maxActiveDays)
         {
-            DateTime DateNow = DateTime.Now;
+            var maxActiveDaysDate = DateTime.Now.AddDays(-maxActiveDays).Date;
 
             var query = (from job in _dataContext.JobVacancies
                          join brand in _dataContext.Brands on job.Idbrand equals brand.Idbrand
-                         join logo in _dataContext.Logos on job.Identerprise equals logo.Identerprise
                          where !job.ChkDeleted
                                 && !job.ChkFilled
                                 && job.PublicationDate < DateTime.Now
                                 && job.FinishDate > DateTime.Now
                                 && job.Idstatus == (int)OfferStatus.Active
+                                && job.PublicationDate > maxActiveDaysDate
                          select new JobDataDefinition()
                          {
                              Title = job.Title,
@@ -246,19 +246,38 @@ namespace Persistence.Repositories
                              IDRegion = job.Idregion,
                              IDArea = job.Idarea,
                              IDJobVacancy = job.IdjobVacancy,
-                             IDBrand = job.Idbrand,
                              IDEnterprise = job.Identerprise,
                              IDSite = job.Idsite,
-                             ChkBlindVacancy = job.ChkBlindVac,
                              PublicationDate = job.PublicationDate,
-                             City = job.City,
-                             IDCity = (job.Idcity.HasValue) ? job.Idcity.Value : 0,
-                             ActiveDays = (int)DateTime.Now.Subtract(job.PublicationDate).TotalDays,
-                             Description = "",
-                             Logo = logo.UrlImgBig,
+                             IDCity = job.Idcity ?? 0,
+                             //Description = "",
                          });
 
             return await query.ToListAsync();
+        }
+
+        public async Task<JobDataDefinition?> GetJobDataById(int id)
+        {
+            var query = (from job in _dataContext.JobVacancies
+                         join brand in _dataContext.Brands on job.Idbrand equals brand.Idbrand
+                         where job.IdjobVacancy == id
+                         select new JobDataDefinition()
+                         {
+                             Title = job.Title,
+                             CompanyName = brand.Name,
+                             IDCountry = job.Idcountry,
+                             IDRegion = job.Idregion,
+                             IDArea = job.Idarea,
+                             IDJobVacancy = job.IdjobVacancy,
+                             IDEnterprise = job.Identerprise,
+                             IDSite = job.Idsite,
+                             PublicationDate = job.PublicationDate,
+                             IDCity = job.Idcity ?? 0,
+                             //Description = "",
+                         });
+
+            var offer = await query.FirstAsync();
+            return offer;
         }
 
         public Task<List<FeaturedJob>> GetFeaturedJobs()

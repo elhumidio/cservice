@@ -9,7 +9,7 @@ namespace Application.JobOffer.Queries
     {
         public class Query : IRequest<Result<IReadOnlyList<JobDataDefinition>>>
         {
-            //public int DaysOld { get; set; }
+            public int MaxActiveDays { get; set; }
         }
 
         public class Handler : IRequestHandler<Query, Result<IReadOnlyList<JobDataDefinition>>>
@@ -23,7 +23,7 @@ namespace Application.JobOffer.Queries
 
             public async Task<Result<IReadOnlyList<JobDataDefinition>>> Handle(Query request, CancellationToken cancellationToken)
             {
-                return Result<IReadOnlyList<JobDataDefinition>>.Success(await _jobOffer.GetActiveJobs());
+                return Result<IReadOnlyList<JobDataDefinition>>.Success(await _jobOffer.GetActiveJobs(request.MaxActiveDays));
             }
         }
     }
