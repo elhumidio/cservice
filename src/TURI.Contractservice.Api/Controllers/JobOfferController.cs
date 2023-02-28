@@ -275,9 +275,9 @@ namespace API.Controllers
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(JobOfferResponse[]))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetActiveJobs()
+        public async Task<IActionResult> GetActiveJobs(int maxActiveDays)
         {
-            var result = await Mediator.Send(new ListActiveJobs.Query { });
+            var result = await Mediator.Send(new ListActiveJobs.Query { MaxActiveDays = maxActiveDays });
 
             if (result.IsSuccess)
             {
