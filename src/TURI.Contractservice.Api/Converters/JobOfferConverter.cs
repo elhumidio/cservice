@@ -15,14 +15,10 @@ namespace API.Converters
                 IDRegion = item.IDRegion,
                 IDArea = item.IDArea,
                 IDJobVacancy = item.IDJobVacancy,
-                IDBrand = item.IDBrand,
                 IDEnterprise = item.IDEnterprise,
-                ChkBlindVacancy = item.ChkBlindVacancy,
                 PublicationDate = item.PublicationDate,
-                City = item.City,
                 IDCity = item.IDCity,
                 Description = item.Description,
-                Logo = item.Logo,
                 IDSite = item.IDSite,
             };
         }
