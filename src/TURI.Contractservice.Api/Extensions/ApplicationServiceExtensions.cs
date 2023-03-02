@@ -11,6 +11,7 @@ using Infraestructure.Integrations;
 using MediatR;
 using MediatR.Extensions.FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using Persistence.Repositories;
 using System.Reflection;
 
@@ -30,6 +31,8 @@ namespace API.Extensions
             services.AddAutoMapper(typeof(Application.Core.MappingProfiles).Assembly);
             services.AddControllers().AddNewtonsoftJson();
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
+
+            services.AddSingleton<IMemoryCache, MemoryCache>();
 
             #region MAPPING REPOSITORIES
 
