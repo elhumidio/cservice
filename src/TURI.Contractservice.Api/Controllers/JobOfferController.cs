@@ -1,11 +1,16 @@
+using Amazon.Runtime.Internal.Util;
 using API.Converters;
 using Application.Aimwel.Interfaces;
 using Application.JobOffer.Commands;
 using Application.JobOffer.DTO;
 using Application.JobOffer.Queries;
+using Application.Utils;
 using Application.Utils.Queries.Equest;
+using Domain.Classes;
 using Domain.DTO;
+using Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 using TURI.ContractService.Contract.Models;
 
 namespace API.Controllers
@@ -13,10 +18,12 @@ namespace API.Controllers
     public class JobOfferController : BaseApiController
     {
         private readonly IAimwelCampaign _aimwelCampaign;
+        private readonly IMemoryCache _cache;
 
-        public JobOfferController(IAimwelCampaign aimwelCampaign)
+        public JobOfferController(IAimwelCampaign aimwelCampaign, IMemoryCache cache)
         {
             _aimwelCampaign = aimwelCampaign;
+            _cache = cache;
         }
 
         /// <summary>
@@ -271,24 +278,42 @@ namespace API.Controllers
         /// <summary>
         /// Get Active JobOffers
         /// </summary>
+        /// <param name="maxActiveDays"></param>
         /// <returns></returns>
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(JobOfferResponse[]))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetActiveJobs(int maxActiveDays)
         {
-            var result = await Mediator.Send(new ListActiveJobs.Query { MaxActiveDays = maxActiveDays });
-
-            if (result.IsSuccess)
+            if (!_cache.TryGetValue(CacheKeys.ActiveJobsByActiveDays, out IReadOnlyList<JobDataDefinition> jobOffers))
             {
-                if (result.Value == null)
-                    return NotFound();
+                var result = await Mediator.Send(new ListActiveJobs.Query { MaxActiveDays = maxActiveDays });
 
-                var response = result.Value.Select(jobOffer => jobOffer.ToModel()).ToArray();
-                return Ok(response);
+                var cacheEntryOptions = new MemoryCacheEntryOptions
+                {
+                    AbsoluteExpiration = DateTime.Now.AddSeconds(600),
+                    Priority = CacheItemPriority.NeverRemove
+                };
+
+                _cache.Set(CacheKeys.ActiveJobsByActiveDays, result.Value, cacheEntryOptions);
+
+                if (result.IsSuccess)
+                {
+                    jobOffers = result.Value;
+                }
+                else
+                {
+                    return BadRequest(result.Error);
+                }
             }
 
-            return BadRequest(result.Error);
+            if (jobOffers == null)
+                return NotFound();
+
+            var response = jobOffers
+                .Select(jobOffer => jobOffer.ToModel())
+                .ToArray();
+            return Ok(response);
         }
 
         /// <summary>
