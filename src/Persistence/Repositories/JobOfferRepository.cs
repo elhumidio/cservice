@@ -38,7 +38,7 @@ namespace Persistence.Repositories
         {
             var query = _dataContext.JobVacancies.Where(a => a.Idcontract == contractId && !a.ChkDeleted
                 && !a.ChkFilled
-                && a.FinishDate >= DateTime.Today && a.IdenterpriseUserG == managerId && a.Idstatus == (int)OfferStatus.Active);
+                && a.FinishDate >= DateTime.Today && a.IdenterpriseUserG == managerId && (a.Idstatus == (int)OfferStatus.Active || a.Idstatus == (int)OfferStatus.Pending));
 
             return query;
         }

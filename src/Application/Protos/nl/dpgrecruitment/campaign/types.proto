@@ -4,6 +4,7 @@ package nl.dpgrecruitment.campaign;
 option csharp_namespace = "DPGRecruitmentCampaignClient";
 
 import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
 import "validate/validate.proto";
 
 enum ConversionType {
@@ -58,8 +59,8 @@ message JobContent {
   HiringOrganization hiring_organization = 7 [(validate.rules).message.required = true]; // The organization hiring for the job.
   repeated PerformancePredictingAttributesEntry performance_predicting_attributes = 8; // Any attributes that might be of value when predicting performance. Supply as [key],[value] pairs.
   Salary salary = 9;
-  string industry = 10;
-  string education_level = 11;
+  string industry = 10 [(validate.rules).string = {max_len: 128}];
+  string education_level = 11 [(validate.rules).string = {max_len: 256}];
   EmploymentType employment_type = 12;
   repeated JobClassificationEntry job_classification = 13 [(validate.rules).repeated = {// An ISCO entry is required
     unique: true
@@ -72,16 +73,19 @@ message Geolocation {
   double latitude = 1;  // The latitude in degrees. It must be in the range [-90.0, +90.0].
   double longitude = 2;  // The longitude in degrees. It must be in the range [-180.0, +180.0].
   double radius = 3; // The radius to target around the long/lat coords. Specify in kilometers.
-  Country country_iso = 4; // The country associated with the long/lat coords. For nationwide jobs, set the radius to a large radius and the Country to GB. When country is set to Northern Ireland, people in Ireland will also be targeted (given the radius is large enough.) People from Scotland will not be targeted when Country is set to Northern Ireland.
+  Country country_iso = 4 [deprecated = true]; // use country_alpha2 instead
+  google.protobuf.StringValue country_alpha2 = 5 [(validate.rules).string = {pattern: "[a-zA-Z]{2}"}]; // Represents the ISO3166-1 two letter country (alpha-2) associated with the long/lat coords.
 }
 
 message Address {
-  Country country_iso = 1;
-  string state = 2; // State or province
-  string city = 3;
-  string street = 4; // Street name with house number
-  string postal_code = 5;
-  string region = 6; // Example: South West England 
+  Country country_iso = 1 [deprecated = true]; // use country_alpha2 for a two letter country code and country_subdivision_iso for the a country code with a subdivision, separated with a hyphen instead.
+  string state = 2 [(validate.rules).string = {max_len: 128}]; // State or province
+  string city = 3 [(validate.rules).string = {max_len: 128}];
+  string street = 4 [(validate.rules).string = {max_len: 256}]; // Street name with house number
+  string postal_code = 5 [(validate.rules).string = {max_len: 128}];
+  string region = 6 [(validate.rules).string = {max_len: 128}]; // Example: South West England
+  google.protobuf.StringValue country_alpha2 = 7 [(validate.rules).string = {pattern: "[a-zA-Z]{2}"}]; // Represents the ISO3166-1 two letter country (alpha-2).<br/>E.g.: 'NL' or 'GB'
+  google.protobuf.StringValue country_subdivision_iso = 8 [(validate.rules).string = {pattern: "[a-zA-Z]{2}-[a-zA-Z0-9\\-]+"}]; // Represents the ISO 3166-2 subdivision of a country, using the format:<br/>{country-alpha2}-{subdivision}<br/>E.g.: 'GB-WLS'
 }
 
 enum Country {
@@ -123,7 +127,7 @@ enum Language {
 
 message Advertisement {
   string branding = 1;
-  string uri = 2 [(validate.rules).string = {uri : true}];
+  string uri = 2 [(validate.rules).string = {uri : true, max_len: 1024}];
 }
 
 message HiringOrganization {
@@ -135,16 +139,16 @@ message HiringOrganization {
   }
 
   string name = 1 [(validate.rules).string = {min_len: 1, max_len: 128}];
-  string logoUrl = 2;
+  string logoUrl = 2 [(validate.rules).string = {max_len: 254}];
   HiringOrganizationType hiring_organization_type = 3;
 }
 
 message Salary {
   Currency currency = 1;
-  string from = 2; // Minimal amount
-  string to = 3; // Maximal amount
-  string full_text = 4; // Example: 1000 to 5000 EUR monthly with yearly bonus
-  string benefits = 5; // Example: yearly bonus
+  string from = 2 [(validate.rules).string = {max_len: 16}]; // Minimal amount
+  string to = 3 [(validate.rules).string = {max_len: 16}]; // Maximal amount
+  string full_text = 4 [(validate.rules).string = {max_len: 128}]; // Example: 1000 to 5000 EUR monthly with yearly bonus
+  string benefits = 5 [(validate.rules).string = {max_len: 128}]; // Example: yearly bonus
   SalaryPeriod period = 6; // Period associated with the salary range (from and to)
 }
 
@@ -170,8 +174,8 @@ enum EmploymentType {
 }
 
 message PerformancePredictingAttributesEntry {
-  string name = 1  [(validate.rules).string = {min_len: 1, max_len: 1024}];
-  string value = 2  [(validate.rules).string = {min_len: 1, max_len: 1024}];
+  string name = 1  [(validate.rules).string = {min_len: 1, max_len: 254}];
+  string value = 2  [(validate.rules).string = {min_len: 1, max_len: 254}];
 }
 
 enum JobClassificationType {
@@ -186,8 +190,8 @@ enum JobClassificationType {
 
 message JobClassificationEntry {
   JobClassificationType job_classification_type = 1;
-  string job_classification_value = 2 [(validate.rules).string = {min_len: 1, max_len: 1024}];
-  string job_classification_description = 3 [(validate.rules).string = {max_len: 1024}];
+  string job_classification_value = 2 [(validate.rules).string = {min_len: 1, max_len: 128}]; // The identifier of the classification value. Can be the name if no identifier is available.
+  string job_classification_description = 3 [(validate.rules).string = {max_len: 1024}]; // A human readable description of the classification. Not required.
 }
 
 message AdditionalField {
@@ -203,10 +207,10 @@ enum CampaignStatus {
 }
 
 enum CampaignEndedReason {
-  NOT_ENDED = 0;
-  MANUAL = 1;
-  END_TIME_REACHED = 2;
-  GOAL_REACHED = 3;
+  NOT_ENDED = 0; // The Campaign has not yet ended.
+  MANUAL = 1; // Ended by your system calling the EndCampaign api.
+  END_TIME_REACHED = 2; // The Campaign was ended because its end time has been reached.
+  GOAL_REACHED = 3; // The Campaign was ended because the goal is reached (budget is depleted).
 }
 
 enum ChannelType {
@@ -225,7 +229,7 @@ enum ApplicationType {
 }
 
 message Settings {
-  string id = 1;
+  string id = 1; // Identifier that indicates what type of campaign is being run. We will align together on what types we will support for you. Used to differentiate between always-on campaigns, media upsell packages, etc.
 }
 
 message Brand {

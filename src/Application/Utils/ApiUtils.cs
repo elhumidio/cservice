@@ -140,5 +140,29 @@ namespace Application.Utils
             }
             return country;
         }
+
+        public static int GetCountryIdBySite(int site)
+        {
+            int country = 40;
+            switch (site)
+            {
+                case 6:
+                    country = 40;
+                    break;
+
+                case 8:
+                    country = 118;
+                    break;
+
+                case 39:
+                    country = 71;
+                    break;
+
+                case 11:
+                    country = 98;
+                    break;
+            }
+            return country;
+        }
     }
 }

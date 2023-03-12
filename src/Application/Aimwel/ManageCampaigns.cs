@@ -254,11 +254,10 @@ namespace Application.Aimwel
                     }
                     else
                     {
-                        //TODO get pais by idcountry
-
+                        
                         if (!string.IsNullOrEmpty(job.City))
                         {
-                            //TODO busqueda por ciudad
+                            
                             countryISO = _countryIsoRepo.GetIsobyCountryId(job.Idcountry);
                             geolocation = _geoNamesConector.GetPostalCodesCollectionByPlaceName(job.City, countryISO);
 
@@ -327,11 +326,7 @@ namespace Application.Aimwel
 
                 var address = new Address
                 {
-                    CountryIso = job.Idsite == 6
-                           ? Country.Es : job.Idsite == 8
-                           ? Country.Pt : job.Idsite == 11
-                           ? Country.Mx : job.Idsite == 39
-                           ? Country.It : Country.Es,
+                    CountryAlpha2 = _countryIsoRepo.GetIsobyCountryId(ApiUtils.GetCountryIdBySite(job.Idsite)),                           
                     State = region == null ? companyRegion.Ccaa : region.Ccaa == null ? region.BaseName : region.Ccaa,
                     City = job.City ?? geolocation.postalCodes.First().adminName3,
                     Street = "",
@@ -357,7 +352,7 @@ namespace Application.Aimwel
                         },
                         Location = new Geolocation
                         {
-                            CountryIso = Country.Es,
+                            CountryAlpha2 = _countryIsoRepo.GetIsobyCountryId(job.Idcountry), //verificar
                             Latitude = latitude,
                             Longitude = longitude,
                         },

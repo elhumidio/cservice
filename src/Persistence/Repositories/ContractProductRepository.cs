@@ -18,7 +18,7 @@ namespace Persistence.Repositories
             .Join(_dataContext.Products, p => new { p.Idproduct }, cp => new { cp.Idproduct },
                 (p, cp) => new { p, cp })
             .Join(_dataContext.ProductLines, ppl => ppl.p.Idproduct, pl => pl.Idproduct, (ppl, pl) => new { ppl, pl })
-            .Where(o => o.ppl.p.Idcontract == contractId && o.pl.IdjobVacType != null)
+            .Where(o => o.ppl.p.Idcontract == contractId && o.pl.IdjobVacType != null && o.ppl.p.Idproduct != 110)
             .Select(o => o.ppl.cp.ChkPack);
 
             if (res.Any() && res != null)
