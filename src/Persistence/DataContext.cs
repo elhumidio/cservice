@@ -59,11 +59,28 @@ namespace Persistence
         public virtual DbSet<CampaignsManagement> CampaignManagements { get; set; } = null!;
         public virtual DbSet<CampaignSetting> CampaignSettings { get; set; } = null!;
         public virtual DbSet<ManagersVisibility> ManagersVisibilities { get; set; } = null!;
+        public virtual DbSet<OigSafety> OigSafeties { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.UseCollation("Modern_Spanish_CI_AS");
 
+
+            modelBuilder.Entity<OigSafety>(entity =>
+            {
+                entity.ToTable("OIG_safety");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.Column0)
+                    .HasColumnType("text")
+                    .HasColumnName("Column 0");
+
+                entity.Property(e => e.Column1)
+                    .HasMaxLength(50)
+                    .IsUnicode(false)
+                    .HasColumnName("Column 1");
+            });
 
             modelBuilder.Entity<TypeUser>(entity =>
             {

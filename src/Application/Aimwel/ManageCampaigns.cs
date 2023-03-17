@@ -326,7 +326,7 @@ namespace Application.Aimwel
 
                 var address = new Address
                 {
-                    CountryAlpha2 = _countryIsoRepo.GetIsobyCountryId(ApiUtils.GetCountryIdBySite(job.Idsite)),                           
+                    CountryAlpha2 = _countryIsoRepo.GetIsobyCountryId(job.Idcountry),                           
                     State = region == null ? companyRegion.Ccaa : region.Ccaa == null ? region.BaseName : region.Ccaa,
                     City = job.City ?? geolocation.postalCodes.First().adminName3,
                     Street = "",

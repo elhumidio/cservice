@@ -9,7 +9,9 @@ using Application.Utils;
 using Application.Utils.Queries;
 using Domain.DTO;
 using Domain.Entities;
+using Domain.Repositories;
 using DPGRecruitmentCampaignClient;
+using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using System.Diagnostics;
@@ -21,11 +23,13 @@ namespace API.Controllers
 
         private readonly IMemoryCache _cache;
         public IHostEnvironment _env;
+        private readonly ISafetyModeration _moderation;
 
-        public UtilInfoController(IHostEnvironment env, IMemoryCache memoryCache)
+        public UtilInfoController(IHostEnvironment env, IMemoryCache memoryCache,ISafetyModeration moderation)
         {
             _env = env;
             _cache = memoryCache;
+            _moderation = moderation;
         }
 
         [HttpGet]
@@ -54,6 +58,36 @@ namespace API.Controllers
             });
             return HandleResult(result);
         }
+
+        [HttpGet]
+        public IActionResult InsertIntoModerationTable()
+        {
+            using (var reader = new StreamReader("OIG_safety_v0.2.txt"))
+            {
+                List<string> listA = new List<string>();
+                List<string> listB = new List<string>();
+                while (!reader.EndOfStream)
+                {
+                    var line = reader.ReadLine();
+                    var sentencesInLine = line.Split("||||");
+
+                    foreach (var sentence in sentencesInLine)
+                    {
+                        var values = line.Split("|||");
+                        var it = new OigSafety();
+                        it.Column0 = values[0].Trim();
+                        //if (!line.Contains(';'))
+                        //    it.Column1 = "casual";
+                        //else
+                            it.Column1 = values[1].Trim();
+                        _moderation.InsertModerations(it);
+                    }
+                }
+            }
+
+            return Ok();
+        }
+
 
 
         [HttpGet("{zipCode}/{countryId}")] 
