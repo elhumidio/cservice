@@ -9,6 +9,7 @@ using DPGRecruitmentCampaignClient;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using Grpc.Net.Client;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
@@ -236,9 +237,9 @@ namespace Application.Aimwel
                     settings = new CampaignSetting();
                     settings.Goal = 100;
                     settings.Budget = 0.000m;
-                    job.Isco ??= _areaRepository.GetIscoDefaultFromArea(job.Idarea);
+                    
                 }
-
+                job.Isco ??= _areaRepository.GetIscoDefaultFromArea(job.Idarea);
                 GrpcChannel channel;
                 string logo = string.Empty;
                 string urlLogo = string.Empty;
@@ -313,9 +314,12 @@ namespace Application.Aimwel
                 else
                 {
                     var code = _zipCodeRepo.GetZipById((int)job.IdzipCode);
-                    latitude = Convert.ToDouble(code.Latitude);
-                    longitude = Convert.ToDouble((code.Longitude));
-                    PostalCode = code.Zip;
+                    if (code != null) {
+                        latitude = Convert.ToDouble(code.Latitude);
+                        longitude = Convert.ToDouble((code.Longitude));
+                        PostalCode = code.Zip;
+                    }
+                    
                 }
                 var logoEntity = _logoRepo.GetLogoByBrand(job.Idbrand);
                 if (logoEntity == null)
@@ -457,9 +461,20 @@ namespace Application.Aimwel
         private async Task<CreateCampaignResponse> CreateCampaign(CampaignManagement.CampaignManagementClient client, CreateCampaignRequest request, Grpc.Core.Metadata metadata)
         {
             // Note that there is also a client.CreateCampaignAsyn(request, metadata); available
-            var reply = await client.CreateCampaignAsync(request, metadata);
-            _logger.LogInformation("Successfully created campaign: " + reply);
-            return reply;
+
+            try {
+                var reply = await client.CreateCampaignAsync(request, metadata);
+                _logger.LogInformation("Successfully created campaign: " + reply);
+                return reply;
+            }
+            catch (Exception e) {
+
+                CreateCampaignResponse r = new CreateCampaignResponse();
+                r.CampaignId = e.Message;    
+                return r;
+
+            }
+            
         }
     }
 }
