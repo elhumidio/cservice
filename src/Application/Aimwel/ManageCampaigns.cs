@@ -206,6 +206,16 @@ namespace Application.Aimwel
             }
         }
 
+        public async Task<bool> GetCampaignNeedsUpdate(string campaignName)
+        {
+            return await _campaignsManagementRepo.GetCampaignNeedsUpdate(campaignName);
+        }
+
+        public async Task<bool> MarkUpdateCampaign(string campaignName)
+        {
+           return await _campaignsManagementRepo.MarkCampaignUpdated(campaignName);   
+        }
+
         /// <summary>
         /// Creates Aimwel campaign
         /// </summary>

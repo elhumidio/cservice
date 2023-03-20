@@ -22,12 +22,14 @@ namespace Domain.Repositories
         public IQueryable<JobVacancy> GetActiveOffersByCompany(int enterpriseId);
         Task<IReadOnlyList<JobDataDefinition>> GetActiveJobs(int maxActiveDays);
 
+        public Task<List<JobData>> GetAllJobs();
+
         IQueryable<JobVacancy> GetConsumedUnitsWelcomeNotSpain(int companyId);
 
         public int Add(JobVacancy job);
 
         public IQueryable<JobVacancy> GetActiveOffers();
-                
+
         public JobVacancy GetOfferById(int id);
 
         Task<int> UpdateOffer(JobVacancy jobUpdated);
@@ -38,7 +40,8 @@ namespace Domain.Repositories
 
         public IQueryable<JobVacancy> GetActiveOffersByContractAndTypeNoPack(int contractId, int type);
 
-        public Task<List<JobVacancy>> GetOffersCreatedLastFortnight(); 
+        public Task<List<JobVacancy>> GetOffersCreatedLastFortnight();
+
         public int DeleteOffer(JobVacancy job);
         public Task<int> CountOffersPublished(int days);
     }

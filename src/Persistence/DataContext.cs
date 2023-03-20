@@ -60,6 +60,7 @@ namespace Persistence
         public virtual DbSet<CampaignSetting> CampaignSettings { get; set; } = null!;
         public virtual DbSet<ManagersVisibility> ManagersVisibilities { get; set; } = null!;
         public virtual DbSet<OigSafety> OigSafeties { get; set; } = null!;
+        public virtual DbSet<CampaignsUpdatingCheck> CampaignsUpdatingChecks { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -116,6 +117,15 @@ namespace Persistence
                 entity.Property(e => e.LastModificationDate).HasColumnType("datetime");
 
                 entity.Property(e => e.Provider).HasMaxLength(50);
+            });
+
+            modelBuilder.Entity<CampaignsUpdatingCheck>(entity =>
+            {
+                entity.ToTable("CampaignsUpdatingCheck");
+
+                entity.Property(e => e.Campaign)
+                    .HasMaxLength(30)
+                    .IsFixedLength();
             });
 
             modelBuilder.Entity<CampaignSetting>(entity =>
