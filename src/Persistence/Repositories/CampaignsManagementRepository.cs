@@ -1,23 +1,18 @@
 using Domain.Entities;
-using Domain.Enums;
 using Domain.Repositories;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Persistence.Repositories
 {
     public class CampaignsManagementRepository : ICampaignsManagementRepository
     {
         private readonly DataContext _dataContext;
-        public CampaignsManagementRepository(DataContext dataContext) {
-            _dataContext = dataContext; 
+
+        public CampaignsManagementRepository(DataContext dataContext)
+        {
+            _dataContext = dataContext;
         }
 
-        
         public async Task<int> Add(CampaignsManagement _campaign)
         {
             try
@@ -58,7 +53,6 @@ namespace Persistence.Repositories
             {
                 _dataContext.CampaignManagements.Update(_campaign);
                 var ret = await _dataContext.SaveChangesAsync();
-
             }
             catch (Exception ex)
             {
@@ -66,9 +60,27 @@ namespace Persistence.Repositories
             }
 
             return true;
-
         }
 
-        
+
+        public async Task<bool> GetCampaignNeedsUpdate(string campaignName)
+        {
+            var campaign = await _dataContext.CampaignsUpdatingChecks.Where(c => c.Campaign == campaignName).FirstOrDefaultAsync();
+            if(campaign != null)
+            return  (bool)campaign.NeedsRefresh;
+            else return false;  
+        }
+             
+        public async Task<bool> MarkCampaignUpdated(string campaignName)
+        {
+            var campaign = await _dataContext.CampaignsUpdatingChecks.Where(c => c.Campaign == campaignName).FirstOrDefaultAsync();
+            if (campaign == null) return false;
+            else
+            {
+                campaign.NeedsRefresh = false;
+                var a = await _dataContext.SaveChangesAsync();
+                return a > 0;
+            }
+        }
     }
 }

@@ -138,7 +138,8 @@ namespace Persistence.Repositories
             var query = _dataContext.JobVacancies.Where(a => !a.ChkDeleted
             && !a.ChkFilled
             && a.FinishDate >= DateTime.Today.Date
-            && a.Idstatus == (int)OfferStatus.Active);
+            && a.Idstatus == (int)OfferStatus.Active
+            && (a.Idsite == (int)Sites.SPAIN || a.Idsite == (int)Sites.PORTUGAL));
             return query;
         }
 
