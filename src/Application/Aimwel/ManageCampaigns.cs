@@ -11,7 +11,6 @@ using Grpc.Core;
 using Grpc.Net.Client;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Country = DPGRecruitmentCampaignClient.Country;
 
 namespace Application.Aimwel
 {
@@ -229,6 +228,7 @@ namespace Application.Aimwel
                     settings.Budget = 0.000m;
                     job.Isco ??= _areaRepository.GetIscoDefaultFromArea(job.Idarea);
                 }
+
                 GrpcChannel channel;
                 string logo = string.Empty;
                 string urlLogo = string.Empty;
@@ -254,10 +254,8 @@ namespace Application.Aimwel
                     }
                     else
                     {
-                        
                         if (!string.IsNullOrEmpty(job.City))
                         {
-                            
                             countryISO = _countryIsoRepo.GetIsobyCountryId(job.Idcountry);
                             geolocation = _geoNamesConector.GetPostalCodesCollectionByPlaceName(job.City, countryISO);
 
@@ -326,7 +324,7 @@ namespace Application.Aimwel
 
                 var address = new Address
                 {
-                    CountryAlpha2 = _countryIsoRepo.GetIsobyCountryId(job.Idcountry),                           
+                    CountryAlpha2 = _countryIsoRepo.GetIsobyCountryId(job.Idcountry),
                     State = region == null ? companyRegion.Ccaa : region.Ccaa == null ? region.BaseName : region.Ccaa,
                     City = job.City ?? geolocation.postalCodes.First().adminName3,
                     Street = "",
@@ -378,6 +376,7 @@ namespace Application.Aimwel
                         }
                     }
                 };
+
                 var ans = await CreateCampaign(client, request, new Metadata());
                 if (!string.IsNullOrEmpty(ans.CampaignId))
                 {
