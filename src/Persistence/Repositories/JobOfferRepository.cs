@@ -292,7 +292,7 @@ namespace Persistence.Repositories
         public async Task<List<JobVacancy>> GetOffersCreatedLastFortnight()
         {
             var offers =await _dataContext.JobVacancies
-                .Where( o => o.Idstatus == 1 && o.PublicationDate  > DateTime.Today.AddDays(-15))
+                .Where( o => o.Idstatus == 1 && o.PublicationDate  > DateTime.Today.AddDays(-15) && o.FinishDate > DateTime.Today.Date)
                 .ToListAsync();
             return offers;
         }
