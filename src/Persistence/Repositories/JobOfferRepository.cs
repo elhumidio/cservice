@@ -38,7 +38,7 @@ namespace Persistence.Repositories
         {
             var query = _dataContext.JobVacancies.Where(a => a.Idcontract == contractId && !a.ChkDeleted
                 && !a.ChkFilled
-                && a.FinishDate >= DateTime.Today && a.IdenterpriseUserG == managerId && a.Idstatus == (int)OfferStatus.Active);
+                && a.FinishDate >= DateTime.Today && a.IdenterpriseUserG == managerId && (a.Idstatus == (int)OfferStatus.Active || a.Idstatus == (int)OfferStatus.Pending));
 
             return query;
         }
@@ -138,7 +138,8 @@ namespace Persistence.Repositories
             var query = _dataContext.JobVacancies.Where(a => !a.ChkDeleted
             && !a.ChkFilled
             && a.FinishDate >= DateTime.Today.Date
-            && a.Idstatus == (int)OfferStatus.Active);
+            && a.Idstatus == (int)OfferStatus.Active
+            && (a.Idsite == (int)Sites.SPAIN || a.Idsite == (int)Sites.PORTUGAL));
             return query;
         }
 
@@ -291,7 +292,7 @@ namespace Persistence.Repositories
         public async Task<List<JobVacancy>> GetOffersCreatedLastFortnight()
         {
             var offers =await _dataContext.JobVacancies
-                .Where( o => o.Idstatus == 1 && o.PublicationDate  > DateTime.Today.AddDays(-15))
+                .Where( o => o.Idstatus == 1 && o.PublicationDate  > DateTime.Today.AddDays(-15) && o.FinishDate > DateTime.Today.Date)
                 .ToListAsync();
             return offers;
         }

@@ -20,10 +20,11 @@ namespace Infraestructure
 
         public async Task<GenericOfferCounter> CountApplicantsByOffers(ListOffersRequest jobIds)
         {
+   
             var serviceURL = _config["ApplicationService:CandidateApplication"];
             Uri serviceUri = GetURL(serviceURL, $"CountApplicantsByOffers");
             var result = await RestClient.Post<ListOffersRequest,GenericOfferCounter>(serviceUri.AbsoluteUri,jobIds);
-            throw new NotImplementedException();
+            return result;
         }
 
         public async Task<GenericOfferCounter> CountRedirectsByOffer(ListOffersRequest jobIds)
@@ -31,7 +32,7 @@ namespace Infraestructure
             var serviceURL = _config["ApplicationService:JobOfferRedirect"];
             Uri serviceUri = GetURL(serviceURL, $"CountRedirectsByOffers");
             var result = await RestClient.Post<ListOffersRequest, GenericOfferCounter>(serviceUri.AbsoluteUri, jobIds);
-            throw new NotImplementedException();
+            return result;
         }
 
 

@@ -4,6 +4,7 @@ using Application.Behaviors;
 using Application.Interfaces;
 using Application.JobOffer.Commands;
 using Application.JobOffer.Queries;
+using Domain.Entities;
 using Domain.Repositories;
 using FluentValidation.AspNetCore;
 using Infraestructure;
@@ -35,7 +36,7 @@ namespace API.Extensions
             services.AddSingleton<IMemoryCache, MemoryCache>();
 
             #region MAPPING REPOSITORIES
-
+            services.AddScoped<IZoneUrl, UrlZoneRepository>();
             services.AddScoped<IContractRepository, ContractRepository>();
             services.AddScoped<IJobOfferRepository, JobOfferRepository>();
             services.AddScoped<IUnitsRepository, UnitsRepository>();
@@ -79,6 +80,7 @@ namespace API.Extensions
             services.AddScoped<ICampaignsManagementRepository, CampaignsManagementRepository>();
             services.AddScoped<IApplicationService, ApplicationService>();
             services.AddScoped<IinternalService, InternalService>();
+            services.AddScoped<ISafetyModeration, SafetyModeration>();
             #endregion MAPPING REPOSITORIES
             
             services.AddScoped<IGeoNamesConector, GeoNamesConector>();

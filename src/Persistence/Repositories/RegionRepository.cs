@@ -67,6 +67,37 @@ namespace Persistence.Repositories
             return countryId;
         }
 
+        public string GetRegionNameByID(int _region, bool english)
+        {
+            var regionname = string.Empty;
+            var lang = (int)Languages.English;
+            if (english)
+            {
+                regionname = _dataContext.Regions.Where(a => a.Idregion == _region && a.Idslanguage == lang).FirstOrDefault().BaseName;
+            }
+            else
+            {
+                regionname = _dataContext.Regions.Where(a => a.Idregion == _region && a.Idslanguage != lang).FirstOrDefault().BaseName;
+            }
+
+            return regionname;
+        }
+
+        public string GetCCAAByID(int _region, bool english)
+        {
+            var CCAA = string.Empty;
+            var lang = (int)Languages.English;
+            if (english)
+            {
+                CCAA = _dataContext.Regions.Where(a => a.Idregion == _region && a.Idslanguage == lang).FirstOrDefault().Ccaa;
+            }
+            else
+            {
+                CCAA = _dataContext.Regions.Where(a => a.Idregion == _region && a.Idslanguage != lang).FirstOrDefault().Ccaa;
+            }
+            return CCAA;
+        }
+
         public IQueryable<Region> GetRegions(int siteId, int languageId)
         {
             var regions = _dataContext.Regions

@@ -11,12 +11,13 @@ using Grpc.Core;
 using Grpc.Net.Client;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Country = DPGRecruitmentCampaignClient.Country;
+using System.Text;
 
 namespace Application.Aimwel
 {
     public class ManageCampaigns : IAimwelCampaign
     {
+        private readonly IZoneUrl _zoneUrl;
         private readonly IConfiguration _config;
         private readonly IGeoNamesConector _geoNamesConector;
         private readonly IEnterpriseRepository _enterpriseRepo;
@@ -40,8 +41,7 @@ namespace Application.Aimwel
             ICampaignsManagementRepository campaignsManagementRepo,
             IAreaRepository areaRepository,
             IRegionRepository regionRepository,
-
-            ICountryRepository countryRepository)
+            ICountryRepository countryRepository, IZoneUrl zoneUrl)
         {
             _config = config;
             _geoNamesConector = geoNamesConector;
@@ -53,8 +53,8 @@ namespace Application.Aimwel
             _campaignsManagementRepo = campaignsManagementRepo;
             _areaRepository = areaRepository;
             _regionRepo = regionRepository;
-
             _countryRepo = countryRepository;
+            _zoneUrl = zoneUrl;
         }
 
         /// <summary>
@@ -207,6 +207,16 @@ namespace Application.Aimwel
             }
         }
 
+        public async Task<bool> GetCampaignNeedsUpdate(string campaignName)
+        {
+            return await _campaignsManagementRepo.GetCampaignNeedsUpdate(campaignName);
+        }
+
+        public async Task<bool> MarkUpdateCampaign(string campaignName)
+        {
+            return await _campaignsManagementRepo.MarkCampaignUpdated(campaignName);
+        }
+
         /// <summary>
         /// Creates Aimwel campaign
         /// </summary>
@@ -227,8 +237,8 @@ namespace Application.Aimwel
                     settings = new CampaignSetting();
                     settings.Goal = 100;
                     settings.Budget = 0.000m;
-                    job.Isco ??= _areaRepository.GetIscoDefaultFromArea(job.Idarea);
                 }
+                job.Isco ??= _areaRepository.GetIscoDefaultFromArea(job.Idarea);
                 GrpcChannel channel;
                 string logo = string.Empty;
                 string urlLogo = string.Empty;
@@ -254,11 +264,8 @@ namespace Application.Aimwel
                     }
                     else
                     {
-                        //TODO get pais by idcountry
-
                         if (!string.IsNullOrEmpty(job.City))
                         {
-                            //TODO busqueda por ciudad
                             countryISO = _countryIsoRepo.GetIsobyCountryId(job.Idcountry);
                             geolocation = _geoNamesConector.GetPostalCodesCollectionByPlaceName(job.City, countryISO);
 
@@ -306,9 +313,12 @@ namespace Application.Aimwel
                 else
                 {
                     var code = _zipCodeRepo.GetZipById((int)job.IdzipCode);
-                    latitude = Convert.ToDouble(code.Latitude);
-                    longitude = Convert.ToDouble((code.Longitude));
-                    PostalCode = code.Zip;
+                    if (code != null)
+                    {
+                        latitude = Convert.ToDouble(code.Latitude);
+                        longitude = Convert.ToDouble((code.Longitude));
+                        PostalCode = code.Zip;
+                    }
                 }
                 var logoEntity = _logoRepo.GetLogoByBrand(job.Idbrand);
                 if (logoEntity == null)
@@ -327,11 +337,7 @@ namespace Application.Aimwel
 
                 var address = new Address
                 {
-                    CountryIso = job.Idsite == 6
-                           ? Country.Es : job.Idsite == 8
-                           ? Country.Pt : job.Idsite == 11
-                           ? Country.Mx : job.Idsite == 39
-                           ? Country.It : Country.Es,
+                    CountryAlpha2 = _countryIsoRepo.GetIsobyCountryId(job.Idcountry),
                     State = region == null ? companyRegion.Ccaa : region.Ccaa == null ? region.BaseName : region.Ccaa,
                     City = job.City ?? geolocation.postalCodes.First().adminName3,
                     Street = "",
@@ -343,13 +349,19 @@ namespace Application.Aimwel
                 {
                     JobId = job.IdjobVacancy.ToString(),
 
-                    Advertisement = new Advertisement { Branding = ApiUtils.GetBrandBySite(job.Idsite), Uri = ApiUtils.GetUriBySite(job.Idsite).AbsoluteUri },
+                    Advertisement = new Advertisement
+                    {
+                        Branding = ApiUtils.GetBrandBySite(job.Idsite),
+                        Uri = BuildURLJobvacancy(job)
+                    },
+
                     JobContent = new JobContent
                     {
                         JobTitle = job.Title,
                         JobDescription = job.Description,
                         Language = ApiUtils.GetLanguageBySite(job.Idsite),
                         PublicationTime = Timestamp.FromDateTime(DateTime.UtcNow),
+
                         HiringOrganization = new HiringOrganization
                         {
                             Name = _enterpriseRepo.GetCompanyName(job.Identerprise),
@@ -357,7 +369,7 @@ namespace Application.Aimwel
                         },
                         Location = new Geolocation
                         {
-                            CountryIso = Country.Es,
+                            CountryAlpha2 = _countryIsoRepo.GetIsobyCountryId(job.Idcountry), //verificar
                             Latitude = latitude,
                             Longitude = longitude,
                         },
@@ -383,6 +395,7 @@ namespace Application.Aimwel
                         }
                     }
                 };
+
                 var ans = await CreateCampaign(client, request, new Metadata());
                 if (!string.IsNullOrEmpty(ans.CampaignId))
                 {
@@ -453,9 +466,69 @@ namespace Application.Aimwel
         private async Task<CreateCampaignResponse> CreateCampaign(CampaignManagement.CampaignManagementClient client, CreateCampaignRequest request, Grpc.Core.Metadata metadata)
         {
             // Note that there is also a client.CreateCampaignAsyn(request, metadata); available
-            var reply = await client.CreateCampaignAsync(request, metadata);
-            _logger.LogInformation("Successfully created campaign: " + reply);
-            return reply;
+
+            try
+            {
+                var reply = await client.CreateCampaignAsync(request, metadata);
+                _logger.LogInformation("Successfully created campaign: " + reply);
+                return reply;
+            }
+            catch (Exception e)
+            {
+                CreateCampaignResponse r = new CreateCampaignResponse();
+                r.CampaignId = e.Message;
+                return r;
+            }
+        }
+
+        public string BuildURLJobvacancy(JobVacancy _offer)
+        {
+            StringBuilder sb = new StringBuilder();
+            StringBuilder tmpSb = new StringBuilder();
+
+            tmpSb.Clear();
+            string title = ApiUtils.FormatString(_offer.Title.Trim());
+            title = title.EndsWith("-") ? title.Remove(title.Length - 1, 1) : title;
+
+            tmpSb.Append(ApiUtils.GetUriBySite(_offer.Idsite)); //http://www.turijobs.com
+            tmpSb.Append(ApiUtils.GetSearchbySite(_offer.Idsite));
+            if (_offer.Idregion == 61 || _offer.Idcountry == 226)
+                tmpSb.Append(ApiUtils.GetAbroadTerm(_offer.Idsite));
+            if (_offer.Idcity != null && _offer.Idcity > 0)
+            {
+                var cityUrl = _zoneUrl.GetCityUrlByCityId((int)_offer.Idcity);
+                if (!string.IsNullOrEmpty(cityUrl))
+                {
+                    tmpSb.Append(string.Format("-{0}", ApiUtils.FormatString(cityUrl).Trim())); //http://www.turijobs.com/ofertas-trabajo-calella
+                }
+                else
+                {
+                    if (_offer.Idsite != (int)Sites.MEXICO)
+                    {
+                        var regionName = _regionRepo.GetRegionNameByID(_offer.Idregion, true);
+                        var ccaa = _regionRepo.GetCCAAByID(_offer.Idregion, true);
+                        if (_offer.Idcity == 0)
+                        {
+                            tmpSb.Append(string.Format("-{0}", StringUtils.FormatString(regionName).Trim())); //http://www.turijobs.com/ofertas-trabajo-cadiz
+                            if ((ccaa != "- Todo País" && ccaa != "- Todo Portugal") && ccaa != regionName)
+                                tmpSb.Append(string.Format("-{0}", StringUtils.FormatString(ccaa).Trim())); //http://www.turijobs.com/ofertas-trabajo-cadiz-andalucia
+                        }
+                        else
+                            tmpSb.Append(string.Format("-{0}", StringUtils.FormatString(regionName).Trim()));
+                    }
+                    else // méxico
+                    {
+                        tmpSb.Append(string.Format("-{0}", StringUtils.FormatString(_offer.City).Trim()));
+                    }
+                }
+            }
+
+            tmpSb.Append(string.Format("{0}", StringUtils.FormatString(_offer.Title).Trim())); //http://www.turijobs.com/ofertas-trabajo-cadiz/recepcionista
+            tmpSb.Append(string.Format("{0}", StringUtils.FormatString("-of").Trim())); //http://www.turijobs.com/ofertas-trabajo-cadiz/recepcionista-of
+            tmpSb.Append(string.Format("{0}", StringUtils.FormatString(_offer.IdjobVacancy.ToString().Trim()))); //http://www.turijobs.com/ofertas-trabajo-cadiz/recepcionista-of76008
+            sb.Append(ApiUtils.SanitizeURL(tmpSb).ToString());
+
+            return sb.ToString();
         }
     }
 }

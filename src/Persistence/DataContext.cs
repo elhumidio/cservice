@@ -59,11 +59,54 @@ namespace Persistence
         public virtual DbSet<CampaignsManagement> CampaignManagements { get; set; } = null!;
         public virtual DbSet<CampaignSetting> CampaignSettings { get; set; } = null!;
         public virtual DbSet<ManagersVisibility> ManagersVisibilities { get; set; } = null!;
+        public virtual DbSet<OigSafety> OigSafeties { get; set; } = null!;
+        public virtual DbSet<CampaignsUpdatingCheck> CampaignsUpdatingChecks { get; set; } = null!;
+
+        public virtual DbSet<ZoneUrl> ZoneUrls { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.UseCollation("Modern_Spanish_CI_AS");
 
+            modelBuilder.Entity<ZoneUrl>(entity =>
+            {
+                entity.HasKey(e => e.Url);
+
+                entity.ToTable("TZoneURL");
+
+                entity.HasIndex(e => new { e.Idcity, e.Idregion }, "ix_TZoneURL_IDCity_IDRegion")
+                    .HasFillFactor(90);
+
+                entity.HasIndex(e => new { e.Idcountry, e.Idregion, e.Idcity }, "ix_TZoneURL_IDCountry_IDRegion_IDCity_includes")
+                    .HasFillFactor(90);
+
+                entity.Property(e => e.Url)
+                    .HasMaxLength(100)
+                    .HasColumnName("URL");
+
+                entity.Property(e => e.Idcity).HasColumnName("IDCity");
+
+                entity.Property(e => e.Idcountry).HasColumnName("IDCountry");
+
+                entity.Property(e => e.Idregion).HasColumnName("IDRegion");
+            });
+
+
+            modelBuilder.Entity<OigSafety>(entity =>
+            {
+                entity.ToTable("OIG_safety");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.Column0)
+                    .HasColumnType("text")
+                    .HasColumnName("Column 0");
+
+                entity.Property(e => e.Column1)
+                    .HasMaxLength(50)
+                    .IsUnicode(false)
+                    .HasColumnName("Column 1");
+            });
 
             modelBuilder.Entity<TypeUser>(entity =>
             {
@@ -99,6 +142,15 @@ namespace Persistence
                 entity.Property(e => e.LastModificationDate).HasColumnType("datetime");
 
                 entity.Property(e => e.Provider).HasMaxLength(50);
+            });
+
+            modelBuilder.Entity<CampaignsUpdatingCheck>(entity =>
+            {
+                entity.ToTable("CampaignsUpdatingCheck");
+
+                entity.Property(e => e.Campaign)
+                    .HasMaxLength(30)
+                    .IsFixedLength();
             });
 
             modelBuilder.Entity<CampaignSetting>(entity =>

@@ -30,7 +30,7 @@ namespace Application.JobOffer.Queries
 
             public async Task<Result<List<JobOfferDto>>> Handle(Query request, CancellationToken cancellationToken)
             {
-                IQueryable<JobOfferDto> query = _jobOfferRepository.GetActiveOffers().ProjectTo<JobOfferDto>(_mapper.ConfigurationProvider).AsQueryable();
+                IQueryable<JobOfferDto> query =_jobOfferRepository.GetActiveOffers().ProjectTo<JobOfferDto>(_mapper.ConfigurationProvider).AsQueryable();
                 return Result<List<JobOfferDto>>.Success(await query.ToListAsync());
             }
         }
