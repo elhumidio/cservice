@@ -16,6 +16,9 @@ using System.Text;
 
 namespace Application.Aimwel
 {
+    /// <summary>
+    /// This class provides methods to manage campaigns in the Aimwel system.
+    /// </summary>
     public class ManageCampaigns : IAimwelCampaign
     {
         private readonly IZoneUrl _zoneUrl;
@@ -220,11 +223,21 @@ namespace Application.Aimwel
             }
         }
 
+        /// <summary>
+        /// Gets the campaign needs update.
+        /// </summary>
+        /// <param name="campaignName">Name of the campaign.</param>
+        /// <returns>The campaign needs update.</returns>
         public async Task<bool> GetCampaignNeedsUpdate(string campaignName)
         {
             return await _campaignsManagementRepo.GetCampaignNeedsUpdate(campaignName);
         }
 
+        /// <summary>
+        /// Marks a campaign as updated in the database.
+        /// </summary>
+        /// <param name="campaignName">The name of the campaign to mark as updated.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
         public async Task<bool> MarkUpdateCampaign(string campaignName)
         {
             return await _campaignsManagementRepo.MarkCampaignUpdated(campaignName);
@@ -772,7 +785,7 @@ namespace Application.Aimwel
                 }
             }
 
-            tmpSb.Append(string.Format("/{0}", StringUtils.FormatString(_offer.Title.ToLower()).Trim())); //http://www.turijobs.com/ofertas-trabajo-cadiz/recepcionista
+            tmpSb.Append(string.Format("/{0}", StringUtils.FormatString(title.ToLower()).Trim())); //http://www.turijobs.com/ofertas-trabajo-cadiz/recepcionista
             tmpSb.Append(string.Format("{0}", StringUtils.FormatString("-of").Trim())); //http://www.turijobs.com/ofertas-trabajo-cadiz/recepcionista-of
             tmpSb.Append(string.Format("{0}", StringUtils.FormatString(_offer.IdjobVacancy.ToString().Trim()))); //http://www.turijobs.com/ofertas-trabajo-cadiz/recepcionista-of76008
             sb.Append(ApiUtils.SanitizeURL(tmpSb).ToString());
