@@ -62,9 +62,34 @@ namespace Persistence
         public virtual DbSet<OigSafety> OigSafeties { get; set; } = null!;
         public virtual DbSet<CampaignsUpdatingCheck> CampaignsUpdatingChecks { get; set; } = null!;
 
+        public virtual DbSet<ZoneUrl> ZoneUrls { get; set; } = null!;
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.UseCollation("Modern_Spanish_CI_AS");
+
+            modelBuilder.Entity<ZoneUrl>(entity =>
+            {
+                entity.HasKey(e => e.Url);
+
+                entity.ToTable("TZoneURL");
+
+                entity.HasIndex(e => new { e.Idcity, e.Idregion }, "ix_TZoneURL_IDCity_IDRegion")
+                    .HasFillFactor(90);
+
+                entity.HasIndex(e => new { e.Idcountry, e.Idregion, e.Idcity }, "ix_TZoneURL_IDCountry_IDRegion_IDCity_includes")
+                    .HasFillFactor(90);
+
+                entity.Property(e => e.Url)
+                    .HasMaxLength(100)
+                    .HasColumnName("URL");
+
+                entity.Property(e => e.Idcity).HasColumnName("IDCity");
+
+                entity.Property(e => e.Idcountry).HasColumnName("IDCountry");
+
+                entity.Property(e => e.Idregion).HasColumnName("IDRegion");
+            });
 
 
             modelBuilder.Entity<OigSafety>(entity =>
