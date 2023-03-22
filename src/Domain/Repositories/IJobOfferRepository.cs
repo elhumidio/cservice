@@ -42,5 +42,6 @@ namespace Domain.Repositories
 
         public int DeleteOffer(JobVacancy job);
         public Task<int> CountOffersPublished(int days);
+        public List<int>? GetoffersinCampaigns();
     }
 }

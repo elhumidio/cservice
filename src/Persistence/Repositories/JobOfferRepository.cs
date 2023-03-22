@@ -143,6 +143,13 @@ namespace Persistence.Repositories
             return query;
         }
 
+        public List<int>? GetoffersinCampaigns() {
+
+            var offers = _dataContext.CampaignManagements.Select(c => (int)c.IdjobVacancy).ToList();
+            return offers;
+
+        }
+
 
         public IQueryable<JobVacancy> GetActiveOffersByContractAndManagerNoPack(int contractId, int managerId)
         {

@@ -50,9 +50,8 @@ namespace Persistence
         public virtual DbSet<RegJobVacWorkPermit> RegJobVacWorkPermits { get; set; } = null!;
         public virtual DbSet<JobVacancyLanguage> JobVacancyLanguages { get; set; } = null!;
         public virtual DbSet<AtsmanagerAdminRegion> AtsmanagerAdminRegions { get; set; } = null!;
-
+        public virtual DbSet<AimwelCreationError> AimwelCreationErrors { get; set; } = null!;
         public virtual DbSet<TypeUser> TypeUsers { get; set; } = null!;
-
         public virtual DbSet<Title> Titles { get; set; } = null!;
         public virtual DbSet<TitleLang> TitleLangs { get; set; } = null!;
         public virtual DbSet<TitlesRelationship> TitlesRelationships { get; set; } = null!;
@@ -90,7 +89,10 @@ namespace Persistence
 
                 entity.Property(e => e.Idregion).HasColumnName("IDRegion");
             });
-
+            modelBuilder.Entity<AimwelCreationError>(entity =>
+            {
+                entity.Property(e => e.Date).HasColumnType("datetime");
+            });
 
             modelBuilder.Entity<OigSafety>(entity =>
             {
@@ -133,11 +135,11 @@ namespace Persistence
 
                 entity.Property(e => e.Id).HasColumnName("ID");
 
-                entity.Property(e => e.Budget).HasColumnType("decimal(18, 0)");
+                entity.Property(e => e.Budget).HasColumnType("decimal(10, 2)");
 
                 entity.Property(e => e.ExternalCampaignId).HasMaxLength(150);
 
-                entity.Property(e => e.IdjobVacancy).HasColumnName("IDjobVacancy");                
+                entity.Property(e => e.IdjobVacancy).HasColumnName("IDjobVacancy");
 
                 entity.Property(e => e.LastModificationDate).HasColumnType("datetime");
 

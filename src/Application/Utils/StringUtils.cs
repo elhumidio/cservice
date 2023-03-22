@@ -53,44 +53,34 @@ namespace Application.Utils
                 .Replace("ë", "e")
                 .Replace("ê", "e")
                 .Replace("ě", "e")
-
+                .Replace("\u009B", "")
                 .Replace("í", "i")
                 .Replace("ì", "i")
                 .Replace("ï", "i")
                 .Replace("î", "i")
                 .Replace("ı", "i")
-
                 .Replace("ó", "o")
                 .Replace("ò", "o")
                 .Replace("ö", "o")
                 .Replace("ô", "o")
                 .Replace("õ", "o")
                 .Replace("ø", "o")
-
                 .Replace("ú", "u")
                 .Replace("ù", "u")
                 .Replace("ü", "u")
                 .Replace("û", "u")
                 .Replace("ů", "u")
-
                 .Replace("ç", "c")
                 .Replace("ć", "c")
                 .Replace("č", "c")
-
                 .Replace("ğ", "g")
-
                 .Replace("ş", "s")
                 .Replace("š", "s")
-
                 .Replace("ž", "z")
-
                 .Replace("ý", "y")
-
                 .Replace("ð", "d")
                 .Replace("ď", "d")
-
                 .Replace("þ", "th")
-
                 .Replace("/", "-")
                 .Replace("'", "")
                 .Replace("-&-", "-")
@@ -129,6 +119,7 @@ namespace Application.Utils
                 .Replace("---", "-")
                 .Replace("--", "-")
                 .Replace("’", "")
+                .Replace("  "," ")
                 .Replace(" ", separator);
 
             sb.Replace("--", "-")

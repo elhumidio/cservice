@@ -11,6 +11,7 @@ using Grpc.Core;
 using Grpc.Net.Client;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using System.Text;
 
 namespace Application.Aimwel
@@ -28,6 +29,7 @@ namespace Application.Aimwel
         private readonly ICampaignsManagementRepository _campaignsManagementRepo;
         private readonly IAreaRepository _areaRepository;
         private readonly IRegionRepository _regionRepo;
+        private readonly IAimwelErrorsRepository _aimwelErrorsRepository;
 
         private readonly ICountryRepository _countryRepo;
 
@@ -41,7 +43,9 @@ namespace Application.Aimwel
             ICampaignsManagementRepository campaignsManagementRepo,
             IAreaRepository areaRepository,
             IRegionRepository regionRepository,
-            ICountryRepository countryRepository, IZoneUrl zoneUrl)
+            ICountryRepository countryRepository,
+            IZoneUrl zoneUrl,
+            IAimwelErrorsRepository aimwelErrorsRepository)
         {
             _config = config;
             _geoNamesConector = geoNamesConector;
@@ -55,6 +59,7 @@ namespace Application.Aimwel
             _regionRepo = regionRepository;
             _countryRepo = countryRepository;
             _zoneUrl = zoneUrl;
+            _aimwelErrorsRepository = aimwelErrorsRepository;
         }
 
         /// <summary>
@@ -113,7 +118,15 @@ namespace Application.Aimwel
                         CampaignId = campaign.ExternalCampaignId
                     };
 
-                    var ret = await client.EndCampaignAsync(request);
+                    try
+                    {
+                        var ret = await client.EndCampaignAsync(request);
+                    }
+                    catch (Exception ex)
+                    {
+                        var a = ex.Message;
+                    }
+
                     return true;
                 }
             }
@@ -399,27 +412,263 @@ namespace Application.Aimwel
                 var ans = await CreateCampaign(client, request, new Metadata());
                 if (!string.IsNullOrEmpty(ans.CampaignId))
                 {
-                    CampaignsManagement campaign = new()
+                    Guid guidOutput = new Guid();
+                    bool isValid = Guid.TryParse(ans.CampaignId, out guidOutput);
+                    if (isValid)
                     {
-                        Status = (int)AimwelStatus.ACTIVE,
-                        Goal = settings.Goal,
-                        IdjobVacancy = job.IdjobVacancy,
-                        Budget = settings.Budget,
-                        ExternalCampaignId = ans.CampaignId,
-                        LastModificationDate = DateTime.Now,
-                        ModificationReason = (int)CampaignModificationReason.CREATED,
-                        Provider = "Aimwell"
-                    };
+                        CampaignsManagement campaign = new()
+                        {
+                            Status = (int)AimwelStatus.ACTIVE,
+                            Goal = settings.Goal,
+                            IdjobVacancy = job.IdjobVacancy,
+                            Budget = settings.Budget,
+                            ExternalCampaignId = ans.CampaignId,
+                            LastModificationDate = DateTime.Now,
+                            ModificationReason = (int)CampaignModificationReason.CREATED,
+                            Provider = "Aimwell"
+                        };
 
-                    await _campaignsManagementRepo.Add(campaign);
+                        await _campaignsManagementRepo.Add(campaign);
+                    }
                 }
-
+                else
+                {
+                    //save in errors table
+                    AimwelCreationError err = new()
+                    {
+                        Date = DateTime.Now,
+                        IdJobVacancy = job.IdjobVacancy,
+                        FailedCampaign = JsonConvert.SerializeObject(ans)
+                    };
+                    _aimwelErrorsRepository.Add(err);
+                }
                 return ans;
             }
             catch (Exception ex)
             {
                 var msg = ex.Message;
                 return new CreateCampaignResponse { CampaignId = msg };
+            }
+        }
+
+        public async Task<CampaignsManagement> CreateCampaingUpdater(JobVacancy job)
+        {
+            if (job.Idsite == (int)Sites.ITALY || job.Idsite == (int)Sites.MEXICO)
+            {
+                return new CampaignsManagement() { };
+            }
+            CampaignSetting settings;
+            try
+            {
+                settings = await _campaignsManagementRepo.GetCampaignSetting(job);
+                if (settings == null)
+                {
+                    settings = new CampaignSetting();
+                    settings.Goal = 100;
+                    settings.Budget = 0.000m;
+                }
+                job.Isco ??= _areaRepository.GetIscoDefaultFromArea(job.Idarea);
+                GrpcChannel channel;
+                string logo = string.Empty;
+                string urlLogo = string.Empty;
+                var client = GetClient(out channel);
+                double latitude = 0d;
+                double longitude = 0d;
+                string PostalCode = string.Empty;
+                string countryISO = string.Empty;
+                var regionId = _enterpriseRepo.GetCompanyRegion(job.Identerprise);
+                var companyRegion = _regionRepo.Get(regionId);
+                GeoNamesDto geolocation = null;
+                var region = _regionRepo.Get(job.Idregion);
+                long units = Convert.ToInt64(decimal.Truncate(settings.Budget));
+                int hundredths = settings.Budget == 0.00m ? 0 : ReminderDigits(Convert.ToDouble(settings.Budget), 2);
+                var countryName = _countryRepo.GetCountryById(job.Idcountry).BaseName;
+                if (job.IdzipCode == null || job.IdzipCode == -1 || job.IdzipCode == 0)
+                {
+                    if (job.Idcountry == 226)
+                    {
+                        latitude = Convert.ToDouble("40.60704563565361");
+                        longitude = Convert.ToDouble("-4.049663543701172");
+                        PostalCode = "28292";
+                    }
+                    else
+                    {
+                        if (!string.IsNullOrEmpty(job.City))
+                        {
+                            countryISO = _countryIsoRepo.GetIsobyCountryId(job.Idcountry);
+                            geolocation = _geoNamesConector.GetPostalCodesCollectionByPlaceName(job.City, countryISO);
+
+                            //if geolocation not GOOGLE will be
+                            if (geolocation != null && geolocation.postalCodes.Any())
+                            {
+                                latitude = geolocation.postalCodes.FirstOrDefault().lat;
+                                longitude = geolocation.postalCodes.FirstOrDefault().lng;
+                                PostalCode = geolocation.postalCodes.FirstOrDefault().postalCode;
+                            }
+                            else
+                            {
+                                countryISO = _countryIsoRepo.GetIsobyCountryId(job.Idcountry);
+                                geolocation = _geoNamesConector.GetPostalCodesCollectionByPlaceName(companyRegion.BaseName.ToLower(), countryISO);
+                                //if geolocation not GOOGLE will be
+                                if (geolocation != null && geolocation.postalCodes.Any())
+                                {
+                                    latitude = geolocation.postalCodes.FirstOrDefault().lat;
+                                    longitude = geolocation.postalCodes.FirstOrDefault().lng;
+                                    PostalCode = geolocation.postalCodes.FirstOrDefault().postalCode;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (job.Idregion == 60)
+                            {
+                                if (regionId != 61)
+                                {
+                                    //TODO get name
+                                    countryISO = _countryIsoRepo.GetIsobyCountryId(job.Idcountry);
+                                    geolocation = _geoNamesConector.GetPostalCodesCollectionByPlaceName(companyRegion.BaseName.ToLower(), countryISO);
+                                    //if geolocation not GOOGLE will be
+                                    if (geolocation != null && geolocation.postalCodes.Any())
+                                    {
+                                        latitude = geolocation.postalCodes.FirstOrDefault().lat;
+                                        longitude = geolocation.postalCodes.FirstOrDefault().lng;
+                                        PostalCode = geolocation.postalCodes.FirstOrDefault().postalCode;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    var code = _zipCodeRepo.GetZipById((int)job.IdzipCode);
+                    if (code != null)
+                    {
+                        latitude = Convert.ToDouble(code.Latitude);
+                        longitude = Convert.ToDouble((code.Longitude));
+                        PostalCode = code.Zip;
+                    }
+                }
+                var logoEntity = _logoRepo.GetLogoByBrand(job.Idbrand);
+                if (logoEntity == null)
+                {
+                    urlLogo = "https://www.turijobs.com/static/img/global/nologo.png";
+                }
+                else
+                {
+                    logo = logoEntity.UrlImgBig;
+                    urlLogo = $"{_config["Aimwel:Portal.urlRootStatics"]}" +
+                  $"{"/img/"}" +
+                  $"{ApiUtils.GetShortCountryBySite((Sites)job.Idsite)}" +
+                  $"{"/logos/"}" +
+                  $"{logo}";
+                }
+
+                var address = new Address
+                {
+                    CountryAlpha2 = _countryIsoRepo.GetIsobyCountryId(job.Idcountry),
+                    State = region == null ? companyRegion.Ccaa : region.Ccaa == null ? region.BaseName : region.Ccaa,
+                    City = job.City ?? geolocation.postalCodes.First().adminName3,
+                    Street = "",
+                    Region = region == null ? companyRegion.BaseName : region.BaseName,
+                    PostalCode = PostalCode
+                };
+
+                var request = new CreateCampaignRequest
+                {
+                    JobId = job.IdjobVacancy.ToString(),
+
+                    Advertisement = new Advertisement
+                    {
+                        Branding = ApiUtils.GetBrandBySite(job.Idsite),
+                        Uri = BuildURLJobvacancy(job)
+                    },
+
+                    JobContent = new JobContent
+                    {
+                        JobTitle = job.Title,
+                        JobDescription = job.Description,
+                        Language = ApiUtils.GetLanguageBySite(job.Idsite),
+                        PublicationTime = Timestamp.FromDateTime(DateTime.UtcNow),
+
+                        HiringOrganization = new HiringOrganization
+                        {
+                            Name = _enterpriseRepo.GetCompanyName(job.Identerprise),
+                            LogoUrl = urlLogo,
+                        },
+                        Location = new Geolocation
+                        {
+                            CountryAlpha2 = _countryIsoRepo.GetIsobyCountryId(job.Idcountry), //verificar
+                            Latitude = latitude,
+                            Longitude = longitude,
+                        },
+                        Address = address,
+                        JobClassification = {
+                        new[] {
+                            new JobClassificationEntry {
+                                JobClassificationType = JobClassificationType.Isco,
+                                JobClassificationValue = job.Isco.ToString() //TODO determine which Isco code put here
+                            },
+                        }
+                    }
+                    },
+                    EndTime = Timestamp.FromDateTime(DateTime.UtcNow.AddDays(14)),
+
+                    BudgetBestEffort = new BudgetBestEffort
+                    {
+                        Budget = new Money
+                        {
+                            Currency = Currency.Eur,
+                            Units = units,
+                            Hundredths = hundredths
+                        }
+                    }
+                };
+
+                var ans = await CreateCampaign(client, request, new Metadata());
+
+                if (!string.IsNullOrEmpty(ans.CampaignId))
+                {
+                    Guid guidOutput = new Guid();
+                    bool isValid = Guid.TryParse(ans.CampaignId, out guidOutput);
+                    if (isValid)
+                    {
+                        CampaignsManagement campaign = new()
+                        {
+                            Status = (int)AimwelStatus.ACTIVE,
+                            Goal = settings.Goal,
+                            IdjobVacancy = job.IdjobVacancy,
+                            Budget = settings.Budget,
+                            ExternalCampaignId = ans.CampaignId,
+                            LastModificationDate = DateTime.Now,
+                            ModificationReason = (int)CampaignModificationReason.CREATED,
+                            Provider = "Aimwell"
+                        };
+
+                        return campaign;
+                    }
+                    else
+                    {
+                        AimwelCreationError err = new()
+                        {
+                            Date = DateTime.Now,
+                            IdJobVacancy = job.IdjobVacancy,
+                            FailedCampaign = JsonConvert.SerializeObject(ans)
+                        };
+                        _aimwelErrorsRepository.Add(err);
+                    }
+                }
+                else
+                {
+                    return new CampaignsManagement();
+                }
+
+                return new CampaignsManagement();
+            }
+            catch (Exception ex)
+            {
+                var msg = ex.Message;
+                return new CampaignsManagement();
             }
         }
 
@@ -523,7 +772,7 @@ namespace Application.Aimwel
                 }
             }
 
-            tmpSb.Append(string.Format("{0}", StringUtils.FormatString(_offer.Title).Trim())); //http://www.turijobs.com/ofertas-trabajo-cadiz/recepcionista
+            tmpSb.Append(string.Format("/{0}", StringUtils.FormatString(_offer.Title.ToLower()).Trim())); //http://www.turijobs.com/ofertas-trabajo-cadiz/recepcionista
             tmpSb.Append(string.Format("{0}", StringUtils.FormatString("-of").Trim())); //http://www.turijobs.com/ofertas-trabajo-cadiz/recepcionista-of
             tmpSb.Append(string.Format("{0}", StringUtils.FormatString(_offer.IdjobVacancy.ToString().Trim()))); //http://www.turijobs.com/ofertas-trabajo-cadiz/recepcionista-of76008
             sb.Append(ApiUtils.SanitizeURL(tmpSb).ToString());
