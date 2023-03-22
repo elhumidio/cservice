@@ -1,6 +1,10 @@
+using Domain.Entities;
 using Domain.Enums;
+using Domain.Repositories;
 using DPGRecruitmentCampaignClient;
 using Microsoft.Extensions.Configuration;
+using System.Collections;
+using System.Text;
 using System.Text.RegularExpressions;
 
 
@@ -8,7 +12,10 @@ namespace Application.Utils
 {
     public class ApiUtils
     {
-        
+     
+
+    
+
         public static bool IsValidEmail(string _email)
         {
             var regex = @"^[a-z0-9!#$%&' * +/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$";
@@ -164,5 +171,182 @@ namespace Application.Utils
             }
             return country;
         }
+
+        public static string FormatString(string inputString)
+        {
+            return FormatString(inputString, "-");
+        }
+
+        /// <summary>
+        /// Sanitiza una URL.
+        /// </summary>        
+        /// <param name="_cadena">String con la cadena a sanitizar.</param>
+        /// <returns>Devuelve un String con la URL generada.</returns>
+        public static string SanitizeURL(StringBuilder _cadena)
+        {
+            _cadena.Replace("--", "-");
+            _cadena.Replace("-/", "/");
+            _cadena.Replace("//cursos/", "/cursos/");
+
+            // elimina el "-" del final de la cadena, si lo tiene
+            string strcad = _cadena.ToString();
+            if (strcad.Substring(strcad.Length - 1, 1) == "-")
+            {
+                strcad = strcad.Substring(0, strcad.Length - 1);
+            }
+
+            _cadena.Clear();
+            _cadena.Append(strcad);
+
+            return _cadena.ToString();
+        }
+
+        public static string FormatString(string inputString, string separator)
+        {
+            if (string.IsNullOrEmpty(inputString)) return String.Empty;
+
+            StringBuilder sb = new StringBuilder(inputString.Trim().ToLower(), inputString.Trim().Length);
+
+            sb
+                .Replace("á", "a")
+                .Replace("à", "a")
+                .Replace("ä", "a")
+                .Replace("â", "a")
+                .Replace("ã", "a")
+                .Replace("å", "a")
+                .Replace("æ", "a")
+
+                .Replace("é", "e")
+                .Replace("è", "e")
+                .Replace("ë", "e")
+                .Replace("ê", "e")
+                .Replace("ě", "e")
+
+                .Replace("í", "i")
+                .Replace("ì", "i")
+                .Replace("ï", "i")
+                .Replace("î", "i")
+                .Replace("ı", "i")
+
+                .Replace("ó", "o")
+                .Replace("ò", "o")
+                .Replace("ö", "o")
+                .Replace("ô", "o")
+                .Replace("õ", "o")
+                .Replace("ø", "o")
+
+                .Replace("ú", "u")
+                .Replace("ù", "u")
+                .Replace("ü", "u")
+                .Replace("û", "u")
+                .Replace("ů", "u")
+
+                .Replace("ç", "c")
+                .Replace("ć", "c")
+                .Replace("č", "c")
+
+                .Replace("ğ", "g")
+
+                .Replace("ş", "s")
+                .Replace("š", "s")
+
+                .Replace("ž", "z")
+
+                .Replace("ý", "y")
+
+                .Replace("ð", "d")
+                .Replace("ď", "d")
+
+                .Replace("þ", "th")
+
+                .Replace("/", "-")
+                .Replace("'", "")
+                .Replace("-&-", "-")
+                .Replace("[", "-")
+                .Replace("]", "-")
+                .Replace("–", "-")
+                .Replace("\"", "")
+                .Replace("$", "")
+                .Replace("¨", "")
+                .Replace("*", "")
+                .Replace("#", "")
+                .Replace("ñ", "n")
+                .Replace("ç", "c")
+                .Replace(".", "-")
+                .Replace("%", "")
+                .Replace("?", "")
+                .Replace("¿", "")
+                .Replace("&", "")
+                .Replace(":", "")
+                .Replace("+", "")
+                .Replace(",", "")
+                .Replace("^", "-")
+                .Replace("“", "")
+                .Replace("”", "")
+                .Replace("\\", "-")
+                .Replace("(", "-")
+                .Replace(")", "-")
+                .Replace("¡", "")
+                .Replace("!", "")
+                .Replace("|", "")
+                .Replace("º", "")
+                .Replace("ª", "")
+                .Replace("´", "")
+                .Replace("`", "")
+                .Replace(" - ", "-")
+                .Replace("---", "-")
+                .Replace("--", "-")
+                .Replace("’", "")
+                .Replace(" ", separator);
+
+            sb.Replace("--", "-")
+              .Replace("--", "-");
+
+            return sb.ToString();
+        }
+
+       public static string GetSearchbySite(int site)
+        {
+            string domain = string.Empty;
+
+            switch (site)
+            {
+                case 6:
+                    domain = "/ofertas-trabajo";
+                    break;
+                case 8:
+                    domain = "/anuncios-emprego";
+                    break;
+                case 11:
+                    domain = "/ofertas-trabajo";
+                    break;
+                case 39:
+                    domain = "/offerte-lavoro";
+                    break;
+
+            }
+
+            return domain;
+        }
+
+        public static string GetAbroadTerm(int _idsite)
+        {
+            string url = string.Empty;
+            switch (_idsite)
+            {
+                case 8:
+                    url = string.Format("/{0}", "anuncios-emprego-estrangeiro");
+                    break;
+                case 6:
+                case 11:
+                    url = string.Format("/{0}", "ofertas-trabajo-extranjero");
+                    break;
+                case 39:
+                    url = string.Format("/{0}", "offerte-lavoro-allestero");
+                    break;
+            }
+            return url;
+        }
+ 
     }
 }
