@@ -312,16 +312,16 @@ namespace Application.Utils
             switch (site)
             {
                 case 6:
-                    domain = "/ofertas-trabajo";
+                    domain = "ofertas-trabajo";
                     break;
                 case 8:
-                    domain = "/anuncios-emprego";
+                    domain = "anuncios-emprego";
                     break;
                 case 11:
-                    domain = "/ofertas-trabajo";
+                    domain = "ofertas-trabajo";
                     break;
                 case 39:
-                    domain = "/offerte-lavoro";
+                    domain = "offerte-lavoro";
                     break;
 
             }
