@@ -23,6 +23,21 @@ namespace Persistence.Repositories
             }
             catch (Exception ex)
             {
+                var a = ex;
+                return -1;
+            }
+        }
+
+        public int AddRange(List<CampaignsManagement> _campaigns)
+        {
+            try
+            {
+                _dataContext.CampaignManagements.AddRange(_campaigns);
+                var ret = _dataContext.SaveChanges();
+                return ret;
+            }
+            catch (Exception ex)
+            {
                 return -1;
             }
         }

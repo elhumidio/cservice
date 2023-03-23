@@ -18,5 +18,6 @@ namespace Application.Aimwel.Interfaces
 
         public Task<GetCampaignResponse> GetCampaignState(int jobId);
         public Task<bool> MarkUpdateCampaign(string campaignName);
+        public Task<CampaignsManagement> CreateCampaingUpdater(JobVacancy job);
     }
 }

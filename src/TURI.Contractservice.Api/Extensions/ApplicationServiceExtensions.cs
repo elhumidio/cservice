@@ -36,6 +36,7 @@ namespace API.Extensions
             services.AddSingleton<IMemoryCache, MemoryCache>();
 
             #region MAPPING REPOSITORIES
+            services.AddScoped<IAimwelErrorsRepository, AimwelErrorsRepository>();
             services.AddScoped<IZoneUrl, UrlZoneRepository>();
             services.AddScoped<IContractRepository, ContractRepository>();
             services.AddScoped<IJobOfferRepository, JobOfferRepository>();

@@ -143,6 +143,13 @@ namespace Persistence.Repositories
             return query;
         }
 
+        public List<int>? GetoffersinCampaigns() {
+
+            var offers = _dataContext.CampaignManagements.Select(c => (int)c.IdjobVacancy).ToList();
+            return offers;
+
+        }
+
 
         public IQueryable<JobVacancy> GetActiveOffersByContractAndManagerNoPack(int contractId, int managerId)
         {
@@ -251,6 +258,7 @@ namespace Persistence.Repositories
                              IDSite = job.Idsite,
                              PublicationDate = job.PublicationDate,
                              IDCity = job.Idcity ?? 0,
+                             ChkBlindVac = job.ChkBlindVac
                              //Description = "",
                          });
 
