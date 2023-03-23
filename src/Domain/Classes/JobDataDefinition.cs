@@ -13,5 +13,6 @@ namespace Domain.Classes
         public int IDCity { get; set; }
         public string Description { get; set; }
         public int IDSite { get; set; }
+        public bool ChkBlindVac { get; set; }
     }
 }
