@@ -40,8 +40,7 @@ namespace Application.JobOffer.Validations
                     ProductId = productId,
                 }).Result.Value;
             }
-            obj.UpdatingDate = DateTime.Now;
-            obj.PublicationDate = DateTime.Now;
+            obj.UpdatingDate = DateTime.Now;           
             obj.UpdatingDate = DateTime.Now;
             obj.LastVisitorDate = null;
             obj.FilledDate = null;

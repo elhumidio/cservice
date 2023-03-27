@@ -224,6 +224,25 @@ namespace Application.Aimwel
         }
 
         /// <summary>
+        /// Gets the campaign by Aimwel ID.
+        /// </summary>
+        /// <param name="aimwelId">The Aimwel ID.</param>
+        /// <returns>The campaign response.</returns>
+        public async Task<GetCampaignResponse> GetCampaignByAimwelId(string aimwelId)
+        {
+            GrpcChannel channel;
+
+            var client = GetClient(out channel);
+            var request = new GetCampaignRequest
+            {
+                CampaignId = aimwelId
+            };
+
+            var ret = await client.GetCampaignAsync(request);
+            return ret;
+        }
+
+        /// <summary>
         /// Gets the campaign needs update.
         /// </summary>
         /// <param name="campaignName">Name of the campaign.</param>
@@ -384,7 +403,7 @@ namespace Application.Aimwel
                     JobContent = new JobContent
                     {
                         JobTitle = job.Title,
-                        JobDescription = $"{job.Description} \n {job.Requirements}",                       
+                        JobDescription = $"{job.Description} \n {job.Requirements}",
                         Language = ApiUtils.GetLanguageBySite(job.Idsite),
                         PublicationTime = Timestamp.FromDateTime(DateTime.UtcNow),
 
