@@ -3,6 +3,7 @@ using Application.Core;
 using Application.Interfaces;
 using Domain.DTO;
 using Domain.Entities;
+using Domain.Enums;
 using Domain.Repositories;
 using MediatR;
 using Microsoft.Extensions.Logging;
@@ -45,26 +46,28 @@ namespace Application.Aimwel.Commands
                 };
                 var applicants = await _applicationService.CountApplicantsByOffers(offersIdsList);
                 var redirects = await _applicationService.CountRedirectsByOffer(offersIdsList);
+
                 foreach (var offer in offers)
                 {
                     var campaign = await _manageCampaign.GetCampaignState(offer.IdjobVacancy);
-                    bool active = !offer.ChkDeleted && !offer.ChkFilled && offer.FinishDate >= DateTime.Now.Date;
-                    CampaignSetting setting = new CampaignSetting();
+                    bool active = !offer.ChkDeleted && !offer.ChkFilled && offer.FinishDate >= DateTime.Now.Date && offer.Idstatus == (int)OfferStatus.Active;
+                    CampaignSetting setting = new();
+
                     if (active)
                     {
                         bool isRedirect = offer.ExternalUrl != null;
+                        setting = await _campaignsManagementRepository.GetCampaignSetting(offer);
+                        if (setting == null)
+                        {
+                            setting = new CampaignSetting();
+                            setting.Goal = 100;
+                            setting.Budget = 0.000m;
+                        }
+                        var goal = setting.Goal;
+                        var applications = applicants.results.Where(o => o.jobId == offer.IdjobVacancy).Count();
+                        var redirections = redirects.results.Where(o => o.jobId == offer.IdjobVacancy).Count();
                         if (isRedirect)
                         {
-                            //get goal
-                            setting = await _campaignsManagementRepository.GetCampaignSetting(offer);
-                            if (setting == null)
-                            {
-                                setting = new CampaignSetting();
-                                setting.Goal = 100;
-                                setting.Budget = 0.000m;
-                            }
-                            var goal = setting.Goal * 20;
-                            var redirections = redirects.results.Where(o => o.jobId == offer.IdjobVacancy).Count();
                             if (redirections >= goal)
                             {
                                 if (campaign.Status == DPGRecruitmentCampaignClient.CampaignStatus.Active)
@@ -74,7 +77,7 @@ namespace Application.Aimwel.Commands
                                     await _manageCampaign.StopCampaign(offer.IdjobVacancy);
                                 }
                             }
-                            if (redirections < goal)
+                            else
                             {
                                 if (campaign.Status != DPGRecruitmentCampaignClient.CampaignStatus.Active)
                                 {
@@ -95,16 +98,6 @@ namespace Application.Aimwel.Commands
                         }
                         else
                         {
-                            
-                            setting = await _campaignsManagementRepository.GetCampaignSetting(offer);
-                            if(setting == null)
-                            {                                
-                                    setting = new CampaignSetting();
-                                    setting.Goal = 100;
-                                    setting.Budget = 0.000m;                                
-                            }
-                            var goal = setting.Goal;
-                            var applications = applicants.results.Where(o => o.jobId == offer.IdjobVacancy).Count();
                             if (applications >= goal)
                             {
                                 if (campaign.Status == DPGRecruitmentCampaignClient.CampaignStatus.Active)
@@ -113,7 +106,7 @@ namespace Application.Aimwel.Commands
                                     _logger.LogInformation("CANCEL CAMPAIGN - GOAL REACHED", new { campaign.CampaignId, offer.IdjobVacancy });
                                 }
                             }
-                            if (applications < goal)
+                            else
                             {
                                 if (campaign.Status != DPGRecruitmentCampaignClient.CampaignStatus.Active)
                                 {

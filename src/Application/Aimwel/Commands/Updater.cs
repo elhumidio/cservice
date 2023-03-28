@@ -1,4 +1,6 @@
 using Application.Aimwel.Interfaces;
+using Application.Interfaces;
+using Domain.DTO;
 using Domain.Entities;
 using Domain.Repositories;
 using DPGRecruitmentCampaignClient;
@@ -15,6 +17,7 @@ namespace Application.Aimwel.Commands
 
         public class Handler : IRequestHandler<Command, Response>
         {
+            private readonly IApplicationService _applicationService;
             private readonly IJobOfferRepository _offerRepo;
             private readonly IAimwelCampaign _manageCampaign;
             private readonly ICampaignsManagementRepository _campaignsManagementRepository;
@@ -28,35 +31,42 @@ namespace Application.Aimwel.Commands
 
             public async Task<Response> Handle(Command request, CancellationToken cancellationToken)
             {
-              //  string[] lines = File.ReadAllLines("CampaignManagement.txt");
-              //  var campaignslistfromfile = JsonConvert.DeserializeObject<List<CampaignsManagement>>(lines[0]);
-              ////  _campaignsManagementRepository.AddRange(campaignslistfromfile);
-              //  foreach (var item in campaignslistfromfile)
-              //  {
-              //      Guid guidOutput = new Guid();
-              //      bool isValid = Guid.TryParse(item.ExternalCampaignId, out guidOutput);
-              //      if(isValid)
-              //          await _campaignsManagementRepository.Add(item);
-              //  }
 
                 List<CampaignsManagement> campaignsList = new();
                 var needUpdate = await _manageCampaign.GetCampaignNeedsUpdate("aimwel");
                 if (needUpdate)
                 {
                     var offersList = _offerRepo.GetActiveOffers().ToList();
-        
+                    ListOffersRequest offersIdsList = new()
+                    {
+                        Offers = offersList.Select(o => o.IdjobVacancy).ToList(),
+                    };
+                    var applicants = await _applicationService.CountApplicantsByOffers(offersIdsList);
+                    var redirects = await _applicationService.CountRedirectsByOffer(offersIdsList);
+
                     foreach (JobVacancy offer in offersList)
                     {
                         bool cancelCampaign = await _manageCampaign.StopCampaign(offer.IdjobVacancy);
-                        var campaignCreated = await _manageCampaign.CreateCampaingUpdater(offer);
-                        if (campaignCreated != null && !string.IsNullOrEmpty(campaignCreated.ExternalCampaignId))
+                        bool isRedirect = offer.ExternalUrl != null;
+                        CampaignSetting setting = await _campaignsManagementRepository.GetCampaignSetting(offer);
+                        if (setting == null)
                         {
-                            campaignsList.Add(campaignCreated); 
+                            setting = new CampaignSetting();
+                            setting.Goal = 100;
+                            setting.Budget = 0.000m;
+                        }
+                        var goal = isRedirect ? setting.Goal * 20 : setting.Goal;
+                        var applications = isRedirect ? redirects.results.Where(o => o.jobId == offer.IdjobVacancy).Count()
+                            : applicants.results.Where(o => o.jobId == offer.IdjobVacancy).Count();
+                        if (applications < goal) {
+                            var campaignCreated = await _manageCampaign.CreateCampaingUpdater(offer);
+                            if (campaignCreated != null && !string.IsNullOrEmpty(campaignCreated.ExternalCampaignId))
+                            {
+                                campaignsList.Add(campaignCreated);
+                            }
                         }
                     }
                     _campaignsManagementRepository.AddRange(campaignsList);
-                    var json = JsonConvert.SerializeObject(campaignsList);
-                    File.WriteAllText("CampaignManagement.txt",json);
                     bool updateMarked = await _manageCampaign.MarkUpdateCampaign("aimwel");
                 }
                 return new Response();
