@@ -87,7 +87,7 @@ namespace Application.JobOffer.Commands
 
             if (company.Idstatus != (int)EnterpriseStatus.Active)
             {
-                offer.Idstatus = (int)EnterpriseStatus.Pending;
+                existentOffer.Idstatus = (int)EnterpriseStatus.Pending;
             }
             var ret = await _offerRepo.UpdateOffer(existentOffer);
             var updatedOffer = _mediatr.Send(new GetResult.Query
