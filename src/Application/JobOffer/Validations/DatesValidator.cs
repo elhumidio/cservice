@@ -104,3 +104,4 @@ namespace Application.JobOffer.Validations
             }
         }
     }
+}
