@@ -26,6 +26,9 @@ namespace Persistence.Repositories
 
         public ZipCode GetZipCodeEntity(string zipcode, int countryId)
         {
+            if (zipcode == null)
+                return null;
+
             var zipCode = _dataContext.ZipCodes.Where(z => z.Zip == zipcode.Trim() && z.Idcountry == countryId).FirstOrDefault();
             return zipCode;
         }
