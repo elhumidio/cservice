@@ -16,6 +16,7 @@ namespace TURI.Contractservice.Grpc.MappingProfiles
             CreateMap<Application.JobOffer.Commands.IntegrationData, GrpcPublish.IntegrationData>();
             CreateMap<GrpcPublish.IntegrationData, Application.JobOffer.Commands.IntegrationData>();
             CreateMap<FileAtsOfferCommand, GrpcPublish.IntegrationData>();
+
             CreateMap<GrpcPublish.IntegrationData, FileAtsOfferCommand>();
         }
     }
