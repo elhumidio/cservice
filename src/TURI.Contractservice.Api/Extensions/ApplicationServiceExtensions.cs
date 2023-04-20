@@ -4,7 +4,6 @@ using Application.Behaviors;
 using Application.Interfaces;
 using Application.JobOffer.Commands;
 using Application.JobOffer.Queries;
-using Domain.Entities;
 using Domain.Repositories;
 using FluentValidation.AspNetCore;
 using Infraestructure;
@@ -26,9 +25,9 @@ namespace API.Extensions
             {
                 opt.UseSqlServer(config.GetConnectionString("DefaultConnection"));
             });
-            services.AddFluentValidation(new[] { typeof(CreateOfferCommandHandler).GetTypeInfo().Assembly });            
+            services.AddFluentValidation(new[] { typeof(CreateOfferCommandHandler).GetTypeInfo().Assembly });
             services.AddMediatR(typeof(CreateOfferCommand).Assembly);
-            services.AddMediatR(typeof(ListActives.Handler).Assembly);      
+            services.AddMediatR(typeof(ListActives.Handler).Assembly);
             services.AddAutoMapper(typeof(Application.Core.MappingProfiles).Assembly);
             services.AddControllers().AddNewtonsoftJson();
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
@@ -36,6 +35,7 @@ namespace API.Extensions
             services.AddSingleton<IMemoryCache, MemoryCache>();
 
             #region MAPPING REPOSITORIES
+
             services.AddScoped<IAimwelErrorsRepository, AimwelErrorsRepository>();
             services.AddScoped<IZoneUrl, UrlZoneRepository>();
             services.AddScoped<IContractRepository, ContractRepository>();
@@ -82,8 +82,9 @@ namespace API.Extensions
             services.AddScoped<IApplicationService, ApplicationService>();
             services.AddScoped<IinternalService, InternalService>();
             services.AddScoped<ISafetyModeration, SafetyModeration>();
+
             #endregion MAPPING REPOSITORIES
-            
+
             services.AddScoped<IGeoNamesConector, GeoNamesConector>();
             return services;
         }
