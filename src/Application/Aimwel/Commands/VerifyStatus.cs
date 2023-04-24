@@ -15,6 +15,8 @@ namespace Application.Aimwel.Commands
         public class Query : IRequest<Result<bool>>
         {
         }
+        //TODO divide logic in two parts, actives and inactives
+
 
         public class Handler : IRequestHandler<Query, Result<bool>>
         {
@@ -38,7 +40,7 @@ namespace Application.Aimwel.Commands
 
             public async Task<Result<bool>> Handle(Query request, CancellationToken cancellationToken)
             {
-                var offers = await _jobOfferRepository.GetOffersCreatedLastFortnight();
+                var offers = await _jobOfferRepository.GetOffersCreatedLastFiveDays();
 
                 ListOffersRequest offersIdsList = new ListOffersRequest()
                 {
@@ -128,11 +130,9 @@ namespace Application.Aimwel.Commands
                     }
                     else 
                     {
-                       // if (campaign.Status == DPGRecruitmentCampaignClient.CampaignStatus.Active)
-                       // {
                             await _manageCampaign.StopCampaign(offer.IdjobVacancy);
                             _logger.LogInformation("CANCEL CAMPAIGN - OFFER ENDED", new { campaign.CampaignId, offer.IdjobVacancy });
-                        //}
+                      
                     }
                 }
                 return Result<bool>.Success(true);
