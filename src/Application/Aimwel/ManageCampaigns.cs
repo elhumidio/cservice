@@ -12,6 +12,7 @@ using Grpc.Net.Client;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using System;
 using System.Text;
 
 namespace Application.Aimwel
@@ -33,6 +34,7 @@ namespace Application.Aimwel
         private readonly IAreaRepository _areaRepository;
         private readonly IRegionRepository _regionRepo;
         private readonly IAimwelErrorsRepository _aimwelErrorsRepository;
+        private readonly ICampaignsManagementRepository _campaignsManagementRepository;
 
         private readonly ICountryRepository _countryRepo;
 
@@ -48,7 +50,8 @@ namespace Application.Aimwel
             IRegionRepository regionRepository,
             ICountryRepository countryRepository,
             IZoneUrl zoneUrl,
-            IAimwelErrorsRepository aimwelErrorsRepository)
+            IAimwelErrorsRepository aimwelErrorsRepository,
+            ICampaignsManagementRepository campaignsManagementRepository)
         {
             _config = config;
             _geoNamesConector = geoNamesConector;
@@ -63,6 +66,7 @@ namespace Application.Aimwel
             _countryRepo = countryRepository;
             _zoneUrl = zoneUrl;
             _aimwelErrorsRepository = aimwelErrorsRepository;
+            _campaignsManagementRepository = campaignsManagementRepository;
         }
 
         /// <summary>
@@ -101,40 +105,44 @@ namespace Application.Aimwel
         public async Task<bool> StopCampaign(int jobId)
         {
             GrpcChannel channel;
-            var campaign = await _campaignsManagementRepo.GetCampaignManagement(jobId);
-            if (campaign != null)
+            var campaigns = await _campaignsManagementRepo.GetAllCampaignManagement(jobId);
+            foreach (var campaign in campaigns)
             {
-                campaign.Status = (int)AimwelStatus.CANCELED;
-                campaign.LastModificationDate = DateTime.UtcNow;
-                campaign.ModificationReason = (int)CampaignModificationReason.FILED;
-                await _campaignsManagementRepo.Update(campaign);
-
-                if (string.IsNullOrEmpty(campaign.ExternalCampaignId))
+                if (campaign.Status != (int)AimwelStatus.CANCELED)
                 {
-                    return false;
-                }
-                else
-                {
-                    var client = GetClient(out channel);
-                    var request = new EndCampaignRequest
-                    {
-                        CampaignId = campaign.ExternalCampaignId
-                    };
+                    campaign.Status = (int)AimwelStatus.CANCELED;
+                    campaign.LastModificationDate = DateTime.UtcNow;
+                    campaign.ModificationReason = (int)CampaignModificationReason.FILED;
+                    await _campaignsManagementRepo.Update(campaign);
 
-                    try
+                    if (string.IsNullOrEmpty(campaign.ExternalCampaignId))
                     {
-                        var ret = await client.EndCampaignAsync(request);
+                        return false;
                     }
-                    catch (Exception ex)
+                    else
                     {
-                        var a = ex.Message;
+                        var client = GetClient(out channel);
+                        var request = new EndCampaignRequest
+                        {
+                            CampaignId = campaign.ExternalCampaignId
+                        };
+
+                        try
+                        {
+                            var ret = await client.EndCampaignAsync(request);
+                        }
+                        catch (Exception ex)
+                        {
+                            var a = ex.Message;
+                        }
+
                     }
 
-                    return true;
                 }
+
             }
-            else
-                return true;
+
+          return true;
         }
 
         /// <summary>
@@ -440,10 +448,20 @@ namespace Application.Aimwel
                         }
                     }
                 };
-
                 var ans = await CreateCampaign(client, request, new Metadata());
-                if (!string.IsNullOrEmpty(ans.CampaignId))
+                var management = await _campaignsManagementRepository.GetCampaignManagement(job.IdjobVacancy);
+                if (management != null && management.Status != null && !string.IsNullOrEmpty(ans.CampaignId))
                 {
+                    //update
+                    management.ExternalCampaignId = ans.CampaignId;
+                    management.Status =(int) AimwelStatus.ACTIVE;
+                    management.LastModificationDate = DateTime.Now;
+                    management.Budget = settings.Budget;
+                    management.Goal = settings.Goal;
+                    management.ModificationReason = (int)CampaignModificationReason.MANUAL;
+                    await _campaignsManagementRepo.Update(management);
+                }
+                else {
                     Guid guidOutput = new Guid();
                     bool isValid = Guid.TryParse(ans.CampaignId, out guidOutput);
                     if (isValid)
@@ -463,6 +481,12 @@ namespace Application.Aimwel
                         await _campaignsManagementRepo.Add(campaign);
                     }
                 }
+                
+               
+               /* if (!string.IsNullOrEmpty(ans.CampaignId))
+                {
+                   
+                }
                 else
                 {
                     //save in errors table
@@ -473,7 +497,7 @@ namespace Application.Aimwel
                         FailedCampaign = JsonConvert.SerializeObject(ans)
                     };
                     _aimwelErrorsRepository.Add(err);
-                }
+                }*/
                 return ans;
             }
             catch (Exception ex)

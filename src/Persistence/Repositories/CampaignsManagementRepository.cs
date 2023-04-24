@@ -97,5 +97,11 @@ namespace Persistence.Repositories
                 return a > 0;
             }
         }
+
+        public async Task<List<CampaignsManagement>> GetAllCampaignManagement(int _jobId)
+        {
+            var campaigns  =await _dataContext.CampaignManagements.Where(c => c.IdjobVacancy == _jobId).ToListAsync();
+            return campaigns;
+        }
     }
 }

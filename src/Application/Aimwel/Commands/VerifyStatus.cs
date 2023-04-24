@@ -50,6 +50,7 @@ namespace Application.Aimwel.Commands
                 foreach (var offer in offers)
                 {
                     var campaign = await _manageCampaign.GetCampaignState(offer.IdjobVacancy);
+         
                     bool active = !offer.ChkDeleted && !offer.ChkFilled && offer.FinishDate >= DateTime.Now.Date && offer.Idstatus == (int)OfferStatus.Active;
                     CampaignSetting setting = new();
 
@@ -64,18 +65,18 @@ namespace Application.Aimwel.Commands
                             setting.Budget = 0.000m;
                         }
                         var goal = setting.Goal;
-                        var applications = applicants.results.Where(o => o.jobId == offer.IdjobVacancy).Count();
-                        var redirections = redirects.results.Where(o => o.jobId == offer.IdjobVacancy).Count();
+                        var applicationsList = applicants.results.Where(o => o.jobId == offer.IdjobVacancy).ToList();
+                        var redirectionsList = redirects.results.Where(o => o.jobId == offer.IdjobVacancy).ToList();
+                        var applications = applicationsList.Any() ? applicationsList.FirstOrDefault().Applicants : 0;
+                        var redirections = redirectionsList.Any() ? redirectionsList.FirstOrDefault().Applicants : 0;
+
                         if (isRedirect)
                         {
                             if (redirections >= goal)
                             {
-                                if (campaign.Status == DPGRecruitmentCampaignClient.CampaignStatus.Active)
-                                {
                                     //TODO cancel campaign
                                     _logger.LogInformation("CANCEL CAMPAIGN - GOAL REACHED", new { campaign.CampaignId, offer.IdjobVacancy });
-                                    await _manageCampaign.StopCampaign(offer.IdjobVacancy);
-                                }
+                                    await _manageCampaign.StopCampaign(offer.IdjobVacancy);                                
                             }
                             else
                             {
@@ -100,11 +101,10 @@ namespace Application.Aimwel.Commands
                         {
                             if (applications >= goal)
                             {
-                                if (campaign.Status == DPGRecruitmentCampaignClient.CampaignStatus.Active)
-                                {
+                                
                                     await _manageCampaign.StopCampaign(offer.IdjobVacancy);
                                     _logger.LogInformation("CANCEL CAMPAIGN - GOAL REACHED", new { campaign.CampaignId, offer.IdjobVacancy });
-                                }
+                                
                             }
                             else
                             {
@@ -126,13 +126,13 @@ namespace Application.Aimwel.Commands
                             }
                         }
                     }
-                    else
+                    else 
                     {
-                        if (campaign.Status == DPGRecruitmentCampaignClient.CampaignStatus.Active)
-                        {
+                       // if (campaign.Status == DPGRecruitmentCampaignClient.CampaignStatus.Active)
+                       // {
                             await _manageCampaign.StopCampaign(offer.IdjobVacancy);
                             _logger.LogInformation("CANCEL CAMPAIGN - OFFER ENDED", new { campaign.CampaignId, offer.IdjobVacancy });
-                        }
+                        //}
                     }
                 }
                 return Result<bool>.Success(true);
