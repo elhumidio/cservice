@@ -224,7 +224,7 @@ namespace Application.Aimwel
                 try {
                     var ret = await client.GetCampaignAsync(request);
                     return ret;
-                } catch (Exception ex){
+                } catch {
                     return null;
                 }   
                 
