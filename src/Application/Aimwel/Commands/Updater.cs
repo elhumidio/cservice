@@ -22,11 +22,15 @@ namespace Application.Aimwel.Commands
             private readonly IAimwelCampaign _manageCampaign;
             private readonly ICampaignsManagementRepository _campaignsManagementRepository;
 
-            public Handler(IJobOfferRepository offerRepo, IAimwelCampaign aimwelCampaign, ICampaignsManagementRepository campaignsManagementRepository)
+            public Handler(IJobOfferRepository offerRepo,
+                IAimwelCampaign aimwelCampaign,
+                ICampaignsManagementRepository campaignsManagementRepository,
+                IApplicationService applicationService)
             {
                 _offerRepo = offerRepo;
                 _manageCampaign = aimwelCampaign;
                 _campaignsManagementRepository = campaignsManagementRepository;
+                _applicationService = applicationService;
             }
 
             public async Task<Response> Handle(Command request, CancellationToken cancellationToken)

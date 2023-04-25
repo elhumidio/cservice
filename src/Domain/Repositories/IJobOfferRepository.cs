@@ -38,10 +38,11 @@ namespace Domain.Repositories
 
         public IQueryable<JobVacancy> GetActiveOffersByContractAndTypeNoPack(int contractId, int type);
 
-        public Task<List<JobVacancy>> GetOffersCreatedLastFortnight();
+        public Task<List<JobVacancy>> GetOffersCreatedLastFourDays();
 
         public int DeleteOffer(JobVacancy job);
         public Task<int> CountOffersPublished(int days);
         public List<int>? GetoffersinCampaigns();
+        public Task<List<JobVacancy>> GetInactiveOffersChunk();
     }
 }
