@@ -142,7 +142,7 @@ namespace Application.Aimwel
 
             }
 
-          return true;
+            return true;
         }
 
         /// <summary>
@@ -450,18 +450,21 @@ namespace Application.Aimwel
                 };
                 var ans = await CreateCampaign(client, request, new Metadata());
                 var management = await _campaignsManagementRepository.GetCampaignManagement(job.IdjobVacancy);
-                if (management != null && management.Status != null && !string.IsNullOrEmpty(ans.CampaignId))
+                var IsUpdate = management?.Status != null && !string.IsNullOrEmpty(ans.CampaignId);
+                
+                if (IsUpdate)
                 {
                     //update
                     management.ExternalCampaignId = ans.CampaignId;
-                    management.Status =(int) AimwelStatus.ACTIVE;
+                    management.Status = (int)AimwelStatus.ACTIVE;
                     management.LastModificationDate = DateTime.Now;
                     management.Budget = settings.Budget;
                     management.Goal = settings.Goal;
                     management.ModificationReason = (int)CampaignModificationReason.MANUAL;
                     await _campaignsManagementRepo.Update(management);
                 }
-                else {
+                else
+                {
                     Guid guidOutput = new Guid();
                     bool isValid = Guid.TryParse(ans.CampaignId, out guidOutput);
                     if (isValid)
@@ -481,23 +484,7 @@ namespace Application.Aimwel
                         await _campaignsManagementRepo.Add(campaign);
                     }
                 }
-                
-               
-               /* if (!string.IsNullOrEmpty(ans.CampaignId))
-                {
-                   
-                }
-                else
-                {
-                    //save in errors table
-                    AimwelCreationError err = new()
-                    {
-                        Date = DateTime.Now,
-                        IdJobVacancy = job.IdjobVacancy,
-                        FailedCampaign = JsonConvert.SerializeObject(ans)
-                    };
-                    _aimwelErrorsRepository.Add(err);
-                }*/
+
                 return ans;
             }
             catch (Exception ex)

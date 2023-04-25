@@ -50,7 +50,8 @@ namespace Persistence.Repositories
 
         public async Task<string> GetAimwellIdByJobId(int _jobId)
         {
-            var campaignData = await _dataContext.CampaignManagements.Where(j => j.IdjobVacancy == _jobId).OrderByDescending(d => d.LastModificationDate).FirstOrDefaultAsync();
+            var campaignData = await _dataContext.CampaignManagements
+                .Where(j => j.IdjobVacancy == _jobId).OrderByDescending(d => d.LastModificationDate).FirstOrDefaultAsync();
             if (campaignData == null)
                 return null;
             else return campaignData.ExternalCampaignId;

@@ -70,7 +70,7 @@ namespace Persistence.Repositories
             {
                 job.ChkFilled = true;
                 job.FilledDate = DateTime.Now;
-                job.ModificationDate = DateTime.Now;                
+                job.ModificationDate = DateTime.Now;
                 var ret = _dataContext.SaveChanges();
                 return ret;
             }
@@ -88,6 +88,8 @@ namespace Persistence.Repositories
             {
                 job.ChkFilled = true;
                 job.ChkDeleted = true;
+                job.FilledDate = DateTime.Now;  
+                job.ModificationDate= DateTime.Now; 
                 job.FinishDate = DateTime.Now;
                 job.Idstatus = (int)OfferStatus.Deleted;
                 var ret = _dataContext.SaveChanges();
@@ -103,18 +105,18 @@ namespace Persistence.Repositories
 
         public JobVacancy GetOfferById(int id)
         {
-            try {
+            try
+            {
                 var offer = _dataContext.JobVacancies.FirstOrDefault(o => o.IdjobVacancy == id);
                 if (offer == null)
                     return new JobVacancy();
                 else return offer;
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 return new JobVacancy();
             }
-            
         }
-
 
         public int Add(JobVacancy job)
         {
@@ -132,7 +134,6 @@ namespace Persistence.Repositories
             }
         }
 
-
         public IQueryable<JobVacancy> GetActiveOffers()
         {
             var query = _dataContext.JobVacancies.Where(a => !a.ChkDeleted
@@ -144,13 +145,11 @@ namespace Persistence.Repositories
             return query;
         }
 
-        public List<int>? GetoffersinCampaigns() {
-
+        public List<int>? GetoffersinCampaigns()
+        {
             var offers = _dataContext.CampaignManagements.Select(c => (int)c.IdjobVacancy).ToList();
             return offers;
-
         }
-
 
         public IQueryable<JobVacancy> GetActiveOffersByContractAndManagerNoPack(int contractId, int managerId)
         {
@@ -227,13 +226,12 @@ namespace Persistence.Repositories
                .Where(o => o.jvc.jv.Identerprise == companyId
 
                && (o.cp.Idproduct == 110 || o.cp.Idproduct == 115)
-              // && !o.jvc.jv.ChkFilled && !o.jvc.jv.ChkDeleted && o.jvc.jv.Idstatus == 1 && o.jvc.jv.FinishDate >= DateTime.Today
+               // && !o.jvc.jv.ChkFilled && !o.jvc.jv.ChkDeleted && o.jvc.jv.Idstatus == 1 && o.jvc.jv.FinishDate >= DateTime.Today
                )
                .Select(o => o.jvc.jv);
 
             return res;
         }
-
 
         public async Task<IReadOnlyList<JobDataDefinition>> GetActiveJobs(int maxActiveDays)
         {
@@ -289,30 +287,33 @@ namespace Persistence.Repositories
             var offer = await query.FirstAsync();
             return offer;
         }
-    
+
         public Task<List<FeaturedJob>> GetFeaturedJobs()
         {
             var query = (from featuredJob in _dataContext.FeaturedJobs
-                    select featuredJob);
+                         select featuredJob);
 
             return query.ToListAsync();
         }
 
-        public async Task<List<JobVacancy>> GetOffersCreatedLastFiveDays()
-        { 
-        
-        var offers =await _dataContext.JobVacancies
-                .Where( o => o.Idstatus == 1 && !o.ChkFilled  && !o.ChkDeleted && o.FinishDate.Date > DateTime.Today.Date &&  o.PublicationDate.Date  > DateTime.Today.Date.AddDays(-3) )
+        public async Task<List<JobVacancy>> GetOffersCreatedLastFourDays()
+        {
+            var offers = await _dataContext.JobVacancies
+                .Where(o => o.Idstatus == (int)OfferStatus.Active && !o.ChkFilled && !o.ChkDeleted
+                && o.FinishDate.Date > DateTime.Today.Date && o.PublicationDate.Date > DateTime.Today.Date.AddDays(-4))
                 .OrderByDescending(a => a.IdjobVacancy).ToListAsync();
             return offers;
         }
 
-        public async Task<List<JobVacancy>> GetInactiveOffersCreatedLastTenDays()
+        public async Task<List<JobVacancy>> GetInactiveOffersChunk()
         {
-
             var offers = await _dataContext.JobVacancies
-                    .Where(o => (o.Idstatus != 1 || o.ChkFilled || o.ChkDeleted ) && o.PublicationDate.Date > DateTime.Today.Date.AddDays(-60))
-                    .OrderByDescending(a => a.IdjobVacancy).ToListAsync();
+                    .Where(o => (o.Idstatus != 1
+                    || o.ChkFilled
+                    || o.ChkDeleted
+                    || o.FinishDate.Date < DateTime.Today.Date)
+                    )
+                    .OrderByDescending(a => a.IdjobVacancy).Take(200).ToListAsync();
             return offers;
         }
 
