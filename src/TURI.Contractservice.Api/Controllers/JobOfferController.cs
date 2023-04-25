@@ -64,7 +64,7 @@ namespace API.Controllers
         {
             var result = await Mediator.Send(new FileJobs.Command
             {
-                
+
                 id = _ids.First()
             });
 
@@ -119,11 +119,11 @@ namespace API.Controllers
             var result = await Mediator.Send(new CloseJobs.Command
             {
                 dto = _closingOffer
-            }); 
+            });
 
             var ret = HandleResult(result);
             return ret;
-        }   
+        }
 
         /// <summary>
         /// Publish an offer
@@ -193,7 +193,7 @@ namespace API.Controllers
         {
             var result = await Mediator.Send(new ListAutoFilteredGroupByContracts.Query
             {
-                 ContractIDs = contractIds
+                ContractIDs = contractIds
             });
             return HandleResult(result);
         }
@@ -224,7 +224,7 @@ namespace API.Controllers
         {
             var result = await Mediator.Send(new ListActivesByManagerList.Query
             {
-             Dto = dto
+                Dto = dto
             });
             return HandleResult(result);
         }
@@ -269,6 +269,22 @@ namespace API.Controllers
         public async Task<IActionResult> GetActiveOffersByCompany(int companyId)
         {
             var result = await Mediator.Send(new ListActivesByCompany.Query
+            {
+                CompanyId = companyId,
+            });
+            return HandleResult(result);
+        }
+
+
+        /// <summary>
+        /// Gets active offers full data by company.
+        /// </summary>
+        /// <param name="companyId">The company identifier.</param>
+        /// <returns>The active offers full data.</returns>
+        [HttpGet("{companyId}")]
+        public async Task<IActionResult> GetActiveOffersFullDataByCompany(int companyId)
+        {
+            var result = await Mediator.Send(new ListActivesWholeDataByCompany.Query
             {
                 CompanyId = companyId,
             });
@@ -392,7 +408,7 @@ namespace API.Controllers
             return HandleResult(result);
         }
 
-    
+
 
         /// <summary>
         /// It update job date
@@ -407,7 +423,7 @@ namespace API.Controllers
                 var response = await Mediator.Send(new UpdateDate.Command
                 {
                     id = jobId
-                 
+
                 });
                 return Ok(response);
             }

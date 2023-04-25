@@ -14,6 +14,7 @@ namespace Application.JobOffer.Validations
             RuleFor(command => command).NotEmpty().WithMessage("Description is mandatory field.\n")
                 .Must(HasBeCleanHtml)
                 .Must(DescriptionMaxLength)
+                .Must(IsNotShortDescriptionNull)
                 .Must(RequirementsMaxLength);
         }
 
@@ -52,6 +53,15 @@ namespace Application.JobOffer.Validations
            
         }
 
+        private bool IsNotShortDescriptionNull(CreateOfferCommand cmd)
+        {
+            if (string.IsNullOrEmpty(cmd.ShortDescription)) {
+                cmd.ShortDescription = string.Empty;
+            }
+            return true;    
+        }
+
+
         private bool RequirementsMaxLength(CreateOfferCommand cmd)
         {
             if (string.IsNullOrEmpty(cmd.Requirements))
@@ -81,7 +91,17 @@ namespace Application.JobOffer.Validations
             RuleFor(command => command).NotEmpty().WithMessage("Description is mandatory field.\n")
                 .Must(HasBeCleanHtml)
                 .Must(DescriptionMaxLength)
+                .Must(IsNotShortDescriptionNull)
                 .Must(RequirementsMaxLength);
+        }
+
+        private bool IsNotShortDescriptionNull(UpdateOfferCommand cmd)
+        {
+            if (string.IsNullOrEmpty(cmd.ShortDescription))
+            {
+                cmd.ShortDescription = string.Empty;
+            }
+            return true;
         }
 
         private bool HasNotHtml(UpdateOfferCommand cmd)

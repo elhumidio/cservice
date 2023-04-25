@@ -189,5 +189,19 @@ namespace TURI.Contractservice.Controllers
             }
         }
 
+        [HttpGet()]
+        public async Task<IActionResult> GetAimwelCampaignByAimwelId(string aimwelId)
+        {
+            try
+            {
+             var ret = await _aimwelCampaign.GetCampaignByAimwelId(aimwelId);  
+                return Ok(ret);
+            }
+            catch (Exception ex)
+            {
+                return Ok(ex.Message);
+            }
+        }
+
     }
 }

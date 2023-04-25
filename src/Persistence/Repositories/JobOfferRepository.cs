@@ -138,8 +138,17 @@ namespace Persistence.Repositories
             var query = _dataContext.JobVacancies.Where(a => !a.ChkDeleted
             && !a.ChkFilled
             && a.FinishDate >= DateTime.Today.Date
-            && a.Idstatus == (int)OfferStatus.Active);
+            && a.Idstatus == (int)OfferStatus.Active
+            && !a.ChkDeleted
+            && (a.Idsite == (int)Sites.SPAIN || a.Idsite == (int)Sites.PORTUGAL));
             return query;
+        }
+
+        public List<int>? GetoffersinCampaigns() {
+
+            var offers = _dataContext.CampaignManagements.Select(c => (int)c.IdjobVacancy).ToList();
+            return offers;
+
         }
 
 
@@ -250,6 +259,7 @@ namespace Persistence.Repositories
                              IDSite = job.Idsite,
                              PublicationDate = job.PublicationDate,
                              IDCity = job.Idcity ?? 0,
+                             ChkBlindVac = job.ChkBlindVac
                              //Description = "",
                          });
 
@@ -279,7 +289,7 @@ namespace Persistence.Repositories
             var offer = await query.FirstAsync();
             return offer;
         }
-
+    
         public Task<List<FeaturedJob>> GetFeaturedJobs()
         {
             var query = (from featuredJob in _dataContext.FeaturedJobs
@@ -288,11 +298,21 @@ namespace Persistence.Repositories
             return query.ToListAsync();
         }
 
-        public async Task<List<JobVacancy>> GetOffersCreatedLastFortnight()
+        public async Task<List<JobVacancy>> GetOffersCreatedLastFiveDays()
+        { 
+        
+        var offers =await _dataContext.JobVacancies
+                .Where( o => o.Idstatus == 1 && !o.ChkFilled  && !o.ChkDeleted && o.FinishDate.Date > DateTime.Today.Date &&  o.PublicationDate.Date  > DateTime.Today.Date.AddDays(-3) )
+                .OrderByDescending(a => a.IdjobVacancy).ToListAsync();
+            return offers;
+        }
+
+        public async Task<List<JobVacancy>> GetInactiveOffersCreatedLastTenDays()
         {
-            var offers =await _dataContext.JobVacancies
-                .Where( o => o.Idstatus == 1 && o.PublicationDate  > DateTime.Today.AddDays(-15))
-                .ToListAsync();
+
+            var offers = await _dataContext.JobVacancies
+                    .Where(o => (o.Idstatus != 1 || o.ChkFilled || o.ChkDeleted ) && o.PublicationDate.Date > DateTime.Today.Date.AddDays(-60))
+                    .OrderByDescending(a => a.IdjobVacancy).ToListAsync();
             return offers;
         }
 

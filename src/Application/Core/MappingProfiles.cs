@@ -44,6 +44,7 @@ namespace Application.Core
             CreateMap<JobOfferDto, JobVacancy>();
             CreateMap<JobVacancy, OfferResultDto>();
             CreateMap<OfferResultDto, JobOfferDto>();
+            CreateMap<JobVacancy,JobOfferWholeDto>();   
             CreateMap<RegJobVacMatching, IntegrationData>()
                 .ForMember(a => a.ApplicationReference, opt => opt.MapFrom(src => src.ExternalId))
                 .ForMember(a => a.IDIntegration, opt => opt.MapFrom(src => src.Idintegration))
