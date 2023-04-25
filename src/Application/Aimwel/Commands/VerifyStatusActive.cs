@@ -3,20 +3,19 @@ using Application.Core;
 using Application.Interfaces;
 using Domain.DTO;
 using Domain.Entities;
-using Domain.Enums;
 using Domain.Repositories;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
 namespace Application.Aimwel.Commands
 {
-    public class VerifyStatus
+    public class VerifyStatusActive
     {
         public class Query : IRequest<Result<bool>>
         {
         }
-        //TODO divide logic in two parts, actives and inactives
 
+        //TODO divide logic in two parts, actives and inactives
 
         public class Handler : IRequestHandler<Query, Result<bool>>
         {
@@ -40,9 +39,8 @@ namespace Application.Aimwel.Commands
 
             public async Task<Result<bool>> Handle(Query request, CancellationToken cancellationToken)
             {
-                var offers = await _jobOfferRepository.GetOffersCreatedLastFourDays();
+                var offers = await _jobOfferRepository.GetOffersCreatedLastTwoDays();
                 var inactiveOffers = await _jobOfferRepository.GetInactiveOffersChunk();
-
 
                 ListOffersRequest offersIdsList = new ListOffersRequest()
                 {
@@ -54,8 +52,6 @@ namespace Application.Aimwel.Commands
                 foreach (var offer in offers)
                 {
                     var campaign = await _manageCampaign.GetCampaignState(offer.IdjobVacancy);
-
-                    // bool active = !offer.ChkDeleted && !offer.ChkFilled && offer.FinishDate >= DateTime.Now.Date && offer.Idstatus == (int)OfferStatus.Active;
                     CampaignSetting setting = new();
 
                     bool isRedirect = offer.ExternalUrl != null;
@@ -76,28 +72,25 @@ namespace Application.Aimwel.Commands
                     {
                         if (redirections >= goal)
                         {
-                            //TODO cancel campaign
                             _logger.LogInformation("CANCEL CAMPAIGN - GOAL REACHED", new { campaign.CampaignId, offer.IdjobVacancy });
                             await _manageCampaign.StopCampaign(offer.IdjobVacancy);
                         }
                         else
                         {
-                            if (campaign.Status != DPGRecruitmentCampaignClient.CampaignStatus.Active)
-                            {
-                                //create or active campaign
-                                if (campaign.Status == DPGRecruitmentCampaignClient.CampaignStatus.Paused)
-                                {
-                                    await _manageCampaign.ResumeCampaign(offer.IdjobVacancy);
-                                    _logger.LogInformation("CANCEL CAMPAIGN - GOAL REACHED", new { campaign.CampaignId, offer.IdjobVacancy });
-                                }
-                                var mustCreate = (campaign != null && campaign.Status == DPGRecruitmentCampaignClient.CampaignStatus.Ended)
+                            var mustResume = campaign != null && campaign.Status == DPGRecruitmentCampaignClient.CampaignStatus.Paused;
+                            var mustCreate = (campaign != null && campaign.Status == DPGRecruitmentCampaignClient.CampaignStatus.Ended)
                                     || campaign is null;
 
-                                if (mustCreate)
-                                {
-                                    var campaignCreated = await _manageCampaign.CreateCampaing(offer);
-                                    _logger.LogInformation("CREATE CAMPAIGN - CAMPAIGN ENDED", new { campaign.CampaignId, CreatedCampaignId = campaignCreated.CampaignId, offer.IdjobVacancy });
-                                }
+                            if (mustResume)
+                            {
+                                await _manageCampaign.ResumeCampaign(offer.IdjobVacancy);
+                                _logger.LogInformation("RESUME CAMPAIGN - GOAL NOT REACHED YET", new { campaign.CampaignId, offer.IdjobVacancy });
+                            }
+
+                            if (mustCreate)
+                            {
+                                var campaignCreated = await _manageCampaign.CreateCampaing(offer);
+                                _logger.LogInformation("CREATE CAMPAIGN - CAMPAIGN ENDED", new { campaign.CampaignId, CreatedCampaignId = campaignCreated.CampaignId, offer.IdjobVacancy });
                             }
                         }
                     }
@@ -110,29 +103,21 @@ namespace Application.Aimwel.Commands
                         }
                         else
                         {
-                            if (campaign.Status != DPGRecruitmentCampaignClient.CampaignStatus.Active)
+                            var mustResume = campaign != null && campaign.Status == DPGRecruitmentCampaignClient.CampaignStatus.Paused;
+                            var mustCreate = (campaign != null && campaign.Status == DPGRecruitmentCampaignClient.CampaignStatus.Ended)
+                               || campaign is null;
+
+                            if (mustResume)
                             {
-                                //create or active campaign
-                                if (campaign.Status == DPGRecruitmentCampaignClient.CampaignStatus.Paused)
-                                {
-                                    await _manageCampaign.ResumeCampaign(offer.IdjobVacancy);
-                                    _logger.LogInformation("RESUME CAMPAIGN - GOAL NOT REACHED", new { campaign.CampaignId, offer.IdjobVacancy });
-                                }
-                                var mustCreate = (campaign != null && campaign.Status == DPGRecruitmentCampaignClient.CampaignStatus.Ended)
-                                   || campaign is null;
-                                if (mustCreate)
-                                {
-                                    var campaignCreated = await _manageCampaign.CreateCampaing(offer);
-                                    _logger.LogInformation("CREATE CAMPAIGN - GOAL NOT REACHED", new { campaign.CampaignId, CreatedCampaignId = campaignCreated.CampaignId, offer.IdjobVacancy });
-                                }
+                                await _manageCampaign.ResumeCampaign(offer.IdjobVacancy);
+                                _logger.LogInformation("RESUME CAMPAIGN - GOAL NOT REACHED", new { campaign.CampaignId, offer.IdjobVacancy });
+                            }
+                            if (mustCreate)
+                            {
+                                var campaignCreated = await _manageCampaign.CreateCampaing(offer);
+                                _logger.LogInformation("CREATE CAMPAIGN - GOAL NOT REACHED", new { campaign.CampaignId, CreatedCampaignId = campaignCreated.CampaignId, offer.IdjobVacancy });
                             }
                         }
-                    }
-
-                    foreach (var inactiveOffer in inactiveOffers)
-                    {
-                        await _manageCampaign.StopCampaign(offer.IdjobVacancy);
-                        _logger.LogInformation("CANCEL CAMPAIGN - OFFER ENDED", new { campaign.CampaignId, offer.IdjobVacancy });
                     }
                 }
 

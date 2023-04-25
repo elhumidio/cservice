@@ -135,13 +135,9 @@ namespace Application.Aimwel
                         {
                             var a = ex.Message;
                         }
-
                     }
-
                 }
-
             }
-
             return true;
         }
 
@@ -225,9 +221,13 @@ namespace Application.Aimwel
                 {
                     CampaignId = campaignId
                 };
-
-                var ret = await client.GetCampaignAsync(request);
-                return ret;
+                try {
+                    var ret = await client.GetCampaignAsync(request);
+                    return ret;
+                } catch (Exception ex){
+                    return null;
+                }   
+                
             }
         }
 
@@ -305,7 +305,8 @@ namespace Application.Aimwel
                 GeoNamesDto geolocation = null;
                 var region = _regionRepo.Get(job.Idregion);
                 long units = Convert.ToInt64(decimal.Truncate(settings.Budget));
-                int hundredths = settings.Budget == 0.00m ? 0 : ReminderDigits(Convert.ToDouble(settings.Budget), 2);
+                var inputValue = Math.Round(settings.Budget, 2, MidpointRounding.AwayFromZero);
+                int hundredths = settings.Budget == 0.00m ? 0 : ReminderDigits(inputValue, 2);
                 var countryName = _countryRepo.GetCountryById(job.Idcountry).BaseName;
                 if (job.IdzipCode == null || job.IdzipCode == -1 || job.IdzipCode == 0)
                 {
@@ -524,7 +525,8 @@ namespace Application.Aimwel
                 GeoNamesDto geolocation = null;
                 var region = _regionRepo.Get(job.Idregion);
                 long units = Convert.ToInt64(decimal.Truncate(settings.Budget));
-                int hundredths = settings.Budget == 0.00m ? 0 : ReminderDigits(Convert.ToDouble(settings.Budget), 2);
+                var inputValue = Math.Round(settings.Budget, 2, MidpointRounding.AwayFromZero);
+                int hundredths = settings.Budget == 0.00m ? 0 : ReminderDigits(inputValue, 2);
                 var countryName = _countryRepo.GetCountryById(job.Idcountry).BaseName;
                 if (job.IdzipCode == null || job.IdzipCode == -1 || job.IdzipCode == 0)
                 {
@@ -715,7 +717,7 @@ namespace Application.Aimwel
             }
         }
 
-        public int ReminderDigits(Double number, int count)
+        public int ReminderDigits(decimal number, int count)
         {
             return Convert.ToInt32((number - Math.Truncate(number)).ToString().Substring(2, count));
         }

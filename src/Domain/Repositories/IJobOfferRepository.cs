@@ -38,7 +38,7 @@ namespace Domain.Repositories
 
         public IQueryable<JobVacancy> GetActiveOffersByContractAndTypeNoPack(int contractId, int type);
 
-        public Task<List<JobVacancy>> GetOffersCreatedLastFourDays();
+        public Task<List<JobVacancy>> GetOffersCreatedLastTwoDays();
 
         public int DeleteOffer(JobVacancy job);
         public Task<int> CountOffersPublished(int days);
