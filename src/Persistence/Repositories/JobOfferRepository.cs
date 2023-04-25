@@ -296,12 +296,15 @@ namespace Persistence.Repositories
             return query.ToListAsync();
         }
 
-        public async Task<List<JobVacancy>> GetOffersCreatedLastFourDays()
+        public async Task<List<JobVacancy>> GetOffersCreatedLastTwoDays()
         {
             var offers = await _dataContext.JobVacancies
-                .Where(o => o.Idstatus == (int)OfferStatus.Active && !o.ChkFilled && !o.ChkDeleted
-                && o.FinishDate.Date > DateTime.Today.Date && o.PublicationDate.Date > DateTime.Today.Date.AddDays(-4))
-                .OrderByDescending(a => a.IdjobVacancy).ToListAsync();
+                .Where(o => o.Idstatus == (int)OfferStatus.Active
+                && !o.ChkFilled
+                && !o.ChkDeleted
+                && o.FinishDate.Date > DateTime.Today.Date
+                && o.PublicationDate.Date > DateTime.Today.Date.AddDays(-2))
+                .OrderByDescending(a => a.FilledDate).ThenBy(a => a.IdjobVacancy).ToListAsync();
             return offers;
         }
 
@@ -311,9 +314,9 @@ namespace Persistence.Repositories
                     .Where(o => (o.Idstatus != 1
                     || o.ChkFilled
                     || o.ChkDeleted
-                    || o.FinishDate.Date < DateTime.Today.Date)
+                    || o.FinishDate.Date > DateTime.Today.Date)
                     )
-                    .OrderByDescending(a => a.IdjobVacancy).Take(200).ToListAsync();
+                    .OrderByDescending(a => a.FilledDate).Take(100).ToListAsync();
             return offers;
         }
 

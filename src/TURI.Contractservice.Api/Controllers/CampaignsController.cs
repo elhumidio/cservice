@@ -161,15 +161,37 @@ namespace TURI.Contractservice.Controllers
             }
         }
 
+        /// <summary>
+        /// Verifies the status of campaigns.
+        /// </summary>
+        /// <returns>
+        /// Returns the response of the verification.
+        /// </returns>
         [HttpGet]
         public async Task<IActionResult> VerifyCampaignsStatus()
         {
-            var response = await Mediator.Send(new VerifyStatus.Query {
+            var response = await Mediator.Send(new VerifyStatusActive.Query
+            {
             });
 
-            return Ok(response);    
+            return Ok(response);
         }
 
+        /// <summary>
+        /// Verifies the status of an inactive user.
+        /// </summary>
+        /// <returns>
+        /// Returns an OK response with the verification result.
+        /// </returns>
+        [HttpGet]
+        public async Task<IActionResult> VerifyStatusInactive()
+        {
+            var response = await Mediator.Send(new VerifyStatusInactive.Query
+            {
+            });
+
+            return Ok(response);
+        }
 
         /// <summary>
         /// Actualiza el estado de las campañas
@@ -194,7 +216,7 @@ namespace TURI.Contractservice.Controllers
         {
             try
             {
-             var ret = await _aimwelCampaign.GetCampaignByAimwelId(aimwelId);  
+                var ret = await _aimwelCampaign.GetCampaignByAimwelId(aimwelId);
                 return Ok(ret);
             }
             catch (Exception ex)
