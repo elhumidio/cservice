@@ -131,9 +131,9 @@ namespace Application.Aimwel
                         {
                             var ret = await client.EndCampaignAsync(request);
                         }
-                        catch (Exception ex)
+                        catch 
                         {
-                            var a = ex.Message;
+                            
                         }
                     }
                 }

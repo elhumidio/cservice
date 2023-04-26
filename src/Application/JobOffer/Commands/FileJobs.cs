@@ -70,17 +70,13 @@ namespace Application.JobOffer.Commands
                     msg += $"Offer {request.id} filed.\n\r";                    
 
                     if (aimwelEnabled)
-                    {
-                        var campaign = await _mediatr.Send(new GetStatus.Query
-                        {
-                            OfferId = request.id
-                        });
+                    {                        
+                        var campaign = await _manageCampaign.GetCampaignState(request.id);
                         if (campaign != null )
                         {
                             await _manageCampaign.StopCampaign(job.IdjobVacancy);
                             msg += $"Campaign {campaign.CampaignId} /  {request.id} - Canceled ";                    
-                        }
-                  
+                        }                  
                     }
                 }
                 OfferResultDto dto = new OfferResultDto();
