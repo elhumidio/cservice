@@ -75,15 +75,12 @@ namespace Application.JobOffer.Commands
                         {
                             OfferId = request.id
                         });
-                        if (campaign != null && campaign.Status == CampaignStatus.Active)
+                        if (campaign != null )
                         {
                             await _manageCampaign.StopCampaign(job.IdjobVacancy);
                             msg += $"Campaign {campaign.CampaignId} /  {request.id} - Canceled ";                    
                         }
-                        else if(campaign != null)
-                        {
-                            msg += $"Campaign {campaign.CampaignId} not editable  /  {campaign.Status}";                            
-                        }
+                  
                     }
                 }
                 OfferResultDto dto = new OfferResultDto();
