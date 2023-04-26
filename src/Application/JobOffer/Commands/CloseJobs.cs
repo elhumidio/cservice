@@ -93,12 +93,8 @@ namespace Application.JobOffer.Commands
                             OfferId = request.dto.id
                         });
 
-                        
-                            var canceled = _mediatr.Send(new Cancel.Command
-                            {
-                                offerId = request.dto.id
-                            });
-                            msg += $"Campaign {campaign.CampaignId} /  {request.dto.id} - Canceled ";
+                        await _manageCampaign.StopCampaign(job.IdjobVacancy);
+                        msg += $"Campaign {campaign.CampaignId} /  {request.dto.id} - Canceled ";
                         
                     }
                     OfferResultDto dto = new OfferResultDto();
