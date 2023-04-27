@@ -90,7 +90,7 @@ namespace API.Controllers
                 });
             }
 
-            return Ok();
+            return Ok(new OfferModificationResult() { IsSuccess=true });
         }
 
 
