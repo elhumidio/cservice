@@ -304,19 +304,24 @@ namespace Persistence.Repositories
                 && !o.ChkDeleted
                 && o.FinishDate.Date > DateTime.Today.Date
                 && o.PublicationDate.Date > DateTime.Today.Date.AddDays(-2))
-                .OrderByDescending(a => a.FilledDate).ThenBy(a => a.IdjobVacancy).ToListAsync();
+                .OrderByDescending(a => a.IdjobVacancy).ToListAsync();
             return offers;
         }
 
+/// <summary>
+/// Retrieves a list of inactive job offers from the database.
+/// </summary>
+/// <returns>
+/// A list of JobVacancy objects.
+/// </returns>
         public async Task<List<JobVacancy>> GetInactiveOffersChunk()
         {
-            var offers = await _dataContext.JobVacancies
-                    .Where(o => (o.Idstatus != 1
-                    || o.ChkFilled
-                    || o.ChkDeleted
-                    || o.FinishDate.Date > DateTime.Today.Date)
-                    )
-                    .OrderByDescending(a => a.FilledDate).Take(100).ToListAsync();
+            var offers = await (from a in _dataContext.JobVacancies
+                          join m in _dataContext.CampaignManagements on a.IdjobVacancy equals m.IdjobVacancy
+                          where (a.ChkFilled || a.ChkDeleted
+                    || a.FinishDate.Date < DateTime.Today.Date) && m.Status == (int)OfferStatus.Active  
+                         select a).ToListAsync();                   
+
             return offers;
         }
 

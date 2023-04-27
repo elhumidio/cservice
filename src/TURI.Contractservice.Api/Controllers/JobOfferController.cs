@@ -74,6 +74,27 @@ namespace API.Controllers
 
 
         /// <summary>
+        /// Sends a command to file jobs for each item in the list of ids.
+        /// </summary>
+        /// <param name="_ids">List of ids to send the command to.</param>
+        /// <returns>Returns an Ok result.</returns>
+        [HttpPost]
+        public async Task<IActionResult> FileOffersFeed(List<int> _ids)
+        {
+            foreach (var item in _ids)
+            {
+                await Mediator.Send(new FileJobs.Command
+                {
+
+                    id = item
+                });
+            }
+
+            return Ok();
+        }
+
+
+        /// <summary>
         /// Delete Offers (from Web)
         /// </summary>
         /// <param name="offer"></param>
