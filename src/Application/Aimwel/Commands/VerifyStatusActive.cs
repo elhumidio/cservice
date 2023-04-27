@@ -40,7 +40,7 @@ namespace Application.Aimwel.Commands
             public async Task<Result<bool>> Handle(Query request, CancellationToken cancellationToken)
             {
                 var offers = await _jobOfferRepository.GetOffersCreatedLastTwoDays();
-                var inactiveOffers = await _jobOfferRepository.GetInactiveOffersChunk();
+             
 
                 ListOffersRequest offersIdsList = new ListOffersRequest()
                 {
