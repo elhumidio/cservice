@@ -1,4 +1,5 @@
 using Domain.Classes;
+using Domain.DTO;
 using Domain.Entities;
 using Domain.Enums;
 using Domain.Repositories;
@@ -88,8 +89,8 @@ namespace Persistence.Repositories
             {
                 job.ChkFilled = true;
                 job.ChkDeleted = true;
-                job.FilledDate = DateTime.Now;  
-                job.ModificationDate= DateTime.Now; 
+                job.FilledDate = DateTime.Now;
+                job.ModificationDate = DateTime.Now;
                 job.FinishDate = DateTime.Now;
                 job.Idstatus = (int)OfferStatus.Deleted;
                 var ret = _dataContext.SaveChanges();
@@ -168,6 +169,55 @@ namespace Persistence.Repositories
                 && a.Idstatus == (int)OfferStatus.Active);
 
             return query;
+        }
+
+        /// <summary>
+        /// Gets a list of OfferMinInfoAtsDto objects based on the given externalId and companyId.
+        /// </summary>
+        /// <param name="externalId">The externalId of the offer.</param>
+        /// <param name="companyId">The companyId of the offer.</param>
+        /// <returns>A list of OfferMinInfoAtsDto objects.</returns>
+        public async Task<List<OfferMinInfoAtsDto>> GetOfferInfoByExternalId(string externalId, int companyId)
+        {
+            try
+            {
+                var query = await (from o in _dataContext.JobVacancies
+                                   join reg in _dataContext.RegJobVacMatchings on o.IdjobVacancy equals reg.IdjobVacancy
+                                   where o.Identerprise == companyId && o.PublicationDate > DateTime.Now.Date.AddYears(-1)
+                                   select new OfferMinInfoAtsDto()
+                                   {
+                                       FiledDate = o.FilledDate.ToString(),
+                                       FinishDate = o.FinishDate.ToString(),
+                                       PublishedDate = o.PublicationDate.ToString(),
+                                       Status = o.ChkFilled ? "Archived" : "Active",
+                                       Title = o.Title,
+                                       ExternalId = reg.ExternalId,
+                                       TurijobsId = o.IdjobVacancy
+                                   }).OrderByDescending(a => a.PublishedDate).ToListAsync();
+
+                if (!string.IsNullOrEmpty(externalId))
+                {
+                    query = query.Where(a => a.ExternalId == externalId).ToList();
+                }
+
+                query.ForEach(o =>
+                {
+
+                    o.FinishDate = Convert.ToDateTime(o.FinishDate).ToString("yyyy-MM-dd HH:mm:ss");
+                    o.FiledDate = !string.IsNullOrEmpty(o.FiledDate) ? Convert.ToDateTime(o.FiledDate).ToString("yyyy-MM-dd HH:mm:ss") : string.Empty;
+                    o.PublishedDate = Convert.ToDateTime(o.PublishedDate).ToString("yyyy-MM-dd HH:mm:ss");
+
+
+                });
+                return query;
+            }
+            catch (Exception ex)
+            {
+
+                var a = ex.Message;
+                return null;
+            }
+
         }
 
         public IQueryable<JobVacancy> GetActiveOffersByContractNoPack(int contractId)
@@ -308,19 +358,19 @@ namespace Persistence.Repositories
             return offers;
         }
 
-/// <summary>
-/// Retrieves a list of inactive job offers from the database.
-/// </summary>
-/// <returns>
-/// A list of JobVacancy objects.
-/// </returns>
+        /// <summary>
+        /// Retrieves a list of inactive job offers from the database.
+        /// </summary>
+        /// <returns>
+        /// A list of JobVacancy objects.
+        /// </returns>
         public async Task<List<JobVacancy>> GetInactiveOffersChunk()
         {
             var offers = await (from a in _dataContext.JobVacancies
-                          join m in _dataContext.CampaignManagements on a.IdjobVacancy equals m.IdjobVacancy
-                          where (a.ChkFilled || a.ChkDeleted
-                    || a.FinishDate.Date < DateTime.Today.Date) && m.Status == (int)OfferStatus.Active  
-                         select a).ToListAsync();                   
+                                join m in _dataContext.CampaignManagements on a.IdjobVacancy equals m.IdjobVacancy
+                                where (a.ChkFilled || a.ChkDeleted
+                          || a.FinishDate.Date < DateTime.Today.Date) && m.Status == (int)OfferStatus.Active
+                                select a).ToListAsync();
 
             return offers;
         }

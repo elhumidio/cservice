@@ -33,7 +33,7 @@ namespace TURI.Contractservice.Tests.Unit.Contracts.Queries
                   _contractProductRepoMock.Object,
                   _unitsRepoMock.Object);
 
-              var result = await handler.Handle(new GetAvailableUnitsByOwner.Query(), CancellationToken.None);
+              var result = await handler.Handle(new GetAvailableUnitsByOwner.Get(), CancellationToken.None);
               result.Value.ShouldBeOfType<List<AvailableUnitsDto>>();
               result.Value.Count.ShouldBeGreaterThan(0);
               result.Value.Sum(a => a.Units).ShouldBeGreaterThan(0);

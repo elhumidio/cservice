@@ -30,7 +30,7 @@ namespace API.Controllers
         //[ProducesResponseType(StatusCodes.Status404NotFound)]
         //public async Task<IActionResult> GetAvailableUnits(int contractId)
         //{
-        //    var query = new GetAvailableUnits.Query
+        //    var query = new GetAvailableUnits.Get
         //    {
         //        ContractId = contractId
         //    };

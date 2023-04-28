@@ -429,6 +429,19 @@ namespace API.Controllers
             return HandleResult(result);
         }
 
+        [HttpPost]
+        public async Task<IActionResult> ListOffersAtsInfo(OfferMinInfoAtsRequest dto)
+        {
+            var result = await Mediator.Send(new ListOffersAtsInfo.Get
+            {
+                 CompanyId = dto.CompanyId,
+                 ExternalId = dto.ExternalId       
+
+            });
+
+            return HandleResult(result);    
+        }
+
 
 
         /// <summary>

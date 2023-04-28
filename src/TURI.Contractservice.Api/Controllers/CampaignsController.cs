@@ -74,7 +74,7 @@ namespace TURI.Contractservice.Controllers
                     offerId = jobId
                 });
 
-                return Ok(response);
+                    return Ok(response);
             }
             catch (Exception ex)
             {
