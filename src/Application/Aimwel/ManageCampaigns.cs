@@ -632,7 +632,7 @@ namespace Application.Aimwel
                     JobContent = new JobContent
                     {
                         JobTitle = job.Title,
-                        JobDescription = job.Description,
+                        JobDescription = $"{job.Description} \n {job.Requirements}",
                         Language = ApiUtils.GetLanguageBySite(job.Idsite),
                         PublicationTime = Timestamp.FromDateTime(DateTime.UtcNow),
 

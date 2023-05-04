@@ -225,5 +225,22 @@ namespace TURI.Contractservice.Controllers
             }
         }
 
+        [HttpGet("{jobId}")]
+        public async Task<IActionResult> CreateCampaignUpdater(int jobId)
+        {
+            try
+            {
+                var response = await Mediator.Send(new CreateUpdater.Command
+                {
+                    offerId = jobId
+                });
+
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return Ok(ex.Message);
+            }
+        }
     }
 }
