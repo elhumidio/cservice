@@ -6,6 +6,8 @@ namespace Domain.Repositories
     {
         public Task<int> Add(RegJobVacMatching recjob);
 
+        public Task<bool> Update(RegJobVacMatching recjob);
+
         public Task<RegJobVacMatching> GetAtsIntegrationInfo(string externalId);
 
         public Task<List<RegJobVacMatching>> GetAtsIntegrationInfoForFile(string externalId);

@@ -155,6 +155,18 @@ namespace Application.JobOffer.Commands
                                 job.Idquest = questId;
                                 await _offerRepo.UpdateOffer(job);
                             }
+                            else
+                            {
+                                job = _offerRepo.GetOfferById(jobVacancyId);
+                                job.Idstatus = 2;
+                                await _offerRepo.UpdateOffer(job);
+                                RegJobVacMatching jobReg = await _regJobVacRepo.GetAtsIntegrationInfoByJobId(jobVacancyId);
+                                jobReg.ExternalId = $"{jobReg.ExternalId}_OLD";
+                                await _regJobVacRepo.Update(jobReg);
+                                error = "Failed to creating questionnaire";
+                                _logger.LogError(error);
+                                return OfferModificationResult.Failure(new List<string> { error });
+                            }
                         }
 
                         return OfferModificationResult.Success(createdOffer);
