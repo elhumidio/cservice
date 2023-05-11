@@ -1,3 +1,4 @@
+using ApisClient.DTO;
 using Application.JobOffer.DTO;
 using Domain.Enums;
 using MediatR;
@@ -204,6 +205,9 @@ namespace Application.JobOffer.Commands
 
         [DataMember]
         public List<JobLanguages>? JobLanguages { get; set; }
+
+        [DataMember]
+        public QuestDTO QuestDTO { get; set; }
 
         public CreateOfferCommand()
         {
