@@ -82,9 +82,8 @@ namespace API.Extensions
             services.AddScoped<IApplicationService, ApplicationService>();
             services.AddScoped<IinternalService, InternalService>();
             services.AddScoped<ISafetyModeration, SafetyModeration>();
-
+            services.AddScoped<IQuestService, QuestService>();
             #endregion MAPPING REPOSITORIES
-
             services.AddScoped<IGeoNamesConector, GeoNamesConector>();
             return services;
         }

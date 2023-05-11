@@ -1,5 +1,6 @@
 using Domain.Entities;
 using Domain.Repositories;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace Persistence.Repositories
 {
@@ -17,6 +18,13 @@ namespace Persistence.Repositories
             var a = _dataContext.Add(recjob).Entity;
             var ret = _dataContext.SaveChangesAsync();
             return ret;
+        }
+
+        public async Task<bool> Update(RegJobVacMatching recjob)
+        {
+            _dataContext.RegJobVacMatchings.Update(recjob);
+            var ret = await _dataContext.SaveChangesAsync();
+            return true;
         }
 
         public Task<RegJobVacMatching> GetAtsIntegrationInfo(string externalId)

@@ -1,4 +1,5 @@
     using Application.Aimwel.Interfaces;
+using Application.Interfaces;
 using Application.JobOffer.DTO;
 using Application.JobOffer.Queries;
 using AutoMapper;
@@ -28,6 +29,7 @@ namespace Application.JobOffer.Commands
         private readonly IRegJobVacWorkPermitRepository _regJobVacWorkPermitRepo;
         private readonly ICityRepository _cityRepository;
         private readonly IAreaRepository _areaRepository;
+        private readonly IQuestService _questService;
 
         #endregion PRIVATE PROPERTIES
 
@@ -42,7 +44,8 @@ namespace Application.JobOffer.Commands
             IJobVacancyLanguageRepository jobVacancyLangRepo,
             IRegJobVacWorkPermitRepository regJobVacWorkPermitRepository,
             ICityRepository cityRepository,
-            IAreaRepository areaRepository)
+            IAreaRepository areaRepository,
+            IQuestService questService)
         {
             _offerRepo = offerRepo;
             _mapper = mapper;
@@ -56,7 +59,8 @@ namespace Application.JobOffer.Commands
             _jobVacancyLangRepo = jobVacancyLangRepo;
             _regJobVacWorkPermitRepo = regJobVacWorkPermitRepository;
             _cityRepository = cityRepository;
-            _areaRepository = areaRepository;   
+            _areaRepository = areaRepository;
+            _questService = questService;
         }
 
         public async Task<OfferModificationResult> Handle(CreateOfferCommand offer, CancellationToken cancellationToken)
@@ -140,6 +144,30 @@ namespace Application.JobOffer.Commands
 
                         if (aimwelEnabled)
                             await _manageCampaign.CreateCampaing(entity);
+
+                        // QUESTIONNAIRE.
+                        if (offer.QuestDTO != null)
+                        {
+                            int questId = await _questService.CreateQuest(offer.QuestDTO);
+                            if (questId > 0)
+                            {
+                                job = _offerRepo.GetOfferById(jobVacancyId);
+                                job.Idquest = questId;
+                                await _offerRepo.UpdateOffer(job);
+                            }
+                            else
+                            {
+                                job = _offerRepo.GetOfferById(jobVacancyId);
+                                job.Idstatus = 2;
+                                await _offerRepo.UpdateOffer(job);
+                                RegJobVacMatching jobReg = await _regJobVacRepo.GetAtsIntegrationInfoByJobId(jobVacancyId);
+                                jobReg.ExternalId = $"{jobReg.ExternalId}_OLD";
+                                await _regJobVacRepo.Update(jobReg);
+                                error = "Failed to creating questionnaire";
+                                _logger.LogError(error);
+                                return OfferModificationResult.Failure(new List<string> { error });
+                            }
+                        }
 
                         return OfferModificationResult.Success(createdOffer);
                     }
