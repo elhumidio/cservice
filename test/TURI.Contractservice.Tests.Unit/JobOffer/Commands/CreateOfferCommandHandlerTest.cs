@@ -37,8 +37,8 @@ namespace TURI.Contractservice.Tests.Unit.JobOffer.Commands
             });
             _mapper = mapperConfig.CreateMapper();
 
-            //.Callback<GetResult.Query, CancellationToken>((notification,cToken) =>  GetResult.Query(notification, cToken));
-            //.Callback<GetResult.Query, CancellationToken>()
+            //.Callback<GetResult.Get, CancellationToken>((notification,cToken) =>  GetResult.Get(notification, cToken));
+            //.Callback<GetResult.Get, CancellationToken>()
 
             //(notification,token)=>CreateOfferCommandHandler(notifica));
         }
@@ -47,7 +47,7 @@ namespace TURI.Contractservice.Tests.Unit.JobOffer.Commands
         public async Task CreateOfferCommandHandlerSuccess()
         {
             /* var _mediatr = new Mock<IMediator>();
-             _mediatr.Setup(m => m.Send(It.IsAny<GetResult.Query>(), It.IsAny<CancellationToken>()));
+             _mediatr.Setup(m => m.Send(It.IsAny<GetResult.Get>(), It.IsAny<CancellationToken>()));
              var _loggerMock = new Mock<ILogger<CreateOfferCommandHandler>>();
              var handler = new CreateOfferCommandHandler(_regEnterpriseContractRepositoryMock.Object,
                  _regVacMatchingRepositoryMock.Object,

@@ -1,6 +1,5 @@
 using Application.Contracts.DTO;
 using Application.Core;
-using AutoMapper;
 using Domain.Enums;
 using Domain.Repositories;
 using MediatR;
@@ -19,11 +18,9 @@ namespace Application.Contracts.Queries
             private readonly IJobOfferRepository _jobOfferRepo;
             private readonly IContractProductRepository _contractProductRepo;
             private readonly IUnitsRepository _unitsRepo;
-            
 
             public Handler(IJobOfferRepository jobOfferRepo, IContractProductRepository contractProductRepo, IUnitsRepository unitsRepo)
             {
-            
                 _jobOfferRepo = jobOfferRepo;
                 _contractProductRepo = contractProductRepo;
                 _unitsRepo = unitsRepo;

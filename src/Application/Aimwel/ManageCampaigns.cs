@@ -131,9 +131,9 @@ namespace Application.Aimwel
                         {
                             var ret = await client.EndCampaignAsync(request);
                         }
-                        catch (Exception ex)
+                        catch 
                         {
-                            var a = ex.Message;
+                            
                         }
                     }
                 }
@@ -632,7 +632,7 @@ namespace Application.Aimwel
                     JobContent = new JobContent
                     {
                         JobTitle = job.Title,
-                        JobDescription = job.Description,
+                        JobDescription = $"{job.Description} \n {job.Requirements}",
                         Language = ApiUtils.GetLanguageBySite(job.Idsite),
                         PublicationTime = Timestamp.FromDateTime(DateTime.UtcNow),
 
