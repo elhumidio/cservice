@@ -60,6 +60,15 @@ namespace Persistence.Repositories
             return CorporateName;
         }
 
+        public string GetCompanyNameByBrandId(int brandId)
+        {
+            string CorporateName = string.Empty;
+            var name = _dataContext.Brands.Where(c => c.Idbrand == brandId).FirstOrDefault().Name;
+            if (!string.IsNullOrEmpty(name))
+                CorporateName = name;
+            return CorporateName;
+        }
+
         public int GetCompanyRegion(int companyId)
         {
             var region = _dataContext.Enterprises.Where(c => c.Identerprise == companyId).FirstOrDefault().Idregion;

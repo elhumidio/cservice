@@ -28,6 +28,7 @@ namespace Application.Aimwel
         private readonly IEnterpriseRepository _enterpriseRepo;
         private readonly ILogger _logger;
         private readonly IlogoRepository _logoRepo;
+        private readonly IEnterpriseBlindRepository _enterpriseBlindRepo;
         private readonly IZipCodeRepository _zipCodeRepo;
         private readonly ICountryIsoRepository _countryIsoRepo;
         private readonly ICampaignsManagementRepository _campaignsManagementRepo;
@@ -43,6 +44,7 @@ namespace Application.Aimwel
             IEnterpriseRepository enterpriseRepo,
             ILogger<ManageCampaigns> logger,
             IlogoRepository logoRepo,
+            IEnterpriseBlindRepository enterpriseBlindRepo,
             IZipCodeRepository zipCodeRepo,
             ICountryIsoRepository countryIsoRepo,
             ICampaignsManagementRepository campaignsManagementRepo,
@@ -58,6 +60,7 @@ namespace Application.Aimwel
             _enterpriseRepo = enterpriseRepo;
             _logger = logger;
             _logoRepo = logoRepo;
+            _enterpriseBlindRepo = enterpriseBlindRepo;
             _zipCodeRepo = zipCodeRepo;
             _countryIsoRepo = countryIsoRepo;
             _campaignsManagementRepo = campaignsManagementRepo;
@@ -398,6 +401,11 @@ namespace Application.Aimwel
                     Region = region == null ? companyRegion.BaseName : region.BaseName,
                     PostalCode = PostalCode
                 };
+                string blindEnterpriseName = string.Empty;
+                if (job.ChkBlindVac)
+                {
+                    blindEnterpriseName = _enterpriseBlindRepo.GetEnterpriseBlindName(job.Identerprise);
+                }
 
                 var request = new CreateCampaignRequest
                 {
@@ -418,8 +426,8 @@ namespace Application.Aimwel
 
                         HiringOrganization = new HiringOrganization
                         {
-                            Name = _enterpriseRepo.GetCompanyName(job.Identerprise),
-                            LogoUrl = urlLogo,
+                            Name = job.ChkBlindVac ? blindEnterpriseName : _enterpriseRepo.GetCompanyNameByBrandId(job.Idbrand),
+                            LogoUrl = job.ChkBlindVac ? "https://www.turijobs.com/static/img/global/nologo.png" : urlLogo,
                         },
                         Location = new Geolocation
                         {
@@ -618,6 +626,11 @@ namespace Application.Aimwel
                     Region = region == null ? companyRegion.BaseName : region.BaseName,
                     PostalCode = PostalCode
                 };
+                string blindEnterpriseName = string.Empty;
+                if (job.ChkBlindVac)
+                {
+                    blindEnterpriseName = _enterpriseBlindRepo.GetEnterpriseBlindName(job.Identerprise);
+                }
 
                 var request = new CreateCampaignRequest
                 {
@@ -638,8 +651,8 @@ namespace Application.Aimwel
 
                         HiringOrganization = new HiringOrganization
                         {
-                            Name = _enterpriseRepo.GetCompanyName(job.Identerprise),
-                            LogoUrl = urlLogo,
+                            Name = job.ChkBlindVac ? blindEnterpriseName : _enterpriseRepo.GetCompanyNameByBrandId(job.Idbrand),
+                            LogoUrl = job.ChkBlindVac ? "https://www.turijobs.com/static/img/global/nologo.png" : urlLogo,
                         },
                         Location = new Geolocation
                         {

@@ -73,6 +73,7 @@ namespace API.Extensions
             services.AddScoped<ILanguageRepository, LanguageRepository>();
             services.AddScoped<IAimwelCampaign, ManageCampaigns>();
             services.AddScoped<IlogoRepository, LogoRepository>();
+            services.AddScoped<IEnterpriseBlindRepository, EnterpriseBlindRepository>();
             services.AddScoped<IJobVacancyLanguageRepository, JobVacancyLanguageRepository>();
             services.AddScoped<IRegJobVacWorkPermitRepository, RegJobVacWorkPermitRepository>();
             services.AddScoped<ICityRepository, CityRepository>();

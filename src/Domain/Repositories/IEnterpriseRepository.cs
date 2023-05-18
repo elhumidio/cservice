@@ -13,5 +13,6 @@ namespace Domain.Repositories
         public API.DataContext.Enterprise Get(int companyId);
         public Task<int> GetCountCompaniesActive();
         public int GetCompanyRegion(int companyId);
+        public string GetCompanyNameByBrandId(int brandId);
     }
 }
