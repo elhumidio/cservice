@@ -207,7 +207,7 @@ namespace Application.JobOffer.Commands
         public List<JobLanguages>? JobLanguages { get; set; }
 
         [DataMember]
-        public QuestDTO QuestDTO { get; set; }
+        public QuestDTO? QuestDTO { get; set; }
 
         public CreateOfferCommand()
         {
