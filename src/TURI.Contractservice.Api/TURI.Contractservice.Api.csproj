@@ -38,6 +38,7 @@
 	  <ProjectReference Include="..\Domain\Domain.csproj" />
 	  <ProjectReference Include="..\Infraestructure\Infraestructure.csproj" />
 	  <ProjectReference Include="..\Persistence\Persistence.csproj" />
+	  <ProjectReference Include="..\TURI.ContractService.Contracts\TURI.ContractService.Contracts.csproj" />
 	</ItemGroup>
 
   <ItemGroup>
