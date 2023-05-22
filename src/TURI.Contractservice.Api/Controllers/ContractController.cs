@@ -152,6 +152,16 @@ namespace API.Controllers
             });
             return HandleResult(contracts);
         }
+        [HttpGet("{companyId}")]
+        public async Task<IActionResult> GetPurchasedProductsByCompany(int companyId)
+        {
+            var contracts = await Mediator.Send(new GetValidContractsByCompany.Get
+            {
+                CompanyId = companyId
+            });
+            return HandleResult(contracts);
+        }
+
 
         /// <summary>
         /// Get users that contrats expire soon
