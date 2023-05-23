@@ -12,7 +12,6 @@ using Grpc.Net.Client;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using System;
 using System.Text;
 
 namespace Application.Aimwel
@@ -105,18 +104,22 @@ namespace Application.Aimwel
         /// </summary>
         /// <param name="jobId"></param>
         /// <returns></returns>
-        public async Task<bool> StopCampaign(int jobId)
+        public async Task<bool> StopCampaign(JobVacancy job, int? modificationReason = 0)
         {
+          
             GrpcChannel channel;
-            var campaigns = await _campaignsManagementRepo.GetAllCampaignManagement(jobId);
+            var campaigns = await _campaignsManagementRepo.GetAllCampaignManagement(job.IdjobVacancy);
             foreach (var campaign in campaigns)
             {
                 if (campaign.Status != (int)AimwelStatus.CANCELED)
                 {
                     campaign.Status = (int)AimwelStatus.CANCELED;
                     campaign.LastModificationDate = DateTime.UtcNow;
-                    campaign.ModificationReason = (int)CampaignModificationReason.FILED;
-                    await _campaignsManagementRepo.Update(campaign);
+
+                    bool IsCaducityReached = job.FinishDate.Date < DateTime.Now.Date && modificationReason == 0;
+                    campaign.ModificationReason = IsCaducityReached
+                        ? (int)CampaignModificationReason.EXPIRED
+                        : modificationReason > 0 ? modificationReason : (int)CampaignModificationReason.FILED;                 
 
                     if (string.IsNullOrEmpty(campaign.ExternalCampaignId))
                     {
@@ -129,14 +132,14 @@ namespace Application.Aimwel
                         {
                             CampaignId = campaign.ExternalCampaignId
                         };
-
                         try
                         {
                             var ret = await client.EndCampaignAsync(request);
+                            await _campaignsManagementRepo.Update(campaign);
                         }
-                        catch 
+                        catch
                         {
-                            
+                            return false;
                         }
                     }
                 }
@@ -224,13 +227,15 @@ namespace Application.Aimwel
                 {
                     CampaignId = campaignId
                 };
-                try {
+                try
+                {
                     var ret = await client.GetCampaignAsync(request);
                     return ret;
-                } catch {
+                }
+                catch
+                {
                     return null;
-                }   
-                
+                }
             }
         }
 
@@ -460,7 +465,7 @@ namespace Application.Aimwel
                 var ans = await CreateCampaign(client, request, new Metadata());
                 var management = await _campaignsManagementRepository.GetCampaignManagement(job.IdjobVacancy);
                 var IsUpdate = management?.Status != null && !string.IsNullOrEmpty(ans.CampaignId);
-                
+
                 if (IsUpdate)
                 {
                     //update
