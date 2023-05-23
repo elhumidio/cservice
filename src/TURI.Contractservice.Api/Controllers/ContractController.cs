@@ -1,11 +1,10 @@
-using API.Converters;
 using Application.Contracts.DTO;
 using Application.Contracts.Queries;
 using Application.EnterpriseContract.Queries;
 using Application.Managers.Queries;
+using Application.Product.Queries;
 using Domain.Enums;
 using Microsoft.AspNetCore.Mvc;
-using TURI.ContractService.Contract.Models;
 
 namespace API.Controllers
 {
@@ -25,31 +24,6 @@ namespace API.Controllers
             });
             return HandleResult(result);
         }
-        //[HttpGet]
-        //[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AvailableUnitsResponse[]))]
-        //[ProducesResponseType(StatusCodes.Status404NotFound)]
-        //public async Task<IActionResult> GetAvailableUnits(int contractId)
-        //{
-        //    var query = new GetAvailableUnits.Get
-        //    {
-        //        ContractId = contractId
-        //    };
-
-        //    var result = await Mediator.Send(query);
-
-        //    if (result.IsSuccess)
-        //    {
-        //        if (result.Value == null)
-        //            return NotFound();
-        //        else
-        //        {
-        //            var response = result.Value.Select(alert => alert.ToModel()).ToArray();
-        //            return Ok(response);
-        //        }
-        //    }
-
-        //    return BadRequest(result.Error);
-        //}
 
         /// <summary>
         /// It gets assignations by contract and owner
@@ -153,6 +127,16 @@ namespace API.Controllers
             return HandleResult(contracts);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetPurchasedProductsByCompany(int companyId)
+        {
+            var contracts = await Mediator.Send(new GetPurchasedProducts.GetProducts
+            {
+                CompanyId = companyId
+            });
+            return HandleResult(contracts);
+        }
+
         /// <summary>
         /// Get users that contrats expire soon
         /// </summary>
@@ -216,16 +200,17 @@ namespace API.Controllers
             return HandleResult(result);
         }
 
-
         [HttpGet("{contractId}")]
         public async Task<IActionResult> GetRegionsAllowed(int contractId)
         {
             var result = await Mediator.Send(new GetRegionsAllowed.GetRegions
             {
                 ContractId = contractId
-                
             });
             return HandleResult(result);
         }
+
+ 
+
     }
 }
