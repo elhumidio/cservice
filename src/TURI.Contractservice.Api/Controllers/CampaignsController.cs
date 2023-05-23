@@ -74,7 +74,7 @@ namespace TURI.Contractservice.Controllers
                     offerId = jobId
                 });
 
-                    return Ok(response);
+                return Ok(response);
             }
             catch (Exception ex)
             {
@@ -88,11 +88,11 @@ namespace TURI.Contractservice.Controllers
         /// <param name="jobId"></param>
         /// <returns></returns>
         [HttpGet("{jobId}")]
-        public async Task<IActionResult> CancelCampaign(int jobId)
+        public async Task<IActionResult> CancelCampaign(int jobId, int? modificationReason = 0)
         {
             try
             {
-                var response = await Mediator.Send(new Cancel.Command { offerId = jobId });
+                var response = await Mediator.Send(new Cancel.Command { offerId = jobId, ModificationReason = modificationReason });
                 return Ok(response);
             }
             catch (Exception ex)
@@ -153,56 +153,6 @@ namespace TURI.Contractservice.Controllers
                 {
                     OfferId = jobId
                 });
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                return Ok(ex.Message);
-            }
-        }
-
-        /// <summary>
-        /// Verifies the status of campaigns.
-        /// </summary>
-        /// <returns>
-        /// Returns the response of the verification.
-        /// </returns>
-        [HttpGet]
-        public async Task<IActionResult> VerifyCampaignsStatus()
-        {
-            var response = await Mediator.Send(new VerifyStatusActive.Query
-            {
-            });
-
-            return Ok(response);
-        }
-
-        /// <summary>
-        /// Verifies the status of an inactive user.
-        /// </summary>
-        /// <returns>
-        /// Returns an OK response with the verification result.
-        /// </returns>
-        [HttpGet]
-        public async Task<IActionResult> VerifyStatusInactive()
-        {
-            var response = await Mediator.Send(new VerifyStatusInactive.Query
-            {
-            });
-
-            return Ok(response);
-        }
-
-        /// <summary>
-        /// Actualiza el estado de las campañas
-        /// </summary>
-        /// <returns></returns>
-        [HttpGet()]
-        public async Task<IActionResult> CampaignStatusUpdater()
-        {
-            try
-            {
-                var response = await Mediator.Send(new Updater.Command { });
                 return Ok(response);
             }
             catch (Exception ex)

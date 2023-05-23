@@ -93,7 +93,7 @@ namespace Application.JobOffer.Commands
                             OfferId = request.dto.id
                         });
 
-                        await _manageCampaign.StopCampaign(job.IdjobVacancy);
+                        await _manageCampaign.StopCampaign(job);
                         msg += $"Campaign {campaign.CampaignId} /  {request.dto.id} - Canceled ";
                         
                     }
