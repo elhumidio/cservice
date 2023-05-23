@@ -113,6 +113,12 @@ namespace Persistence.Repositories
             return list;
         }
 
+
+        /// <summary>
+        /// Get all actives purchased products by a company 
+        /// </summary>
+        /// <param name="companyId"></param>
+        /// <returns></returns>
         public async  Task<List<ProductsPurchasedDto>> GetPurchasedProductsByCompany(int companyId)
         {
             var result = await _dataContext.Contracts
@@ -129,7 +135,7 @@ namespace Persistence.Repositories
                       FinishDate = x.ccp.cc.c.FinishDate,
                       SiteID = x.ccp.cc.c.SiteId,
                       Price = x.ccp.p.Price
-                  }).ToListAsync();
+                  }).Distinct().ToListAsync();
             return result;
         }
     }
