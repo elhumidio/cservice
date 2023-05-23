@@ -74,7 +74,7 @@ namespace Application.JobOffer.Commands
                         var campaign = await _manageCampaign.GetCampaignState(request.id);
                         if (campaign != null )
                         {
-                            await _manageCampaign.StopCampaign(job.IdjobVacancy);
+                            await _manageCampaign.StopCampaign(job);
                             msg += $"Campaign {campaign.CampaignId} /  {request.id} - Canceled ";                    
                         }                  
                     }

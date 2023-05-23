@@ -67,7 +67,7 @@ namespace Application.JobOffer.Commands
                     if (isActiveOffer)
                     {
                         if (aimwelEnabled)
-                            await _manageCampaign.StopCampaign(job.IdjobVacancy);
+                            await _manageCampaign.StopCampaign(job);
                         var ret = _offerRepo.FileOffer(job);
                         if (ret > 0) filed++;
                     }
