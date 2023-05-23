@@ -94,7 +94,7 @@ namespace Application.JobOffer.Commands
                         });
                         if (campaign != null && campaign.Status != CampaignStatus.Ended)
                         {
-                            await _manageCampaign.StopCampaign(job.IdjobVacancy);
+                            await _manageCampaign.StopCampaign(job);
                             msg += $"Campaign {campaign.CampaignId} /  {request.id} - Canceled ";                            
                         }
                         else if(campaign != null)

@@ -105,18 +105,22 @@ namespace Application.Aimwel
         /// </summary>
         /// <param name="jobId"></param>
         /// <returns></returns>
-        public async Task<bool> StopCampaign(int jobId)
+        public async Task<bool> StopCampaign(JobVacancy job, int? modificationReason = 0)
         {
             GrpcChannel channel;
-            var campaigns = await _campaignsManagementRepo.GetAllCampaignManagement(jobId);
+            var campaigns = await _campaignsManagementRepo.GetAllCampaignManagement(job.IdjobVacancy);
             foreach (var campaign in campaigns)
             {
                 if (campaign.Status != (int)AimwelStatus.CANCELED)
                 {
                     campaign.Status = (int)AimwelStatus.CANCELED;
                     campaign.LastModificationDate = DateTime.UtcNow;
-                    campaign.ModificationReason = (int)CampaignModificationReason.FILED;
-                    await _campaignsManagementRepo.Update(campaign);
+
+                    bool IsExpired = job.FinishDate.Date < DateTime.Now.Date;
+                    campaign.ModificationReason = IsExpired
+                        ? (int)CampaignModificationReason.EXPIRED
+                        : modificationReason > 0 ? modificationReason : (int)CampaignModificationReason.FILED;
+                    
 
                     if (string.IsNullOrEmpty(campaign.ExternalCampaignId))
                     {
@@ -133,10 +137,11 @@ namespace Application.Aimwel
                         try
                         {
                             var ret = await client.EndCampaignAsync(request);
+                            await _campaignsManagementRepo.Update(campaign);
                         }
                         catch 
                         {
-                            
+                            return false;
                         }
                     }
                 }
