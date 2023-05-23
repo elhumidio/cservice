@@ -116,7 +116,7 @@ namespace Application.Aimwel
                     campaign.Status = (int)AimwelStatus.CANCELED;
                     campaign.LastModificationDate = DateTime.UtcNow;
 
-                    bool IsCaducityReached = job.FinishDate.Date < DateTime.Now.Date && modificationReason == 0;
+                    bool IsCaducityReached = job.FinishDate.Date < DateTime.Now.Date;
                     campaign.ModificationReason = IsCaducityReached
                         ? (int)CampaignModificationReason.EXPIRED
                         : modificationReason > 0 ? modificationReason : (int)CampaignModificationReason.FILED;                 
