@@ -14,10 +14,10 @@
 # }
 
 # module "secrets" {
-#   source = "git::ssh://git@stash.stepstone.com:7999/tfm/release-zero-secret.git?ref=v2.2.1"
+#   source = "git::ssh://git@stash.stepstone.com:7999/tfm/release-zero-secret.git?ref=v2.3.0"
 
 #   environment                     = var.environment
-#   team_name                       = var.team_name 
+#   team_name                       = var.team_name
 #   application_namespace           = var.namespace
 #   application_service_name        = var.service_name
 #   ecs_cluster_name                = var.ecs_cluster_id
