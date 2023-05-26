@@ -4,6 +4,7 @@ using Application.Behaviors;
 using Application.Interfaces;
 using Application.JobOffer.Commands;
 using Application.JobOffer.Queries;
+using Application.Product.Queries;
 using Domain.Repositories;
 using FluentValidation.AspNetCore;
 using Infraestructure;
@@ -27,6 +28,7 @@ namespace API.Extensions
             });
             services.AddFluentValidation(new[] { typeof(CreateOfferCommandHandler).GetTypeInfo().Assembly });
             services.AddMediatR(typeof(CreateOfferCommand).Assembly);
+            services.AddMediatR(typeof(GetPurchasedProducts.Handler).Assembly);
             services.AddMediatR(typeof(ListActives.Handler).Assembly);
             services.AddAutoMapper(typeof(Application.Core.MappingProfiles).Assembly);
             services.AddControllers().AddNewtonsoftJson();

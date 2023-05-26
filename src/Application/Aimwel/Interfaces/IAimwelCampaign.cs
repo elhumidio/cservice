@@ -9,7 +9,7 @@ namespace Application.Aimwel.Interfaces
 
         public Task<GetCampaignResponse> GetCampaign(GetCampaignRequest request);
 
-        public Task<bool> StopCampaign(JobVacancy job, int? modificationReason= 0);
+        public Task<bool> StopCampaign(JobVacancy job, int? modificationReason = 0);
 
         public Task<bool> PauseCampaign(int jobId);
 

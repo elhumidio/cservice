@@ -112,5 +112,31 @@ namespace Persistence.Repositories
 
             return list;
         }
+
+
+        /// <summary>
+        /// Get all actives purchased products by a company 
+        /// </summary>
+        /// <param name="companyId"></param>
+        /// <returns></returns>
+        public async  Task<List<ProductsPurchasedDto>> GetPurchasedProductsByCompany(int companyId)
+        {
+            var result = await _dataContext.Contracts
+                .Join(_dataContext.ContractProducts, c => c.Idcontract, cp => cp.Idcontract, (c, cp) => new { c, cp })
+                .Join(_dataContext.Products, cc => cc.cp.Idproduct, p => p.Idproduct, (cc, p) => new { cc, p })
+                .Join(_dataContext.Enterprises, ccp => ccp.cc.c.Identerprise, e => e.Identerprise, (ccp, e) => new { ccp, e })
+                .Where(x => x.ccp.cc.c.Identerprise == companyId && x.ccp.cc.c.FinishDate.Value.Date >= DateTime.Now.Date && x.ccp.p.Idsite == x.e.SiteId)
+                .OrderByDescending(x => x.ccp.cc.c.Idcontract)
+                  .Select(x => new ProductsPurchasedDto
+                  {
+                      IDContract = x.ccp.cc.c.Idcontract,
+                      BaseName = x.ccp.p.BaseName,
+                      StartDate = x.ccp.cc.c.StartDate,
+                      FinishDate = x.ccp.cc.c.FinishDate,
+                      SiteID = x.ccp.cc.c.SiteId,
+                      Price = x.ccp.p.Price
+                  }).Distinct().ToListAsync();
+            return result;
+        }
     }
 }

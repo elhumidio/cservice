@@ -12,58 +12,66 @@
       "name": "${bamboo_AWS_ECS_SERVICE_NAME}",
       "image": "${bamboo_DockerImage}",
       "cpu": ${bamboo_props_AWS_ECS_CPU},
-      "memoryReservation": ${bamboo_props_AWS_ECS_RAM},
-      "essential": true,
-      "portMappings": [
-        {
-          "containerPort": 80
-        }
-      ],
-      "environment": [
-        {
-          "name": "Service__ServiceVersion",
-          "value": "${bamboo_deploy_release}"
-        },
-        {
-          "name": "Service__Environment",
-          "value": "${bamboo_environment}"
-        },
-        {
-          "name": "DD_TRACE_ENABLED",
-          "value": "${bamboo_DD_TRACE_ENABLED}"
-        },
-        {
-          "name": "DD_ENV",
-          "value": "${bamboo_environment}"
-        },
-        {
-          "name": "DD_SERVICE",
-          "value": "${bamboo_AWS_ECS_SERVICE_NAME}"
-        },
-        {
-          "name": "DD_VERSION",
-          "value": "${bamboo_deploy_release}"
-        },
-        {
-          "name": "ENVCONSUL_ENABLED",
-          "value": "false"
-        },
-        {
-          "name": "VAULT_ADDR",
-          "value": "${bamboo_VAULT_ADDR}"
-        },
-        {
-          "name": "TEAM_NAME",
-          "value": "${bamboo_teamName}"
-        },
-		{
-          "name": "ASPNETCORE_ENVIRONMENT",
-          "value": "${bamboo_service_envvar_DOTNET_ENVIRONMENT}"
-        }
-      ],
-      "dockerLabels": {
-        "gather_logs": "json"
+    "memoryReservation": ${bamboo_props_AWS_ECS_RAM},
+    "essential": true,
+    "portMappings": [
+      {
+        "containerPort": 80
       }
+    ],
+    "environment": [
+      {
+        "name": "Service__ServiceVersion",
+        "value": "${bamboo_deploy_release}"
+      },
+      {
+        "name": "Service__Environment",
+        "value": "${bamboo_environment}"
+      },
+      {
+        "name": "DD_TRACE_ENABLED",
+        "value": "${bamboo_DD_TRACE_ENABLED}"
+      },
+      {
+        "name": "DD_ENV",
+        "value": "${bamboo_environment}"
+      },
+      {
+        "name": "DD_SERVICE",
+        "value": "${bamboo_AWS_ECS_SERVICE_NAME}"
+      },
+      {
+        "name": "DD_VERSION",
+        "value": "${bamboo_deploy_release}"
+      },
+      {
+        "name": "ENVCONSUL_ENABLED",
+        "value": "false"
+      },
+      {
+        "name": "VAULT_ADDR",
+        "value": "${bamboo_VAULT_ADDR}"
+      },
+      {
+        "name": "TEAM_NAME",
+        "value": "${bamboo_teamName}"
+      },
+
+      {
+        "name": "ASPNETCORE_ENVIRONMENT",
+        "value": "${bamboo_service_envvar_DOTNET_ENVIRONMENT}"
+      }
+    ],
+    "healthCheck": {
+      "command" : [ "CMD-SHELL", "curl -f http://localhost:80/ping || exit 1" ],
+      "interval" : 30,
+      "retries" : 8,
+      "startPeriod" : 0,
+      "timeout" : 15
+    },
+    "dockerLabels": {
+      "gather_logs": "json"
+    }
     }
   ]
 }
