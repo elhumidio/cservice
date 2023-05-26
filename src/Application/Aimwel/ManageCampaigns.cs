@@ -21,6 +21,7 @@ namespace Application.Aimwel
     /// </summary>
     public class ManageCampaigns : IAimwelCampaign
     {
+        private const int ONBOARD = 226;
         private readonly IZoneUrl _zoneUrl;
         private readonly IConfiguration _config;
         private readonly IGeoNamesConector _geoNamesConector;
@@ -318,7 +319,7 @@ namespace Application.Aimwel
                 var countryName = _countryRepo.GetCountryById(job.Idcountry).BaseName;
                 if (job.IdzipCode == null || job.IdzipCode == -1 || job.IdzipCode == 0)
                 {
-                    if (job.Idcountry == 226)
+                    if (job.Idcountry == ONBOARD)
                     {
                         latitude = Convert.ToDouble("40.60704563565361");
                         longitude = Convert.ToDouble("-4.049663543701172");
@@ -399,7 +400,7 @@ namespace Application.Aimwel
 
                 var address = new Address
                 {
-                    CountryAlpha2 = _countryIsoRepo.GetIsobyCountryId(job.Idcountry),
+                    CountryAlpha2 = job.Idcountry == ONBOARD ? _countryIsoRepo.GetIsobyCountryId(ApiUtils.GetCountryIdBySite(job.Idsite)) : _countryIsoRepo.GetIsobyCountryId(job.Idcountry),
                     State = region == null ? companyRegion.Ccaa : region.Ccaa == null ? region.BaseName : region.Ccaa,
                     City = job.City ?? geolocation.postalCodes.First().adminName3,
                     Street = "",
@@ -436,7 +437,7 @@ namespace Application.Aimwel
                         },
                         Location = new Geolocation
                         {
-                            CountryAlpha2 = _countryIsoRepo.GetIsobyCountryId(job.Idcountry), //verificar
+                            CountryAlpha2 = job.Idcountry == ONBOARD ? _countryIsoRepo.GetIsobyCountryId(ApiUtils.GetCountryIdBySite(job.Idsite))  :  _countryIsoRepo.GetIsobyCountryId(job.Idcountry),
                             Latitude = latitude,
                             Longitude = longitude,
                         },
@@ -543,7 +544,7 @@ namespace Application.Aimwel
                 var countryName = _countryRepo.GetCountryById(job.Idcountry).BaseName;
                 if (job.IdzipCode == null || job.IdzipCode == -1 || job.IdzipCode == 0)
                 {
-                    if (job.Idcountry == 226)
+                    if (job.Idcountry == ONBOARD)
                     {
                         latitude = Convert.ToDouble("40.60704563565361");
                         longitude = Convert.ToDouble("-4.049663543701172");
@@ -804,7 +805,7 @@ namespace Application.Aimwel
 
             tmpSb.Append(ApiUtils.GetUriBySite(_offer.Idsite)); //http://www.turijobs.com
             tmpSb.Append(ApiUtils.GetSearchbySite(_offer.Idsite));
-            if (_offer.Idregion == 61 || _offer.Idcountry == 226)
+            if (_offer.Idregion == 61 || _offer.Idcountry == ONBOARD)
                 tmpSb.Append(ApiUtils.GetAbroadTerm(_offer.Idsite));
             if (_offer.Idcity != null && _offer.Idcity > 0)
             {
