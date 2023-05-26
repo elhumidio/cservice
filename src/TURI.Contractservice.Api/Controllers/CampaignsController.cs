@@ -74,7 +74,7 @@ namespace TURI.Contractservice.Controllers
                     offerId = jobId
                 });
 
-                return Ok(response);
+                    return Ok(response);
             }
             catch (Exception ex)
             {
@@ -160,6 +160,7 @@ namespace TURI.Contractservice.Controllers
                 return Ok(ex.Message);
             }
         }
+
 
         [HttpGet()]
         public async Task<IActionResult> GetAimwelCampaignByAimwelId(string aimwelId)

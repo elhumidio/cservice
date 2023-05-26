@@ -119,8 +119,7 @@ namespace Application.Aimwel
                     bool IsExpired = job.FinishDate.Date < DateTime.Now.Date;
                     campaign.ModificationReason = IsExpired
                         ? (int)CampaignModificationReason.EXPIRED
-                        : modificationReason > 0 ? modificationReason : (int)CampaignModificationReason.FILED;
-                    
+                        : modificationReason > 0 ? modificationReason : (int)CampaignModificationReason.FILED;                 
 
                     if (string.IsNullOrEmpty(campaign.ExternalCampaignId))
                     {
