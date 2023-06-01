@@ -19,9 +19,10 @@ namespace Application.Aimwel.Commands
             private readonly IJobOfferRepository _offerRepo;
 
             public Handler(
-                IAimwelCampaign aimwelCampaign, IJobOfferRepository jobOfferRepository)
+                IAimwelCampaign aimwelCampaign, IJobOfferRepository jobOfferRepository, IJobOfferRepository offerRepository)
             {
                 _manageCampaign = aimwelCampaign;
+                _offerRepo = jobOfferRepository;    
             }
 
             public async Task<Result<bool>> Handle(Command request, CancellationToken cancellationToken)
