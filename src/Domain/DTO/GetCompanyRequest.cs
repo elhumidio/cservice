@@ -14,5 +14,6 @@ namespace Domain.DTO
         public int ContractId { get; set; }
         public int IdJobVacType { get; set; }
         public int CompanyId { get; set; }
+        public int? IdEnterpriseUser { get; set; }
     }
 }
