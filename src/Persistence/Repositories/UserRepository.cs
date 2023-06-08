@@ -172,6 +172,16 @@ namespace Persistence.Repositories
             return allCandidates.ToListAsync();
         }
 
+        public int GetIdsuserByManagerId(int managerId)
+        {
+            var userId = (from user in _dataContext.Users
+                         join eu in _dataContext.EnterpriseUsers on user.Idsuser equals eu.Idsuser
+                         where eu.IdenterpriseUser == managerId
+                         select eu.Idsuser).FirstOrDefault();
+
+            return userId;  
+        }
+
         public bool UpdateUserGetResponse(User request)
         {
             var users = _dataContext.Users.Where(x => x.Email == request.Email);

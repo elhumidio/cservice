@@ -14,5 +14,6 @@ namespace Domain.Repositories
         public Task<List<UserContractBegin>> GetUsersContractBegin();
         public Task<List<UserGetResponseData>> ListUsersEmptyGetResponse();
         public bool UpdateUserGetResponse(User request);
+        public int GetIdsuserByManagerId(int managerId);
     }
 }
