@@ -82,7 +82,9 @@ namespace Application.JobOffer.Validations
                         CountryId = offer.Idcountry,
                         IdJobVacType = offer.IdjobVacType,
                         RegionId = offer.Idregion,
-                        CompanyId = offer.Identerprise
+                        CompanyId = offer.Identerprise,
+                        IdEnterpriseUser = offer.IdenterpriseUserG
+                        
                     }
                 });
                 if (managerAts.Result.Value != null && managerAts.Result.Value.ManagerId > 0)

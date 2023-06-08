@@ -38,7 +38,7 @@ namespace Application.EnterpriseContract.Queries
             {
                 CompanyinfoDto obj = new()
                 {
-                    IDSUser = _userRepository.GetUserIdByEmail(request.CompanyData.Email)
+                    IDSUser = _userRepository.GetIdsuserByManagerId((int)request.CompanyData.IdEnterpriseUser)
                 };
 
                 var managers = _atSManagerAdminRepository.Get(request.CompanyData.CompanyId);
