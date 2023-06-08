@@ -19,7 +19,7 @@ namespace Application.Aimwel.Commands
             private readonly IJobOfferRepository _offerRepo;
 
             public Handler(
-                IAimwelCampaign aimwelCampaign, IJobOfferRepository jobOfferRepository)
+                IAimwelCampaign aimwelCampaign, IJobOfferRepository jobOfferRepository, IJobOfferRepository offerRepository)
             {
                 _manageCampaign = aimwelCampaign;
                 _offerRepo = jobOfferRepository;
