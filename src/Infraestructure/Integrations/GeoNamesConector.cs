@@ -22,7 +22,12 @@ namespace Infraestructure.Integrations
 
             using (var httpClient = new HttpClient())
             {
-                geoNames = JsonConvert.DeserializeObject<GeoNamesDto>(httpClient.GetStringAsync(new Uri(url)).Result);
+                var response = httpClient.GetStringAsync(new Uri(url));
+                var res = response.Result;
+                if(res != null)
+                {
+                    geoNames = JsonConvert.DeserializeObject<GeoNamesDto>(response.Result);
+                }                
             }
 
             return geoNames;
