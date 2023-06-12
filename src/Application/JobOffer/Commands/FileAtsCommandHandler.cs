@@ -63,7 +63,10 @@ namespace Application.JobOffer.Commands
                     aimwelEnabled = aimwelEnabled && aimwelEnabledSites.Contains(job.Idsite);
 
 
-                    isActiveOffer = !job.ChkFilled && !job.ChkDeleted && job.FinishDate.Date >= DateTime.Now.Date && job.Idstatus == (int)OfferStatus.Active;
+                    isActiveOffer = !job.ChkFilled && !job.ChkDeleted
+                        && job.FinishDate.Date >= DateTime.Now.Date
+                        && (job.Idstatus == (int)OfferStatus.Active ||
+                       _config["TestWorkAround:CompaniesTesting"].Split(',').Contains(job.Identerprise.ToString()));
                     if (isActiveOffer)
                     {
                         if (aimwelEnabled)
