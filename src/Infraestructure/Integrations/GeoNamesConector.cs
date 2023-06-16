@@ -19,18 +19,22 @@ namespace Infraestructure.Integrations
         {
             GeoNamesDto geoNames = new();
             string url = $"{_geoNamesUrl}?postalcode={postalCode}&country={country}&maxRows=100&username=turijobs";
-
-            using (var httpClient = new HttpClient())
-            {
-                var response = httpClient.GetStringAsync(new Uri(url));
-                var res = response.Result;
-                if(res != null)
+            try {
+                using (var httpClient = new HttpClient())
                 {
-                    geoNames = JsonConvert.DeserializeObject<GeoNamesDto>(response.Result);
-                }                
+                    httpClient.Timeout = TimeSpan.FromMilliseconds(1000);
+                    var response = httpClient.GetStringAsync(new Uri(url));
+                    var res = response.Result;
+                    if (res != null)
+                    {
+                        geoNames = JsonConvert.DeserializeObject<GeoNamesDto>(response.Result);
+                    }
+                }
+                return geoNames;
             }
-
-            return geoNames;
+            catch{
+                return geoNames;
+            }
         }
 
         public GeoNamesDto GetPostalCodesCollectionByPlaceName(string placename, string country)

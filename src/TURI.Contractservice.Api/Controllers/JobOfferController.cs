@@ -322,35 +322,43 @@ namespace API.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetActiveJobs(int maxActiveDays)
         {
-            if (!_cache.TryGetValue(CacheKeys.ActiveJobsByActiveDays, out IReadOnlyList<JobDataDefinition> jobOffers))
-            {
                 var result = await Mediator.Send(new ListActiveJobs.Query { MaxActiveDays = maxActiveDays });
-
-                var cacheEntryOptions = new MemoryCacheEntryOptions
-                {
-                    AbsoluteExpiration = DateTime.Now.AddSeconds(600),
-                    Priority = CacheItemPriority.NeverRemove
-                };
-
-                _cache.Set(CacheKeys.ActiveJobsByActiveDays, result.Value, cacheEntryOptions);
-
                 if (result.IsSuccess)
                 {
-                    jobOffers = result.Value;
+                    var jobOffers = result.Value;
+                    if (jobOffers == null)
+                        return NotFound();
+
+                    var response = jobOffers
+                        .Select(jobOffer => jobOffer.ToModel())
+                        .ToArray();
+
+                    return Ok(response);
                 }
                 else
                 {
                     return BadRequest(result.Error);
                 }
+
+
+        }
+
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<int>))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetActiveOffersByIds(List<int>? offersIds)
+        {
+            var result = await Mediator.Send(new ListActiveJobsByIds.Query { OffersIds = offersIds });
+            if (result.IsSuccess)
+            {
+                return Ok(result.Value);
+            }
+            else
+            {
+                return BadRequest(result.Error);
             }
 
-            if (jobOffers == null)
-                return NotFound();
 
-            var response = jobOffers
-                .Select(jobOffer => jobOffer.ToModel())
-                .ToArray();
-            return Ok(response);
         }
 
         /// <summary>
