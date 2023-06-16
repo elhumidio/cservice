@@ -23,6 +23,7 @@ namespace Domain.Repositories
         public IQueryable<JobVacancy> GetActiveOffersByCompany(int enterpriseId);
 
         Task<IReadOnlyList<JobDataDefinition>> GetActiveJobs(int maxActiveDays);
+        Task<List<int>?> GetActiveJobsByIds(List<int> offersIds);
 
         IQueryable<JobVacancy> GetConsumedUnitsWelcomeNotSpain(int companyId);
 
