@@ -314,6 +314,20 @@ namespace Persistence.Repositories
             return await query.ToListAsync();
         }
 
+        public async Task<List<int>?> GetActiveJobsByIds(List<int>? offersIds)
+        {
+            var query = _dataContext.JobVacancies
+                         .Where(job => !job.ChkDeleted
+                                && !job.ChkFilled
+                                && job.PublicationDate < DateTime.Now
+                                && job.FinishDate > DateTime.Now
+                                && job.Idstatus == (int)OfferStatus.Active
+                                && offersIds.Contains(job.IdjobVacancy)
+                        ).Select(c => c.IdjobVacancy).Distinct();
+
+            return await query.ToListAsync();
+        }
+
         public async Task<JobDataDefinition?> GetJobDataById(int id)
         {
             var query = (from job in _dataContext.JobVacancies
