@@ -60,6 +60,28 @@ namespace Persistence.Repositories
             return CorporateName;
         }
 
+        public string GetCompanyNameCheckingBlind(int companyId, bool isBlind)
+        {
+            string CorporateName = string.Empty;
+            if (isBlind)
+            {
+                var enterpriseBlind = _dataContext.EnterpriseBlinds.Where(c => c.Identerprise == companyId).FirstOrDefault();
+                if (enterpriseBlind != null)
+                {
+                    CorporateName = enterpriseBlind.Name;
+                }
+            }
+            else
+            {
+                var name = _dataContext.Enterprises.Where(c => c.Identerprise == companyId).FirstOrDefault().CorporateName;
+                if (!string.IsNullOrEmpty(name))
+                {
+                    CorporateName = name;
+                }
+            }
+            return CorporateName;
+        }
+
         public string GetCompanyNameByBrandId(int brandId)
         {
             string CorporateName = string.Empty;
