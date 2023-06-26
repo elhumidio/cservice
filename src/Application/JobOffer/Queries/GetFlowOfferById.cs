@@ -49,6 +49,7 @@ namespace Application.JobOffer.Queries
                 flowOffer.AreaId = offer.Idarea;
                 flowOffer.CountryId = offer.Idcountry;
                 flowOffer.RegionId = offer.Idregion;
+                flowOffer.SiteId = offer.Idsite;
                 if (!string.IsNullOrEmpty(offer.ExternalUrl))
                 {
                     flowOffer.ExternalURL = offer.ExternalUrl;

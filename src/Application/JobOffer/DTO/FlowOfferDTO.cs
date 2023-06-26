@@ -15,5 +15,6 @@ namespace Application.JobOffer.DTO
         public int AreaId { get; set; }
         public int CountryId { get; set; }
         public int RegionId { get; set; }
+        public int SiteId { get; set; }
     }
 }

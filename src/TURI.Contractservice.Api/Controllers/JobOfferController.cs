@@ -1,17 +1,12 @@
-using Amazon.Runtime.Internal.Util;
 using API.Converters;
 using Application.Aimwel.Interfaces;
 using Application.JobOffer.Commands;
 using Application.JobOffer.DTO;
 using Application.JobOffer.Queries;
-using Application.Utils;
 using Application.Utils.Queries.Equest;
-using Domain.Classes;
 using Domain.DTO;
-using Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
-using System.Diagnostics.Contracts;
 using TURI.ContractService.Contract.Models;
 
 namespace API.Controllers
