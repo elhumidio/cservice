@@ -1,14 +1,10 @@
-using Amazon.Runtime.Internal.Util;
 using API.Converters;
 using Application.Aimwel.Interfaces;
 using Application.JobOffer.Commands;
 using Application.JobOffer.DTO;
 using Application.JobOffer.Queries;
-using Application.Utils;
 using Application.Utils.Queries.Equest;
-using Domain.Classes;
 using Domain.DTO;
-using Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using TURI.ContractService.Contract.Models;
@@ -37,6 +33,17 @@ namespace API.Controllers
             var result = await Mediator.Send(new ListActives.Query
             {
                 ContractID = contractId,
+            });
+            return HandleResult(result);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> GetFlowOfferById(GetFlowOfferByIdCommand command)
+        {
+            var result = await Mediator.Send(new GetFlowOfferById.Query
+            {
+                OfferId = command.OfferId,
+                LanguageId = command.LanguageId
             });
             return HandleResult(result);
         }
