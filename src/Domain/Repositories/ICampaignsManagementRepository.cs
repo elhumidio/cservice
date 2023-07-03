@@ -18,6 +18,7 @@ namespace Domain.Repositories
         public Task<bool> MarkCampaignUpdated(string campaign);
         public Task<bool> GetCampaignNeedsUpdate(string campaignName);
         public int AddRange(List<CampaignsManagement> _campaigns);
+        public IQueryable<CampaignSetting> GetAllSettings();
     }
 }
 

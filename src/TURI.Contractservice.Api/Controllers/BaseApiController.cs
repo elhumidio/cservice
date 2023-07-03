@@ -1,6 +1,7 @@
 using Application.Core;
 using Application.DTO;
 using Application.JobOffer.DTO;
+using Domain.DTO;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -35,5 +36,15 @@ namespace API.Controllers
         {
             return Ok(result);
         }
+
+
+        protected IActionResult HandleResult(VerifyGoalsOfferResponse result)
+        {
+
+            return Ok(result);
+
+
+        }  
+
     }
 }

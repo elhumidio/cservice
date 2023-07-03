@@ -52,5 +52,6 @@ namespace Domain.Repositories
         public Task<List<JobVacancy>> GetInactiveOffersChunk();
 
         public Task<List<OfferMinInfoAtsDto>> GetOfferInfoByExternalId(string externalId, int companyId);
+        public List<JobVacancy> GetOffersByIds(List<int> ids);
     }
 }

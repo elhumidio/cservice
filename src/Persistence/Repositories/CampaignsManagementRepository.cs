@@ -104,5 +104,10 @@ namespace Persistence.Repositories
             var campaigns  =await _dataContext.CampaignManagements.Where(c => c.IdjobVacancy == _jobId).ToListAsync();
             return campaigns;
         }
+
+        public IQueryable<CampaignSetting> GetAllSettings()
+        {
+           return _dataContext.CampaignSettings;    
+        }
     }
 }

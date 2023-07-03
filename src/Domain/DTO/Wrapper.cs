@@ -1,3 +1,4 @@
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,7 +18,11 @@ namespace Domain.DTO
     }
     public class CountByOffer
     {
+
+        [JsonProperty("jobOfferId")] 
         public int jobId { get; set; }
+
+        [JsonProperty("applicants")]
         public int Applicants { get; set; }
 
         public CountByOffer()

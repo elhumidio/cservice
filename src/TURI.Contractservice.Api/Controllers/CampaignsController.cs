@@ -192,5 +192,19 @@ namespace TURI.Contractservice.Controllers
                 return Ok(ex.Message);
             }
         }
+
+
+        [HttpPost]
+        public async Task<IActionResult> VerifyOfferGoal(List<int> ids)
+        {
+            var response = await Mediator.Send(new VerifyOfferGoal.Verifier
+            {
+                OffersToVerify = ids
+
+            });
+
+            return HandleResult(response);
+
+        }
     }
 }
