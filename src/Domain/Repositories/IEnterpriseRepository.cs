@@ -10,6 +10,8 @@ namespace Domain.Repositories
 
         public string GetCompanyName(int companyId);
 
+        public string GetCompanyNameCheckingBlind(int companyId, bool isBlind);
+
         public API.DataContext.Enterprise Get(int companyId);
         public Task<int> GetCountCompaniesActive();
         public int GetCompanyRegion(int companyId);
