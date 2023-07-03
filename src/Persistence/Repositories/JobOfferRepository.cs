@@ -307,7 +307,8 @@ namespace Persistence.Repositories
                              IDSite = job.Idsite,
                              PublicationDate = job.PublicationDate,
                              IDCity = job.Idcity ?? 0,
-                             ChkBlindVac = job.ChkBlindVac
+                             ChkBlindVac = job.ChkBlindVac,
+                             City = job.City ?? ""
                              //Description = "",
                          });
 
