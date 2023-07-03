@@ -20,6 +20,7 @@ namespace API.Converters
                 IDCity = item.IDCity,
                 Description = item.Description,
                 IDSite = item.IDSite,
+                City = item.City
             };
         }
     }

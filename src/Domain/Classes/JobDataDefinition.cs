@@ -14,5 +14,6 @@ namespace Domain.Classes
         public string Description { get; set; }
         public int IDSite { get; set; }
         public bool ChkBlindVac { get; set; }
+        public string City { get; set; }
     }
 }
