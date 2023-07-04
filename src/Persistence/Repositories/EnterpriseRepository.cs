@@ -73,7 +73,7 @@ namespace Persistence.Repositories
             }
             else
             {
-                var name = _dataContext.Enterprises.Where(c => c.Identerprise == companyId).FirstOrDefault().CorporateName;
+                var name = _dataContext.Enterprises.Where(c => c.Identerprise == companyId).FirstOrDefault().Name;
                 if (!string.IsNullOrEmpty(name))
                 {
                     CorporateName = name;
