@@ -1,6 +1,8 @@
 using Domain.Entities;
 using Domain.Repositories;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using System.Data;
 
 namespace Persistence.Repositories
 {
@@ -78,15 +80,14 @@ namespace Persistence.Repositories
             return true;
         }
 
-
         public async Task<bool> GetCampaignNeedsUpdate(string campaignName)
         {
             var campaign = await _dataContext.CampaignsUpdatingChecks.Where(c => c.Campaign == campaignName).FirstOrDefaultAsync();
-            if(campaign != null)
-            return  (bool)campaign.NeedsRefresh;
-            else return false;  
+            if (campaign != null)
+                return (bool)campaign.NeedsRefresh;
+            else return false;
         }
-             
+
         public async Task<bool> MarkCampaignUpdated(string campaignName)
         {
             var campaign = await _dataContext.CampaignsUpdatingChecks.Where(c => c.Campaign == campaignName).FirstOrDefaultAsync();
@@ -101,13 +102,46 @@ namespace Persistence.Repositories
 
         public async Task<List<CampaignsManagement>> GetAllCampaignManagement(int _jobId)
         {
-            var campaigns  =await _dataContext.CampaignManagements.Where(c => c.IdjobVacancy == _jobId).ToListAsync();
+            var campaigns = await _dataContext.CampaignManagements.Where(c => c.IdjobVacancy == _jobId).ToListAsync();
             return campaigns;
         }
 
         public IQueryable<CampaignSetting> GetAllSettings()
         {
-           return _dataContext.CampaignSettings;    
+            return _dataContext.CampaignSettings;
+        }
+
+        public int GetNextId()
+        {
+            try {
+
+                SqlParameter result = new SqlParameter("@result", System.Data.SqlDbType.Int)
+                {
+                    Direction = System.Data.ParameterDirection.Output
+                };
+
+                _dataContext.Database.ExecuteSqlRaw(
+                           "SELECT @result = (NEXT VALUE FOR dbo.FeedAggregatorsLogsIdSequence)", result);
+
+                var a =  (int)result.Value;
+
+
+
+                return a;
+            }
+            catch (Exception ex){
+                var a = ex;
+                return -1;
+            }
+            
+
+        }
+
+        public async Task<bool> SaveFeedLogs(List<FeedsAggregatorsLog> logList)
+        {
+            await _dataContext.AddRangeAsync(logList);
+            var ret = _dataContext.SaveChanges();
+            return ret > 0;
         }
     }
 }

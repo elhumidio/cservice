@@ -10,22 +10,26 @@ namespace Application.Aimwel.Queries
     {
         public class Verifier : IRequest<VerifyGoalsOfferResponse>
         {
-            public List<int> OffersToVerify {  get; set; }  
+            public VerifyGoalsRequest OffersToVerify {  get; set; }  
         }
         public class Handler : IRequestHandler<Verifier, VerifyGoalsOfferResponse>
         {
             private readonly ICampaignsManagementRepository _campaignsManagementRepo;
             private readonly IJobOfferRepository _jobOfferRepository;
             private readonly IApplicationService _applicationService;
+            private readonly IAreaRepository _areaRepo;
+            private readonly IRegionRepository _regionRepository;
             
 
             public Handler(ICampaignsManagementRepository campaignsManagementRepository,
                 IJobOfferRepository jobOfferRepository,
-                IApplicationService applicationService)
+                IApplicationService applicationService,IAreaRepository areaRepository, IRegionRepository regionRepository)
             {
                 _applicationService = applicationService;
                 _campaignsManagementRepo = campaignsManagementRepository;
-                _jobOfferRepository = jobOfferRepository;   
+                _jobOfferRepository = jobOfferRepository;
+                _areaRepo = areaRepository;
+                _regionRepository = regionRepository;   
                     
             }
 
@@ -36,8 +40,9 @@ namespace Application.Aimwel.Queries
                 var listAppliesOffers = new HashSet<JobVacancy>();
                 var listAppliedRequest = new ListOffersRequest();
                 var listRedirectRequest = new ListOffersRequest();
+                List<JobVacancy> actualFeed = new List<JobVacancy>();
                 var settings = _campaignsManagementRepo.GetAllSettings().ToList();
-                var offerIds = request.OffersToVerify;
+                var offerIds = request.OffersToVerify.OffersList;
 
                 var offers = _jobOfferRepository.GetOffersByIds(offerIds); // Obtener todas las ofertas de una vez
 
@@ -50,6 +55,7 @@ namespace Application.Aimwel.Queries
                     else
                     {
                         listRedirectOffers.Add(offer);                        
+
                     }
                 }
 
@@ -65,6 +71,7 @@ namespace Application.Aimwel.Queries
                         continue;
                     else
                     {
+                        actualFeed.Add(o);
                         var setting = settings.FirstOrDefault(a => a.AreaId == o.Idarea);
                         var retrievedApplicants = offerApplicants.results.FirstOrDefault(of => of.jobId == o.IdjobVacancy) == null ? 0
                             : offerApplicants.results.FirstOrDefault(of => of.jobId == o.IdjobVacancy).Applicants;
@@ -86,6 +93,7 @@ namespace Application.Aimwel.Queries
                         continue;
                     else
                     {
+                        actualFeed.Add(o);
                         var setting = settings.FirstOrDefault(a => a.AreaId == o.Idarea);
                         var retrievedRedirections = offerRedireccions.results.FirstOrDefault(of => of.jobId == o.IdjobVacancy) == null ? 0 :
 
@@ -100,8 +108,26 @@ namespace Application.Aimwel.Queries
                             response.GoalsOffersList.Add(new GoalsOffer { OfferId = o.IdjobVacancy, ReachedGoals = true });
                         }
                     }
+                }          
+                var offersGroupedByAreaAndregion  = actualFeed.GroupBy(obj => new { obj.Idarea, obj.Idregion });
+                List<FeedsAggregatorsLog> list = new List<FeedsAggregatorsLog>();
+                var id = _campaignsManagementRepo.GetNextId();
+                foreach (var item in offersGroupedByAreaAndregion)
+                {
+
+                    var obj = new FeedsAggregatorsLog
+                    {
+                        Id = id,
+                        TotalOffers = item.Count(),
+                        Date = DateTime.Now,
+                        AreaId = item.Key.Idarea,
+                        RegionId = item.Key.Idregion,
+                        RegionName = _regionRepository.GetRegionNameByID(item.Key.Idregion, false),
+                        AreaName = _areaRepo.GetAreaName(item.Key.Idarea)
+                    };
+                    list.Add(obj);
                 }
- 
+                await _campaignsManagementRepo.SaveFeedLogs(list);    
                 return response;
             }
         }
