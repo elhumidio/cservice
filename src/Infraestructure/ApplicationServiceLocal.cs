@@ -9,13 +9,14 @@ using System.Linq;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
+using Application.Interfaces;
 
 namespace Infraestructure
 {
-    public class ApplicationService : IApplicationService
+    public class ApplicationServiceLocal : IApplicationServiceLocal
     {
         private IConfiguration _config;
-        public ApplicationService(IConfiguration config)
+        public ApplicationServiceLocal(IConfiguration config)
         {
             _config = config;
         }
