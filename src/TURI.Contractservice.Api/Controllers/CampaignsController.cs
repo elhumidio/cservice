@@ -199,7 +199,7 @@ namespace TURI.Contractservice.Controllers
         public async Task<IActionResult> VerifyOfferGoal(VerifyGoalsRequest request)
         {
             var response = await Mediator.Send(new VerifyOfferGoal.Verifier
-            {1
+            {
                 OffersToVerify = request
 
             });
