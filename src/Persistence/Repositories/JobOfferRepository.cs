@@ -104,6 +104,12 @@ namespace Persistence.Repositories
             }
         }
 
+        public List<JobVacancy> GetOffersByIds(List<int> ids)
+        {
+            var offers = _dataContext.JobVacancies.Where(o => ids.Contains(o.IdjobVacancy)).ToList();
+            return offers;
+        }
+
         public JobVacancy GetOfferById(int id)
         {
             try

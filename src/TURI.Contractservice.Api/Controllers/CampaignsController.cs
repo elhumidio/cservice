@@ -2,6 +2,7 @@ using API.Controllers;
 using Application.Aimwel.Commands;
 using Application.Aimwel.Interfaces;
 using Application.Aimwel.Queries;
+using Domain.DTO;
 using Domain.Entities;
 using DPGRecruitmentCampaignClient;
 using Microsoft.AspNetCore.Mvc;
@@ -192,6 +193,20 @@ namespace TURI.Contractservice.Controllers
             {
                 return Ok(ex.Message);
             }
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> VerifyOfferGoal(VerifyGoalsRequest request)
+        {
+            var response = await Mediator.Send(new VerifyOfferGoal.Verifier
+            {
+                OffersToVerify = request
+
+            });
+
+            return HandleResult(response);
+
         }
     }
 }

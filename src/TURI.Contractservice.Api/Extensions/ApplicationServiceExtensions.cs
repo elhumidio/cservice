@@ -15,6 +15,7 @@ using Microsoft.Extensions.Caching.Memory;
 using Persistence.Repositories;
 using System.Reflection;
 
+
 namespace API.Extensions
 {
     public static class ApplicationServiceExtensions
@@ -31,9 +32,7 @@ namespace API.Extensions
             services.AddAutoMapper(typeof(Application.Core.MappingProfiles).Assembly);
             services.AddControllers().AddNewtonsoftJson();
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
-
-            services.AddSingleton<IMemoryCache, MemoryCache>();
-
+            services.AddSingleton<IMemoryCache, MemoryCache>();            
             #region MAPPING REPOSITORIES
 
             services.AddScoped<IAimwelErrorsRepository, AimwelErrorsRepository>();
@@ -80,7 +79,7 @@ namespace API.Extensions
             services.AddScoped<IATSManagerAdminRepository, ATSManagerAdminRepository>();
             services.AddScoped<ITitleRepository, TitleRepository>();
             services.AddScoped<ICampaignsManagementRepository, CampaignsManagementRepository>();
-            services.AddScoped<IApplicationService, ApplicationService>();
+            services.AddScoped<IApplicationServiceLocal, ApplicationLocalService>();
             services.AddScoped<IinternalService, InternalService>();
             services.AddScoped<ISafetyModeration, SafetyModeration>();
             services.AddScoped<IQuestService, QuestService>();

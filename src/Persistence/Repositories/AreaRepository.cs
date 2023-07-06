@@ -1,6 +1,5 @@
 using Domain.Entities;
 using Domain.Repositories;
-using Microsoft.EntityFrameworkCore;
 
 namespace Persistence.Repositories
 {
@@ -23,7 +22,14 @@ namespace Persistence.Repositories
         {
             var area = _dataContext.Areas.Where(a => a.Idarea == _area).FirstOrDefault();
             return area.IscoDefault;      
-        } 
+        }
+
+        public string GetAreaName(int areaId)
+        {
+            var name = _dataContext.Areas.FirstOrDefault(a => a.Idarea == areaId && a.Idslanguage == 7 && a.Idsite == 6).BaseName;
+            return name;    
+
+        }
 
         public IQueryable<Area> GetAreas(int siteId, int languageId)
         {

@@ -1,13 +1,5 @@
 using Application.Interfaces;
-using Application.Utils;
-using Domain.DTO;
-using Domain.DTO.Location;
 using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Infraestructure
 {

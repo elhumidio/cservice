@@ -60,12 +60,52 @@ namespace Persistence
         public virtual DbSet<ManagersVisibility> ManagersVisibilities { get; set; } = null!;
         public virtual DbSet<OigSafety> OigSafeties { get; set; } = null!;
         public virtual DbSet<CampaignsUpdatingCheck> CampaignsUpdatingChecks { get; set; } = null!;
+        public virtual DbSet<FeedsAggregatorsLog> FeedsAggregatorsLogs { get; set; } = null!;
+        //public DbSet<NextSqlValueFeedLog> NextSeqFeedLog { get; set; }
 
         public virtual DbSet<ZoneUrl> ZoneUrls { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.UseCollation("Modern_Spanish_CI_AS");
+
+
+            modelBuilder.HasSequence("GetNextSequenceValueFeedsLog");
+
+
+            modelBuilder.Entity<FeedsAggregatorsLog>(entity =>
+            {
+                entity.HasKey(e => new { e.Id, e.Date })
+                    .HasName("PK_Feeds_Aggregators_logs");
+
+                entity.ToTable("Feeds_Aggregators_Logs");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.Date)
+                    .HasColumnType("datetime")
+                    .HasColumnName("date");
+
+                entity.Property(e => e.AreaId).HasColumnName("area_id");
+
+                entity.Property(e => e.AreaName)
+                    .HasMaxLength(50)
+                    .HasColumnName("area_name");
+
+                entity.Property(e => e.FeedName)
+                    .HasMaxLength(50)
+                    .HasColumnName("feed_name");
+
+                entity.Property(e => e.RegionId).HasColumnName("region_id");
+
+                entity.Property(e => e.RegionName)
+                    .HasMaxLength(50)
+                    .HasColumnName("region_name");
+
+                entity.Property(e => e.TotalOffers).HasColumnName("total_offers");
+            });
+
+
 
             modelBuilder.Entity<ZoneUrl>(entity =>
             {

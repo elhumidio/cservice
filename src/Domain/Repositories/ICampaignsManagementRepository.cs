@@ -1,9 +1,4 @@
 using Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Domain.Repositories
 {
@@ -18,6 +13,9 @@ namespace Domain.Repositories
         public Task<bool> MarkCampaignUpdated(string campaign);
         public Task<bool> GetCampaignNeedsUpdate(string campaignName);
         public int AddRange(List<CampaignsManagement> _campaigns);
+        public IQueryable<CampaignSetting> GetAllSettings();
+        public int GetNextId();
+        public Task<bool> SaveFeedLogs(List<FeedsAggregatorsLog> logList);
     }
 }
 

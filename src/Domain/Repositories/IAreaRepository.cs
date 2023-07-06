@@ -8,5 +8,6 @@ namespace Domain.Repositories
 
         public IQueryable<Area> GetAreas(int siteId, int languageId);
         public int GetIscoDefaultFromArea(int _area);
+        public string GetAreaName(int areaId);
     }
 }
