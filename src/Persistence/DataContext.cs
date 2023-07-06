@@ -75,16 +75,12 @@ namespace Persistence
 
             modelBuilder.Entity<FeedsAggregatorsLog>(entity =>
             {
-                entity.HasKey(e => new { e.Id, e.Date })
-                    .HasName("PK_Feeds_Aggregators_logs");
+                entity.HasKey(e => e.AutoId)
+                    .HasName("PK_Feeds_Aggregators_Logs_1");
 
                 entity.ToTable("Feeds_Aggregators_Logs");
 
-                entity.Property(e => e.Id).HasColumnName("id");
-
-                entity.Property(e => e.Date)
-                    .HasColumnType("datetime")
-                    .HasColumnName("date");
+                entity.Property(e => e.AutoId).HasColumnName("autoId");
 
                 entity.Property(e => e.AreaId).HasColumnName("area_id");
 
@@ -92,9 +88,15 @@ namespace Persistence
                     .HasMaxLength(50)
                     .HasColumnName("area_name");
 
+                entity.Property(e => e.Date)
+                    .HasColumnType("datetime")
+                    .HasColumnName("date");
+
                 entity.Property(e => e.FeedName)
                     .HasMaxLength(50)
                     .HasColumnName("feed_name");
+
+                entity.Property(e => e.Id).HasColumnName("id");
 
                 entity.Property(e => e.RegionId).HasColumnName("region_id");
 
