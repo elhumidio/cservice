@@ -2,6 +2,7 @@ namespace Domain.Entities
 {
     public partial class FeedsAggregatorsLog
     {
+        public int AutoId { get; set; }
         public int Id { get; set; }
         public DateTime Date { get; set; }
         public string? FeedName { get; set; }
