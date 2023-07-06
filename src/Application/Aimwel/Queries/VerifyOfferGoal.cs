@@ -60,9 +60,7 @@ namespace Application.Aimwel.Queries
                 listAppliedRequest.Offers.AddRange(listAppliesOffers.Select(a => a.IdjobVacancy).ToList());
                 var offerApplicants = await _applicationServiceLocal.CountApplicantsByOffers(listAppliedRequest);
                 listRedirectRequest.Offers.AddRange(listRedirectOffers.Select(a => a.IdjobVacancy).ToList());
-                var offerRedireccions = await _applicationServiceLocal.CountRedirectsByOffer(listRedirectRequest);
-
-                //try with nuget method
+                var offerRedireccions = await _applicationServiceLocal.CountRedirectsByOffer(listRedirectRequest);     
 
                 foreach (var o in listAppliesOffers)
                 {
@@ -97,7 +95,7 @@ namespace Application.Aimwel.Queries
 
                             offerRedireccions.results.FirstOrDefault(of => of.jobId == o.IdjobVacancy).Applicants;
 
-                        if (retrievedRedirections < setting?.Goal)
+                        if (retrievedRedirections < setting?.Goal * 10)
                         {
                             response.GoalsOffersList.Add(new GoalsOffer { OfferId = o.IdjobVacancy, ReachedGoals = false });
                         }
@@ -120,7 +118,8 @@ namespace Application.Aimwel.Queries
                         AreaId = item.Key.Idarea,
                         RegionId = item.Key.Idregion,
                         RegionName = _regionRepository.GetRegionNameByID(item.Key.Idregion, false),
-                        AreaName = _areaRepo.GetAreaName(item.Key.Idarea)
+                        AreaName = _areaRepo.GetAreaName(item.Key.Idarea),
+                        FeedName = request.OffersToVerify.Feed
                     };
                     list.Add(obj);
                 }

@@ -28,8 +28,10 @@ namespace Infraestructure
                 HttpResponseMessage responseMessage = await httpClient.SendAsync(request);
                 var response = await responseMessage.Content.ReadAsStringAsync();
                 var responseDTO = JsonConvert.DeserializeObject<List<CountByOffer>>(response);
-                GenericOfferCounter obj = new GenericOfferCounter();
-                obj.results = responseDTO;
+                GenericOfferCounter obj = new()
+                {
+                    results = responseDTO
+                };
                 return obj;
             }
             catch (Exception)
@@ -41,8 +43,10 @@ namespace Infraestructure
 
         public async Task<GenericOfferCounter> CountRedirectsByOffer(ListOffersRequest jobIds)
         {
-            CountOffersRequest obj = new CountOffersRequest();
-            obj.JobOfferIds = jobIds.Offers.ToArray();
+            CountOffersRequest obj = new()
+            {
+                JobOfferIds = jobIds.Offers.ToArray()
+            };
             var serviceURL = _config["ApplicationService:JobOfferRedirect"];
             Uri serviceUri = GetURL(serviceURL, $"CountRedirectsByOffers");
             var json = JsonConvert.SerializeObject(obj);
