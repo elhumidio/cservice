@@ -88,7 +88,12 @@ namespace API.Controllers
             return Ok();
         }
 
-
+        [HttpGet("{cityName}")]
+        public async Task<IActionResult> GetZipCodeFromCityName(string cityName)
+        {
+            var result = await Mediator.Send(new GetZipCodeFromCityName.Get(cityName));
+            return HandleResult(result);
+        }
 
         [HttpGet("{zipCode}/{countryId}")] 
         public async Task<IActionResult> GetIdsbyZipCodeAndCountry(string zipCode,int countryId)

@@ -65,6 +65,11 @@ namespace Persistence.Repositories
             return _zipcode.IdzipCode;
         }
 
+        public ZipCode GetZipCodeByCityName(string cityName)
+        {
+            return _dataContext.ZipCodes.Where(z => z.City.Contains(cityName)).FirstOrDefault();
+        }
+
         public int GetZipCodeIdByCity(string cityName)
         {
             var zipCodeId = 0;

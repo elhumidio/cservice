@@ -22,7 +22,7 @@ namespace Application.Aimwel.Commands
                 IAimwelCampaign aimwelCampaign, IJobOfferRepository jobOfferRepository, IJobOfferRepository offerRepository)
             {
                 _manageCampaign = aimwelCampaign;
-                _offerRepo = jobOfferRepository;    
+                _offerRepo = jobOfferRepository;
             }
 
             public async Task<Result<bool>> Handle(Command request, CancellationToken cancellationToken)

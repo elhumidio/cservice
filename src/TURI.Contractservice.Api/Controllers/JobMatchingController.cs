@@ -6,10 +6,10 @@ namespace TURI.Contractservice.Controllers
 {
     public class JobMatchingController : BaseApiController
     {
-        [HttpPost]
-        public async Task<IActionResult> GetBizneoJobId(BizneoJobIdCommand command)
+        [HttpGet]
+        public async Task<IActionResult> GetExternalJobId(int jobId)
         {
-            var response = await Mediator.Send(command);
+            var response = await Mediator.Send(new AtsJobIdCommand() {JobVacancyID = jobId } );
             return HandleResult(response);
         }
     }
