@@ -18,6 +18,10 @@ namespace Application.JobVacMatching.Commands
         public async Task<Result<string>> Handle(AtsJobIdCommand request, CancellationToken cancellationToken)
         {
             var regJobVac = _regJobMatching.GetAtsIntegrationInfoByJobId(request.JobVacancyID).Result;
+
+            if (regJobVac == null)
+                return Result<string>.Failure("No Job Vacancy Found");
+
             return Result<string>.Success(regJobVac.ExternalId);
         }
     }
