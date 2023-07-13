@@ -208,22 +208,17 @@ namespace Persistence.Repositories
 
                 query.ForEach(o =>
                 {
-
                     o.FinishDate = Convert.ToDateTime(o.FinishDate).ToString("yyyy-MM-dd HH:mm:ss");
                     o.FiledDate = !string.IsNullOrEmpty(o.FiledDate) ? Convert.ToDateTime(o.FiledDate).ToString("yyyy-MM-dd HH:mm:ss") : string.Empty;
                     o.PublishedDate = Convert.ToDateTime(o.PublishedDate).ToString("yyyy-MM-dd HH:mm:ss");
-
-
                 });
                 return query;
             }
             catch (Exception ex)
             {
-
                 var a = ex.Message;
                 return null;
             }
-
         }
 
         public IQueryable<JobVacancy> GetActiveOffersByContractNoPack(int contractId)
@@ -319,6 +314,63 @@ namespace Persistence.Repositories
                          });
 
             return await query.ToListAsync();
+        }
+
+        public async Task<IReadOnlyList<JobDataDefinition>> GetActiveJobsSinceADate(DateTime LastLoggin, int[] followedCompanies)
+        {
+            var query = (from job in _dataContext.JobVacancies
+                         join brand in _dataContext.Brands on job.Idbrand equals brand.Idbrand
+                         where !job.ChkDeleted
+                                && !job.ChkFilled
+                                && job.PublicationDate < DateTime.Now
+                                && job.FinishDate > DateTime.Now
+                                && job.Idstatus == (int)OfferStatus.Active
+                                && job.PublicationDate > LastLoggin && followedCompanies.Contains(job.Identerprise)
+                         select new JobDataDefinition()
+                         {
+                             Title = job.Title,
+                             CompanyName = brand.Name,
+                             IDCountry = job.Idcountry,
+                             IDRegion = job.Idregion,
+                             IDArea = job.Idarea,
+                             IDJobVacancy = job.IdjobVacancy,
+                             IDEnterprise = job.Identerprise,
+                             IDSite = job.Idsite,
+                             PublicationDate = job.PublicationDate,
+                             IDCity = job.Idcity ?? 0,
+                             ChkBlindVac = job.ChkBlindVac,
+                             City = job.City ?? ""
+                         });
+
+            return await query.ToListAsync();
+        }
+
+        public async Task<List<OfferInfoMin>> GetOffersForView(List<int> favoritesOfferIds, int lang, int site)
+        {
+            List<OfferInfoMin> list = new List<OfferInfoMin>();
+            list = await _dataContext.JobVacancies
+           .Join(_dataContext.Enterprises, vac => vac.Identerprise, ent => ent.Identerprise, (vac, ent) => new { vac, ent })
+           .Join(_dataContext.Logos, x => x.vac.Idbrand, logo => logo.Idbrand, (x, logo) => new { x.vac, x.ent, logo })
+           .Join(_dataContext.Regions, x => x.vac.Idregion, region => region.Idregion, (x, region) => new { x.vac, x.ent, x.logo, region })
+           .Join(_dataContext.Countries, x => x.vac.Idcountry, country => country.Idcountry, (x, country) => new { x.vac, x.ent, x.logo, x.region, country })
+           .Where(x => favoritesOfferIds.Contains(x.vac.IdjobVacancy) && x.country.Idslanguage == lang && x.country.Idsite == site)
+           .Select(x => new OfferInfoMin()
+           {
+               CompanyName = x.ent.CorporateName,
+               Description = x.vac.Description,
+               Title = x.vac.Title,
+               JobId = x.vac.IdjobVacancy,
+               LogoUrl = x.logo.UrlImgBig,
+               CityId = x.vac.Idcity,
+               CityName = x.vac.City,
+               CountryId = x.vac.Idcountry,
+               CountryName = x.country.BaseName,
+               RegionId = x.vac.Idregion,
+               RegionName = x.region.BaseName,
+           })
+           .ToListAsync();
+
+            return list;
         }
 
         public async Task<List<int>?> GetActiveJobsByIds(List<int>? offersIds)

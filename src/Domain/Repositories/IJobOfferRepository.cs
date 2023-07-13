@@ -23,6 +23,7 @@ namespace Domain.Repositories
         public IQueryable<JobVacancy> GetActiveOffersByCompany(int enterpriseId);
 
         Task<IReadOnlyList<JobDataDefinition>> GetActiveJobs(int maxActiveDays);
+
         Task<List<int>?> GetActiveJobsByIds(List<int> offersIds);
 
         IQueryable<JobVacancy> GetConsumedUnitsWelcomeNotSpain(int companyId);
@@ -52,6 +53,12 @@ namespace Domain.Repositories
         public Task<List<JobVacancy>> GetInactiveOffersChunk();
 
         public Task<List<OfferMinInfoAtsDto>> GetOfferInfoByExternalId(string externalId, int companyId);
+
         public List<JobVacancy> GetOffersByIds(List<int> ids);
+
+        public Task<IReadOnlyList<JobDataDefinition>> GetActiveJobsSinceADate(DateTime LastLoggin, int[] followedCompanies);
+
+        public Task<List<OfferInfoMin>> GetOffersForView(List<int> favoritesOfferIds, int lang, int site);
+        
     }
 }
