@@ -345,7 +345,7 @@ namespace Persistence.Repositories
             return await query.ToListAsync();
         }
 
-        public async Task<List<OfferInfoMin>> GetOffersForView(List<int> favoritesOfferIds, int lang, int site)
+        public async Task<List<OfferInfoMin>> GetOffersForView(int[] favoritesOfferIds, int lang, int site)
         {
             List<OfferInfoMin> list = new List<OfferInfoMin>();
             list = await _dataContext.JobVacancies

@@ -12,5 +12,5 @@ public interface IJobOfferService
     Task<JobOfferResponse[]> GetActiveJobsFollowedCompaniesSinceLastLogin(string lastLoggin, string followedCompanies);
     
     [Get("/api/JobOffer/GetOffersForView")]
-    Task<OfferInfoMinForViewResponse[]> GetOffersForView(List<int> offerIds, int language, int site);
+    Task<OfferInfoMinForViewResponse[]> GetOffersForView(int[] offerIds, int language, int site);
 }

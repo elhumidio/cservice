@@ -499,7 +499,7 @@ namespace API.Controllers
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(JobOfferResponse[]))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetOffersForView(List<int> offerIds, int language, int site)
+        public async Task<IActionResult> GetOffersForView(int[] offerIds, int language, int site)
         {
             var result = await Mediator.Send(new GetOffersForView.Get
             {

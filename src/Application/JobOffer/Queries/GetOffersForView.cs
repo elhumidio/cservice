@@ -10,7 +10,7 @@ namespace Application.JobOffer.Queries
     {
         public class Get : IRequest<Result<List<OfferInfoMin>>>
         {
-            public List<int> OfferIds { get; set; }
+            public int[] OfferIds { get; set; }
             public int Language { get; set; }
             public int Site { get; set; }
         }

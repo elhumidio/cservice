@@ -19,4 +19,4 @@ namespace Domain.DTO
 
     }
 }
-}
+
