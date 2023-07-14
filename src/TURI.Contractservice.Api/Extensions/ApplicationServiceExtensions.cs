@@ -14,7 +14,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using Persistence.Repositories;
 using System.Reflection;
-
+using TURI.ApplicationService.Contracts.Application.Services;
+using TURI.EnterpriseService.Contracts.Services;
 
 namespace API.Extensions
 {
@@ -32,7 +33,9 @@ namespace API.Extensions
             services.AddAutoMapper(typeof(Application.Core.MappingProfiles).Assembly);
             services.AddControllers().AddNewtonsoftJson();
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
-            services.AddSingleton<IMemoryCache, MemoryCache>();            
+            services.AddSingleton<IMemoryCache, MemoryCache>();
+            services.AddSingleton(s => Refit.RestService.For<IApplicationService>(config["ExternalServices:ApplicationService"] ?? ""));
+            services.AddSingleton(s => Refit.RestService.For<IEnterpriseService>(config["ExternalServices:EnterpriseService"] ?? ""));
             #region MAPPING REPOSITORIES
 
             services.AddScoped<IAimwelErrorsRepository, AimwelErrorsRepository>();

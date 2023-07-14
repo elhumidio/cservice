@@ -34,10 +34,14 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="Refit" Version="7.0.0" />
+    <PackageReference Include="TURI.ApplicationService.Contracts" Version="1.0.1" />
+    <PackageReference Include="TURI.EnterpriseService.Contracts" Version="1.0.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Domain\Domain.csproj" />
+    <ProjectReference Include="..\TURI.ContractService.Contracts\TURI.ContractService.Contracts.csproj" />
   </ItemGroup>
 
   <ItemGroup>
