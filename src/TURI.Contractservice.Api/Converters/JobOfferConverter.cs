@@ -1,4 +1,5 @@
 using Domain.Classes;
+using Domain.DTO;
 using TURI.ContractService.Contract.Models;
 
 namespace API.Converters
@@ -21,6 +22,27 @@ namespace API.Converters
                 Description = item.Description,
                 IDSite = item.IDSite,
                 City = item.City
+            };
+        }
+
+        public static OfferInfoMinForViewResponse ToModel(this OfferInfoMin item)
+        {
+            return new OfferInfoMinForViewResponse
+            {
+                Title = item.Title,
+                CompanyName = item.CompanyName,
+                JobId = item.JobId,
+                CvId = item.CvId,
+                RegistrationId = item.RegistrationId,
+                CityId = item.CityId,
+                CityName = item.CityName,
+                CountryId = item.CountryId,
+                CountryName = item.CountryName,
+                Description = item.Description,
+                LogoUrl = item.LogoUrl,
+                NumApplies = item.NumApplies,
+                RegionId = item.RegionId,
+                RegionName = item.RegionName,
             };
         }
     }
