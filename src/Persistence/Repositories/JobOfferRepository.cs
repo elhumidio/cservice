@@ -12,6 +12,7 @@ namespace Persistence.Repositories
     {
         private readonly DataContext _dataContext;
         private readonly ILogger<JobOfferRepository> _logger;
+        private const int ENGLISH = 14;
 
         public JobOfferRepository(DataContext dataContext, ILogger<JobOfferRepository> logger)
         {
@@ -345,32 +346,38 @@ namespace Persistence.Repositories
             return await query.ToListAsync();
         }
 
-        public async Task<List<OfferInfoMin>> GetOffersForView(int[] favoritesOfferIds, int lang, int site)
+        public async Task<List<OfferInfoMin>> GetOffersForView(int[] favoritesOfferIds, int lang)
         {
-            List<OfferInfoMin> list = new List<OfferInfoMin>();
-            list = await _dataContext.JobVacancies
-           .Join(_dataContext.Enterprises, vac => vac.Identerprise, ent => ent.Identerprise, (vac, ent) => new { vac, ent })
-           .Join(_dataContext.Logos, x => x.vac.Idbrand, logo => logo.Idbrand, (x, logo) => new { x.vac, x.ent, logo })
-           .Join(_dataContext.Regions, x => x.vac.Idregion, region => region.Idregion, (x, region) => new { x.vac, x.ent, x.logo, region })
-           .Join(_dataContext.Countries, x => x.vac.Idcountry, country => country.Idcountry, (x, country) => new { x.vac, x.ent, x.logo, x.region, country })
-           .Where(x => favoritesOfferIds.Contains(x.vac.IdjobVacancy) && x.country.Idslanguage == lang && x.country.Idsite == site)
-           .Select(x => new OfferInfoMin()
-           {
-               CompanyName = x.ent.CorporateName,
-               Description = x.vac.Description,
-               Title = x.vac.Title,
-               JobId = x.vac.IdjobVacancy,
-               LogoUrl = x.logo.UrlImgBig,
-               CityId = x.vac.Idcity,
-               CityName = x.vac.City,
-               CountryId = x.vac.Idcountry,
-               CountryName = x.country.BaseName,
-               RegionId = x.vac.Idregion,
-               RegionName = x.region.BaseName,
-           })
-           .ToListAsync();
+            //TODO change this query
+
+            var list = await (
+                from vac in _dataContext.JobVacancies
+                join ent in _dataContext.Enterprises on vac.Identerprise equals ent.Identerprise
+                join logo in _dataContext.Logos on vac.Idbrand equals logo.Idbrand
+                join region in _dataContext.Regions on vac.Idregion equals region.Idregion
+                join country in _dataContext.Countries on vac.Idcountry equals country.Idcountry
+                where favoritesOfferIds.Contains(vac.IdjobVacancy) &&
+                      (country.Idslanguage == lang || country.Idslanguage == ENGLISH) 
+                      && (region.Idslanguage == lang || region.Idslanguage == ENGLISH)  
+                select new OfferInfoMin
+                {
+                    CompanyName = ent.CorporateName,
+                    Description = vac.Description,
+                    Title = vac.Title,
+                    JobId = vac.IdjobVacancy,
+                    LogoUrl = logo.UrlImgBig,
+                    CityId = vac.Idcity,
+                    CityName = vac.City,
+                    CountryId = vac.Idcountry,
+                    CountryName = country.BaseName,
+                    RegionId = vac.Idregion,
+                    RegionName = region.BaseName
+                })
+                .Distinct()
+                .ToListAsync();
 
             return list;
+
         }
 
         public async Task<List<int>?> GetActiveJobsByIds(List<int>? offersIds)

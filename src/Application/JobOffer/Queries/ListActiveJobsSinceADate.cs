@@ -26,6 +26,10 @@ namespace Application.JobOffer.Queries
             {
                 DateTime _lastLoggin = DateTime.UtcNow;
                 DateTime.TryParse(request.LastLoggin, out _lastLoggin);
+                if(!request.FollowedCompanies.Any())
+                {
+                    return Result<IReadOnlyList<JobDataDefinition>>.Failure("Following 0 companies");
+                }
                 return Result<IReadOnlyList<JobDataDefinition>>.Success(await _jobOffer.GetActiveJobsSinceADate(_lastLoggin, request.FollowedCompanies));
             }
         }

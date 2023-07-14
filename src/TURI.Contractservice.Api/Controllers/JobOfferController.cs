@@ -8,6 +8,7 @@ using Domain.DTO;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using TURI.ContractService.Contract.Models;
+using TURI.ContractService.Contracts.Contract.Models.Requests;
 
 namespace API.Controllers
 {
@@ -496,16 +497,15 @@ namespace API.Controllers
             }
         }
 
-        [HttpGet]
+        [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(JobOfferResponse[]))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetOffersForView(string offerIds, int language, int site)
+        public async Task<IActionResult> GetOffersForView(OfferInfoRequest request)
         {
             var result = await Mediator.Send(new GetOffersForView.Get
             {
-                Language = language,
-                Site = site,
-                OfferIds = offerIds.Split(",").Select(a => Convert.ToInt32(a)).ToArray()
+                Language = request.Language,
+                OfferIds = request.OfferIds
             });
 
             if (result.IsSuccess)

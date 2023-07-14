@@ -1,5 +1,6 @@
 using Refit;
 using TURI.ContractService.Contract.Models;
+using TURI.ContractService.Contracts.Contract.Models.Requests;
 
 namespace TURI.ContractService.Contracts.Contract.Services;
 
@@ -11,6 +12,6 @@ public interface IJobOfferService
     [Get("/api/JobOffer/GetActiveJobsFollowedCompaniesSinceLastLogin")]
     Task<JobOfferResponse[]> GetActiveJobsFollowedCompaniesSinceLastLogin(string lastLoggin, string followedCompanies);
     
-    [Get("/api/JobOffer/GetOffersForView")]
-    Task<OfferInfoMinForViewResponse[]> GetOffersForView(string offerIds, int language, int site);
+    [Post("/api/JobOffer/GetOffersForView")]
+    Task<OfferInfoMinForViewResponse[]> GetOffersForView(OfferInfoRequest request);
 }

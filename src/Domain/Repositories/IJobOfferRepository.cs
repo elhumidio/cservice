@@ -58,7 +58,7 @@ namespace Domain.Repositories
 
         public Task<IReadOnlyList<JobDataDefinition>> GetActiveJobsSinceADate(DateTime LastLoggin, int[] followedCompanies);
 
-        public Task<List<OfferInfoMin>> GetOffersForView(int[] favoritesOfferIds, int lang, int site);
+        public Task<List<OfferInfoMin>> GetOffersForView(int[] favoritesOfferIds, int lang);
         
     }
 }

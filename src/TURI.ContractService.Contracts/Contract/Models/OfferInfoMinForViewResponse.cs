@@ -1,3 +1,5 @@
+using TURI.ContractService.Contracts.Contract.Models.Partials;
+
 namespace TURI.ContractService.Contract.Models;
 
 public class OfferInfoMinForViewResponse
@@ -16,4 +18,5 @@ public class OfferInfoMinForViewResponse
     public int? CountryId { get; set; }
     public string? CountryName { get; set; } = string.Empty;
     public int? NumApplies { get; set; }
+    public List<CandidacyState> States { get; set; }
 }
