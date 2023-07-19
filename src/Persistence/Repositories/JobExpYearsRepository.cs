@@ -32,5 +32,20 @@ namespace Persistence.Repositories
                 return null;
             }
         }
+
+        public JobExpYear GetJobExperienceYearsById(int jobExperienceId, int siteId, int languageId)
+        {
+            var jobExperienceYears = _dataContext.JobExpYears
+                .FirstOrDefault(a => a.IdjobExpYears == jobExperienceId && a.Idsite == siteId && a.Idslanguage == languageId);
+
+            if (jobExperienceYears != null)
+            {
+                return jobExperienceYears;
+            }
+            else
+            {
+                return null;
+            }
+        }
     }
 }

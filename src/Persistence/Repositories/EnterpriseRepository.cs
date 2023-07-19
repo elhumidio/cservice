@@ -1,4 +1,3 @@
-using Domain.Enums;
 using Domain.Repositories;
 using API.DataContext;
 using Microsoft.EntityFrameworkCore;
@@ -82,6 +81,28 @@ namespace Persistence.Repositories
             return CorporateName;
         }
 
+        public string GetCompanyDescriptionCheckingBlind(int companyId, bool isBlind)
+        {
+            string CorporateDescription = string.Empty;
+            if (isBlind)
+            {
+                var enterpriseBlind = _dataContext.EnterpriseBlinds.Where(c => c.Identerprise == companyId).FirstOrDefault();
+                if (enterpriseBlind != null)
+                {
+                    CorporateDescription = enterpriseBlind.Description;
+                }
+            }
+            else
+            {
+                var description = _dataContext.Enterprises.Where(c => c.Identerprise == companyId).FirstOrDefault().Description;
+                if (!string.IsNullOrEmpty(description))
+                {
+                    CorporateDescription = description;
+                }
+            }
+            return CorporateDescription;
+        }
+
         public string GetCompanyNameByBrandId(int brandId)
         {
             string CorporateName = string.Empty;
@@ -101,6 +122,24 @@ namespace Persistence.Repositories
         {
             var query = _dataContext.Enterprises.Where(e => e.ChkActive == true).CountAsync();
             return query;
+        }
+
+        public string GetCompanyLogo(int companyId, int brandId, bool isBlind)
+        {
+            string logoURL = "https://www.turijobs.com/static/img/global/nologo.png";
+            // Offer blind then return static logo.
+            if (isBlind)
+            {
+                return logoURL;
+            }
+            // Searching logo.
+            var logo = _dataContext.Logos.FirstOrDefault(x => x.Identerprise == companyId && x.Idbrand == brandId);
+            // Return enterprise logo by brand.
+            if (logo != null && !string.IsNullOrEmpty(logo.UrlImgBig))
+            {
+                logoURL = logo.UrlImgBig;
+            }
+            return logoURL;
         }
     }
 }

@@ -32,5 +32,20 @@ namespace Persistence.Repositories
                 return null;
             }
         }
+
+        public ResidenceType GetResidenceTypeById(int residenceTypeId, int siteId, int languageId)
+        {
+            var residenceTypes = _dataContext.ResidenceTypes
+                .FirstOrDefault(a => a.IdresidenceType == residenceTypeId && a.Idsite == siteId && a.Idslanguage == languageId);
+
+            if (residenceTypes != null)
+            {
+                return residenceTypes;
+            }
+            else
+            {
+                return null;
+            }
+        }
     }
 }

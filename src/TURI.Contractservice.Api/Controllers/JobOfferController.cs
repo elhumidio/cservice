@@ -49,6 +49,18 @@ namespace API.Controllers
             return HandleResult(result);
         }
 
+        [HttpPost]
+        public async Task<IActionResult> GetOfferDescriptionById(GetOfferDescriptionByIdCommand command)
+        {
+            var result = await Mediator.Send(new GetOfferDescriptionById.Query
+            {
+                OfferId = command.OfferId,
+                LanguageId = command.LanguageId,
+                SiteId = command.SiteId
+            });
+            return HandleResult(result);
+        }
+
         /// <summary>
         /// File Ats Offer
         /// </summary>

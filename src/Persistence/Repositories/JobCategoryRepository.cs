@@ -33,5 +33,20 @@ namespace Persistence.Repositories
                 return null;
             }
         }
+
+        public JobCategory GetJobCategoryById(int jobCategoryId, int siteId, int languageId)
+        {
+            var jobCategories = _dataContext.JobCategories
+                .FirstOrDefault(a => a.IdjobCategory == jobCategoryId && a.Idsite == siteId && a.Idslanguage == languageId);
+
+            if (jobCategories != null)
+            {
+                return jobCategories;
+            }
+            else
+            {
+                return null;
+            }
+        }
     }
 }
