@@ -7,5 +7,7 @@ namespace Domain.Repositories
         public bool IsRightCategory(int? jobCatId);
 
         public IQueryable<JobCategory> GetJobCategories(int siteId, int languageId);
+
+        public JobCategory GetJobCategoryById(int jobCategoryId, int siteId, int languageId);
     }
 }

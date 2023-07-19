@@ -33,5 +33,15 @@ namespace Persistence.Repositories
                 return null;
             }
         }
+
+        public Degree GetDegreeById(int degreeId, int siteId, int languageId)
+        {
+            var degree = _dataContext.Degrees.FirstOrDefault(x => x.Iddegree == degreeId && x.Idsite == siteId && x.Idslanguage == languageId);
+            if (degree == null)
+            {
+                return null;
+            }
+            return degree;
+        }
     }
 }

@@ -12,9 +12,16 @@ namespace Domain.Repositories
 
         public string GetCompanyNameCheckingBlind(int companyId, bool isBlind);
 
+        public string GetCompanyDescriptionCheckingBlind(int companyId, bool isBlind);
+
         public API.DataContext.Enterprise Get(int companyId);
+
         public Task<int> GetCountCompaniesActive();
+
         public int GetCompanyRegion(int companyId);
+
         public string GetCompanyNameByBrandId(int brandId);
+
+        public string GetCompanyLogo(int companyId, int brandId, bool isBlind);
     }
 }

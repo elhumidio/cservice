@@ -9,5 +9,7 @@ namespace Domain.Repositories
         public bool IsRightSalaryValue(string salary, int salaryType);
 
         public IQueryable<SalaryType> GetSalaryTypes(int siteId, int languageId);
+
+        public SalaryType GetSalaryTypeById(int salaryTypeId, int siteId, int languageId);
     }
 }

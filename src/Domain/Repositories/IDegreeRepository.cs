@@ -7,5 +7,7 @@ namespace Domain.Repositories
         public bool IsRightDegree(int degreeId);
 
         public IQueryable<Degree> GetDegrees(int siteId, int languageId);
+
+        public Degree GetDegreeById(int degreeId, int siteId, int languageId);
     }
 }

@@ -38,6 +38,8 @@ namespace Persistence
         public virtual DbSet<RegEnterpriseContract> RegEnterpriseContracts { get; set; } = null!;
         public virtual DbSet<Salary> Salaries { get; set; } = null!;
         public virtual DbSet<SalaryType> SalaryTypes { get; set; } = null!;
+        public virtual DbSet<Currency> Currencies { get; set; } = null!;
+        public virtual DbSet<Field> Fields { get; set; } = null!;
         public virtual DbSet<TsturijobsLang> TsturijobsLangs { get; set; } = null!;
         public virtual DbSet<TsubArea> TsubAreas { get; set; } = null!;
         public virtual DbSet<ZipCode> ZipCodes { get; set; } = null!;
@@ -1550,6 +1552,38 @@ namespace Persistence
                     .HasForeignKey(d => new { d.Idslanguage, d.Idsite })
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_TSalaryType_TSTuriJobsLang");
+            });
+
+            modelBuilder.Entity<Currency>(entity =>
+            {
+                entity.HasKey(e => new { e.IDCurrency, e.IDSite, e.IDSLanguage });
+
+                entity.ToTable("TCurrency");
+
+                entity.Property(e => e.IDCurrency);
+
+                entity.Property(e => e.IDSite);
+
+                entity.Property(e => e.IDSLanguage);
+
+                entity.Property(e => e.BaseName).HasMaxLength(30);
+            });
+
+            modelBuilder.Entity<Field>(entity =>
+            {
+                entity.HasKey(e => new { e.IDField, e.IDSite, e.IDSLanguage });
+
+                entity.ToTable("TField");
+
+                entity.Property(e => e.IDField);
+
+                entity.Property(e => e.IDSite);
+
+                entity.Property(e => e.IDSLanguage);
+
+                entity.Property(e => e.BaseName).HasMaxLength(30);
+
+                entity.Property(e => e.IDMacroSector);
             });
 
             modelBuilder.Entity<TsturijobsLang>(entity =>
