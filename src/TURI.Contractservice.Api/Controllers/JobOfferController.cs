@@ -8,6 +8,7 @@ using Domain.DTO;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using TURI.ContractService.Contract.Models;
+using TURI.ContractService.Contracts.Contract.Models.Requests;
 
 namespace API.Controllers
 {
@@ -83,14 +84,12 @@ namespace API.Controllers
         {
             var result = await Mediator.Send(new FileJobs.Command
             {
-
                 id = _ids.First()
             });
 
             var ret = HandleResult(result);
             return ret;
         }
-
 
         /// <summary>
         /// Sends a command to file jobs for each item in the list of ids.
@@ -104,14 +103,12 @@ namespace API.Controllers
             {
                 await Mediator.Send(new FileJobs.Command
                 {
-
                     id = item
                 });
             }
 
-            return Ok(new OfferModificationResult() { IsSuccess=true });
+            return Ok(new OfferModificationResult() { IsSuccess = true });
         }
-
 
         /// <summary>
         /// Delete Offers (from Web)
@@ -222,7 +219,6 @@ namespace API.Controllers
             return HandleResult(result);
         }
 
-
         /// <summary>
         /// It gets consumed units grouped by contract
         /// </summary>
@@ -254,8 +250,8 @@ namespace API.Controllers
             return HandleResult(result);
         }
 
-        /// <summary>   
-        /// Get Consumed JobOffers Pack or not pack by Company 
+        /// <summary>
+        /// Get Consumed JobOffers Pack or not pack by Company
         /// </summary>
         /// <param name="dto"></param>
         /// <returns></returns>
@@ -268,7 +264,6 @@ namespace API.Controllers
             });
             return HandleResult(result);
         }
-
 
         /// <summary>
         /// Get Consumed JobOffers Pack or not pack all managers By Contract
@@ -315,7 +310,6 @@ namespace API.Controllers
             return HandleResult(result);
         }
 
-
         /// <summary>
         /// Gets active offers full data by company.
         /// </summary>
@@ -341,25 +335,52 @@ namespace API.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetActiveJobs(int maxActiveDays)
         {
-                var result = await Mediator.Send(new ListActiveJobs.Query { MaxActiveDays = maxActiveDays });
-                if (result.IsSuccess)
-                {
-                    var jobOffers = result.Value;
-                    if (jobOffers == null)
-                        return NotFound();
+            var result = await Mediator.Send(new ListActiveJobs.Query { MaxActiveDays = maxActiveDays });
+            if (result.IsSuccess)
+            {
+                var jobOffers = result.Value;
+                if (jobOffers == null)
+                    return NotFound();
 
-                    var response = jobOffers
-                        .Select(jobOffer => jobOffer.ToModel())
-                        .ToArray();
+                var response = jobOffers
+                    .Select(jobOffer => jobOffer.ToModel())
+                    .ToArray();
 
-                    return Ok(response);
-                }
-                else
-                {
-                    return BadRequest(result.Error);
-                }
+                return Ok(response);
+            }
+            else
+            {
+                return BadRequest(result.Error);
+            }
+        }
 
+        /// <summary>
+        /// Get Active JobOffers
+        /// </summary>
+        /// <param name="date"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(JobOfferResponse[]))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetActiveJobsFollowedCompaniesSinceLastLogin(string lastLoggin, string followedCompanies)
+        {
+            var result = await Mediator.Send(new GetActiveJobsFollowedCompaniesSinceLastLogin.Get { LastLoggin = lastLoggin, FollowedCompanies = followedCompanies.Split(',').Select(a => Convert.ToInt32(a)).ToArray() });
+            if (result.IsSuccess)
+            {
+                var jobOffers = result.Value;
+                if (jobOffers == null)
+                    return NotFound();
 
+                var response = jobOffers
+                    .Select(jobOffer => jobOffer.ToModel())
+                    .ToArray();
+
+                return Ok(response);
+            }
+            else
+            {
+                return BadRequest(result.Error);
+            }
         }
 
         [HttpPost]
@@ -376,8 +397,6 @@ namespace API.Controllers
             {
                 return BadRequest(result.Error);
             }
-
-
         }
 
         /// <summary>
@@ -461,15 +480,12 @@ namespace API.Controllers
         {
             var result = await Mediator.Send(new ListOffersAtsInfo.Get
             {
-                 CompanyId = dto.CompanyId,
-                 ExternalId = dto.ExternalId       
-
+                CompanyId = dto.CompanyId,
+                ExternalId = dto.ExternalId
             });
 
-            return HandleResult(result);    
+            return HandleResult(result);
         }
-
-
 
         /// <summary>
         /// It update job date
@@ -484,7 +500,6 @@ namespace API.Controllers
                 var response = await Mediator.Send(new UpdateDate.Command
                 {
                     id = jobId
-
                 });
                 return Ok(response);
             }
@@ -494,6 +509,33 @@ namespace API.Controllers
             }
         }
 
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(JobOfferResponse[]))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetOffersForView(OfferInfoRequest request)
+        {
+            var result = await Mediator.Send(new GetOffersForView.Get
+            {
+                Language = request.Language,
+                OfferIds = request.OfferIds
+            });
 
+            if (result.IsSuccess)
+            {
+                var jobs = result.Value;
+                if (jobs == null)
+                    return NotFound();
+
+                var response = jobs
+                    .Select(jobOffer => jobOffer.ToModel())
+                    .ToArray();
+
+                return Ok(response);
+            }
+            else
+            {
+                return BadRequest(result.Error);
+            }
+        }
     }
 }
