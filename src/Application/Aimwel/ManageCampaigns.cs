@@ -457,7 +457,7 @@ namespace Application.Aimwel
                     {
                         Budget = new Money
                         {
-                            Currency = Currency.Eur,
+                            Currency = DPGRecruitmentCampaignClient.Currency.Eur,
                             Units = units,
                             Hundredths = hundredths
                         }
@@ -682,7 +682,7 @@ namespace Application.Aimwel
                     {
                         Budget = new Money
                         {
-                            Currency = Currency.Eur,
+                            Currency = DPGRecruitmentCampaignClient.Currency.Eur,
                             Units = units,
                             Hundredths = hundredths
                         }

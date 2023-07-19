@@ -54,7 +54,8 @@ namespace API.Controllers
             var result = await Mediator.Send(new GetOfferDescriptionById.Query
             {
                 OfferId = command.OfferId,
-                LanguageId = command.LanguageId
+                LanguageId = command.LanguageId,
+                SiteId = command.SiteId
             });
             return HandleResult(result);
         }

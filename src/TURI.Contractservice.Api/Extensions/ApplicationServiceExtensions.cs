@@ -16,6 +16,7 @@ using Persistence.Repositories;
 using System.Reflection;
 using TURI.ApplicationService.Contracts.Application.Services;
 using TURI.EnterpriseService.Contracts.Services;
+using TURI.SearchService.Contracts.Search.Services;
 
 namespace API.Extensions
 {
@@ -36,6 +37,7 @@ namespace API.Extensions
             services.AddSingleton<IMemoryCache, MemoryCache>();
             services.AddSingleton(s => Refit.RestService.For<IApplicationService>(config["ExternalServices:ApplicationService"] ?? ""));
             services.AddSingleton(s => Refit.RestService.For<IEnterpriseService>(config["ExternalServices:EnterpriseService"] ?? ""));
+            services.AddSingleton(s => Refit.RestService.For<ISearchService>(config["ExternalServices:SearchService"] ?? ""));
             #region MAPPING REPOSITORIES
 
             services.AddScoped<IAimwelErrorsRepository, AimwelErrorsRepository>();
@@ -86,6 +88,8 @@ namespace API.Extensions
             services.AddScoped<IinternalService, InternalService>();
             services.AddScoped<ISafetyModeration, SafetyModeration>();
             services.AddScoped<IQuestService, QuestService>();
+            services.AddScoped<ICurrencyRepository, CurrencyRepository>();
+            services.AddScoped<IFieldRepository, FieldRepository>();
             #endregion MAPPING REPOSITORIES
             services.AddScoped<IGeoNamesConector, GeoNamesConector>();
             return services;

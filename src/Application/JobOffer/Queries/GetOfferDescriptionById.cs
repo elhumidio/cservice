@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using TURI.ApplicationService.Contracts.Application.Services;
 using TURI.EnterpriseService.Contracts.Models;
 using TURI.EnterpriseService.Contracts.Services;
+using TURI.SearchService.Contracts.Search.Services;
 
 namespace Application.JobOffer.Queries
 {
@@ -20,6 +21,7 @@ namespace Application.JobOffer.Queries
         {
             public int OfferId { get; set; }
             public int LanguageId { get; set; }
+            public int SiteId { get; set; }
         }
 
         public class Handler : IRequestHandler<Query, Result<OfferDescriptionDTO>>
@@ -30,12 +32,18 @@ namespace Application.JobOffer.Queries
             private readonly IEnterpriseRepository _enterpriseOffer;
             private readonly IDegreeRepository _degreeOffer;
             private readonly IJobExpYearsRepository _jobExpYearsOffer;
+            private readonly IJobCategoryRepository _jobCategoryOffer;
+            private readonly IResidenceTypeRepository _residenceTypeOffer;
+            private readonly ISalaryTypeRepository _salaryTypeOffer;
+            private readonly ICurrencyRepository _currencyRepository;
+            private readonly IFieldRepository _fieldRepository;
             private readonly IMapper _mapper;
             private readonly IConfiguration _config;
             private readonly IApplicationService _applicationService;
             private readonly IEnterpriseService _enterpriseService;
+            private readonly ISearchService _searchService;
 
-            public Handler(IMapper mapper, IConfiguration config, IJobOfferRepository jobOffer, ICountryRepository countryOffer, IRegionRepository regionOffer, IEnterpriseRepository enterpriseOffer, IApplicationService applicationService, IEnterpriseService enterpriseService, IDegreeRepository degreeOffer, IJobExpYearsRepository jobExpYearsOffer)
+            public Handler(IMapper mapper, IConfiguration config, IJobOfferRepository jobOffer, ICountryRepository countryOffer, IRegionRepository regionOffer, IEnterpriseRepository enterpriseOffer, IApplicationService applicationService, IEnterpriseService enterpriseService, IDegreeRepository degreeOffer, IJobExpYearsRepository jobExpYearsOffer, IJobCategoryRepository jobCategoryOffer, IResidenceTypeRepository residenceTypeOffer, ISalaryTypeRepository salaryTypeOffer, ICurrencyRepository currencyRepository, IFieldRepository fieldRepository, ISearchService searchService)
             {
                 _mapper = mapper;
                 _config = config;
@@ -47,6 +55,12 @@ namespace Application.JobOffer.Queries
                 _enterpriseService = enterpriseService;
                 _degreeOffer = degreeOffer;
                 _jobExpYearsOffer = jobExpYearsOffer;
+                _jobCategoryOffer = jobCategoryOffer;
+                _residenceTypeOffer = residenceTypeOffer;
+                _salaryTypeOffer = salaryTypeOffer;
+                _currencyRepository = currencyRepository;
+                _fieldRepository = fieldRepository;
+                _searchService = searchService;
             }
 
             public async Task<Result<OfferDescriptionDTO>> Handle(Query request, CancellationToken cancellationToken)
@@ -72,43 +86,62 @@ namespace Application.JobOffer.Queries
                 offerDescription.Logo = GetEnterpriseLogoURL(logoURL, offer.Idsite);
                 offerDescription.Vacancies = offer.VacancyNumber;
                 offerDescription.TotalCandidateApplied = await GetApplicationCountByOffer(offer.IdjobVacancy);
+                // Salary.
+                if (!offer.ChkBlindSalary.GetValueOrDefault())
+                { 
+                    offerDescription.SalaryMin = offer.SalaryMin;
+                    offerDescription.SalaryMax = offer.SalaryMax;
+                    if (offer.SalaryCurrency.HasValue)
+                    { 
+                        offerDescription.SalaryCurrency = _currencyRepository.GetCurrencyById(offer.SalaryCurrency.Value, request.SiteId, request.LanguageId);
+                    }
+                    var salaryType = _salaryTypeOffer.GetSalaryTypeById(offer.IdsalaryType, request.SiteId, request.LanguageId);
+                    if (salaryType != null)
+                    {
+                        offerDescription.SalaryType = salaryType.BaseName;
+                    }
+                }
+                offerDescription.Tags = await GetOfferTags(offer.IdjobVacancy, request.LanguageId, request.SiteId);
                 offerDescription.Tasks = await GetOfferTasks(offer.IdjobVacancy, request.LanguageId);
-                // IDDegree, IDJobExpYears, IDJobCategory, IDResidenceType (fields tjobvacancy).
+                offerDescription.Skills = await GetOfferSkills(offer.IdjobVacancy, request.LanguageId);
+                offerDescription.Benefits = await GetOfferBenefits(offer.IdjobVacancy, request.LanguageId);
+                offerDescription.Preferences = await GetOfferPreferences(offer.IdjobVacancy, request.LanguageId);
+                // Requirements.
                 offerDescription.Requirements = new List<string>();
-                var degree = _degreeOffer.GetDegreeById(offer.Iddegree, offer.Idsite, request.LanguageId);
+                var degree = _degreeOffer.GetDegreeById(offer.Iddegree, request.SiteId, request.LanguageId);
                 if (degree != null)
                 {
                     offerDescription.Requirements.Add(degree.BaseName);
                 }
-                //var degree = _jobExpYearsOffer.get(offer.Iddegree, offer.Idsite, request.LanguageId);
-                //if (degree != null)
-                //{
-                //    offerDescription.Requirements.Add(degree.BaseName);
-                //}
-                //var degree = _degreeOffer.GetDegreeById(offer.Iddegree, offer.Idsite, request.LanguageId);
-                //if (degree != null)
-                //{
-                //    offerDescription.Requirements.Add(degree.BaseName);
-                //}
-                //var degree = _degreeOffer.GetDegreeById(offer.Iddegree, offer.Idsite, request.LanguageId);
-                //if (degree != null)
-                //{
-                //    offerDescription.Requirements.Add(degree.BaseName);
-                //}
+                var jobExpYear = _jobExpYearsOffer.GetJobExperienceYearsById(offer.IdjobExpYears, request.SiteId, request.LanguageId);
+                if (jobExpYear != null)
+                {
+                    offerDescription.Requirements.Add(jobExpYear.BaseName);
+                }
+                if (offer.IdjobCategory.GetValueOrDefault() > 0)
+                {
+                    var jobCategory = _jobCategoryOffer.GetJobCategoryById(offer.IdjobCategory.GetValueOrDefault(), request.SiteId, request.LanguageId);
+                    if (jobCategory != null)
+                    {
+                        offerDescription.Requirements.Add(jobCategory.BaseName);
+                    }
+                }
+                var residenceType = _residenceTypeOffer.GetResidenceTypeById(offer.IdresidenceType, request.SiteId, request.LanguageId);
+                if (residenceType != null)
+                {
+                    offerDescription.Requirements.Add(residenceType.BaseName);
+                }
                 if (!string.IsNullOrEmpty(offer.Requirements))
                 {
                     offerDescription.Requirements.Add(offer.Requirements);
                 }
-                offerDescription.Skills = await GetOfferSkills(offer.IdjobVacancy, request.LanguageId);
-                offerDescription.Preferences = await GetOfferPreferences(offer.IdjobVacancy, request.LanguageId);
-                offerDescription.Benefits = await GetOfferBenefits(offer.IdjobVacancy, request.LanguageId);
                 // Enterprise data.
                 offerDescription.CompanyId = enterprise.Identerprise;
                 offerDescription.CompanyName = _enterpriseOffer.GetCompanyNameCheckingBlind(offer.Identerprise, offer.ChkBlindVac);
                 offerDescription.CompanyLocation = GetLocation(enterprise.Idcountry, enterprise.Idregion, request.LanguageId); // TODO
                 offerDescription.CompanyDescription = _enterpriseOffer.GetCompanyDescriptionCheckingBlind(offer.Identerprise, offer.ChkBlindVac);
                 offerDescription.Employees = enterprise.Employees;
-                offerDescription.CompanyField = string.Empty; // TODO
+                offerDescription.CompanyField = _fieldRepository.GetFieldById(enterprise.Idfield, request.SiteId, request.LanguageId);
                 offerDescription.CompanyURL = enterprise.UrlWeb ?? string.Empty;
                 return Result<OfferDescriptionDTO>.Success(offerDescription);
             }
@@ -161,6 +194,21 @@ namespace Application.JobOffer.Queries
                     return 0;
                 }
                 return response[0].ApplicationsCount;
+            }
+
+            private async Task<List<string>> GetOfferTags(int offerId, int languageId, int siteId)
+            {
+                var tags = await _searchService.GetOfferTags(new TURI.SearchService.Contracts.Search.Models.SearchOfferTagsModel()
+                {
+                    OfferId = offerId,
+                    LanguageId = languageId,
+                    SiteId = siteId
+                });
+                if (tags == null || tags.Count == 0)
+                {
+                    return new List<string>();
+                }
+                return tags;
             }
 
             private async Task<List<string>> GetOfferTasks(int offerId, int languageId)

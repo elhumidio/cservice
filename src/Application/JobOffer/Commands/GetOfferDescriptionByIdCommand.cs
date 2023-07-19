@@ -10,5 +10,6 @@ namespace Application.JobOffer.Commands
     {
         public int OfferId { get; set; }
         public int LanguageId { get; set; }
+        public int SiteId { get; set; }
     }
 }

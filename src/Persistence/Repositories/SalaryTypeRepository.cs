@@ -38,5 +38,20 @@ namespace Persistence.Repositories
                 return null;
             }
         }
+
+        public SalaryType GetSalaryTypeById(int salaryTypeId, int siteId, int languageId)
+        {
+            var salariesTypes = _dataContext.SalaryTypes
+                .FirstOrDefault(a => a.IdsalaryType == salaryTypeId && a.Idsite == siteId && a.Idslanguage == languageId);
+
+            if (salariesTypes != null)
+            {
+                return salariesTypes;
+            }
+            else
+            {
+                return null;
+            }
+        }
     }
 }

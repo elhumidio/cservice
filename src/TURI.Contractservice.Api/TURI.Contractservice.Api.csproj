@@ -32,8 +32,7 @@
 		<PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.4.0" />
 		<PackageReference Include="Swashbuckle.Core" Version="5.6.0" />
 		<PackageReference Include="TURI.ApplicationService.Contracts" Version="1.0.1" />
-		<PackageReference Include="TURI.ContractService.Contracts" Version="1.0.5" />
-		<PackageReference Include="TURI.EnterpriseService.Contracts" Version="1.0.0" />
+		<PackageReference Include="TURI.EnterpriseService.Contracts" Version="1.0.2" />
 
 	</ItemGroup>
 

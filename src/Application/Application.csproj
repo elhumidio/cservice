@@ -36,7 +36,7 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="Refit" Version="7.0.0" />
     <PackageReference Include="TURI.ApplicationService.Contracts" Version="1.0.1" />
-    <PackageReference Include="TURI.EnterpriseService.Contracts" Version="1.0.0" />
+    <PackageReference Include="TURI.EnterpriseService.Contracts" Version="1.0.2" />
   </ItemGroup>
 
   <ItemGroup>
