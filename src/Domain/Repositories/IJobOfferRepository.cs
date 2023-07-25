@@ -6,6 +6,7 @@ namespace Domain.Repositories
 {
     public interface IJobOfferRepository
     {
+        public IQueryable<JobVacancy> GetOffersByCompanyId(int companyId);
         public IQueryable<JobVacancy> GetActiveOffersByContract(int contractId);
 
         public IQueryable<JobVacancy> GetOffersByContract(int contractId);
