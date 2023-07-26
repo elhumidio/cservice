@@ -1,5 +1,6 @@
 using Application.Core;
 using Domain.DTO.Location;
+using Domain.Enums;
 using Domain.Repositories;
 using MediatR;
 
@@ -39,6 +40,7 @@ namespace Application.JobOffer.Queries
                             ProductId = productId
                         });
                         offer.FinishDate = newFinishDate != null ? newFinishDate.Value : offer.FinishDate;
+                        offer.Idstatus = (int)OfferStatus.Active;
                         var ret = await _jobOfferRepository.UpdateOffer(offer);
                     }
 
