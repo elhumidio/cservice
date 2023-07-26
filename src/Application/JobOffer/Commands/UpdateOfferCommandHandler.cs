@@ -59,12 +59,20 @@ namespace Application.JobOffer.Commands
         {
             string error = string.Empty;
             var integrationInfo = await _regJobVacRepo.GetAtsIntegrationInfo(offer.IntegrationData.ApplicationReference);
-
-            if (integrationInfo != null)
-                error = $"IntegrationId: {offer.IntegrationData.IDIntegration} - Reference: {offer.IntegrationData.ApplicationReference}";
-
+            bool IsIntegration = integrationInfo != null;
+            //if (IsIntegration)
+              
             var existentOffer = _offerRepo.GetOfferById(offer.IdjobVacancy);
-            bool IsActivate = existentOffer.ChkFilled;
+            if (IsIntegration)
+            {
+                error = $"IntegrationId: {offer.IntegrationData.IDIntegration} - Reference: {offer.IntegrationData.ApplicationReference}";
+                offer.Idcity = existentOffer.Idcity;
+                offer.Idregion = existentOffer.Idregion;
+                offer.Idcountry = existentOffer.Idcountry;
+                offer.City = existentOffer.City;
+                offer.IdzipCode = existentOffer.IdzipCode;
+            }
+            bool IsActivate = existentOffer.ChkFilled && IsIntegration;
             bool IsPack = _contractProductRepo.IsPack(existentOffer.Idcontract);
             offer.ChkPack = IsPack;
 
@@ -73,14 +81,6 @@ namespace Application.JobOffer.Commands
                 await ActivateActions(offer, existentOffer);
             }
             
-            if (integrationInfo == null)
-            {
-                offer.Idcity = existentOffer.Idcity;
-                offer.Idregion = existentOffer.Idregion;
-                offer.Idcountry = existentOffer.Idcountry;
-                offer.City = existentOffer.City;
-                offer.IdzipCode= existentOffer.IdzipCode;
-            }
             var entity = _mapper.Map(offer, existentOffer);
             CityValidation(offer);
             var company = _enterpriseRepository.Get(offer.Identerprise);
