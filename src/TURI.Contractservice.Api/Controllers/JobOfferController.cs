@@ -325,6 +325,16 @@ namespace API.Controllers
             return HandleResult(result);
         }
 
+        [HttpGet("{companyId}")]
+        public async Task<IActionResult> UpdateFinishDateOffers(int companyId)
+        {
+            var result = await Mediator.Send(new UpdateFinishDateOffers.Query
+            {
+                CompanyId = companyId,
+            });
+            return HandleResult(result);
+        }
+
         /// <summary>
         /// Get Active JobOffers
         /// </summary>

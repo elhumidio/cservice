@@ -37,6 +37,7 @@
     <PackageReference Include="Refit" Version="7.0.0" />
     <PackageReference Include="TURI.ApplicationService.Contracts" Version="1.0.1" />
     <PackageReference Include="TURI.EnterpriseService.Contracts" Version="1.0.2" />
+    <PackageReference Include="TURI.SearchService.Contracts" Version="1.0.1" />
   </ItemGroup>
 
   <ItemGroup>
