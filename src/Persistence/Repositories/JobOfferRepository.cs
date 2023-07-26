@@ -36,6 +36,12 @@ namespace Persistence.Repositories
             return query;
         }
 
+        public IQueryable<JobVacancy> GetOffersByCompanyId(int companyId)
+        {
+            var query = _dataContext.JobVacancies.Where(a => a.Identerprise == companyId);
+            return query;
+        }
+
         public IQueryable<JobVacancy> GetActiveOffersByContractAndManager(int contractId, int managerId)
         {
             var query = _dataContext.JobVacancies.Where(a => a.Idcontract == contractId && !a.ChkDeleted
