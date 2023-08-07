@@ -14,7 +14,4 @@ public interface IJobOfferService
     
     [Post("/api/JobOffer/GetOffersForView")]
     Task<OfferInfoMinForViewResponse[]> GetOffersForView(OfferInfoRequest request);
-
-    [Post("/api/JobOffer/GetEnterprisesByOffers")]
-    Task<List<int>> GetEnterprisesByOffers(List<int> offerIds);
 }
