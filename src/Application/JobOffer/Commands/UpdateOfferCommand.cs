@@ -159,9 +159,6 @@ namespace Application.JobOffer.Commands
         public bool? ChkSynerquia { get; set; }
 
         [DataMember]
-        public string? ExternalUrl { get; set; }
-
-        [DataMember]
         public int? SalaryCurrency { get; set; }
 
         [DataMember]
