@@ -547,5 +547,29 @@ namespace API.Controllers
                 return BadRequest(result.Error);
             }
         }
+
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<int>))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetEnterprisesByOffers(List<int> offerIds)
+        {
+            var result = await Mediator.Send(new GetEnterprisesByOffers.Get
+            {
+                OfferIds = offerIds
+            });
+
+            if (result.IsSuccess)
+            {
+                var enterprises = result.Value;
+                if (enterprises == null)
+                    return NotFound();
+
+                return Ok(enterprises);
+            }
+            else
+            {
+                return BadRequest(result.Error);
+            }
+        }
     }
 }
