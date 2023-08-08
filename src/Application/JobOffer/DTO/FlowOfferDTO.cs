@@ -17,5 +17,6 @@ namespace Application.JobOffer.DTO
         public int RegionId { get; set; }
         public int QuestId { get; set; }
         public int SiteId { get; set; }
+        public string IntegrationId { get; set; }
     }
 }
