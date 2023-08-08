@@ -29,7 +29,7 @@ namespace Application.JobOffer.Queries
                 var query = _jobOfferRepository.GetOffersByIds(request.OfferIds);
                 if (query == null || query.Count == 0)
                 {
-                    return new Result<List<int>>();
+                    return Result<List<int>>.Success(new List<int>());
                 }
                 return Result<List<int>>.Success(query.Select(x => x.Identerprise).Distinct().ToList());
             }
