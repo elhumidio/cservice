@@ -61,6 +61,7 @@ namespace Application.Core
                 .ForMember(a => a.AppEmail, opt => opt.MapFrom(src => src.ApplicationEmail));
 
             CreateMap<UpsertContractCommand, Contract>();
+            CreateMap<ProductLine, ContractProduct>();
         }
     }
 }

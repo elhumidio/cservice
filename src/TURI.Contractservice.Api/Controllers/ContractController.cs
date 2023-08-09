@@ -1,7 +1,10 @@
 using API.Converters;
+using Application.ContractCreation.Commands;
 using Application.Contracts.DTO;
 using Application.Contracts.Queries;
 using Application.EnterpriseContract.Queries;
+using Application.JobOffer.Commands;
+using Application.JobOffer.DTO;
 using Application.Managers.Queries;
 using Domain.Enums;
 using Microsoft.AspNetCore.Mvc;
@@ -226,6 +229,14 @@ namespace API.Controllers
                 
             });
             return HandleResult(result);
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> CreateContract(UpsertContractCommand contract)
+        {
+            var result = await Mediator.Send(contract);                            
+            return HandleResult(result);    
         }
     }
 }

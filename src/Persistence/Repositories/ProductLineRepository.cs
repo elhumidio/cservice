@@ -20,7 +20,7 @@ namespace Persistence.Repositories
 
         public IEnumerable<ProductLine> GetProductLinesByProductId(int idProduct)
         {
-            var productLines = _dataContext.ProductLines.Where(pl => pl.Idproduct == idProduct && pl.IdjobVacType != null);
+            var productLines = _dataContext.ProductLines.Where(pl => pl.Idproduct == idProduct);
             return productLines;
 
         }
