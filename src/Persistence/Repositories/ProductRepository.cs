@@ -1,3 +1,4 @@
+using Domain.Entities;
 using Domain.Repositories;
 
 namespace Persistence.Repositories
@@ -9,6 +10,12 @@ namespace Persistence.Repositories
         public ProductRepository(DataContext dataContext)
         {
             _dataContext = dataContext;
+        }
+
+        public Product Get(int idProduct)
+        {
+            var product = _dataContext.Products.FirstOrDefault(p => p.Idproduct == idProduct);
+            return product;
         }
 
         public int GetProductDuration(int idProduct)

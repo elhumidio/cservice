@@ -1,4 +1,5 @@
 using Application.AuxiliaryData.DTO;
+using Application.ContractCreation.Commands;
 using Application.ContractProducts.DTO;
 using Application.Contracts.DTO;
 using Application.EnterpriseContract.DTO;
@@ -58,6 +59,8 @@ namespace Application.Core
                 .ForMember(a => a.Idintegration, opt => opt.MapFrom(src => src.IDIntegration))
                 .ForMember(a => a.Redirection, opt => opt.MapFrom(src => src.ApplicationUrl))
                 .ForMember(a => a.AppEmail, opt => opt.MapFrom(src => src.ApplicationEmail));
+
+            CreateMap<UpsertContractCommand, Contract>();
         }
     }
 }

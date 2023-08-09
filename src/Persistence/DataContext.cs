@@ -63,6 +63,8 @@ namespace Persistence
         public virtual DbSet<OigSafety> OigSafeties { get; set; } = null!;
         public virtual DbSet<CampaignsUpdatingCheck> CampaignsUpdatingChecks { get; set; } = null!;
         public virtual DbSet<FeedsAggregatorsLog> FeedsAggregatorsLogs { get; set; } = null!;
+        public virtual DbSet<RegEnterpriseConsum> RegEnterpriseConsums { get; set; } = null!;
+        public virtual DbSet<SalesforceTransaction> SalesforceTransactions { get; set; } = null!;
         //public DbSet<NextSqlValueFeedLog> NextSeqFeedLog { get; set; }
 
         public virtual DbSet<ZoneUrl> ZoneUrls { get; set; } = null!;
@@ -73,6 +75,46 @@ namespace Persistence
 
 
             modelBuilder.HasSequence("GetNextSequenceValueFeedsLog");
+
+
+            modelBuilder.Entity<RegEnterpriseConsum>(entity =>
+            {
+                entity.HasKey(e => new { e.Identerprise, e.Idcontract, e.Idproduct });
+
+                entity.ToTable("TRegEnterpriseConsums");
+
+                entity.Property(e => e.Identerprise).HasColumnName("IDEnterprise");
+
+                entity.Property(e => e.Idcontract).HasColumnName("IDContract");
+
+                entity.Property(e => e.Idproduct).HasColumnName("IDProduct");
+
+                entity.HasOne(d => d.IdcontractNavigation)
+                    .WithMany(p => p.RegEnterpriseConsums)
+                    .HasForeignKey(d => d.Idcontract)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_TRegEnterpriseConsums_TContract");
+            });
+
+
+            modelBuilder.Entity<SalesforceTransaction>(entity =>
+            {
+                entity.HasKey(e => e.IdsalesforceTransaction);
+
+                entity.ToTable("TSalesforceTransaction");
+
+                entity.Property(e => e.IdsalesforceTransaction).HasColumnName("IDSalesforceTransaction");
+
+                entity.Property(e => e.FinishDate).HasColumnType("datetime");
+
+                entity.Property(e => e.Idsite).HasColumnName("IDSite");
+
+                entity.Property(e => e.ObjectTypeName).HasMaxLength(100);
+
+                entity.Property(e => e.StartDate).HasColumnType("datetime");
+
+                entity.Property(e => e.TurijobsId).HasColumnName("TurijobsID");
+            });
 
 
             modelBuilder.Entity<FeedsAggregatorsLog>(entity =>

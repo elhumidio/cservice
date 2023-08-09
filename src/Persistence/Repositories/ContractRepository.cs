@@ -112,5 +112,11 @@ namespace Persistence.Repositories
 
             return list;
         }
+
+        public async Task<int> CreateContract(Contract contract)
+        {
+            var ret = _dataContext.Contracts.Add(contract);
+            return contract.Idcontract;
+        }
     }
 }

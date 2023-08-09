@@ -1,3 +1,5 @@
+using Domain.Entities;
+
 namespace Domain.Repositories
 {
     public interface IContractProductRepository
@@ -5,5 +7,6 @@ namespace Domain.Repositories
         public bool IsPack(int contractId);
 
         public int GetIdProductByContract(int contractId);
+        public Task<int> CreateContractProduct(ContractProduct contract);
     }
 }

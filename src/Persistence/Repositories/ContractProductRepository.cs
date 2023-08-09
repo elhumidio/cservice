@@ -1,3 +1,4 @@
+using Domain.Entities;
 using Domain.Repositories;
 
 namespace Persistence.Repositories
@@ -36,6 +37,12 @@ namespace Persistence.Repositories
             .Select(o => o.ppl.cp.Idproduct)
             .First();
             return res;
+        }
+
+        public async Task<int> CreateContractProduct(ContractProduct contractProduct)
+        {
+            var ret = _dataContext.ContractProducts.AddAsync(contractProduct);
+            return contractProduct.Idcontract;
         }
     }
 }

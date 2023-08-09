@@ -1,3 +1,4 @@
+using Domain.Entities;
 using Domain.Enums;
 using Domain.Repositories;
 
@@ -39,6 +40,10 @@ namespace Persistence.Repositories
             return Task.FromResult(units);
         }
 
-        
+        public async Task<int> Add(RegEnterpriseContract regContract)
+        {
+            var ret = await _dataContext.RegEnterpriseContracts.AddAsync(regContract);
+            return regContract.Idcontract;
+        }
     }
 }

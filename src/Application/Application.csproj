@@ -42,6 +42,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Domain\Domain.csproj" />
+    <ProjectReference Include="..\Persistence\Persistence.csproj" />
     <ProjectReference Include="..\TURI.ContractService.Contracts\TURI.ContractService.Contracts.csproj" />
   </ItemGroup>
 
@@ -58,6 +59,10 @@
     <EmbeddedResource Remove="JobOffer\Interfaces\**" />
     <None Remove="JobOffer\Interfaces\**" />
     <Protobuf Remove="JobOffer\Interfaces\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="ContractCreation\Queries\" />
   </ItemGroup>
 
 </Project>

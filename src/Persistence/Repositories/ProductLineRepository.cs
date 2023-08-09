@@ -1,3 +1,4 @@
+using Domain.Entities;
 using Domain.Repositories;
 
 namespace Persistence.Repositories
@@ -15,6 +16,13 @@ namespace Persistence.Repositories
         {
             var productLine = _dataContext.ProductLines.Where(pl => pl.Idproduct == idProduct && pl.IdjobVacType != null).FirstOrDefault();
             return productLine == null ? 0 : productLine.Duration;
+        }
+
+        public IEnumerable<ProductLine> GetProductLinesByProductId(int idProduct)
+        {
+            var productLines = _dataContext.ProductLines.Where(pl => pl.Idproduct == idProduct && pl.IdjobVacType != null);
+            return productLines;
+
         }
     }
 }

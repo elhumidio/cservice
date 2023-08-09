@@ -52,6 +52,7 @@ namespace Domain.Entities
         public virtual Contract? IdcontractParentNavigation { get; set; }
         public virtual ICollection<Contract> InverseIdcontractParentNavigation { get; set; }
         public virtual ICollection<ContractProduct> ContractProducts { get; set; }
+        public virtual ICollection<RegEnterpriseConsum> RegEnterpriseConsums { get; set; }
         public virtual ICollection<RegEnterpriseContract> RegEnterpriseContracts { get; set; }
     }
 }
