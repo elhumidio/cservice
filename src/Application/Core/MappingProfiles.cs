@@ -8,6 +8,7 @@ using Application.JobOffer.Commands;
 using Application.JobOffer.DTO;
 using AutoMapper;
 using Domain.DTO;
+using Domain.DTO.Requests;
 using Domain.Entities;
 
 namespace Application.Core
@@ -71,6 +72,7 @@ namespace Application.Core
                 .ForMember(a => a.MaxJobVacancies, opt => opt.MapFrom(src => src.Units));
             CreateMap<UpsertContractCommand, RegEnterpriseContract>();
             CreateMap<Product, ContractProduct>();
+            CreateMap<UpdateContractProductSalesforceIdRequest, UpdateContractProductSForceId>();
         }
     }
 }

@@ -18,5 +18,7 @@ namespace Domain.Repositories
         public Task<List<ContractProductShortDto>> GetAllProductsByContract(int contractId, int lang, int site);
 
         public Task<int> CreateContract(Contract contract);
+
+        public Task<bool> UpdateContractSalesforceId(int contractId, string salesforceId);
     }
 }

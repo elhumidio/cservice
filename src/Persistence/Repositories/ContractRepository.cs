@@ -125,5 +125,13 @@ namespace Persistence.Repositories
                 return -1;
             }               
         }
+
+        public async Task<bool> UpdateContractSalesforceId(int contractId, string salesforceId)
+        {
+            var contract =await  _dataContext.Contracts.FirstOrDefaultAsync(c => c.Idcontract == contractId);
+            contract.SalesforceId = salesforceId;
+            var ret = await _dataContext.SaveChangesAsync();
+            return ret > 0;
+        }
     }
 }
