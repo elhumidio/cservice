@@ -1,3 +1,4 @@
+using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Domain.Entities
@@ -48,11 +49,15 @@ namespace Domain.Entities
         public DateTime? Sftimestamp { get; set; }
         public int? SiteId { get; set; }
         public int? OldIdcontract { get; set; }
-
+        [JsonIgnore]
         public virtual Contract? IdcontractParentNavigation { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Contract> InverseIdcontractParentNavigation { get; set; }
+        [JsonIgnore]
         public virtual ICollection<ContractProduct> ContractProducts { get; set; }
+        [JsonIgnore]
         public virtual ICollection<RegEnterpriseConsum> RegEnterpriseConsums { get; set; }
+        [JsonIgnore]
         public virtual ICollection<RegEnterpriseContract> RegEnterpriseContracts { get; set; }
     }
 }

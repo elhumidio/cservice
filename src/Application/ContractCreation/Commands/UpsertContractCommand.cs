@@ -1,3 +1,4 @@
+using Application.ContractCreation.Dto;
 using Application.Core;
 using MediatR;
 using System.Runtime.Serialization;
@@ -5,7 +6,7 @@ using System.Runtime.Serialization;
 namespace Application.ContractCreation.Commands
 {
     [DataContract]
-    public class UpsertContractCommand : IRequest<Result<int>>
+    public class UpsertContractCommand : IRequest<Result<ContractCreationResponse>>
     {
         [DataMember]
         public int IDSUser { get; set; } = -1;

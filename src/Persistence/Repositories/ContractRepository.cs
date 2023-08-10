@@ -115,8 +115,15 @@ namespace Persistence.Repositories
 
         public async Task<int> CreateContract(Contract contract)
         {
-            var ret = _dataContext.Contracts.Add(contract);
-            return contract.Idcontract;
+            try {
+                var a = _dataContext.Add(contract).Entity;
+                var saving = await _dataContext.SaveChangesAsync();
+                return contract.Idcontract;
+            }
+            catch(Exception ex) {
+                var a = ex;
+                return -1;
+            }               
         }
     }
 }

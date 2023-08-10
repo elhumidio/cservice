@@ -1,3 +1,4 @@
+using API.DataContext;
 using Application.AuxiliaryData.DTO;
 using Application.ContractCreation.Commands;
 using Application.ContractProducts.DTO;
@@ -48,7 +49,7 @@ namespace Application.Core
             CreateMap<JobOfferDto, JobVacancy>();
             CreateMap<JobVacancy, OfferResultDto>();
             CreateMap<OfferResultDto, JobOfferDto>();
-            CreateMap<JobVacancy,JobOfferWholeDto>();   
+            CreateMap<JobVacancy, JobOfferWholeDto>();
             CreateMap<RegJobVacMatching, IntegrationData>()
                 .ForMember(a => a.ApplicationReference, opt => opt.MapFrom(src => src.ExternalId))
                 .ForMember(a => a.IDIntegration, opt => opt.MapFrom(src => src.Idintegration))
@@ -61,7 +62,15 @@ namespace Application.Core
                 .ForMember(a => a.AppEmail, opt => opt.MapFrom(src => src.ApplicationEmail));
 
             CreateMap<UpsertContractCommand, Contract>();
+            CreateMap<Enterprise, Contract>();
             CreateMap<ProductLine, ContractProduct>();
+            CreateMap<Product, RegEnterpriseContract>();
+            CreateMap<Contract, EnterpriseUserJobVac>();
+            CreateMap<Product, EnterpriseUserJobVac>();
+            CreateMap<ProductLine, EnterpriseUserJobVac>()
+                .ForMember(a => a.MaxJobVacancies, opt => opt.MapFrom(src => src.Units));
+            CreateMap<UpsertContractCommand, RegEnterpriseContract>();
+            CreateMap<Product, ContractProduct>();
         }
     }
 }

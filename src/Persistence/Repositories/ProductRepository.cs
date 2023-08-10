@@ -12,9 +12,9 @@ namespace Persistence.Repositories
             _dataContext = dataContext;
         }
 
-        public Product Get(int idProduct)
+        public IQueryable<Product> Get(int idProduct)
         {
-            var product = _dataContext.Products.FirstOrDefault(p => p.Idproduct == idProduct);
+            var product = _dataContext.Products.Where(p => p.Idproduct == idProduct);
             return product;
         }
 

@@ -41,7 +41,7 @@ namespace Persistence.Repositories
 
         public async Task<int> CreateContractProduct(ContractProduct contractProduct)
         {
-            var ret = _dataContext.ContractProducts.AddAsync(contractProduct);
+            var ret = await _dataContext.Set<ContractProduct>().AddAsync(contractProduct);            
             return contractProduct.Idcontract;
         }
     }

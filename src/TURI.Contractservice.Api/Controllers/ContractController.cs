@@ -2,6 +2,7 @@ using API.Converters;
 using Application.ContractCreation.Commands;
 using Application.Contracts.DTO;
 using Application.Contracts.Queries;
+using Application.Core;
 using Application.EnterpriseContract.Queries;
 using Application.JobOffer.Commands;
 using Application.JobOffer.DTO;
@@ -235,8 +236,15 @@ namespace API.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateContract(UpsertContractCommand contract)
         {
-            var result = await Mediator.Send(contract);                            
-            return HandleResult(result);    
+            try {
+                var result = await Mediator.Send(contract);
+                return HandleResult(result);
+            }
+            catch(Exception ex) {
+                var a = ex;
+                return Ok(ex.Message);
+            }
+            
         }
     }
 }

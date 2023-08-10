@@ -1,3 +1,4 @@
+using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Domain.Entities
@@ -15,7 +16,7 @@ namespace Domain.Entities
         public string? IdsalesForce { get; set; }
         public decimal? CommercialDiscount { get; set; }
         public decimal? CouponDiscount { get; set; }
-
+        [JsonIgnore]
         public virtual Contract IdcontractNavigation { get; set; } = null!;
     }
 }

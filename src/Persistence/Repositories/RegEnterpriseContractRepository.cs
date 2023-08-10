@@ -42,7 +42,7 @@ namespace Persistence.Repositories
 
         public async Task<int> Add(RegEnterpriseContract regContract)
         {
-            var ret = await _dataContext.RegEnterpriseContracts.AddAsync(regContract);
+            var ret = await _dataContext.Set<RegEnterpriseContract>().AddAsync(regContract);
             return regContract.Idcontract;
         }
     }
