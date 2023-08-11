@@ -10,4 +10,7 @@ public interface IContractService
 
     [Post("/api/JobOffer/GetEnterprisesByOffers")]
     Task<List<int>> GetEnterprisesByOffers(List<int> offerIds);
+
+
+    public Task<IActionResult> CreateContract(UpsertContractCommand contract)
 }

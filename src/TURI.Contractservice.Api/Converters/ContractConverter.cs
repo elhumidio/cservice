@@ -1,3 +1,4 @@
+using Application.ContractCreation.Commands;
 using Application.ContractCreation.Dto;
 using Application.Contracts.DTO;
 using AutoMapper;
@@ -20,6 +21,7 @@ namespace API.Converters
                 cfg.CreateMap<ProductLine, ProductLineResponse>();
                 cfg.CreateMap<RegEnterpriseConsum, RegEnterpriseConsumResponse>();
                 cfg.CreateMap<RegEnterpriseContract, RegEnterpriseContractResponse>();
+                cfg.CreateMap<UpsertContractCommand, ContractCreateRequest>();
             });
 
             _mapper = configuration.CreateMapper();
@@ -37,6 +39,13 @@ namespace API.Converters
                 type = (int)item.type,
                 OwnerId = item.OwnerId,
             };
+        }
+
+        public static UpsertContractCommand ToModel(this ContractCreateRequest item)
+        {
+            var response = new UpsertContractCommand();
+            response = item.ToModel();
+            return response;
         }
 
         public static UpdateSalesforceIdsRequest ToDomain(this UpdateContractProductSForceId item)

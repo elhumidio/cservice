@@ -9,6 +9,7 @@ using Domain.Enums;
 using Microsoft.AspNetCore.Mvc;
 using TURI.ContractService.Contract.Models;
 using TURI.ContractService.Contracts.Contract.Models.ContractCreationFolder;
+using TURI.ContractService.Contracts.Contract.Models.Requests;
 
 namespace API.Controllers
 {
@@ -233,11 +234,12 @@ namespace API.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ContractCreationResponse))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> CreateContract(UpsertContractCommand contract)
+        public async Task<IActionResult> CreateContract(ContractCreateRequest contract)
         {
             try
             {
-                var result = await Mediator.Send(contract);
+                var requestToModel = contract.ToModel();
+                var result = await Mediator.Send(requestToModel);
                 var convertedResult = result.Value.ToCommand();
                 return HandleResult(convertedResult);
             }
