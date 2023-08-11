@@ -1,5 +1,7 @@
 using Refit;
 using TURI.ContractService.Contract.Models;
+using TURI.ContractService.Contracts.Contract.Models.ContractCreationFolder;
+using TURI.ContractService.Contracts.Contract.Models.Requests;
 
 namespace TURI.ContractService.Contracts.Contract.Services;
 
@@ -11,6 +13,6 @@ public interface IContractService
     [Post("/api/JobOffer/GetEnterprisesByOffers")]
     Task<List<int>> GetEnterprisesByOffers(List<int> offerIds);
 
-
-    public Task<IActionResult> CreateContract(UpsertContractCommand contract)
+    [Post("/api/contract/CreateContract")]
+    Task<ContractCreationResponse> CreateContract(ContractCreateRequest contract);
 }
