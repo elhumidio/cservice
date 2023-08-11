@@ -119,7 +119,7 @@ namespace Persistence.Repositories
                 var a = _dataContext.Add(contract).Entity;
                 var saving = await _dataContext.SaveChangesAsync();
                 return contract.Idcontract;
-            }
+            }   
             catch(Exception ex) {
                 var a = ex;
                 return -1;

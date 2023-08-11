@@ -6,35 +6,25 @@ using Domain.Entities;
 using Domain.Enums;
 using MediatR;
 
+
 namespace Application.ContractCreation.Commands
 {
-    public class UpsertContractCommandHandler : IRequestHandler<UpsertContractCommand, Result<ContractCreationResponse>>
+    public class CreateContractCommandHandler : IRequestHandler<UpsertContractCommand, Result<ContractCreationDomainResponse>>
     {
         private readonly IUnitOfWork uow;
         private readonly IMapper mapper;
         private const int WELCOME_PRODUCT = 110;
 
-        public UpsertContractCommandHandler(IUnitOfWork _unitOfWork, IMapper _mapper)
+        public CreateContractCommandHandler(IUnitOfWork _unitOfWork, IMapper _mapper)
         {
             uow = _unitOfWork;
             mapper = _mapper;
         }
 
-        public async Task<Result<ContractCreationResponse>> Handle(UpsertContractCommand request, CancellationToken cancellationToken)
+        public async Task<Result<ContractCreationDomainResponse>> Handle(UpsertContractCommand request, CancellationToken cancellationToken)
         {
             try
             {
-                ContractCreationResponse response = new ContractCreationResponse();
-                var company = uow.EnterpriseRepository.Get(request.IDEnterprise);
-
-                var product = uow.ProductRepository.Get(WELCOME_PRODUCT).FirstOrDefault(p => p.Idsite == request.IDSite);
-                var finishDate = DateTime.Now.AddDays(product?.Duration ?? 0);
-                response.Contract = await CreateContract(finishDate, request, company);
-
-                if (response.Contract.Idcontract < 1)
-                {
-                    return Result<ContractCreationResponse>.Failure("Couldn't create contract");
-                }
 
                 //var salesforceTransaction = new SalesforceTransaction
                 //{
@@ -46,7 +36,23 @@ namespace Application.ContractCreation.Commands
                 //    Idsite = request.IDSite,
                 //};
                 //  var transId = uow.SalesforceTransRepository.Add(salesforceTransaction);
+                ContractCreationDomainResponse response = new();
+                var company = uow.EnterpriseRepository.Get(request.IDEnterprise);
 
+                //Apply restriction region
+                foreach (var prodId in request.ProductsList)
+                {
+
+                }
+                var product = uow.ProductRepository.Get(WELCOME_PRODUCT).FirstOrDefault(p => p.Idsite == request.IDSite);
+                var finishDate = DateTime.Now.AddDays(product?.Duration ?? 0);
+                response.Contract = await CreateContract(finishDate, request, company);
+
+                if (response.Contract.Idcontract < 1)
+                {
+                    return Result<ContractCreationDomainResponse>.Failure("Couldn't create contract");
+                }
+                //Añadir logica de calculo de fecha segun los productos
                 //var product = uow.ProductRepository.Get(110);
                 var productLines = uow.ProductLineRepository.GetProductLinesByProductId(WELCOME_PRODUCT)
                     .Where(pl => pl.Idsite == company.SiteId && (product.ChkService ? pl.IdjobVacType == null : pl.IdjobVacType != null
@@ -67,6 +73,11 @@ namespace Application.ContractCreation.Commands
                     cp.Idcontract = response.Contract.Idcontract;
                     var valueId = await uow.ContractProductRepository.CreateContractProduct(cp);
                     uow.Commit();
+                    if(valueId < 1)
+                    {
+                        return Result<ContractCreationDomainResponse>.Failure("Couldn't create contract");
+                    }
+
 
                     if (request.IDSite == (int)Sites.PORTUGAL)
                     {
@@ -86,17 +97,14 @@ namespace Application.ContractCreation.Commands
                 }
 
                 uow.Commit();
-
-                // TODO: Salesforce operations here
-
                 // TODO: Update salesforceTransaction
 
-                return Result<ContractCreationResponse>.Success(response);
+                return Result<ContractCreationDomainResponse>.Success(response);
             }
             catch (Exception ex)
             {
                 uow.Rollback();
-                return Result<ContractCreationResponse>.Failure(ex.Message);
+                return Result<ContractCreationDomainResponse>.Failure(ex.Message);
             }
         }
 
@@ -117,11 +125,13 @@ namespace Application.ContractCreation.Commands
 
         private async Task<RegEnterpriseConsum> SaveRegEnterPriseConsums(UpsertContractCommand request, Domain.Entities.Product? product, int contractId)
         {
-            var regConsums = new RegEnterpriseConsum();
-            regConsums.Identerprise = request.IDEnterprise;//cvs
-            regConsums.UnitsUsed = 0;
-            regConsums.Idcontract = contractId;
-            regConsums.Units = 200;
+            var regConsums = new RegEnterpriseConsum
+            {
+                Identerprise = request.IDEnterprise,//cvs
+                UnitsUsed = 0,
+                Idcontract = contractId,
+                Units = 200
+            };
             await uow.RegEnterpriseConsumsRepository.Add(regConsums);
             return regConsums;
         }

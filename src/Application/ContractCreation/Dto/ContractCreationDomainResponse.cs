@@ -2,7 +2,7 @@ using Domain.Entities;
 
 namespace Application.ContractCreation.Dto
 {
-    public class ContractCreationResponse
+    public class ContractCreationDomainResponse
     {
         public Contract Contract { get; set; } = new Contract();
         public List<ContractProduct> ContractProducts { get; set; } = new List<ContractProduct> { };

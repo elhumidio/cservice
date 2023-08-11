@@ -1,15 +1,14 @@
 using API.Converters;
 using Application.ContractCreation.Commands;
+using Application.ContractCreation.Dto;
 using Application.Contracts.DTO;
 using Application.Contracts.Queries;
-using Application.Core;
 using Application.EnterpriseContract.Queries;
-using Application.JobOffer.Commands;
-using Application.JobOffer.DTO;
 using Application.Managers.Queries;
 using Domain.Enums;
 using Microsoft.AspNetCore.Mvc;
 using TURI.ContractService.Contract.Models;
+using TURI.ContractService.Contracts.Contract.Models.ContractCreationFolder;
 
 namespace API.Controllers
 {
@@ -29,6 +28,7 @@ namespace API.Controllers
             });
             return HandleResult(result);
         }
+
         //[HttpGet]
         //[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AvailableUnitsResponse[]))]
         //[ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -220,31 +220,42 @@ namespace API.Controllers
             return HandleResult(result);
         }
 
-
         [HttpGet("{contractId}")]
         public async Task<IActionResult> GetRegionsAllowed(int contractId)
         {
             var result = await Mediator.Send(new GetRegionsAllowed.GetRegions
             {
                 ContractId = contractId
-                
             });
             return HandleResult(result);
         }
 
-
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ContractCreationResponse))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> CreateContract(UpsertContractCommand contract)
         {
-            try {
+            try
+            {
                 var result = await Mediator.Send(contract);
-                return HandleResult(result);
+                var convertedResult = result.Value.ToCommand();
+                return HandleResult(convertedResult);
             }
-            catch(Exception ex) {
+            catch (Exception ex)
+            {
                 var a = ex;
                 return Ok(ex.Message);
             }
-            
+        }
+
+
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(bool))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> UpdateContractSalesForceId(UpdateContractProductSalesforceIdRequest request)
+        {
+            var result = await Mediator.Send(request);
+            return HandleResult(result);
         }
     }
 }

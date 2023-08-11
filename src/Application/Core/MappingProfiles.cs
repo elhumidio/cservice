@@ -11,6 +11,7 @@ using Domain.DTO;
 using Domain.DTO.Requests;
 using Domain.Entities;
 
+
 namespace Application.Core
 {
     public class MappingProfiles : Profile

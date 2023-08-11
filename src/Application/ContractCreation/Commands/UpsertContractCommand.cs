@@ -6,7 +6,7 @@ using System.Runtime.Serialization;
 namespace Application.ContractCreation.Commands
 {
     [DataContract]
-    public class UpsertContractCommand : IRequest<Result<ContractCreationResponse>>
+    public class UpsertContractCommand : IRequest<Result<ContractCreationDomainResponse>>
     {
         [DataMember]
         public int IDSUser { get; set; } = -1;

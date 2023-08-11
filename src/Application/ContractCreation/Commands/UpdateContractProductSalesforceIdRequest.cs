@@ -12,6 +12,9 @@ namespace Application.ContractCreation.Commands
         public int ContractId { get; set; }
 
         [DataMember]
+        public string ContractSalesForceId { get; set; }
+
+        [DataMember]
         public List<ContractProductSalesforceId> ContractProductSalesforceIds { get; set; } = new List<ContractProductSalesforceId>();
     }
 }
