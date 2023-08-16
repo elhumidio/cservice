@@ -234,7 +234,7 @@ namespace API.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ContractCreationResponse))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ContractCreationResponse> CreateContract(ContractCreateRequest contract)
+        public async Task<IActionResult> CreateContract(ContractCreateRequest contract)
         {
             try
             {
