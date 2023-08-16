@@ -46,7 +46,7 @@ namespace Application.ContractCreation.Commands
                     var finishDate = DateTime.Now.AddDays(product?.Duration ?? 0);
                     response.Contract = await CreateContract(finishDate, request, company);
 
-                    if (response.Contract.Idcontract < 1)
+                    if (response.Contract == null)
                     {
                         return Result<ContractCreationDomainResponse>.Failure("Couldn't create contract");
                     }
@@ -86,12 +86,11 @@ namespace Application.ContractCreation.Commands
                             response.RegEnterpriseContracts.Add(await SaveRegEnterpriseContract(request, product, response.Contract.Idcontract, pl));
                         }
 
-                        EnterpriseUserJobVac enterpriseUserJobVac = new EnterpriseUserJobVac();
-                        mapper.Map(response.Contract, enterpriseUserJobVac);
-                        mapper.Map(response.ProductLines.First(), enterpriseUserJobVac);
-                        mapper.Map(product, enterpriseUserJobVac);
-
+                        var enterpriseUserJobVac = CreateUserJobVac(response, product);                        
                         await uow.EnterpriseUserJobVacRepository.Add(enterpriseUserJobVac);
+
+                        var cpr = CreateRegionRestrictionObject(response, company, prodId);
+                        await uow.ContractPublicationRegionRepository.AddRestriction(cpr);
                     }
                 }
                
@@ -108,6 +107,29 @@ namespace Application.ContractCreation.Commands
             }
         }
 
+        private static ContractPublicationRegion CreateRegionRestrictionObject(ContractCreationDomainResponse response, Enterprise company, int prodId)
+        {
+            return new()
+            {
+                CreationDate = DateTime.Now,
+                DeactivationDate = null,
+                ChkActive = true,
+                Idcontract = response.Contract.Idcontract,
+                Idproduct = prodId,
+                Idregion = company.Idregion,
+                Idsite = company.SiteId ?? (int)Sites.SPAIN
+            };
+        }
+
+        private EnterpriseUserJobVac CreateUserJobVac(ContractCreationDomainResponse response, Product? product)
+        {
+            EnterpriseUserJobVac enterpriseUserJobVac = new();
+            mapper.Map(response.Contract, enterpriseUserJobVac);
+            mapper.Map(response.ProductLines.First(), enterpriseUserJobVac);
+            mapper.Map(product, enterpriseUserJobVac);
+            return enterpriseUserJobVac;
+        }
+
         private async Task<Contract> CreateContract(DateTime finishDate, UpsertContractCommand request, Enterprise company)
         {
             Contract con = new();
@@ -120,7 +142,12 @@ namespace Application.ContractCreation.Commands
             con.Sftimestamp = DateTime.Now.Date;
             con.ChkApproved = true;
             var contractId = await uow.ContractRepository.CreateContract(con);
-            return con;
+            try {
+                uow.Commit();
+            }
+            catch (Exception) { }
+            uow.Rollback();
+            return null;
         }
 
         private async Task<RegEnterpriseConsum> SaveRegEnterPriseConsums(UpsertContractCommand request, Domain.Entities.Product? product, int contractId)

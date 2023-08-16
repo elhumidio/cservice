@@ -16,6 +16,8 @@ public class UnitOfWork : IUnitOfWork
     public IEnterpriseUserJobVacRepository EnterpriseUserJobVacRepository { get; set; }
     public ISalesforceTransactionRepository SalesforceTransRepository { get; set; }
 
+    public IContractPublicationRegionRepository ContractPublicationRegionRepository { get;set; }
+
     public IProductRepository ProductRepository { get; set; }
 
     public IEnterpriseRepository EnterpriseRepository { get; set; }

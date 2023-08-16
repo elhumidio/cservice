@@ -8,6 +8,7 @@ public interface IUnitOfWork : IDisposable
     IRegEnterpriseContractRepository RegEnterpriseContractRepository { get; }
     IEnterpriseUserJobVacRepository EnterpriseUserJobVacRepository { get; }
     ISalesforceTransactionRepository SalesforceTransRepository { get; }
+    IContractPublicationRegionRepository ContractPublicationRegionRepository { get;}
     IProductRepository ProductRepository { get; }
     IEnterpriseRepository EnterpriseRepository { get; }
     IProductLineRepository ProductLineRepository { get; }

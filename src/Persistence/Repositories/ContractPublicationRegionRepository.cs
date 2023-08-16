@@ -1,4 +1,5 @@
 using Domain.DTO;
+using Domain.Entities;
 using Domain.Repositories;
 using Microsoft.EntityFrameworkCore;
 
@@ -24,7 +25,16 @@ namespace Persistence.Repositories
             }
 
             return regionsAllowed;
+
         }
+
+
+        public async Task<bool> AddRestriction(ContractPublicationRegion regionRestriction)
+        {
+            var ret = await _dataContext.AddAsync(regionRestriction);
+            return ret != null;
+        }
+
 
         public async Task<List<RegionsAllowedDto>> GetAllowedRegionsNamesByContract(int contractId)
         {
@@ -41,6 +51,7 @@ namespace Persistence.Repositories
                 .ToListAsync();
             return res;
         }
+
     }
 }
 
