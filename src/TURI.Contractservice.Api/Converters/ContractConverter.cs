@@ -22,6 +22,7 @@ namespace API.Converters
                 cfg.CreateMap<RegEnterpriseConsum, RegEnterpriseConsumResponse>();
                 cfg.CreateMap<RegEnterpriseContract, RegEnterpriseContractResponse>();
                 cfg.CreateMap<UpsertContractCommand, ContractCreateRequest>();
+                cfg.CreateMap<ContractCreateRequest, UpsertContractCommand>();
             });
 
             _mapper = configuration.CreateMapper();
@@ -41,10 +42,10 @@ namespace API.Converters
             };
         }
 
-        public static UpsertContractCommand ToModel(this ContractCreateRequest item)
+        public static UpsertContractCommand ToDomain(this ContractCreateRequest item)
         {
             var response = new UpsertContractCommand();
-            response = item.ToModel();
+            response = _mapper.Map(item,response);
             return response;
         }
 

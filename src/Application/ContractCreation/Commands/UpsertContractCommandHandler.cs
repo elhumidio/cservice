@@ -56,6 +56,11 @@ namespace Application.ContractCreation.Commands
                         .Where(pl => pl.Idsite == company.SiteId && (product.ChkService ? pl.IdjobVacType == null : pl.IdjobVacType != null
                         && pl.Idslanguage == request.IDSLanguage))
                         .ToList();
+
+                    /*var productLines1 = uow.ProductLineRepository
+                        .GetProductLinesByProductId(prodId).Where(pl => pl.Idsite == company.SiteId && pl.Idslanguage == request.IDSLanguage)
+                        .ToList();*/
+
                     response.ProductLines = productLines;
                     foreach (var pl in productLines)
                     {
@@ -66,11 +71,22 @@ namespace Application.ContractCreation.Commands
                             Price = product.Price,
                             Units = pl.Units
                         };
-                        response.ContractProducts.Add(cp);
                         mapper.Map(pl, cp);
                         cp.Idcontract = response.Contract.Idcontract;
+               
+                  
+                  
                         var valueId = await uow.ContractProductRepository.CreateContractProduct(cp);
-                        uow.Commit();
+                        response.ContractProducts.Add(cp);
+                        try {
+                            uow.Commit();
+                        }
+                        catch (Exception ) {
+
+                            uow.Rollback();
+
+                        }
+                        
                         if (valueId < 1)
                         {
                             return Result<ContractCreationDomainResponse>.Failure("Couldn't create contract");
@@ -93,9 +109,15 @@ namespace Application.ContractCreation.Commands
                         await uow.ContractPublicationRegionRepository.AddRestriction(cpr);
                     }
                 }
-               
-
-                uow.Commit();
+                try
+                {
+                    uow.Commit();
+                }
+                catch (Exception) {
+                    //TODO rollback de contrato 
+                    uow.Rollback();
+                }
+                
                 // TODO: Update salesforceTransaction
 
                 return Result<ContractCreationDomainResponse>.Success(response);
@@ -112,12 +134,16 @@ namespace Application.ContractCreation.Commands
             return new()
             {
                 CreationDate = DateTime.Now,
-                DeactivationDate = null,
+                DeactivationDate = DateTime.Now.AddDays(365),
                 ChkActive = true,
                 Idcontract = response.Contract.Idcontract,
                 Idproduct = prodId,
                 Idregion = company.Idregion,
-                Idsite = company.SiteId ?? (int)Sites.SPAIN
+                Idsite = company.SiteId ?? (int)Sites.SPAIN,
+                DeactivationBouserId = string.Empty,
+                CreationBouserId = "backend",
+   
+
             };
         }
 
@@ -127,6 +153,7 @@ namespace Application.ContractCreation.Commands
             mapper.Map(response.Contract, enterpriseUserJobVac);
             mapper.Map(response.ProductLines.First(), enterpriseUserJobVac);
             mapper.Map(product, enterpriseUserJobVac);
+            enterpriseUserJobVac.JobVacUsed = enterpriseUserJobVac.MaxJobVacancies;
             return enterpriseUserJobVac;
         }
 
@@ -141,13 +168,8 @@ namespace Application.ContractCreation.Commands
             con.ContractDate = DateTime.Now.Date;
             con.Sftimestamp = DateTime.Now.Date;
             con.ChkApproved = true;
-            var contractId = await uow.ContractRepository.CreateContract(con);
-            try {
-                uow.Commit();
-            }
-            catch (Exception) { }
-            uow.Rollback();
-            return null;
+            var contractId = await uow.ContractRepository.CreateContract(con); 
+            return con;
         }
 
         private async Task<RegEnterpriseConsum> SaveRegEnterPriseConsums(UpsertContractCommand request, Domain.Entities.Product? product, int contractId)
@@ -170,6 +192,7 @@ namespace Application.ContractCreation.Commands
             mapper.Map(product, regContract);
             regContract.Idcontract = contractId;
             regContract.Units = pl.Units;
+            regContract.IdjobVacType = pl.IdjobVacType ?? 0;
             var idreg = await uow.RegEnterpriseContractRepository.Add(regContract);
             return regContract;
         }

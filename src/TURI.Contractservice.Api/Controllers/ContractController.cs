@@ -238,7 +238,7 @@ namespace API.Controllers
         {
             try
             {
-                var requestToModel = contract.ToModel();
+                var requestToModel = contract.ToDomain();
                 var result = await Mediator.Send(requestToModel);
                 var convertedResult = result.Value.ToCommand();
                 return HandleResult(convertedResult);

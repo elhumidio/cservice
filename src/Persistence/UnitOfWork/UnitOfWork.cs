@@ -32,7 +32,8 @@ public class UnitOfWork : IUnitOfWork
         ISalesforceTransactionRepository salesforceTransactionRepository,
         IProductRepository productRepository,
         IEnterpriseRepository enterpriseRepository,
-        IProductLineRepository productLineRepository)
+        IProductLineRepository productLineRepository,
+        IContractPublicationRegionRepository contractPublicationRegionRepository)
     {
         _dbContext = dbContext;
         ContractRepository = contractRepository;
@@ -44,6 +45,7 @@ public class UnitOfWork : IUnitOfWork
         ProductRepository = productRepository;
         EnterpriseRepository = enterpriseRepository;
         ProductLineRepository = productLineRepository;
+        ContractPublicationRegionRepository = contractPublicationRegionRepository;
     }
 
     public void Save()
