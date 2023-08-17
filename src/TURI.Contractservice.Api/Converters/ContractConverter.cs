@@ -2,6 +2,7 @@ using Application.ContractCreation.Commands;
 using Application.ContractCreation.Dto;
 using Application.Contracts.DTO;
 using AutoMapper;
+using Domain.DTO;
 using Domain.DTO.Requests;
 using Domain.Entities;
 using TURI.ContractService.Contract.Models;
@@ -23,6 +24,7 @@ namespace API.Converters
                 cfg.CreateMap<RegEnterpriseContract, RegEnterpriseContractResponse>();
                 cfg.CreateMap<UpsertContractCommand, ContractCreateRequest>();
                 cfg.CreateMap<ContractCreateRequest, UpsertContractCommand>();
+                cfg.CreateMap<ContractProductShortDto, ContractProductShortDtoResponse>();
             });
 
             _mapper = configuration.CreateMapper();
@@ -45,7 +47,7 @@ namespace API.Converters
         public static UpsertContractCommand ToDomain(this ContractCreateRequest item)
         {
             var response = new UpsertContractCommand();
-            response = _mapper.Map(item,response);
+            response = _mapper.Map(item, response);
             return response;
         }
 
@@ -103,6 +105,13 @@ namespace API.Converters
             return response;
         }
 
+        public static ContractProductShortDtoResponse ToDomain(this ContractProductShortDto item)
+        {
+            var response = new ContractProductShortDtoResponse();
+            response = _mapper.Map(item, response);
+            return response;
+        }
+
         public static ContractCreationResponse ToCommand(this ContractCreationDomainResponse item)
         {
             var response = new ContractCreationResponse
@@ -111,7 +120,8 @@ namespace API.Converters
                 ProductLines = item.ProductLines.Select(pl => pl.ToDomain()).ToList(),
                 Contract = item.Contract.ToDomain(),
                 RegEnterpriseContracts = item.RegEnterpriseContracts.Select(regc => regc.ToDomain()).ToList(),
-                RegEnterpriseConsums = item.RegEnterpriseConsums.Select(regco => regco.ToDomain()).ToList()
+                RegEnterpriseConsums = item.RegEnterpriseConsums.Select(regco => regco.ToDomain()).ToList(),
+                contractProductShortDtoResponses = item.ProductsDescriptions.Select(v => v.ToDomain()).ToList()
             };
             return response;
         }

@@ -1,4 +1,5 @@
 using AutoMapper;
+using Domain.DTO;
 using Domain.Entities;
 using TURI.ContractService.Contracts.Contract.Models.ContractCreationFolder;
 
@@ -14,6 +15,7 @@ namespace TURI.Contractservice.Converters.Mappings
             CreateMap<ProductLine, ProductLineResponse>();
             CreateMap<RegEnterpriseConsum, RegEnterpriseConsumResponse>();
             CreateMap<RegEnterpriseContract, RegEnterpriseContractResponse>();
+            CreateMap<ContractProductShortDto, ContractProductShortDtoResponse>();
         }
     }
 }

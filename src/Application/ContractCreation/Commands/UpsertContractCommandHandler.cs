@@ -1,12 +1,12 @@
 using API.DataContext;
 using Application.ContractCreation.Dto;
+using Application.Contracts.Queries;
 using Application.Core;
 using AutoMapper;
 using Domain.Entities;
 using Domain.Enums;
 using MediatR;
-
-
+using Application.Extensions;
 namespace Application.ContractCreation.Commands
 {
     public class CreateContractCommandHandler : IRequestHandler<UpsertContractCommand, Result<ContractCreationDomainResponse>>
@@ -14,18 +14,19 @@ namespace Application.ContractCreation.Commands
         private readonly IUnitOfWork uow;
         private readonly IMapper mapper;
         private const int WELCOME_PRODUCT = 110;
+        private readonly IMediator _mediator;
 
-        public CreateContractCommandHandler(IUnitOfWork _unitOfWork, IMapper _mapper)
+        public CreateContractCommandHandler(IUnitOfWork _unitOfWork, IMapper _mapper, IMediator mediator)
         {
             uow = _unitOfWork;
             mapper = _mapper;
+            _mediator = mediator;
         }
 
         public async Task<Result<ContractCreationDomainResponse>> Handle(UpsertContractCommand request, CancellationToken cancellationToken)
         {
             try
             {
-
                 //var salesforceTransaction = new SalesforceTransaction
                 //{
                 //    StartDate = DateTime.Now,
@@ -38,30 +39,23 @@ namespace Application.ContractCreation.Commands
                 //  var transId = uow.SalesforceTransRepository.Add(salesforceTransaction);
                 ContractCreationDomainResponse response = new();
                 var company = uow.EnterpriseRepository.Get(request.IDEnterprise);
-
-                //Apply restriction region
+                var product = uow.ProductRepository.Get(request.ProductsList?.FirstOrDefault() ?? 110).FirstOrDefault(p => p.Idsite == request.IDSite);
+                var finishDate = DateTime.Now.AddDays(product?.Duration ?? 0);
+                response.Contract = await CreateContract(finishDate, request, company);
                 foreach (var prodId in request.ProductsList)
                 {
-                    var product = uow.ProductRepository.Get(prodId).FirstOrDefault(p => p.Idsite == request.IDSite);
-                    var finishDate = DateTime.Now.AddDays(product?.Duration ?? 0);
-                    response.Contract = await CreateContract(finishDate, request, company);
-
                     if (response.Contract == null)
                     {
                         return Result<ContractCreationDomainResponse>.Failure("Couldn't create contract");
                     }
-                    //Añadir logica de calculo de fecha segun los productos
-                    //var product = uow.ProductRepository.Get(110);
                     var productLines = uow.ProductLineRepository.GetProductLinesByProductId(prodId)
                         .Where(pl => pl.Idsite == company.SiteId && (product.ChkService ? pl.IdjobVacType == null : pl.IdjobVacType != null
-                        && pl.Idslanguage == request.IDSLanguage))
+                        && pl.Idslanguage == request.IDSLanguage)).GroupBy(g => g.Idproduct)
                         .ToList();
 
-                    /*var productLines1 = uow.ProductLineRepository
-                        .GetProductLinesByProductId(prodId).Where(pl => pl.Idsite == company.SiteId && pl.Idslanguage == request.IDSLanguage)
-                        .ToList();*/
-
-                    response.ProductLines = productLines;
+                    response.ProductLines = uow.ProductLineRepository.GetProductLinesByProductId(prodId)
+                        .Where(pl => pl.Idsite == company.SiteId && (product.ChkService ? pl.IdjobVacType == null : pl.IdjobVacType != null
+                        && pl.Idslanguage == request.IDSLanguage)).ToList();
                     foreach (var pl in productLines)
                     {
                         var cp = new ContractProduct
@@ -69,29 +63,26 @@ namespace Application.ContractCreation.Commands
                             Idproduct = prodId,
                             Idcontract = response.Contract.Idcontract,
                             Price = product.Price,
-                            Units = pl.Units
+                            Units = pl.First().Units
                         };
-                        mapper.Map(pl, cp);
+                        mapper.Map(pl.First(), cp);
                         cp.Idcontract = response.Contract.Idcontract;
-               
-                  
-                  
+
                         var valueId = await uow.ContractProductRepository.CreateContractProduct(cp);
                         response.ContractProducts.Add(cp);
-                        try {
+                        try
+                        {
                             uow.Commit();
                         }
-                        catch (Exception ) {
-
+                        catch (Exception)
+                        {
                             uow.Rollback();
-
                         }
-                        
+
                         if (valueId < 1)
                         {
                             return Result<ContractCreationDomainResponse>.Failure("Couldn't create contract");
                         }
-
 
                         if (request.IDSite == (int)Sites.PORTUGAL && product.ChkService)
                         {
@@ -99,25 +90,35 @@ namespace Application.ContractCreation.Commands
                         }
                         if (!product.ChkService)
                         {
-                            response.RegEnterpriseContracts.Add(await SaveRegEnterpriseContract(request, product, response.Contract.Idcontract, pl));
+                            response.RegEnterpriseContracts.Add(await SaveRegEnterpriseContract(request, product, response.Contract.Idcontract, pl.First()));
                         }
 
-                        var enterpriseUserJobVac = CreateUserJobVac(response, product);                        
+                        var enterpriseUserJobVac = CreateUserJobVac(response, product);
                         await uow.EnterpriseUserJobVacRepository.Add(enterpriseUserJobVac);
 
                         var cpr = CreateRegionRestrictionObject(response, company, prodId);
                         await uow.ContractPublicationRegionRepository.AddRestriction(cpr);
+
+                        //get all products by contract
+                        var products =await _mediator.Send(new GetAllProductsByContract.GetProducts
+                        {
+                            ContractId = response.Contract.Idcontract,
+                            LanguageID = request.IDSLanguage,
+                            SiteId = request.IDSite
+                        });
+
+                        response.ProductsDescriptions = products.Value;
                     }
                 }
                 try
                 {
                     uow.Commit();
                 }
-                catch (Exception) {
-                    //TODO rollback de contrato 
+                catch (Exception)
+                {
                     uow.Rollback();
                 }
-                
+
                 // TODO: Update salesforceTransaction
 
                 return Result<ContractCreationDomainResponse>.Success(response);
@@ -142,8 +143,6 @@ namespace Application.ContractCreation.Commands
                 Idsite = company.SiteId ?? (int)Sites.SPAIN,
                 DeactivationBouserId = string.Empty,
                 CreationBouserId = "backend",
-   
-
             };
         }
 
@@ -168,7 +167,7 @@ namespace Application.ContractCreation.Commands
             con.ContractDate = DateTime.Now.Date;
             con.Sftimestamp = DateTime.Now.Date;
             con.ChkApproved = true;
-            var contractId = await uow.ContractRepository.CreateContract(con); 
+            var contractId = await uow.ContractRepository.CreateContract(con);
             return con;
         }
 

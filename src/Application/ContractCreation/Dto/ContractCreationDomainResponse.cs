@@ -1,3 +1,4 @@
+using Domain.DTO;
 using Domain.Entities;
 
 namespace Application.ContractCreation.Dto
@@ -9,5 +10,6 @@ namespace Application.ContractCreation.Dto
         public List<RegEnterpriseContract> RegEnterpriseContracts { get; set; } = new List<RegEnterpriseContract> { };
         public List<RegEnterpriseConsum> RegEnterpriseConsums { get; set; } = new List<RegEnterpriseConsum> { };
         public List<ProductLine> ProductLines { get; set; } = new List<ProductLine> { };
+        public List<ContractProductShortDto> ProductsDescriptions { get; set; } = new List<ContractProductShortDto> { };
     }
 }
