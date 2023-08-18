@@ -1,10 +1,6 @@
-using Newtonsoft.Json;
-using System.ComponentModel.DataAnnotations.Schema;
-
-namespace Domain.Entities
+namespace TURI.ContractService.Contracts.Contract.Models.ContractCreationFolder
 {
-    [Table("TcontractProduct")]
-    public partial class ContractProduct
+    public class ContractProductResponse
     {
         public int Idcontract { get; set; }
         public int Idproduct { get; set; }
@@ -16,7 +12,5 @@ namespace Domain.Entities
         public string? IdsalesForce { get; set; }
         public decimal? CommercialDiscount { get; set; }
         public decimal? CouponDiscount { get; set; }
-        [JsonIgnore]
-        public virtual Contract IdcontractNavigation { get; set; } = null!;
     }
 }

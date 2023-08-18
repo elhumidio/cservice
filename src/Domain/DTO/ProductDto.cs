@@ -1,8 +1,8 @@
 using Domain.Entities;
 
-namespace Application.Product.DTO
+namespace Domain.DTO
 {
-    public partial class ProductDto
+    public class ProductDto
     {
         public int Idproduct { get; set; }
         public int Idsite { get; set; }
