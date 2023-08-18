@@ -40,7 +40,10 @@ namespace API.Controllers
         {
             return Ok(result);
         }
-
+        protected IActionResult HandleResult(bool result)
+        {
+            return Ok(result);
+        }
 
         protected IActionResult HandleResult(VerifyGoalsOfferResponse result)
         {

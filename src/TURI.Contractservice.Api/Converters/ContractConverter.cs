@@ -5,8 +5,10 @@ using AutoMapper;
 using Domain.DTO;
 using Domain.DTO.Requests;
 using Domain.Entities;
+using Microsoft.AspNetCore.Mvc.Filters;
 using TURI.ContractService.Contract.Models;
 using TURI.ContractService.Contracts.Contract.Models.ContractCreationFolder;
+using TURI.ContractService.Contracts.Contract.Models.Partials;
 using TURI.ContractService.Contracts.Contract.Models.Requests;
 
 namespace API.Converters
@@ -22,9 +24,10 @@ namespace API.Converters
                 cfg.CreateMap<ProductLine, ProductLineResponse>();
                 cfg.CreateMap<RegEnterpriseConsum, RegEnterpriseConsumResponse>();
                 cfg.CreateMap<RegEnterpriseContract, RegEnterpriseContractResponse>();
-                cfg.CreateMap<UpsertContractCommand, ContractCreateRequest>();
-                cfg.CreateMap<ContractCreateRequest, UpsertContractCommand>();
+                cfg.CreateMap<CreateContractCommand, ContractCreateRequest>();
+                cfg.CreateMap<ContractCreateRequest, CreateContractCommand>();
                 cfg.CreateMap<ContractProductShortDto, ContractProductShortDtoResponse>();
+                cfg.CreateMap<ContractProductSalesforceIdRequest, ContractProductSalesforceId>();
             });
 
             _mapper = configuration.CreateMapper();
@@ -44,9 +47,9 @@ namespace API.Converters
             };
         }
 
-        public static UpsertContractCommand ToDomain(this ContractCreateRequest item)
+        public static CreateContractCommand ToDomain(this ContractCreateRequest item)
         {
-            var response = new UpsertContractCommand();
+            var response = new CreateContractCommand();
             response = _mapper.Map(item, response);
             return response;
         }
@@ -123,6 +126,24 @@ namespace API.Converters
                 RegEnterpriseConsums = item.RegEnterpriseConsums.Select(regco => regco.ToDomain()).ToList(),
                 contractProductShortDtoResponses = item.ProductsDescriptions.Select(v => v.ToDomain()).ToList()
             };
+            return response;
+        }
+
+        public static ContractProductSalesforceId ToModel(this ContractProductSalesforceIdRequest item)
+        {
+            var response = new ContractProductSalesforceId();
+            response = _mapper.Map(item, response);
+            return response;  
+        }
+
+
+
+        public static UpdateContractProductSalesforceIdRequest ToCommand(this WrapperContractProductSalesforceIdRequest item)
+        {
+            var response = new UpdateContractProductSalesforceIdRequest();
+            response.ContractSalesForceId = item.ContractSalesForceId;
+            response.ContractId = item.ContractId;
+            response.ContractProductSalesforceIds = item.ContractProductSalesforceIds.Select(c => c.ToModel()).ToList();
             return response;
         }
     }

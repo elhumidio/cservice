@@ -6,10 +6,10 @@ using AutoMapper;
 using Domain.Entities;
 using Domain.Enums;
 using MediatR;
-using Application.Extensions;
+
 namespace Application.ContractCreation.Commands
 {
-    public class CreateContractCommandHandler : IRequestHandler<UpsertContractCommand, Result<ContractCreationDomainResponse>>
+    public class CreateContractCommandHandler : IRequestHandler<CreateContractCommand, Result<ContractCreationDomainResponse>>
     {
         private readonly IUnitOfWork uow;
         private readonly IMapper mapper;
@@ -23,7 +23,7 @@ namespace Application.ContractCreation.Commands
             _mediator = mediator;
         }
 
-        public async Task<Result<ContractCreationDomainResponse>> Handle(UpsertContractCommand request, CancellationToken cancellationToken)
+        public async Task<Result<ContractCreationDomainResponse>> Handle(CreateContractCommand request, CancellationToken cancellationToken)
         {
             try
             {
@@ -100,7 +100,7 @@ namespace Application.ContractCreation.Commands
                         await uow.ContractPublicationRegionRepository.AddRestriction(cpr);
 
                         //get all products by contract
-                        var products =await _mediator.Send(new GetAllProductsByContract.GetProducts
+                        var products = await _mediator.Send(new GetAllProductsByContract.GetProducts
                         {
                             ContractId = response.Contract.Idcontract,
                             LanguageID = request.IDSLanguage,
@@ -130,6 +130,7 @@ namespace Application.ContractCreation.Commands
             }
         }
 
+        #region PRIVATE METHODS
         private static ContractPublicationRegion CreateRegionRestrictionObject(ContractCreationDomainResponse response, Enterprise company, int prodId)
         {
             return new()
@@ -156,7 +157,7 @@ namespace Application.ContractCreation.Commands
             return enterpriseUserJobVac;
         }
 
-        private async Task<Contract> CreateContract(DateTime finishDate, UpsertContractCommand request, Enterprise company)
+        private async Task<Contract> CreateContract(DateTime finishDate, CreateContractCommand request, Enterprise company)
         {
             Contract con = new();
             con = mapper.Map(request, con);
@@ -171,7 +172,7 @@ namespace Application.ContractCreation.Commands
             return con;
         }
 
-        private async Task<RegEnterpriseConsum> SaveRegEnterPriseConsums(UpsertContractCommand request, Domain.Entities.Product? product, int contractId)
+        private async Task<RegEnterpriseConsum> SaveRegEnterPriseConsums(CreateContractCommand request, Domain.Entities.Product? product, int contractId)
         {
             var regConsums = new RegEnterpriseConsum
             {
@@ -184,7 +185,7 @@ namespace Application.ContractCreation.Commands
             return regConsums;
         }
 
-        private async Task<RegEnterpriseContract> SaveRegEnterpriseContract(UpsertContractCommand request, Domain.Entities.Product? product, int contractId, ProductLine pl)
+        private async Task<RegEnterpriseContract> SaveRegEnterpriseContract(CreateContractCommand request, Domain.Entities.Product? product, int contractId, ProductLine pl)
         {
             var regContract = new RegEnterpriseContract();
             mapper.Map(request, regContract);
@@ -195,5 +196,6 @@ namespace Application.ContractCreation.Commands
             var idreg = await uow.RegEnterpriseContractRepository.Add(regContract);
             return regContract;
         }
+        #endregion
     }
 }

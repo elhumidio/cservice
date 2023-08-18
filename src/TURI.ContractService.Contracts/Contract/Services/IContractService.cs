@@ -15,4 +15,6 @@ public interface IContractService
 
     [Post("/api/contract/CreateContract")]
     Task<ContractCreationResponse> CreateContract(ContractCreateRequest contract);
+
+    Task<bool> UpdateContractSalesForceId(WrapperContractProductSalesforceIdRequest request);
 }

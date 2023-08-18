@@ -244,9 +244,8 @@ namespace API.Controllers
                 return HandleResult(convertedResult);
             }
             catch (Exception ex)
-            {
-                var a = ex;
-                return Ok(ex.Message);
+            {                
+                return BadRequest(ex.Message);
             }
         }
 
@@ -254,10 +253,19 @@ namespace API.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(bool))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> UpdateContractSalesForceId(UpdateContractProductSalesforceIdRequest request)
+        public async Task<IActionResult> UpdateContractSalesForceId(WrapperContractProductSalesforceIdRequest request)
         {
-            var result = await Mediator.Send(request);
-            return HandleResult(result);
+            try
+            {
+                var requestToModel = request.ToCommand();
+                var result = await Mediator.Send(requestToModel);
+                return HandleResult(result.IsSuccess);
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            
         }
     }
 }

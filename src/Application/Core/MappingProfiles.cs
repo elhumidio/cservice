@@ -63,7 +63,7 @@ namespace Application.Core
                 .ForMember(a => a.Redirection, opt => opt.MapFrom(src => src.ApplicationUrl))
                 .ForMember(a => a.AppEmail, opt => opt.MapFrom(src => src.ApplicationEmail));
 
-            CreateMap<UpsertContractCommand, Contract>();
+            CreateMap<CreateContractCommand, Contract>();
             CreateMap<Enterprise, Contract>();
             CreateMap<ProductLine, ContractProduct>();
             CreateMap<Product, RegEnterpriseContract>();
@@ -71,7 +71,7 @@ namespace Application.Core
             CreateMap<Product, EnterpriseUserJobVac>();
             CreateMap<ProductLine, EnterpriseUserJobVac>()
                 .ForMember(a => a.MaxJobVacancies, opt => opt.MapFrom(src => src.Units));
-            CreateMap<UpsertContractCommand, RegEnterpriseContract>();
+            CreateMap<CreateContractCommand, RegEnterpriseContract>();
             CreateMap<Product, ContractProduct>();
             CreateMap<UpdateContractProductSalesforceIdRequest, UpdateContractProductSForceId>();
         }
