@@ -221,7 +221,7 @@ namespace Application.JobOffer.Queries
                 List<string> response = new List<string>();
                 foreach (var task in tasks)
                 {
-                    response.Add(GetTranslationByLanguage(languageId, task.Translations));
+                    response.Add(task.Translations.TextName);
                 }
                 return response;
             }
@@ -236,7 +236,7 @@ namespace Application.JobOffer.Queries
                 List<string> response = new List<string>();
                 foreach (var skill in skills)
                 {
-                    response.Add(GetTranslationByLanguage(languageId, skill.Translations));
+                    response.Add(skill.Translations.TextName);
                 }
                 return response;
             }
@@ -251,7 +251,7 @@ namespace Application.JobOffer.Queries
                 List<string> response = new List<string>();
                 foreach (var preference in preferences)
                 {
-                    response.Add(GetTranslationByLanguage(languageId, preference.Translations));
+                    response.Add(preference.Translations.TextName);
                 }
                 return response;
             }
@@ -266,34 +266,9 @@ namespace Application.JobOffer.Queries
                 List<string> response = new List<string>();
                 foreach (var benefit in benefits)
                 {
-                    response.Add(GetTranslationByLanguage(languageId, benefit.Translations));
+                    response.Add(benefit.Translations.TextName);
                 }
                 return response;
-            }
-
-            private string GetTranslationByLanguage(int languageId, TranslationsWebResponse twr)
-            {
-                string translation = string.Empty;
-                if (twr == null)
-                {
-                    return translation;
-                }
-                switch (languageId)
-                {
-                    case 7:
-                        translation = twr.Spanish;
-                        break;
-                    case 14:
-                        translation = twr.English;
-                        break;
-                    case 15:
-                        translation = twr.Italian;
-                        break;
-                    case 17:
-                        translation = twr.Portuguese;
-                        break;
-                }
-                return translation;
             }
         }
     }

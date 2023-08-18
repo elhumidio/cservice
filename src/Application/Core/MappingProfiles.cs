@@ -24,7 +24,10 @@ namespace Application.Core
             CreateMap<JobVacancy, CreateOfferCommand>().MapOnlyIfChanged().ForMember(a => a.IdjobVacancy, opt => opt.Ignore());
             CreateMap<JobVacancy, UpdateOfferCommand>().MapOnlyIfChanged().ForMember(a => a.IdjobVacancy, opt => opt.Ignore());
             CreateMap<UpdateOfferCommand, JobVacancy>().MapOnlyIfChanged().ForMember(a => a.IdjobVacancy, opt => opt.Ignore()).
-                ForMember(a => a.IdworkPermit, opt => opt.MapFrom(src => src.IdworkPermit.FirstOrDefault())); ;
+                ForMember(a => a.IdworkPermit, opt => opt.MapFrom(src => src.IdworkPermit.FirstOrDefault()))
+                .ForMember(a => a.ChkFilled, opt => opt.Ignore())
+                .ForMember(a => a.FinishDate, opt => opt.Ignore())
+                .ForMember(a => a.FilledDate, opt => opt.Ignore());
             CreateMap<RegJobVacMatching, RegJobVacMatchingDto>();
             CreateMap<Area, AreaDTO>();
             CreateMap<Degree, DegreeDTO>();

@@ -51,6 +51,7 @@ namespace Application.JobOffer.Queries
                 flowOffer.RegionId = offer.Idregion;
                 flowOffer.QuestId = offer.Idquest.GetValueOrDefault();
                 flowOffer.SiteId = offer.Idsite;
+                flowOffer.IntegrationId = offer.IntegrationId;
                 if (!string.IsNullOrEmpty(offer.ExternalUrl))
                 {
                     flowOffer.ExternalURL = offer.ExternalUrl;

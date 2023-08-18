@@ -83,7 +83,7 @@ namespace Application.JobOffer.Validations
               || obj.IdjobVacType == (int)VacancyType.WelcomeSP
               || obj.IdjobVacType == (int)VacancyType.WelcomePT;
             obj.ChkBlindVac = obj.ChkBlindVac == null ? true : obj.ChkBlindVac;
-            obj.ChkFilled = obj.ChkFilled == null ? false : obj.ChkFilled;
+            //obj.ChkFilled = obj.ChkFilled == null ? false : obj.ChkFilled;
             obj.ChkDeleted = obj.ChkFilled == null  ? false : obj.ChkDeleted;
             obj.ChkEnterpriseVisible = obj.ChkEnterpriseVisible == null ? true : obj.ChkEnterpriseVisible;
             obj.ChkBlindSalary = obj.ChkBlindSalary == null ? false : obj.ChkBlindSalary;

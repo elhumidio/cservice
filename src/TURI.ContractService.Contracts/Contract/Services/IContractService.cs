@@ -7,4 +7,7 @@ public interface IContractService
 {
     [Get("/api/contract/GetAvailableUnits")]
     Task<AvailableUnitsResponse[]> GetAvailableUnits(int contractId);
+
+    [Post("/api/JobOffer/GetEnterprisesByOffers")]
+    Task<List<int>> GetEnterprisesByOffers(List<int> offerIds);
 }
