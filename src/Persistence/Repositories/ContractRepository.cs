@@ -112,5 +112,26 @@ namespace Persistence.Repositories
 
             return list;
         }
+
+        public async Task<int> CreateContract(Contract contract)
+        {
+            try {
+                var a = _dataContext.Add(contract).Entity;
+                var saving = await _dataContext.SaveChangesAsync();
+                return contract.Idcontract;
+            }   
+            catch(Exception ex) {
+                var a = ex;
+                return -1;
+            }               
+        }
+
+        public async Task<bool> UpdateContractSalesforceId(int contractId, string salesforceId)
+        {
+            var contract =await  _dataContext.Contracts.FirstOrDefaultAsync(c => c.Idcontract == contractId);
+            contract.SalesforceId = salesforceId;
+            var ret = await _dataContext.SaveChangesAsync();
+            return ret > 0;
+        }
     }
 }

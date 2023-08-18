@@ -12,6 +12,7 @@ using MediatR;
 using MediatR.Extensions.FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
+using Newtonsoft.Json;
 using Persistence.Repositories;
 using System.Reflection;
 using TURI.ApplicationService.Contracts.Application.Services;
@@ -28,6 +29,11 @@ namespace API.Extensions
             {
                 opt.UseSqlServer(config.GetConnectionString("DefaultConnection"));
             });
+            services.AddMvc()
+                .AddNewtonsoftJson(options =>
+                {
+                    options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+                });
             services.AddFluentValidation(new[] { typeof(CreateOfferCommandHandler).GetTypeInfo().Assembly });
             services.AddMediatR(typeof(CreateOfferCommand).Assembly);
             services.AddMediatR(typeof(ListActives.Handler).Assembly);
@@ -38,6 +44,7 @@ namespace API.Extensions
             services.AddSingleton(s => Refit.RestService.For<IApplicationService>(config["ExternalServices:ApplicationService"] ?? ""));
             services.AddSingleton(s => Refit.RestService.For<IEnterpriseService>(config["ExternalServices:EnterpriseService"] ?? ""));
             services.AddSingleton(s => Refit.RestService.For<ISearchService>(config["ExternalServices:SearchService"] ?? ""));
+
             #region MAPPING REPOSITORIES
 
             services.AddScoped<IAimwelErrorsRepository, AimwelErrorsRepository>();
@@ -90,7 +97,13 @@ namespace API.Extensions
             services.AddScoped<IQuestService, QuestService>();
             services.AddScoped<ICurrencyRepository, CurrencyRepository>();
             services.AddScoped<IFieldRepository, FieldRepository>();
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<IRegEnterpriseConsumsRepository, RegEnterpriseConsumsRepository>();
+            services.AddScoped<IEnterpriseUserJobVacRepository, EnterpriseUserJobVacRepository>();
+            services.AddScoped<ISalesforceTransactionRepository, SalesforceTransactionRepository>();
+
             #endregion MAPPING REPOSITORIES
+
             services.AddScoped<IGeoNamesConector, GeoNamesConector>();
             return services;
         }

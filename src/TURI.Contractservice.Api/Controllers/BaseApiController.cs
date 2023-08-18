@@ -4,6 +4,7 @@ using Application.JobOffer.DTO;
 using Domain.DTO;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using TURI.ContractService.Contracts.Contract.Models.ContractCreationFolder;
 
 namespace API.Controllers
 {
@@ -31,12 +32,18 @@ namespace API.Controllers
         {
             return Ok(result);
         }
-
+        protected IActionResult HandleResult(ContractCreationResponse result)
+        {
+            return Ok(result);
+        }
         protected IActionResult HandleResult(ContractResult result)
         {
             return Ok(result);
         }
-
+        protected IActionResult HandleResult(bool result)
+        {
+            return Ok(result);
+        }
 
         protected IActionResult HandleResult(VerifyGoalsOfferResponse result)
         {

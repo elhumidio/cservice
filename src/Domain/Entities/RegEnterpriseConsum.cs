@@ -1,17 +1,14 @@
 using Newtonsoft.Json;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Domain.Entities
 {
-    [Table("TregEnterpriseContract")]
-    public partial class RegEnterpriseContract
+    public partial class RegEnterpriseConsum
     {
         public int Identerprise { get; set; }
         public int Idcontract { get; set; }
-        public int IdjobVacType { get; set; }
+        public int Idproduct { get; set; }
         public int Units { get; set; }
         public int UnitsUsed { get; set; }
-        public int? IdjobVacTypeComp { get; set; }
         [JsonIgnore]
         public virtual Contract IdcontractNavigation { get; set; } = null!;
     }

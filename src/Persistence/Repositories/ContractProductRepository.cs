@@ -1,4 +1,7 @@
+using Domain.DTO.Requests;
+using Domain.Entities;
 using Domain.Repositories;
+using Microsoft.EntityFrameworkCore;
 
 namespace Persistence.Repositories
 {
@@ -36,6 +39,30 @@ namespace Persistence.Repositories
             .Select(o => o.ppl.cp.Idproduct)
             .First();
             return res;
+        }
+
+        public async Task<int> CreateContractProduct(ContractProduct contractProduct)
+        {
+            var ret = await _dataContext.Set<ContractProduct>().AddAsync(contractProduct);            
+            return contractProduct.Idcontract;
+        }
+
+        public async Task<bool> UpdateContractProductSalesforceId(UpdateContractProductSForceId items)
+        {
+            
+            var contractProduct = await _dataContext.ContractProducts.Where(c => c.Idcontract == items.ContractId).ToListAsync();
+
+            foreach (var item in contractProduct)
+            {
+
+                var a =  items.ContractProductSalesforceIds.Where(i => i.ProductId == item.Idproduct).FirstOrDefault();
+                if (a == null)
+                    continue;
+                a.SalesforceId = item.IdsalesForce;
+            }
+            
+            var ret = await _dataContext.SaveChangesAsync();
+            return ret > 0;
         }
     }
 }

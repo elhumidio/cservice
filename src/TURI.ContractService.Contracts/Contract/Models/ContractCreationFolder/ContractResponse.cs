@@ -1,18 +1,7 @@
-using Newtonsoft.Json;
-using System.ComponentModel.DataAnnotations.Schema;
-
-namespace Domain.Entities
+namespace TURI.ContractService.Contracts.Contract.Models.ContractCreationFolder
 {
-    [Table("TContract")]
-    public partial class Contract
+    public class ContractResponse
     {
-        public Contract()
-        {
-            InverseIdcontractParentNavigation = new HashSet<Contract>();
-            ContractProducts = new HashSet<ContractProduct>();
-            RegEnterpriseContracts = new HashSet<RegEnterpriseContract>();
-        }
-
         public int Idcontract { get; set; }
         public int Identerprise { get; set; }
         public int IdenterpriseUser { get; set; }
@@ -49,15 +38,5 @@ namespace Domain.Entities
         public DateTime? Sftimestamp { get; set; }
         public int? SiteId { get; set; }
         public int? OldIdcontract { get; set; }
-        [JsonIgnore]
-        public virtual Contract? IdcontractParentNavigation { get; set; }
-        [JsonIgnore]
-        public virtual ICollection<Contract> InverseIdcontractParentNavigation { get; set; }
-        [JsonIgnore]
-        public virtual ICollection<ContractProduct> ContractProducts { get; set; }
-        [JsonIgnore]
-        public virtual ICollection<RegEnterpriseConsum> RegEnterpriseConsums { get; set; }
-        [JsonIgnore]
-        public virtual ICollection<RegEnterpriseContract> RegEnterpriseContracts { get; set; }
     }
 }

@@ -1,4 +1,6 @@
+using API.DataContext;
 using Application.AuxiliaryData.DTO;
+using Application.ContractCreation.Commands;
 using Application.ContractProducts.DTO;
 using Application.Contracts.DTO;
 using Application.EnterpriseContract.DTO;
@@ -6,7 +8,9 @@ using Application.JobOffer.Commands;
 using Application.JobOffer.DTO;
 using AutoMapper;
 using Domain.DTO;
+using Domain.DTO.Requests;
 using Domain.Entities;
+
 
 namespace Application.Core
 {
@@ -47,7 +51,7 @@ namespace Application.Core
             CreateMap<JobOfferDto, JobVacancy>();
             CreateMap<JobVacancy, OfferResultDto>();
             CreateMap<OfferResultDto, JobOfferDto>();
-            CreateMap<JobVacancy,JobOfferWholeDto>();   
+            CreateMap<JobVacancy, JobOfferWholeDto>();
             CreateMap<RegJobVacMatching, IntegrationData>()
                 .ForMember(a => a.ApplicationReference, opt => opt.MapFrom(src => src.ExternalId))
                 .ForMember(a => a.IDIntegration, opt => opt.MapFrom(src => src.Idintegration))
@@ -58,6 +62,18 @@ namespace Application.Core
                 .ForMember(a => a.Idintegration, opt => opt.MapFrom(src => src.IDIntegration))
                 .ForMember(a => a.Redirection, opt => opt.MapFrom(src => src.ApplicationUrl))
                 .ForMember(a => a.AppEmail, opt => opt.MapFrom(src => src.ApplicationEmail));
+
+            CreateMap<CreateContractCommand, Contract>();
+            CreateMap<Enterprise, Contract>();
+            CreateMap<ProductLine, ContractProduct>();
+            CreateMap<Product, RegEnterpriseContract>();
+            CreateMap<Contract, EnterpriseUserJobVac>();
+            CreateMap<Product, EnterpriseUserJobVac>();
+            CreateMap<ProductLine, EnterpriseUserJobVac>()
+                .ForMember(a => a.MaxJobVacancies, opt => opt.MapFrom(src => src.Units));
+            CreateMap<CreateContractCommand, RegEnterpriseContract>();
+            CreateMap<Product, ContractProduct>();
+            CreateMap<UpdateContractProductSalesforceIdRequest, UpdateContractProductSForceId>();
         }
     }
 }

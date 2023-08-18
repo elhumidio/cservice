@@ -5,7 +5,8 @@ using Application.EnterpriseContract.Queries;
 using Application.Managers.Queries;
 using Domain.Enums;
 using Microsoft.AspNetCore.Mvc;
-using TURI.ContractService.Contract.Models;
+using TURI.ContractService.Contracts.Contract.Models.ContractCreationFolder;
+using TURI.ContractService.Contracts.Contract.Models.Requests;
 
 namespace API.Controllers
 {
@@ -25,6 +26,7 @@ namespace API.Controllers
             });
             return HandleResult(result);
         }
+
         //[HttpGet]
         //[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AvailableUnitsResponse[]))]
         //[ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -216,16 +218,49 @@ namespace API.Controllers
             return HandleResult(result);
         }
 
-
         [HttpGet("{contractId}")]
         public async Task<IActionResult> GetRegionsAllowed(int contractId)
         {
             var result = await Mediator.Send(new GetRegionsAllowed.GetRegions
             {
                 ContractId = contractId
-                
             });
             return HandleResult(result);
+        }
+
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ContractCreationResponse))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> CreateContract(ContractCreateRequest contract)
+        {
+            try
+            {
+                var requestToModel = contract.ToDomain();
+                var result = await Mediator.Send(requestToModel);
+                var convertedResult = result.Value.ToCommand();
+                return HandleResult(convertedResult);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(bool))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> UpdateContractSalesForceId(WrapperContractProductSalesforceIdRequest request)
+        {
+            try
+            {
+                var requestToModel = request.ToCommand();
+                var result = await Mediator.Send(requestToModel);
+                return HandleResult(result.IsSuccess);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }

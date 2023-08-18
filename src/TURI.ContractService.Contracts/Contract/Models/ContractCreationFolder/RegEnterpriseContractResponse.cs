@@ -1,10 +1,6 @@
-using Newtonsoft.Json;
-using System.ComponentModel.DataAnnotations.Schema;
-
-namespace Domain.Entities
+namespace TURI.ContractService.Contracts.Contract.Models.ContractCreationFolder
 {
-    [Table("TregEnterpriseContract")]
-    public partial class RegEnterpriseContract
+    public class RegEnterpriseContractResponse
     {
         public int Identerprise { get; set; }
         public int Idcontract { get; set; }
@@ -12,7 +8,5 @@ namespace Domain.Entities
         public int Units { get; set; }
         public int UnitsUsed { get; set; }
         public int? IdjobVacTypeComp { get; set; }
-        [JsonIgnore]
-        public virtual Contract IdcontractNavigation { get; set; } = null!;
     }
 }
