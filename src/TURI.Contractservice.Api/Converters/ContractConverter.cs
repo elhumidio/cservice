@@ -5,7 +5,6 @@ using AutoMapper;
 using Domain.DTO;
 using Domain.DTO.Requests;
 using Domain.Entities;
-using Microsoft.AspNetCore.Mvc.Filters;
 using TURI.ContractService.Contract.Models;
 using TURI.ContractService.Contracts.Contract.Models.ContractCreationFolder;
 using TURI.ContractService.Contracts.Contract.Models.Partials;
@@ -133,10 +132,8 @@ namespace API.Converters
         {
             var response = new ContractProductSalesforceId();
             response = _mapper.Map(item, response);
-            return response;  
+            return response;
         }
-
-
 
         public static UpdateContractProductSalesforceIdRequest ToCommand(this WrapperContractProductSalesforceIdRequest item)
         {

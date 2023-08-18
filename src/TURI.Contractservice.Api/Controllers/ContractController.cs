@@ -1,13 +1,10 @@
 using API.Converters;
-using Application.ContractCreation.Commands;
-using Application.ContractCreation.Dto;
 using Application.Contracts.DTO;
 using Application.Contracts.Queries;
 using Application.EnterpriseContract.Queries;
 using Application.Managers.Queries;
 using Domain.Enums;
 using Microsoft.AspNetCore.Mvc;
-using TURI.ContractService.Contract.Models;
 using TURI.ContractService.Contracts.Contract.Models.ContractCreationFolder;
 using TURI.ContractService.Contracts.Contract.Models.Requests;
 
@@ -244,11 +241,10 @@ namespace API.Controllers
                 return HandleResult(convertedResult);
             }
             catch (Exception ex)
-            {                
+            {
                 return BadRequest(ex.Message);
             }
         }
-
 
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(bool))]
@@ -261,11 +257,10 @@ namespace API.Controllers
                 var result = await Mediator.Send(requestToModel);
                 return HandleResult(result.IsSuccess);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
-            
         }
     }
 }

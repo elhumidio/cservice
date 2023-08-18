@@ -27,19 +27,9 @@ namespace Application.ContractCreation.Commands
         {
             try
             {
-                //var salesforceTransaction = new SalesforceTransaction
-                //{
-                //    StartDate = DateTime.Now,
-                //    Success = false,
-                //    TurijobsId = contractId,
-                //    ObjectTypeName = "Opportunity",
-                //    FinishDate = DateTime.Now.Date,
-                //    Idsite = request.IDSite,
-                //};
-                //  var transId = uow.SalesforceTransRepository.Add(salesforceTransaction);
                 ContractCreationDomainResponse response = new();
                 var company = uow.EnterpriseRepository.Get(request.IDEnterprise);
-                var product = uow.ProductRepository.Get(request.ProductsList?.FirstOrDefault() ?? 110).FirstOrDefault(p => p.Idsite == request.IDSite);
+                var product = uow.ProductRepository.Get(request.ProductsList?.FirstOrDefault() ?? WELCOME_PRODUCT).FirstOrDefault(p => p.Idsite == request.IDSite);
                 var finishDate = DateTime.Now.AddDays(product?.Duration ?? 0);
                 response.Contract = await CreateContract(finishDate, request, company);
                 foreach (var prodId in request.ProductsList)
@@ -99,7 +89,6 @@ namespace Application.ContractCreation.Commands
                         var cpr = CreateRegionRestrictionObject(response, company, prodId);
                         await uow.ContractPublicationRegionRepository.AddRestriction(cpr);
 
-                        //get all products by contract
                         var products = await _mediator.Send(new GetAllProductsByContract.GetProducts
                         {
                             ContractId = response.Contract.Idcontract,
@@ -118,9 +107,6 @@ namespace Application.ContractCreation.Commands
                 {
                     uow.Rollback();
                 }
-
-                // TODO: Update salesforceTransaction
-
                 return Result<ContractCreationDomainResponse>.Success(response);
             }
             catch (Exception ex)
@@ -131,6 +117,7 @@ namespace Application.ContractCreation.Commands
         }
 
         #region PRIVATE METHODS
+
         private static ContractPublicationRegion CreateRegionRestrictionObject(ContractCreationDomainResponse response, Enterprise company, int prodId)
         {
             return new()
@@ -196,6 +183,7 @@ namespace Application.ContractCreation.Commands
             var idreg = await uow.RegEnterpriseContractRepository.Add(regContract);
             return regContract;
         }
-        #endregion
+
+        #endregion PRIVATE METHODS
     }
 }
