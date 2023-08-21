@@ -51,17 +51,17 @@ namespace Persistence.Repositories
         {
             
             var contractProduct = await _dataContext.ContractProducts.Where(c => c.Idcontract == items.ContractId).ToListAsync();
-
+            int ret = -1;
             foreach (var item in contractProduct)
             {
-
                 var a =  items.ContractProductSalesforceIds.Where(i => i.ProductId == item.Idproduct).FirstOrDefault();
                 if (a == null)
                     continue;
-                a.SalesforceId = item.IdsalesForce;
+                item.IdsalesForce = a.SalesforceId;
+                ret = await _dataContext.SaveChangesAsync();
             }
             
-            var ret = await _dataContext.SaveChangesAsync();
+           
             return ret > 0;
         }
     }

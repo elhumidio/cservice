@@ -5,5 +5,6 @@ namespace Domain.DTO.Requests
 
         public int ProductId { get; set; }
         public string? SalesforceId { get; set; }
+        
     }
 }

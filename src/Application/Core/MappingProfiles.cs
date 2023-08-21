@@ -1,6 +1,7 @@
 using API.DataContext;
 using Application.AuxiliaryData.DTO;
 using Application.ContractCreation.Commands;
+using Application.ContractCreation.Dto;
 using Application.ContractProducts.DTO;
 using Application.Contracts.DTO;
 using Application.EnterpriseContract.DTO;
@@ -74,6 +75,9 @@ namespace Application.Core
             CreateMap<CreateContractCommand, RegEnterpriseContract>();
             CreateMap<Product, ContractProduct>();
             CreateMap<UpdateContractProductSalesforceIdRequest, UpdateContractProductSForceId>();
+            CreateMap<UpdateContractProductSForceId,UpdateContractProductSalesforceIdRequest>();
+            CreateMap<ContractProductSalesforceId, ContractProdSForceId>();
+
         }
     }
 }

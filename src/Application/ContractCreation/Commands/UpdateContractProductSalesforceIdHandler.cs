@@ -23,7 +23,7 @@ namespace Application.ContractCreation.Commands
 
         public async Task<Result<bool>> Handle(UpdateContractProductSalesforceIdRequest request, CancellationToken cancellationToken)
         {
-            var retContract = contractRepository.UpdateContractSalesforceId(request.ContractId, request.ContractSalesForceId);
+            var retContract =await contractRepository.UpdateContractSalesforceId(request.ContractId, request.ContractSalesForceId);
             var args = new UpdateContractProductSForceId();
             args = mapper.Map(request, args);
             var ret = await contractProductrepository.UpdateContractProductSalesforceId(args);
