@@ -1,5 +1,3 @@
-using Application.Aimwel.Commands;
-using Application.Aimwel.Queries;
 using Application.DTO;
 using Application.EnterpriseContract.Queries;
 using Application.JobOffer.DTO;
@@ -8,10 +6,8 @@ using AutoMapper;
 using Domain.Entities;
 using Domain.Enums;
 using Domain.Repositories;
-using DPGRecruitmentCampaignClient;
 using MediatR;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 
 namespace Application.JobOffer.Commands
 {
@@ -35,8 +31,8 @@ namespace Application.JobOffer.Commands
         public UpdateOfferCommandHandler(IRegEnterpriseContractRepository regContractRepo,
             IRegJobVacMatchingRepository regJobVacRepo,
             IMapper mapper,
-            IJobOfferRepository offerRepo,           
-            IContractProductRepository contractProductRepo,         
+            IJobOfferRepository offerRepo,
+            IContractProductRepository contractProductRepo,
             IMediator mediatr,
             IRegJobVacWorkPermitRepository regJobVacWorkPermitRepo,
             ICityRepository cityRepository,
@@ -58,14 +54,12 @@ namespace Application.JobOffer.Commands
         public async Task<OfferModificationResult> Handle(UpdateOfferCommand offer, CancellationToken cancellationToken)
         {
             string error = string.Empty;
-            var integrationInfo = await _regJobVacRepo.GetAtsIntegrationInfo(offer.IntegrationData.ApplicationReference);
+            var integrationInfo = await _regJobVacRepo.GetAtsIntegrationInfoByJobId(offer.IdjobVacancy);
             bool IsIntegration = integrationInfo != null;
-            //if (IsIntegration)
-              
+
             var existentOffer = _offerRepo.GetOfferById(offer.IdjobVacancy);
             if (!IsIntegration)
             {
-                
                 offer.Idcity = existentOffer.Idcity;
                 offer.Idregion = existentOffer.Idregion;
                 offer.Idcountry = existentOffer.Idcountry;
@@ -84,7 +78,7 @@ namespace Application.JobOffer.Commands
             {
                 await ActivateActions(offer, existentOffer);
             }
-            
+
             var entity = _mapper.Map(offer, existentOffer);
             CityValidation(offer);
             var company = _enterpriseRepository.Get(offer.Identerprise);
@@ -102,13 +96,13 @@ namespace Application.JobOffer.Commands
 
             bool canSaveWorkPermit = offer.IdworkPermit != null && offer.IdworkPermit.Any()
                 && integrationInfo == null;
-            
+
             if (canSaveWorkPermit)
-            {            
+            {
                 await _regJobVacWorkPermitRepo.Delete(offer.IdjobVacancy);
                 foreach (var permit in offer.IdworkPermit)
                 {
-                   await _regJobVacWorkPermitRepo.Add(new RegJobVacWorkPermit() { IdjobVacancy = offer.IdjobVacancy, IdworkPermit = permit });
+                    await _regJobVacWorkPermitRepo.Add(new RegJobVacWorkPermit() { IdjobVacancy = offer.IdjobVacancy, IdworkPermit = permit });
                 }
             }
 
@@ -135,7 +129,6 @@ namespace Application.JobOffer.Commands
             {
                 offer.City = string.Empty;
             }
-
         }
 
         private static void IntegrationActions(OfferResultDto updatedOffer, RegJobVacMatching integration)
@@ -158,7 +151,6 @@ namespace Application.JobOffer.Commands
             await ActivateActions(offer, existentOffer, result, canActivate);
         }
 
-
         /// <summary>
         /// It perform actions regarding activate offers
         /// </summary>
@@ -171,40 +163,14 @@ namespace Application.JobOffer.Commands
         {
             if (canActivate)
             {
-                offer.FilledDate = null;
-                offer.ChkUpdateDate = existentOffer.ChkUpdateDate;
-                offer.ChkFilled = false;
-                offer.ChkDeleted = false;
-                offer.IdjobVacType = (int)result.Value.IdJobVacType;
-                offer.PublicationDate = DateTime.Now;
-                offer.UpdatingDate = DateTime.Now;
-                offer.Idstatus = (int)OfferStatus.Active;
-                bool aimwelEnabled = Convert.ToBoolean(_config["Aimwel:EnableAimwel"]);
-                int[] aimwelEnabledSites = _config["Aimwel:EnabledSites"].Split(',').Select(h => Int32.Parse(h)).ToArray();
-                aimwelEnabled = aimwelEnabled && aimwelEnabledSites.Contains(offer.Idsite);
-
-                if (aimwelEnabled) {
-                    var campaign = await _mediatr.Send(new GetStatus.Query
-                    {
-                        OfferId = offer.IdjobVacancy
-                    });
-
-                    if (campaign != null && campaign.Status == CampaignStatus.Paused)
-                    {
-                        var ans = _mediatr.Send(new Resume.Command
-                        {
-                            offerId = offer.IdjobVacancy
-                        });
-                        
-                    }
-                    else if (campaign != null && campaign.Status == CampaignStatus.Ended)
-                    {
-                        var ans = _mediatr.Send(new Create.Command
-                        {
-                            offerId = offer.IdjobVacancy
-                        });                        
-                    }
-                }
+                existentOffer.FilledDate = null;
+                existentOffer.ChkUpdateDate = existentOffer.ChkUpdateDate;
+                existentOffer.ChkFilled = false;
+                existentOffer.ChkDeleted = false;
+                existentOffer.IdjobVacType = (int)result.Value.IdJobVacType;
+                existentOffer.PublicationDate = DateTime.Now;
+                existentOffer.UpdatingDate = DateTime.Now;
+                existentOffer.Idstatus = (int)OfferStatus.Active;
 
                 await _regContractRepo.UpdateUnits(result.Value.Idcontract, (int)result.Value.IdJobVacType);
             }
