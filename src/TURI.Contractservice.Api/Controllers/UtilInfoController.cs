@@ -248,16 +248,16 @@ namespace API.Controllers
 
         }
 
-        [HttpGet("{siteId}/{languageId}", Name = "GetSalaries")]
-        public async Task<IActionResult> GetSalaries(int siteId, int languageId)
-        {
-            var result = await Mediator.Send(new ListSalaries.Query
-            {
-                languageID = languageId,
-                siteID = siteId
-            });
-            return HandleResult(result);
-        }
+        //[HttpGet("{siteId}/{languageId}", Name = "GetSalaries")]
+        //public async Task<IActionResult> GetSalaries(int siteId, int languageId)
+        //{
+        //    var result = await Mediator.Send(new ListSalaries.Query
+        //    {
+        //        languageID = languageId,
+        //        siteID = siteId
+        //    });
+        //    return HandleResult(result);
+        //}
 
         [HttpGet("{siteId}/{languageId}", Name = "GetSalaryTypes")]
         public async Task<IActionResult> GetSalaryTypes(int siteId, int languageId)

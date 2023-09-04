@@ -17,8 +17,8 @@ namespace Application.JobOffer.DTO
         public string Description { get; set; }
         public int Vacancies { get; set; }
         public int TotalCandidateApplied { get; set; }
-        public string SalaryMin { get; set; }
-        public string SalaryMax { get; set; }
+        public decimal SalaryMin { get; set; }
+        public decimal SalaryMax { get; set; }
         public string SalaryCurrency { get; set; }
         public string SalaryType { get; set; }
         public List<string> Tags { get; set; }
