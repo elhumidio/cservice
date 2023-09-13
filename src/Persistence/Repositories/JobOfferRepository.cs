@@ -314,6 +314,7 @@ namespace Persistence.Repositories
                              IDEnterprise = job.Identerprise,
                              IDSite = job.Idsite,
                              PublicationDate = job.PublicationDate,
+                             UpdatingDate = job.UpdatingDate,
                              IDCity = job.Idcity ?? 0,
                              ChkBlindVac = job.ChkBlindVac,
                              City = job.City ?? ""

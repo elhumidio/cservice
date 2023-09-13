@@ -18,10 +18,12 @@ namespace API.Converters
                 IDJobVacancy = item.IDJobVacancy,
                 IDEnterprise = item.IDEnterprise,
                 PublicationDate = item.PublicationDate,
+                UpdatingDate = item.UpdatingDate,
                 IDCity = item.IDCity,
                 Description = item.Description,
                 IDSite = item.IDSite,
-                City = item.City
+                City = item.City,
+                ChkBlindVac = item.ChkBlindVac
             };
         }
 
