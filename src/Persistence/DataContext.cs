@@ -65,6 +65,7 @@ namespace Persistence
         public virtual DbSet<FeedsAggregatorsLog> FeedsAggregatorsLogs { get; set; } = null!;
         public virtual DbSet<RegEnterpriseConsum> RegEnterpriseConsums { get; set; } = null!;
         public virtual DbSet<SalesforceTransaction> SalesforceTransactions { get; set; } = null!;
+        public virtual DbSet<Culture> Cultures { get; set; } = null!;
         //public DbSet<NextSqlValueFeedLog> NextSeqFeedLog { get; set; }
 
         public virtual DbSet<ZoneUrl> ZoneUrls { get; set; } = null!;
@@ -310,6 +311,41 @@ namespace Persistence
 
                 entity.Property(e => e.RegionId).HasColumnName("RegionID");
             });
+
+
+            modelBuilder.Entity<Culture>(entity =>
+            {
+                entity.ToTable("TCulture");
+
+                entity.Property(e => e.Id).ValueGeneratedNever();
+
+                entity.Property(e => e.Actualidad).HasMaxLength(50);
+
+                entity.Property(e => e.CultureCode).HasMaxLength(6);
+
+                entity.Property(e => e.CultureName).HasMaxLength(10);
+
+                entity.Property(e => e.Cursos).HasMaxLength(50);
+
+                entity.Property(e => e.Idcountry).HasColumnName("IDCountry");
+
+                entity.Property(e => e.Idslanguage).HasColumnName("IDSLanguage");
+
+                entity.Property(e => e.Iso639xValue)
+                    .HasMaxLength(3)
+                    .HasColumnName("ISO639xValue");
+
+                entity.Property(e => e.JobVacancyDirName).HasMaxLength(50);
+
+                entity.Property(e => e.Language).HasMaxLength(50);
+
+                entity.Property(e => e.Path).HasMaxLength(150);
+
+                entity.Property(e => e.ShortName).HasMaxLength(2);
+
+                entity.Property(e => e.UrlBase).HasMaxLength(100);
+            });
+
 
             modelBuilder.Entity<City>(entity =>
             {
