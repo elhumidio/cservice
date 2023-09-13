@@ -1,6 +1,7 @@
 using Domain.Classes;
 using Domain.DTO;
 using Domain.DTO.ManageJobs;
+using Domain.DTO.Requests;
 using Domain.Entities;
 using Domain.Enums;
 using Domain.Repositories;
@@ -469,29 +470,24 @@ namespace Persistence.Repositories
             return query;
         }
 
-        public async Task<List<OfferModel>> GetOffersForActionDashboard(int companyId, int site, int langId)
+        public async Task<List<OfferModel>> GetOffersForActionDashboard(ManageJobsArgs args)
         {
-            // Assuming you have a DataContext named "_dataContext" that represents your database context.
             var query = await (from jv in _dataContext.JobVacancies
                                join b in _dataContext.Brands on jv.Idbrand equals b.Idbrand
                                join eb in _dataContext.EnterpriseBlinds on jv.Identerprise equals eb.Identerprise into ebGroup
                                from eb in ebGroup.DefaultIfEmpty()
-                                   //join cjv in _dataContext.VW_CountJobVacancy on jv.IDJobVacancy equals cjv.IDJobVacancy
-                                   //join eq in _dataContext.TDBEquivalent on DB_ID() equals eq.NewDBID
                                join jvt in _dataContext.JobVacTypes on jv.IdjobVacType equals jvt.IdjobVacType
-                               join c in _dataContext.Cultures on site equals c.Id into cGroup
+                               join c in _dataContext.Cultures on args.Site equals c.Id into cGroup
                                from c in cGroup.DefaultIfEmpty()
                                join co in _dataContext.Countries on c.Idcountry equals co.Idcountry
-
                                join ct in _dataContext.Contracts on jv.Idcontract equals ct.Idcontract
-
                                //TODO duration calculado aparte
                                join r in _dataContext.Regions on jv.Idregion equals r.Idregion
-
                                join z in _dataContext.ZoneUrls on jv.Idregion equals z.Idregion
-
-                               where !jv.ChkDeleted && jv.Identerprise == companyId && jvt.Idsite == site && (z.Idcity == (jv.Idcity ?? 0))
-                               && co.Idsite == site && co.Idslanguage == langId//todo add country site and lang
+                               where !jv.ChkDeleted && jv.Identerprise == args.CompanyId && jvt.Idsite == args.Site && (z.Idcity == (jv.Idcity ?? 0))
+                               && co.Idsite == args.Site && co.Idslanguage == args.LangId && jvt.Idslanguage == args.LangId
+                               && r.Idslanguage == args.LangId && r.Idsite == args.Site
+                               
                                select new OfferModel
                                {
                                    Idsite = jv.Idsite,
@@ -504,15 +500,18 @@ namespace Persistence.Repositories
                                    FinishDate = jv.FinishDate,
                                    IdenterpriseUserG = jv.IdenterpriseUserG ?? jv.IdenterpriseUserLastMod,
                                    Title = jv.Title,
-                                   chkPack = jv.ChkPack,
-                                   chkBlindVac = jv.ChkBlindVac,
-                                   chkFilled = jv.ChkFilled,
-                                   chkDeleted = jv.ChkDeleted,
-                                   chkUpdateDate = jv.ChkUpdateDate,
-                                   chkColor = jv.ChkColor,
-                                   chkEnterpriseVisible = jv.ChkEnterpriseVisible ?? false,
+                                   ChkPack = jv.ChkPack,
+                                   CityUrl = z.Url,
+                                   Idcountry = jv.Idcountry,
+                                   ChkBlindVac = jv.ChkBlindVac,
+                                   ChkFilled = jv.ChkFilled,
+                                   ChkDeleted = jv.ChkDeleted,
+                                   ChkUpdateDate = jv.ChkUpdateDate,
+                                   ChkColor = jv.ChkColor,
+                                   ChkEnterpriseVisible = jv.ChkEnterpriseVisible ?? false,
                                    Idcity = jv.Idcity,
                                    City = jv.City,
+                                   Idbrand = b.Idbrand,
                                    Idstatus = jv.Idstatus,
                                    Caducity = (int)(jv.FinishDate - DateTime.Now).TotalDays,
                                    EnterpriseName = !jv.ChkBlindVac ? b.Name : eb.Name,
@@ -530,12 +529,15 @@ namespace Persistence.Repositories
                                    IsWelcome = jv.IdjobVacType == (int)VacancyType.WelcomeSP,
                                    ContractStartDate = ct.StartDate ?? DateTime.Now,
                                    ContractFinishDate = ct.FinishDate ?? DateTime.Now,
-                                   ExtensionDays = jv.ExtensionDays
+                                   ExtensionDays = jv.ExtensionDays,
+                                   
                                }).ToListAsync();
+            query = query.Where(o =>
+                          (args.Filed && o.ChkFilled) ||
+                          (args.Actives && !o.ChkFilled && !o.ChkDeleted && o.FinishDate.Date >= DateTime.Today) ||
+                          args.All).ToList();
 
-            // Execute the LINQ query or further process the results as needed.
-
-            return query;
+            return query.OrderByDescending(v => v.PublicationDate).Skip(args.PageSize * (args.Page - 1)).Take(args.PageSize).ToList();
         }
     }
 }

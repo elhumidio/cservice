@@ -7,6 +7,7 @@ using Application.Contracts.DTO;
 using Application.EnterpriseContract.DTO;
 using Application.JobOffer.Commands;
 using Application.JobOffer.DTO;
+using Application.JobOffer.Queries;
 using AutoMapper;
 using Domain.DTO;
 using Domain.DTO.Requests;
@@ -77,6 +78,7 @@ namespace Application.Core
             CreateMap<UpdateContractProductSalesforceIdRequest, UpdateContractProductSForceId>();
             CreateMap<UpdateContractProductSForceId,UpdateContractProductSalesforceIdRequest>();
             CreateMap<ContractProductSalesforceId, ContractProdSForceId>();
+            CreateMap<GetOffersForDashBoardQuery, ManageJobsArgs>();
 
         }
     }

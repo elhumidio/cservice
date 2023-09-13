@@ -7,7 +7,12 @@ using System.Text.RegularExpressions;
 
 namespace Application.Utils
 {
-    public class ApiUtils
+    public interface IApiUtils
+    {
+        public string BuildURLJobvacancy(JobVacancy _offer);
+    }
+
+    public class ApiUtils : IApiUtils
     {
         private const int ONBOARD = 226;
         private readonly IRegionRepository _regionRepo;

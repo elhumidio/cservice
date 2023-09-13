@@ -1,6 +1,7 @@
 using Domain.Classes;
 using Domain.DTO;
 using Domain.DTO.ManageJobs;
+using Domain.DTO.Requests;
 using Domain.Entities;
 
 namespace Domain.Repositories
@@ -62,7 +63,7 @@ namespace Domain.Repositories
 
         public Task<List<OfferInfoMin>> GetOffersForView(int[] favoritesOfferIds, int lang);
 
-        public Task<List<OfferModel>> GetOffersForActionDashboard(int companyId,int site, int langId);
+        public Task<List<OfferModel>> GetOffersForActionDashboard(ManageJobsArgs args);
         
     }
 }
