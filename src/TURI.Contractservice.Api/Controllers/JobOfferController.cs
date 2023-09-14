@@ -577,7 +577,7 @@ namespace API.Controllers
         /// </summary>
         /// <param name="categoryId">Wordpress Blog category.</param>
         /// <returns>3 offers.</returns>
-        [HttpPost("{categoryId}")]
+        [HttpGet]
         public async Task<IActionResult> WP_GetRelatedOffersByCategory(string categoryId, int siteId, int numOffers)
         {
             try
