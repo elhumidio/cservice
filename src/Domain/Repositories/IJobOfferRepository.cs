@@ -1,5 +1,7 @@
 using Domain.Classes;
 using Domain.DTO;
+using Domain.DTO.ManageJobs;
+using Domain.DTO.Requests;
 using Domain.Entities;
 
 namespace Domain.Repositories
@@ -61,6 +63,8 @@ namespace Domain.Repositories
         public Task<IReadOnlyList<JobDataDefinition>> GetActiveJobsSinceADate(DateTime LastLoggin, int[] followedCompanies);
 
         public Task<List<OfferInfoMin>> GetOffersForView(int[] favoritesOfferIds, int lang);
+
+        public Task<List<OfferModel>> GetOffersForActionDashboard(ManageJobsArgs args);
         
     }
 }

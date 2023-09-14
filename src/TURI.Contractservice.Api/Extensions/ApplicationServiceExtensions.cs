@@ -4,6 +4,7 @@ using Application.Behaviors;
 using Application.Interfaces;
 using Application.JobOffer.Commands;
 using Application.JobOffer.Queries;
+using Application.Utils;
 using Domain.Repositories;
 using FluentValidation.AspNetCore;
 using Infraestructure;
@@ -44,7 +45,7 @@ namespace API.Extensions
             services.AddSingleton(s => Refit.RestService.For<IApplicationService>(config["ExternalServices:ApplicationService"] ?? ""));
             services.AddSingleton(s => Refit.RestService.For<IEnterpriseService>(config["ExternalServices:EnterpriseService"] ?? ""));
             services.AddSingleton(s => Refit.RestService.For<ISearchService>(config["ExternalServices:SearchService"] ?? ""));
-
+            services.AddScoped<IApiUtils, ApiUtils>();
             #region MAPPING REPOSITORIES
 
             services.AddScoped<IAimwelErrorsRepository, AimwelErrorsRepository>();

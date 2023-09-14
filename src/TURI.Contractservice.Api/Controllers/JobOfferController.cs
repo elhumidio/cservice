@@ -4,10 +4,12 @@ using Application.JobOffer.Commands;
 using Application.JobOffer.DTO;
 using Application.JobOffer.Queries;
 using Application.Utils.Queries.Equest;
+using AutoMapper;
 using Domain.DTO;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using TURI.ContractService.Contract.Models;
+using TURI.ContractService.Contracts.Contract.Models.ManageJobs;
 using TURI.ContractService.Contracts.Contract.Models.Requests;
 
 namespace API.Controllers
@@ -16,11 +18,13 @@ namespace API.Controllers
     {
         private readonly IAimwelCampaign _aimwelCampaign;
         private readonly IMemoryCache _cache;
+        private readonly IMapper _mapper;
 
-        public JobOfferController(IAimwelCampaign aimwelCampaign, IMemoryCache cache)
+        public JobOfferController(IAimwelCampaign aimwelCampaign, IMemoryCache cache, IMapper mapper)
         {
             _aimwelCampaign = aimwelCampaign;
             _cache = cache;
+            _mapper = mapper;
         }
 
         /// <summary>
@@ -572,12 +576,30 @@ namespace API.Controllers
             }
         }
 
+
+        [HttpPost]
+        public async Task<IActionResult> GetOffersForDashBoard(GetOffersForDashBoardRequest dto)
+        {   
+            var res = await Mediator.Send(new GetOffersForDashBoardQuery
+            {
+                Actives = dto.Actives,
+                All = dto.All,
+                CompanyId = dto.CompanyId,
+                Filed = dto.Filed,
+                LangId = dto.LangId,
+                Page = dto.Page,
+                PageSize = dto.PageSize,
+                Site = dto.Site
+            });
+            return Ok(res.Value.ToResponse());
+        }
+
         /// <summary>
         /// Retrieve 3 offers related to Wordpress Blog category.
         /// </summary>
         /// <param name="categoryId">Wordpress Blog category.</param>
         /// <returns>3 offers.</returns>
-        [HttpPost("{categoryId}")]
+        [HttpGet]
         public async Task<IActionResult> WP_GetRelatedOffersByCategory(string categoryId, int siteId, int numOffers)
         {
             try
