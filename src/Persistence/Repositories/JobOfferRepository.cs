@@ -1,5 +1,7 @@
 using Domain.Classes;
 using Domain.DTO;
+using Domain.DTO.ManageJobs;
+using Domain.DTO.Requests;
 using Domain.Entities;
 using Domain.Enums;
 using Domain.Repositories;
@@ -393,8 +395,8 @@ namespace Persistence.Repositories
                 join region in _dataContext.Regions on vac.Idregion equals region.Idregion
                 join country in _dataContext.Countries on vac.Idcountry equals country.Idcountry
                 where favoritesOfferIds.Contains(vac.IdjobVacancy) &&
-                      (country.Idslanguage == lang || country.Idslanguage == ENGLISH) 
-                      && (region.Idslanguage == lang || region.Idslanguage == ENGLISH)  
+                      (country.Idslanguage == lang || country.Idslanguage == ENGLISH)
+                      && (region.Idslanguage == lang || region.Idslanguage == ENGLISH)
                 select new OfferInfoMin
                 {
                     CompanyName = ent.CorporateName,
@@ -413,7 +415,6 @@ namespace Persistence.Repositories
                 .ToListAsync();
 
             return list;
-
         }
 
         public async Task<List<int>?> GetActiveJobsByIds(List<int>? offersIds)
@@ -497,6 +498,79 @@ namespace Persistence.Repositories
 
             var query = _dataContext.JobVacancies.Where(a => a.PublicationDate >= lastLogin).CountAsync();
             return query;
+        }
+
+        public async Task<List<OfferModel>> GetOffersForActionDashboard(ManageJobsArgs args)
+        {
+            var query = await (from jv in _dataContext.JobVacancies
+
+                               join b in _dataContext.Brands on jv.Idbrand equals b.Idbrand
+                               join eb in _dataContext.EnterpriseBlinds on jv.Identerprise equals eb.Identerprise into ebGroup
+                               from eb in ebGroup.DefaultIfEmpty()
+                               join jvt in _dataContext.JobVacTypes on jv.IdjobVacType equals jvt.IdjobVacType
+                               join c in _dataContext.Cultures on args.Site equals c.Id into cGroup
+                               from c in cGroup.DefaultIfEmpty()
+                               join co in _dataContext.Countries on c.Idcountry equals co.Idcountry
+                               join ct in _dataContext.Contracts on jv.Idcontract equals ct.Idcontract
+                               //TODO duration calculado aparte
+                               join r in _dataContext.Regions on jv.Idregion equals r.Idregion
+                               join z in _dataContext.ZoneUrls on jv.Idregion equals z.Idregion
+                               where !jv.ChkDeleted && jv.Identerprise == args.CompanyId
+                               && jvt.Idsite == args.Site
+                               && (z.Idcity == (jv.Idcity ?? 0))
+                               && co.Idsite == args.Site
+                               && co.Idslanguage == args.LangId
+                               && jvt.Idslanguage == args.LangId
+                               && jvt.Idsite == args.Site
+                               && r.Idslanguage == args.LangId
+                               && r.Idsite == args.Site
+                               && c.Idslanguage == args.LangId
+                                && c.Id == args.Site
+                               select new OfferModel
+                               {
+                                   Idsite = jv.Idsite,
+                                   IdjobVacancy = jv.IdjobVacancy,
+                                   Idcontract = jv.Idcontract,
+                                   IdjobVacType = jv.IdjobVacType,
+                                   IdjobRegType = jv.IdjobRegType,
+                                   PublicationDate = jv.PublicationDate,
+                                   UpdatingDate = jv.UpdatingDate,
+                                   FinishDate = jv.FinishDate,
+                                   IdenterpriseUserG = jv.IdenterpriseUserG ?? jv.IdenterpriseUserLastMod,
+                                   Title = jv.Title,
+                                   ChkPack = jv.ChkPack,
+                                   CityUrl = z.Url,
+                                   Idcountry = jv.Idcountry,
+                                   ChkBlindVac = jv.ChkBlindVac,
+                                   ChkFilled = jv.ChkFilled,
+                                   ChkDeleted = jv.ChkDeleted,
+                                   ChkUpdateDate = jv.ChkUpdateDate,
+                                   ChkColor = jv.ChkColor,
+                                   ChkEnterpriseVisible = jv.ChkEnterpriseVisible ?? false,
+                                   Idcity = jv.Idcity ?? 0,
+                                   City = jv.City,
+                                   Idbrand = b.Idbrand,
+                                   Idstatus = jv.Idstatus ?? 0,
+                                   Caducity = (int)(jv.FinishDate - DateTime.Now).TotalDays,
+                                   EnterpriseName = !jv.ChkBlindVac ? b.Name : eb.Name,
+                                   Identerprise = !jv.ChkBlindVac ? b.Identerprise : eb.Identerprise,
+                                   RegNumber = 0,
+                                   NNuevos = 0,
+                                   NPendientes = 0,
+                                   NEvaluating = 0,
+                                   NFinalistas = 0,
+                                   NDescartados = 0,
+                                   Idregion = jv.Idregion,
+                                   RegionName = r.BaseName,
+                                   CCAA = r.Ccaa,
+                                   JobVacType = jvt.BaseName,
+                                   IsWelcome = jv.IdjobVacType == (int)VacancyType.WelcomeSP,
+                                   ContractStartDate = ct.StartDate ?? DateTime.Now,
+                                   ContractFinishDate = ct.FinishDate ?? DateTime.Now,
+                                   ExtensionDays = jv.ExtensionDays ?? 0,
+                               }).Distinct().ToListAsync();
+
+            return query.OrderByDescending(v => v.PublicationDate).ToList();
         }
     }
 }
