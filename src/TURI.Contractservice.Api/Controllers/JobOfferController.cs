@@ -571,5 +571,29 @@ namespace API.Controllers
                 return BadRequest(result.Error);
             }
         }
+
+        /// <summary>
+        /// Retrieve 3 offers related to Wordpress Blog category.
+        /// </summary>
+        /// <param name="categoryId">Wordpress Blog category.</param>
+        /// <returns>3 offers.</returns>
+        [HttpPost("{categoryId}")]
+        public async Task<IActionResult> WP_GetRelatedOffersByCategory(string categoryId, int siteId, int numOffers)
+        {
+            try
+            {
+                var response = await Mediator.Send(new WP_GetRelatedOffersByCategory.Command
+                {
+                    CategoryId = categoryId,
+                    SiteId = siteId,
+                    NumOffers = numOffers
+                });
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return Ok(ex.Message);
+            }
+        }
     }
 }

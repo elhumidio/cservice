@@ -39,5 +39,15 @@ namespace Persistence.Repositories
             var country = _dataContext.Countries.Where(c => c.Idcountry == countryId && c.Idsite ==6 && c.Idslanguage == 7).ToList().FirstOrDefault();
             return country;
         }
+
+        public string GetCountryNameById(int countryId)
+        {
+            var country = _dataContext.Countries.Where(c => c.Idcountry == countryId && c.Idsite == 6 && c.Idslanguage == 7).ToList().FirstOrDefault();
+            if (country == null)
+            {
+                return string.Empty;
+            }
+            return country.BaseName;
+        }
     }
 }

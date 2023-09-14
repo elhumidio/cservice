@@ -65,6 +65,7 @@ namespace Persistence
         public virtual DbSet<FeedsAggregatorsLog> FeedsAggregatorsLogs { get; set; } = null!;
         public virtual DbSet<RegEnterpriseConsum> RegEnterpriseConsums { get; set; } = null!;
         public virtual DbSet<SalesforceTransaction> SalesforceTransactions { get; set; } = null!;
+        public virtual DbSet<WP_CategoryOfferRelation> WP_CategoryOfferRelations { get; set; } = null!;
         //public DbSet<NextSqlValueFeedLog> NextSeqFeedLog { get; set; }
 
         public virtual DbSet<ZoneUrl> ZoneUrls { get; set; } = null!;
@@ -1807,6 +1808,19 @@ namespace Persistence
                 entity.Property(e => e.Idsite).HasColumnName("IDSite");
 
                 entity.Property(e => e.Url).HasColumnName("URL");
+            });
+
+            modelBuilder.Entity<WP_CategoryOfferRelation>(entity =>
+            {
+                entity.HasKey(e => new { e.CategoryId, e.RelationId });
+
+                entity.ToTable("WP_CategoryOfferRelation");
+
+                entity.Property(e => e.CategoryId);
+
+                entity.Property(e => e.RelationId);
+
+                entity.Property(e => e.RelationTypeId);
             });
 
             OnModelCreatingPartial(modelBuilder);
