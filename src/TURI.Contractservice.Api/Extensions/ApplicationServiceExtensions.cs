@@ -102,6 +102,7 @@ namespace API.Extensions
             services.AddScoped<IRegEnterpriseConsumsRepository, RegEnterpriseConsumsRepository>();
             services.AddScoped<IEnterpriseUserJobVacRepository, EnterpriseUserJobVacRepository>();
             services.AddScoped<ISalesforceTransactionRepository, SalesforceTransactionRepository>();
+            services.AddScoped<IWP_CategoryOfferRelationRepository, WP_CategoryOfferRelationRepository>();
 
             #endregion MAPPING REPOSITORIES
 

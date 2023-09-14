@@ -36,6 +36,7 @@ namespace Domain.Repositories
         public IQueryable<JobVacancy> GetActiveOffers();
 
         public JobVacancy GetOfferById(int id);
+        public List<JobVacancy> WP_GetOffersRelatedByCategory(int areaId, int siteId, int numOffers);
 
         Task<int> UpdateOffer(JobVacancy jobUpdated);
 

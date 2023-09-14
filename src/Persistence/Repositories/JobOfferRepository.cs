@@ -134,6 +134,26 @@ namespace Persistence.Repositories
             }
         }
 
+        public List<JobVacancy> WP_GetOffersRelatedByCategory(int areaId, int siteId, int numOffers)
+        {
+            try
+            {
+                var offers = _dataContext.JobVacancies.Where(o => o.Idarea == areaId && o.Idsite == siteId).OrderByDescending(o => o.UpdatingDate).Take(numOffers);
+                if (offers == null || !offers.Any())
+                {
+                    return new List<JobVacancy>();
+                }
+                else
+                {
+                    return offers.ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                return new List<JobVacancy>();
+            }
+        }
+
         public int Add(JobVacancy job)
         {
             try
@@ -316,6 +336,7 @@ namespace Persistence.Repositories
                              IDEnterprise = job.Identerprise,
                              IDSite = job.Idsite,
                              PublicationDate = job.PublicationDate,
+                             UpdatingDate = job.UpdatingDate,
                              IDCity = job.Idcity ?? 0,
                              ChkBlindVac = job.ChkBlindVac,
                              City = job.City ?? ""
