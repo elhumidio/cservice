@@ -494,6 +494,7 @@ namespace Persistence.Repositories
         public async Task<List<OfferModel>> GetOffersForActionDashboard(ManageJobsArgs args)
         {
             var query = await (from jv in _dataContext.JobVacancies
+
                                join b in _dataContext.Brands on jv.Idbrand equals b.Idbrand
                                join eb in _dataContext.EnterpriseBlinds on jv.Identerprise equals eb.Identerprise into ebGroup
                                from eb in ebGroup.DefaultIfEmpty()
@@ -505,10 +506,17 @@ namespace Persistence.Repositories
                                //TODO duration calculado aparte
                                join r in _dataContext.Regions on jv.Idregion equals r.Idregion
                                join z in _dataContext.ZoneUrls on jv.Idregion equals z.Idregion
-                               where !jv.ChkDeleted && jv.Identerprise == args.CompanyId && jvt.Idsite == args.Site && (z.Idcity == (jv.Idcity ?? 0))
-                               && co.Idsite == args.Site && co.Idslanguage == args.LangId && jvt.Idslanguage == args.LangId
-                               && r.Idslanguage == args.LangId && r.Idsite == args.Site
-                               
+                               where !jv.ChkDeleted && jv.Identerprise == args.CompanyId
+                               && jvt.Idsite == args.Site
+                               && (z.Idcity == (jv.Idcity ?? 0))
+                               && co.Idsite == args.Site
+                               && co.Idslanguage == args.LangId
+                               && jvt.Idslanguage == args.LangId
+                               && jvt.Idsite == args.Site
+                               && r.Idslanguage == args.LangId
+                               && r.Idsite == args.Site
+                               && c.Idslanguage == args.LangId
+                                && c.Id == args.Site
                                select new OfferModel
                                {
                                    Idsite = jv.Idsite,
@@ -530,10 +538,10 @@ namespace Persistence.Repositories
                                    ChkUpdateDate = jv.ChkUpdateDate,
                                    ChkColor = jv.ChkColor,
                                    ChkEnterpriseVisible = jv.ChkEnterpriseVisible ?? false,
-                                   Idcity = jv.Idcity,
+                                   Idcity = jv.Idcity ?? 0,
                                    City = jv.City,
                                    Idbrand = b.Idbrand,
-                                   Idstatus = jv.Idstatus,
+                                   Idstatus = jv.Idstatus ?? 0,
                                    Caducity = (int)(jv.FinishDate - DateTime.Now).TotalDays,
                                    EnterpriseName = !jv.ChkBlindVac ? b.Name : eb.Name,
                                    Identerprise = !jv.ChkBlindVac ? b.Identerprise : eb.Identerprise,
@@ -550,15 +558,10 @@ namespace Persistence.Repositories
                                    IsWelcome = jv.IdjobVacType == (int)VacancyType.WelcomeSP,
                                    ContractStartDate = ct.StartDate ?? DateTime.Now,
                                    ContractFinishDate = ct.FinishDate ?? DateTime.Now,
-                                   ExtensionDays = jv.ExtensionDays,
-                                   
-                               }).ToListAsync();
-            query = query.Where(o =>
-                          (args.Filed && o.ChkFilled) ||
-                          (args.Actives && !o.ChkFilled && !o.ChkDeleted && o.FinishDate.Date >= DateTime.Today) ||
-                          args.All).ToList();
+                                   ExtensionDays = jv.ExtensionDays ?? 0,
+                               }).Distinct().ToListAsync();
 
-            return query.OrderByDescending(v => v.PublicationDate).Skip(args.PageSize * (args.Page - 1)).Take(args.PageSize).ToList();
+            return query.OrderByDescending(v => v.PublicationDate).ToList();
         }
     }
 }

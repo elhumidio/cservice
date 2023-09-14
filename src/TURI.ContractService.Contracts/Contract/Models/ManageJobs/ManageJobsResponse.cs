@@ -1,6 +1,14 @@
-namespace Domain.DTO.ManageJobs
+namespace TURI.ContractService.Contracts.Contract.Models.ManageJobs
 {
-    public class OfferModel
+    public class ManageJobsResponse
+    {
+        public int Filed { get; set; }
+        public int Total { get; set; }
+        public int Actives { get; set; }
+        public OfferModelResponse[]? Offers { get; set; }
+    }
+
+    public class OfferModelResponse
     {
         public string Name { get; set; }
         public int IdjobVacancy { get; set; }
@@ -61,6 +69,7 @@ namespace Domain.DTO.ManageJobs
         public string? JobVacType { get; set; }
         public string? CCAA { get; set; }
         public string? OfferUrl { get; set; }
+
         public string? JobRegType { get; set; }
     }
 }

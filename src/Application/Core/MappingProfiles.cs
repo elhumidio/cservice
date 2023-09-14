@@ -12,7 +12,7 @@ using AutoMapper;
 using Domain.DTO;
 using Domain.DTO.Requests;
 using Domain.Entities;
-
+using TURI.ContractService.Contracts.Contract.Models.ManageJobs;
 
 namespace Application.Core
 {
@@ -76,10 +76,10 @@ namespace Application.Core
             CreateMap<CreateContractCommand, RegEnterpriseContract>();
             CreateMap<Product, ContractProduct>();
             CreateMap<UpdateContractProductSalesforceIdRequest, UpdateContractProductSForceId>();
-            CreateMap<UpdateContractProductSForceId,UpdateContractProductSalesforceIdRequest>();
+            CreateMap<UpdateContractProductSForceId, UpdateContractProductSalesforceIdRequest>();
             CreateMap<ContractProductSalesforceId, ContractProdSForceId>();
             CreateMap<GetOffersForDashBoardQuery, ManageJobsArgs>();
-
+            CreateMap<ManageJobsDto, ManageJobsResponse>();
         }
     }
 }

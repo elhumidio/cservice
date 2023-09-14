@@ -1,4 +1,4 @@
-using Domain.Entities;
+using Domain.DTO.ManageJobs;
 using Domain.Enums;
 using Domain.Repositories;
 using DPGRecruitmentCampaignClient;
@@ -9,7 +9,10 @@ namespace Application.Utils
 {
     public interface IApiUtils
     {
-        public string BuildURLJobvacancy(JobVacancy _offer);
+        public string BuildURLJobvacancy(OfferModel _offer);
+
+        public string GetRegTypeBySiteAndLanguage(int lang, int type);
+        public int GetCVExpiredDays(IsOldOfferArgs pParameters);
     }
 
     public class ApiUtils : IApiUtils
@@ -17,11 +20,46 @@ namespace Application.Utils
         private const int ONBOARD = 226;
         private readonly IRegionRepository _regionRepo;
         private readonly IZoneUrl _zoneUrl;
+        private const string k_UNO_MARZO_DIECIOCHO = "01-03-2018";
+        private const int k_ONE_YEAR = 1;
+        private const int k_TEN_DAYS = 10;
+        private const int k_JOBVACYPE_STANDARD_SIXTY = 6;
+        private const int k_THIRTY_DAYS = 30;
+        private const int k_NINETY_DAYS = 90;
 
         public ApiUtils(IRegionRepository regionRepository, IZoneUrl zoneUrl)
         {
             _regionRepo = regionRepository;
             _zoneUrl = zoneUrl;
+        }
+
+        public int GetCVExpiredDays(IsOldOfferArgs pParameters)
+        {
+
+            int CVExpiredDays = 0;
+            if (pParameters.ContractStartDate < Convert.ToDateTime(k_UNO_MARZO_DIECIOCHO).Date)
+            {
+                CVExpiredDays = Convert.ToInt32((System.DateTime.Today - pParameters.OfferPublicationDate.AddDays(pParameters.ExtensionDays).AddYears(k_ONE_YEAR)).TotalDays);
+            }
+            else
+            {
+                if (pParameters.OfferIDJobVacType == k_JOBVACYPE_STANDARD_SIXTY)
+                {
+                    CVExpiredDays = Convert.ToInt32((System.DateTime.Today - pParameters.OfferPublicationDate.AddDays(pParameters.ExtensionDays + pParameters.ProductDuration + k_THIRTY_DAYS)).TotalDays);
+                }
+                else
+                {
+                    if (pParameters.OfferCheckPack)
+                    {
+                        CVExpiredDays = Convert.ToInt32((System.DateTime.Today - pParameters.ContractFinishDate.AddDays(k_THIRTY_DAYS + pParameters.ExtensionDays)).TotalDays);
+                    }
+                    else
+                    {
+                        CVExpiredDays = Convert.ToInt32((System.DateTime.Today - pParameters.OfferPublicationDate.AddDays(pParameters.ExtensionDays + k_NINETY_DAYS)).TotalDays);
+                    }
+                }
+            }
+            return CVExpiredDays;
         }
 
         public static bool IsValidEmail(string _email)
@@ -67,6 +105,28 @@ namespace Application.Utils
                     break;
             }
             return Uri;
+        }
+
+        public string GetRegTypeBySiteAndLanguage(int lang, int type)
+        {
+            Dictionary<(int, int), string> regTypeMap = new Dictionary<(int, int), string>
+                {
+                    {(1, 14), "Classic"},
+                    {(1, 7), "Clásica"},
+                    {(1, 17), "Clássica"},
+                    {(1, 15), "Classico"},
+                    {(2, 14), "Express"},
+                    {(2, 7), "Express"},
+                    {(2, 17), "Express"},
+                    {(2, 15), "Express"}
+                };
+
+            if (regTypeMap.TryGetValue((type, lang), out string result))
+            {
+                return result;
+            }
+
+            return string.Empty;
         }
 
         public static string GetBrandBySite(int siteId)
@@ -161,7 +221,7 @@ namespace Application.Utils
             return country;
         }
 
-        public string BuildURLJobvacancy(JobVacancy _offer)
+        public string BuildURLJobvacancy(OfferModel _offer)
         {
             StringBuilder sb = new StringBuilder();
             StringBuilder tmpSb = new StringBuilder();
