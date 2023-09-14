@@ -30,6 +30,7 @@ namespace Application.JobOffer.Queries
         private readonly IApplicationService _applicationService;
         private readonly IMapper _mapper;
         private readonly IApiUtils _utils;
+        private const string JOIN = "ç";
 
         public Handler(IMapper mapper,
             IJobOfferRepository jobOfferRepository,
@@ -52,7 +53,9 @@ namespace Application.JobOffer.Queries
                 offer.NNuevos = counters.Where(c => c.OfferId == offer.IdjobVacancy && c.Status == CandidateStatus.New).FirstOrDefault()?.Count ?? 0;
                 offer.NFinalistas = counters.Where(c => c.OfferId == offer.IdjobVacancy && c.Status == CandidateStatus.Finalist).FirstOrDefault()?.Count ?? 0;
                 offer.OfferUrl = _utils.BuildURLJobvacancy(offer);
-                
+                offer.Caducity = (int)(offer.FinishDate - DateTime.Now).TotalDays;
+                offer.FormData = $"{offer.IdjobVacancy}{JOIN}{offer.Idcontract}{JOIN}{offer.IdjobVacType}{JOIN}{offer.Caducity}{JOIN}{offer.ChkFilled.ToString()}";
+
             }
             return Result<List<OfferModel>>.Success(offers);
         }
