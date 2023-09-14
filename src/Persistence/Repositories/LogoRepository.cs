@@ -23,5 +23,15 @@ namespace Persistence.Repositories
             var logo = _dataContext.Logos.Where(l => l.Idbrand == brandId).FirstOrDefault();
             return logo;
         }
+
+        public string GetLogoURLByBrand(int brandId)
+        {
+            var logo = _dataContext.Logos.Where(l => l.Idbrand == brandId).FirstOrDefault();
+            if (logo == null)
+            {
+                return string.Empty;
+            }
+            return logo.UrlImgBig;
+        }
     }
 }
