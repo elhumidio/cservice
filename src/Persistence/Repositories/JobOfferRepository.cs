@@ -136,7 +136,16 @@ namespace Persistence.Repositories
         {
             try
             {
-                var offers = _dataContext.JobVacancies.Where(o => o.Idarea == areaId && o.Idsite == siteId).OrderByDescending(o => o.UpdatingDate).Take(numOffers);
+                var offers = _dataContext.JobVacancies.Where(
+                    o => o.Idarea == areaId &&
+                    o.Idsite == siteId &&
+                    !o.ChkDeleted &&
+                    !o.ChkFilled &&
+                    o.FinishDate >= DateTime.Today.Date &&
+                    o.Idstatus == (int)OfferStatus.Active
+                )
+                .OrderByDescending(o => o.UpdatingDate)
+                .Take(numOffers);
                 if (offers == null || !offers.Any())
                 {
                     return new List<JobVacancy>();
@@ -146,7 +155,7 @@ namespace Persistence.Repositories
                     return offers.ToList();
                 }
             }
-            catch (Exception ex)
+            catch
             {
                 return new List<JobVacancy>();
             }
