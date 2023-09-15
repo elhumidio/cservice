@@ -61,8 +61,4 @@
     <Protobuf Remove="JobOffer\Interfaces\**" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="ContractCreation\Queries\" />
-  </ItemGroup>
-
 </Project>

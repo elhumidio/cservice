@@ -3,6 +3,7 @@ using Domain.DTO;
 using Domain.DTO.ManageJobs;
 using Domain.DTO.Requests;
 using Domain.Entities;
+using Domain.Enums;
 
 namespace Domain.Repositories
 {
@@ -50,7 +51,7 @@ namespace Domain.Repositories
 
         public int DeleteOffer(JobVacancy job);
 
-        public Task<int> CountOffersPublished(int days);
+        public Task<int> GetCountOffersPublished(int days);
 
         public List<int>? GetoffersinCampaigns();
 
@@ -65,6 +66,9 @@ namespace Domain.Repositories
         public Task<List<OfferInfoMin>> GetOffersForView(int[] favoritesOfferIds, int lang);
 
         public Task<List<OfferModel>> GetOffersForActionDashboard(ManageJobsArgs args);
-        
+        public Dictionary<OfferDashboardStatus, int> GetOffersCounters(int companyId);
+        public List<JobVacancy> GetAllOffersByCompany(int companyId);
+
+
     }
 }
