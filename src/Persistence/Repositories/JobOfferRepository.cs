@@ -492,12 +492,32 @@ namespace Persistence.Repositories
             return offers;
         }
 
-        public Task<int> CountOffersPublished(int days)
+        public Task<int> GetCountOffersPublished(int days)
         {
             var lastLogin = DateTime.Now.AddDays(-days).Date;
 
             var query = _dataContext.JobVacancies.Where(a => a.PublicationDate >= lastLogin).CountAsync();
             return query;
+        }
+
+        public Dictionary<OfferDashboardStatus, int> GetOffersCounters(int companyId)
+        {
+            var allOffers = GetOffersByCompanyId(companyId).ToList();
+            var inactiveOffers = allOffers.Where(o => o.ChkDeleted || o.ChkFilled || o.FinishDate.Date < DateTime.Now.Date).ToList();
+            var activeOffers = allOffers.Except(inactiveOffers).ToList();
+            Dictionary<OfferDashboardStatus, int> dic = new()
+            {
+                { OfferDashboardStatus.All, allOffers.Count },
+                { OfferDashboardStatus.Filed, inactiveOffers.Count },
+                { OfferDashboardStatus.Actives, activeOffers.Count }
+            };
+            return dic;
+        }
+
+        public List<JobVacancy> GetAllOffersByCompany(int companyId)
+        {
+            var allOffers = _dataContext.JobVacancies.Where(a => a.Identerprise == companyId).ToList();            
+            return allOffers;
         }
 
         public async Task<List<OfferModel>> GetOffersForActionDashboard(ManageJobsArgs args)

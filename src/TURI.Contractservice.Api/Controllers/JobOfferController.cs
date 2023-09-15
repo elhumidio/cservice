@@ -576,10 +576,9 @@ namespace API.Controllers
             }
         }
 
-
         [HttpPost]
         public async Task<IActionResult> GetOffersForDashBoard(GetOffersForDashBoardRequest dto)
-        {   
+        {
             var res = await Mediator.Send(new GetOffersForDashBoardQuery
             {
                 Actives = dto.Actives,
@@ -589,9 +588,33 @@ namespace API.Controllers
                 LangId = dto.LangId,
                 Page = dto.Page,
                 PageSize = dto.PageSize,
-                Site = dto.Site
+                Site = dto.Site,
+                BrandId = dto.BrandId,
+                Location = dto.Location,
+                Title = dto.Title
             });
             return Ok(res.Value.ToResponse());
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> GetOfferCounters(GetCountersQuery query)
+        {
+            var result = await Mediator.Send(query);
+            return Ok(result);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> GetCitiesByCompanyOffers(GetCitiesQuery query)
+        {
+            var result = await Mediator.Send(query);
+            return Ok(result);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> GetBrandsByCompanyOffers(GetBrandsQuery query)
+        {
+            var result = await Mediator.Send(query);
+            return Ok(result);
         }
 
         /// <summary>

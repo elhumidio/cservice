@@ -42,7 +42,10 @@ namespace API.Converters
                 LangId = item.LangId,
                 Page = item.Page,
                 PageSize = item.PageSize,
-                Site = item.Site
+                Site = item.Site,
+                BrandId = item.BrandId,
+                Location = item.Location,
+                Title = item.Title
             };
         }
 
@@ -50,10 +53,7 @@ namespace API.Converters
         {
             return new ManageJobsResponse
             {
-                Actives = item.Actives,
-                Filed = item.Filed,
                 Offers = item.Offers.Select(a => a.ToResponse()).ToArray(),
-                Total = item.Total
             };
         }
 
