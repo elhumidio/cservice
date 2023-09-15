@@ -2,9 +2,6 @@ namespace TURI.ContractService.Contracts.Contract.Models.ManageJobs
 {
     public class ManageJobsResponse
     {
-        public int Filed { get; set; }
-        public int Total { get; set; }
-        public int Actives { get; set; }
         public OfferModelResponse[]? Offers { get; set; }
     }
 

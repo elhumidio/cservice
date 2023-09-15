@@ -17,5 +17,11 @@ namespace TURI.ContractService.Contracts.Contract.Models.ManageJobs
         public int Page { get; set; } = 1;
 
         public int PageSize { get; set; } = 10;
+
+        public string? Location { get; set; }
+
+        public int BrandId { get; set; }
+
+        public string? Title { get; set; }
     }
 }

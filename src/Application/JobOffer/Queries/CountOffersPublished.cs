@@ -27,7 +27,7 @@ namespace Application.JobOffer.Queries
 
             public async Task<Result<int>> Handle(Query request, CancellationToken cancellationToken)
             {
-                return Result<int>.Success(await _jobOffer.CountOffersPublished(request.Days));
+                return Result<int>.Success(await _jobOffer.GetCountOffersPublished(request.Days));
             }
         }
     }

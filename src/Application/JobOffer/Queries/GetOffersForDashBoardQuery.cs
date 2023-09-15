@@ -39,6 +39,15 @@ namespace Application.JobOffer.Queries
 
         [DataMember]
         public int PageSize { get; set; } = 10;
+
+        [DataMember]
+        public string? Location { get; set; }
+
+        [DataMember]
+        public int BrandId { get; set; }
+
+        [DataMember]
+        public string? Title { get; set; }
     }
 
     public class Handler : IRequestHandler<GetOffersForDashBoardQuery, Result<ManageJobsDto>>
@@ -63,14 +72,25 @@ namespace Application.JobOffer.Queries
         {
             var response = new ManageJobsDto();
             var offers = await _jobOfferRepository.GetOffersForActionDashboard(_mapper.Map(request, new ManageJobsArgs()));
+            if(!string.IsNullOrEmpty(request.Title))
+            {
+                offers = offers.Where(o => o.Title.Contains(request.Title) || o.Title == request.Title).ToList();
+            }
+            if(request.BrandId != 0)
+            {
+                offers = offers.Where(o => o.Idbrand == request.BrandId).ToList();
+            }
+            if(!string.IsNullOrEmpty(request.Location))
+            {
+                offers = offers.Where(o => o.City == request.Location || o.City.Contains(request.Location) || request.Location.Contains(o.City)).ToList();
+            }
+
             var filedOffersResponse = offers.Where(o => o.ChkFilled).ToList();
             var activesOfferResponse = offers.Where(o => !o.ChkDeleted && !o.ChkFilled && o.FinishDate.Date >= DateTime.Today).ToList();
             response.Offers = request.Actives ? activesOfferResponse : request.Filed ? filedOffersResponse : request.All ? offers : null;
             response.Offers = response.Offers.Skip(request.PageSize * (request.Page - 1)).Take(request.PageSize).ToList();
             var counters = await _applicationService.GetCandidatesByOffersByState(new CandidatesStatesByOffersRequest { OfferIds = response.Offers.Select(a => a.IdjobVacancy).ToList() });
-            response.Filed = filedOffersResponse.Count;
-            response.Actives = activesOfferResponse.Count;
-            response.Total = offers.Count;
+
             foreach (var offer in response.Offers)
             {
                 offer.NPendientes = counters.Where(c => c.OfferId == offer.IdjobVacancy && c.Status == CandidateStatus.Pending).FirstOrDefault()?.Count ?? 0;
