@@ -3,7 +3,6 @@ using Application.JobOffer.DTO;
 using AutoMapper;
 using Domain.Entities;
 using Domain.Repositories;
-using DPGRecruitmentCampaignClient;
 using MediatR;
 using System;
 using System.Collections.Generic;
