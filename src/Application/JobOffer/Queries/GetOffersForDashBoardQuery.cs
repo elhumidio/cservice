@@ -54,33 +54,37 @@ namespace Application.JobOffer.Queries
     {
         private readonly IJobOfferRepository _jobOfferRepository;
         private readonly IApplicationService _applicationService;
+        private readonly IContractRepository _contractRepository;
         private readonly IMapper _mapper;
         private readonly IApiUtils _utils;
         private const string JOIN = "ç";
 
         public Handler(IMapper mapper,
             IJobOfferRepository jobOfferRepository,
-            IApplicationService applicationService, IApiUtils apiUtils)
+            IApplicationService applicationService,
+            IApiUtils apiUtils,
+            IContractRepository contractRepository)
         {
             _mapper = mapper;
             _jobOfferRepository = jobOfferRepository;
             _applicationService = applicationService;
             _utils = apiUtils;
+            _contractRepository = contractRepository;
         }
 
         public async Task<Result<ManageJobsDto>> Handle(GetOffersForDashBoardQuery request, CancellationToken cancellationToken)
         {
             var response = new ManageJobsDto();
             var offers = await _jobOfferRepository.GetOffersForActionDashboard(_mapper.Map(request, new ManageJobsArgs()));
-            if(!string.IsNullOrEmpty(request.Title))
+            if (!string.IsNullOrEmpty(request.Title))
             {
                 offers = offers.Where(o => o.Title.Contains(request.Title) || o.Title == request.Title).ToList();
             }
-            if(request.BrandId != 0)
+            if (request.BrandId != 0)
             {
                 offers = offers.Where(o => o.Idbrand == request.BrandId).ToList();
             }
-            if(!string.IsNullOrEmpty(request.Location))
+            if (!string.IsNullOrEmpty(request.Location))
             {
                 offers = offers.Where(o => o.City == request.Location || o.City.Contains(request.Location) || request.Location.Contains(o.City)).ToList();
             }
@@ -89,6 +93,7 @@ namespace Application.JobOffer.Queries
             var activesOfferResponse = offers.Where(o => !o.ChkDeleted && !o.ChkFilled && o.FinishDate.Date >= DateTime.Today).ToList();
             response.Offers = request.Actives ? activesOfferResponse : request.Filed ? filedOffersResponse : request.All ? offers : null;
             response.Offers = response.Offers.Skip(request.PageSize * (request.Page - 1)).Take(request.PageSize).ToList();
+
             var counters = await _applicationService.GetCandidatesByOffersByState(new CandidatesStatesByOffersRequest { OfferIds = response.Offers.Select(a => a.IdjobVacancy).ToList() });
 
             foreach (var offer in response.Offers)
@@ -102,6 +107,8 @@ namespace Application.JobOffer.Queries
                 offer.Caducity = (int)(offer.FinishDate.Date - DateTime.Now.Date).TotalDays;
                 offer.FormData = $"{offer.IdjobVacancy}{JOIN}{offer.Idcontract}{JOIN}{offer.IdjobVacType}{JOIN}{offer.Caducity}{JOIN}{offer.ChkFilled.ToString()}";
                 offer.JobRegType = _utils.GetRegTypeBySiteAndLanguage(request.LangId, offer.IdjobRegType);
+                offer.CanSeeFilters = await _contractRepository.IsAllowedContractForSeeingFilters(offer.Idcontract);
+
                 IsOldOfferArgs getCVExpierdDays = new()
                 {
                     OfferPublicationDate = offer.PublicationDate,

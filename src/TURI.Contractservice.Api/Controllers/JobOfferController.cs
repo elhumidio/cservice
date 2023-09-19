@@ -14,12 +14,12 @@ using TURI.ContractService.Contracts.Contract.Models.Requests;
 namespace API.Controllers
 {
     public class JobOfferController : BaseApiController
-    {   
+    {
         private readonly IMemoryCache _cache;
         private readonly IMapper _mapper;
 
         public JobOfferController(IMemoryCache cache, IMapper mapper)
-        {            
+        {
             _cache = cache;
             _mapper = mapper;
         }
@@ -636,6 +636,13 @@ namespace API.Controllers
             {
                 return Ok(ex.Message);
             }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> VerifyOfferComms(int _offerId)
+        {
+            var response = await Mediator.Send(new VerifyOfferCommsCommand() { Offerid = _offerId });
+            return HandleResult(response);
         }
     }
 }

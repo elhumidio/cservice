@@ -66,7 +66,7 @@ namespace TURI.ContractService.Contracts.Contract.Models.ManageJobs
         public string? JobVacType { get; set; }
         public string? CCAA { get; set; }
         public string? OfferUrl { get; set; }
-
+        public bool? CanSeeFilters { get; set; }
         public string? JobRegType { get; set; }
     }
 }
