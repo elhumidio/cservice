@@ -637,5 +637,12 @@ namespace API.Controllers
                 return Ok(ex.Message);
             }
         }
+
+        [HttpGet]
+        public async Task<IActionResult> VerifyOfferComms(int _offerId)
+        {
+            var response = await Mediator.Send(new VerifyOfferCommsCommand() { Offerid = _offerId});
+            return HandleResult(response);
+        }
     }
 }
