@@ -4,7 +4,6 @@ using Application.Utils;
 using AutoMapper;
 using Domain.Enums;
 using Domain.Repositories;
-using DPGRecruitmentCampaignClient;
 using MediatR;
 using Microsoft.Extensions.Configuration;
 using System.Threading.Tasks;

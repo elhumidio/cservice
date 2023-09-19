@@ -1,12 +1,8 @@
-using Application.Aimwel.Interfaces;
-using Application.Aimwel.Queries;
 using Application.JobOffer.DTO;
 using AutoMapper;
 using Domain.Repositories;
-using DPGRecruitmentCampaignClient;
 using MediatR;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 
 namespace Application.JobOffer.Commands
 {
@@ -20,46 +16,39 @@ namespace Application.JobOffer.Commands
         public class Handler : IRequestHandler<Command, OfferModificationResult>
         {
             private readonly IJobOfferRepository _offerRepo;
-            private readonly IRegEnterpriseContractRepository _regEnterpriseContractRepository;
-            private readonly IAimwelCampaign _manageCampaign;
+            private readonly IRegEnterpriseContractRepository _regEnterpriseContractRepository;            
             private readonly IConfiguration _config;
             private readonly IMediator _mediatr;
             private readonly IContractProductRepository _contractProductRepo;
-            private readonly IMapper _mapper;            
+            private readonly IMapper _mapper;
 
             public Handler(IJobOfferRepository offerRepo,
-                IRegEnterpriseContractRepository regEnterpriseContractRepository,
-                IAimwelCampaign aimwelCampaign,
+                IRegEnterpriseContractRepository regEnterpriseContractRepository,                
                 IConfiguration config,
                 IContractProductRepository contractProductRepo,
-                IMediator mediatr,IMapper mapper)
+                IMediator mediatr, IMapper mapper)
             {
                 _offerRepo = offerRepo;
-                _regEnterpriseContractRepository = regEnterpriseContractRepository;
-                _manageCampaign = aimwelCampaign;
+                _regEnterpriseContractRepository = regEnterpriseContractRepository;                
                 _config = config;
                 _contractProductRepo = contractProductRepo;
                 _mediatr = mediatr;
-                _mapper = mapper;                
+                _mapper = mapper;
             }
 
             public async Task<OfferModificationResult> Handle(Command request, CancellationToken cancellationToken)
             {
-                            
                 string msg = string.Empty;
                 var job = _offerRepo.GetOfferById(request.id);
-                bool aimwelEnabled = Convert.ToBoolean(_config["Aimwel:EnableAimwel"]);
-                int[] aimwelEnabledSites = _config["Aimwel:EnabledSites"].Split(',').Select(h => Int32.Parse(h)).ToArray();
-                aimwelEnabled = aimwelEnabled && aimwelEnabledSites.Contains(job.Idsite);
 
                 if (job == null)
                 {
-                    return OfferModificationResult.Success( new List<string> { msg });
+                    return OfferModificationResult.Success(new List<string> { msg });
                 }
                 var ret = _offerRepo.FileOffer(job);
                 if (ret <= 0)
                 {
-                    msg += $"Offer {request.id} - Couldn't file job";                    
+                    msg += $"Offer {request.id} - Couldn't file job";
                     return OfferModificationResult.Success(new List<string> { msg });
                 }
                 else
@@ -67,17 +56,7 @@ namespace Application.JobOffer.Commands
                     var isPack = _contractProductRepo.IsPack(job.Idcontract);
                     if (isPack)
                         await _regEnterpriseContractRepository.IncrementAvailableUnits(job.Idcontract, job.IdjobVacType);
-                    msg += $"Offer {request.id} filed.\n\r";                    
-
-                    if (aimwelEnabled)
-                    {                        
-                        var campaign = await _manageCampaign.GetCampaignState(request.id);
-                        if (campaign != null )
-                        {
-                            await _manageCampaign.StopCampaign(job);
-                            msg += $"Campaign {campaign.CampaignId} /  {request.id} - Canceled ";                    
-                        }                  
-                    }
+                    msg += $"Offer {request.id} filed.\n\r";
                 }
                 OfferResultDto dto = new OfferResultDto();
                 dto = _mapper.Map(job, dto);
