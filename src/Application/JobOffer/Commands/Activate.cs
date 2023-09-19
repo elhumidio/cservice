@@ -1,15 +1,10 @@
-using Application.Aimwel.Commands;
-using Application.Aimwel.Interfaces;
-using Application.Aimwel.Queries;
 using Application.Contracts.Queries;
 using Application.JobOffer.DTO;
 using AutoMapper;
 using Domain.Enums;
 using Domain.Repositories;
-using DPGRecruitmentCampaignClient;
 using MediatR;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 
 namespace Application.JobOffer.Commands
 {
@@ -50,10 +45,7 @@ namespace Application.JobOffer.Commands
 
             public async Task<OfferModificationResult> Handle(Command request, CancellationToken cancellationToken)
             {
-
                 string msg = string.Empty;
-                bool aimwelEnabled = Convert.ToBoolean(_config["Aimwel:EnableAimwel"]);
-                int[] aimwelEnabledSites = _config["Aimwel:EnabledSites"].Split(',').Select(h => Int32.Parse(h)).ToArray();
                 bool offerUpdated = false;
                 var job = _offerRepo.GetOfferById(request.id);
                 var company = _enterpriseRepository.Get(job.Identerprise);
@@ -97,39 +89,7 @@ namespace Application.JobOffer.Commands
                 }
                 OfferResultDto dto = new OfferResultDto();
                 dto = _mapper.Map(job, dto);
-                bool canModifyCampaign = aimwelEnabled && offerUpdated && aimwelEnabledSites.Contains(job.Idsite);
-
-                if (canModifyCampaign)
-                {
-
-                    var campaign = await _mediatr.Send(new GetStatus.Query
-                    {
-                        OfferId = request.id
-                    });
-
-                    if (campaign != null && campaign.Status == CampaignStatus.Paused)
-                    {
-                        var ans = _mediatr.Send(new Resume.Command
-                        {
-                            offerId = request.id
-                        });
-                        msg += $"Campaign: {campaign.CampaignId} /  id: {request.id} - resumed ";
-                    }
-                    else if (campaign != null && campaign.Status == CampaignStatus.Ended)
-                    {
-                        var ans = _mediatr.Send(new Create.Command
-                        {
-                            offerId = request.id
-                        });
-                        msg += $"Campaign: {ans.Result.Value.CampaignId} /  id: {request.id} - created ";
-                    }
-                    return OfferModificationResult.Success(dto);
-                }
-                else
-                {
-                    return OfferModificationResult.Success(dto);
-                }
-
+                return OfferModificationResult.Success(new List<string> { msg });
             }
         }
     }

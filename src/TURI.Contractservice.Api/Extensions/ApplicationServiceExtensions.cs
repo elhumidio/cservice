@@ -1,9 +1,8 @@
-using Application.Aimwel;
-using Application.Aimwel.Interfaces;
 using Application.Behaviors;
 using Application.Interfaces;
 using Application.JobOffer.Commands;
 using Application.JobOffer.Queries;
+using Application.Utils;
 using Domain.Repositories;
 using FluentValidation.AspNetCore;
 using Infraestructure;
@@ -44,7 +43,7 @@ namespace API.Extensions
             services.AddSingleton(s => Refit.RestService.For<IApplicationService>(config["ExternalServices:ApplicationService"] ?? ""));
             services.AddSingleton(s => Refit.RestService.For<IEnterpriseService>(config["ExternalServices:EnterpriseService"] ?? ""));
             services.AddSingleton(s => Refit.RestService.For<ISearchService>(config["ExternalServices:SearchService"] ?? ""));
-
+            services.AddScoped<IApiUtils, ApiUtils>();
             #region MAPPING REPOSITORIES
 
             services.AddScoped<IAimwelErrorsRepository, AimwelErrorsRepository>();
@@ -81,8 +80,7 @@ namespace API.Extensions
             services.AddScoped<ISalaryRepository, SalaryRepository>();
             services.AddScoped<IJobVacTypeRepository, JobVacTypeRepository>();
             services.AddScoped<ISiteRepository, SiteRepository>();
-            services.AddScoped<ILanguageRepository, LanguageRepository>();
-            services.AddScoped<IAimwelCampaign, ManageCampaigns>();
+            services.AddScoped<ILanguageRepository, LanguageRepository>();            
             services.AddScoped<IlogoRepository, LogoRepository>();
             services.AddScoped<IEnterpriseBlindRepository, EnterpriseBlindRepository>();
             services.AddScoped<IJobVacancyLanguageRepository, JobVacancyLanguageRepository>();
@@ -101,6 +99,7 @@ namespace API.Extensions
             services.AddScoped<IRegEnterpriseConsumsRepository, RegEnterpriseConsumsRepository>();
             services.AddScoped<IEnterpriseUserJobVacRepository, EnterpriseUserJobVacRepository>();
             services.AddScoped<ISalesforceTransactionRepository, SalesforceTransactionRepository>();
+            services.AddScoped<IWP_CategoryOfferRelationRepository, WP_CategoryOfferRelationRepository>();
 
             #endregion MAPPING REPOSITORIES
 

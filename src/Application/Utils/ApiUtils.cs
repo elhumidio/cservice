@@ -1,20 +1,65 @@
-using Domain.Entities;
+using Domain.DTO.ManageJobs;
 using Domain.Enums;
 using Domain.Repositories;
-using DPGRecruitmentCampaignClient;
-using Microsoft.Extensions.Configuration;
-using System.Collections;
 using System.Text;
 using System.Text.RegularExpressions;
 
-
 namespace Application.Utils
 {
-    public class ApiUtils
+    public interface IApiUtils
     {
-     
+        public string BuildURLJobvacancy(OfferModel _offer);
 
-    
+        public string GetRegTypeBySiteAndLanguage(int lang, int type);
+
+        public int GetCVExpiredDays(IsOldOfferArgs pParameters);
+    }
+
+    public class ApiUtils : IApiUtils
+    {
+        private const int ONBOARD = 226;
+        private readonly IRegionRepository _regionRepo;
+        private readonly IZoneUrl _zoneUrl;
+        private const string k_UNO_MARZO_DIECIOCHO = "01-03-2018";
+        private const int k_ONE_YEAR = 1;
+        private const int k_TEN_DAYS = 10;
+        private const int k_JOBVACYPE_STANDARD_SIXTY = 6;
+        private const int k_THIRTY_DAYS = 30;
+        private const int k_NINETY_DAYS = 90;
+
+        public ApiUtils(IRegionRepository regionRepository, IZoneUrl zoneUrl)
+        {
+            _regionRepo = regionRepository;
+            _zoneUrl = zoneUrl;
+        }
+
+        public int GetCVExpiredDays(IsOldOfferArgs pParameters)
+        {
+            int CVExpiredDays = 0;
+            if (pParameters.ContractStartDate < Convert.ToDateTime(k_UNO_MARZO_DIECIOCHO).Date)
+            {
+                CVExpiredDays = Convert.ToInt32((System.DateTime.Today - pParameters.OfferPublicationDate.AddDays(pParameters.ExtensionDays).AddYears(k_ONE_YEAR)).TotalDays);
+            }
+            else
+            {
+                if (pParameters.OfferIDJobVacType == k_JOBVACYPE_STANDARD_SIXTY)
+                {
+                    CVExpiredDays = Convert.ToInt32((System.DateTime.Today - pParameters.OfferPublicationDate.AddDays(pParameters.ExtensionDays + pParameters.ProductDuration + k_THIRTY_DAYS)).TotalDays);
+                }
+                else
+                {
+                    if (pParameters.OfferCheckPack)
+                    {
+                        CVExpiredDays = Convert.ToInt32((System.DateTime.Today - pParameters.ContractFinishDate.AddDays(k_THIRTY_DAYS + pParameters.ExtensionDays)).TotalDays);
+                    }
+                    else
+                    {
+                        CVExpiredDays = Convert.ToInt32((System.DateTime.Today - pParameters.OfferPublicationDate.AddDays(pParameters.ExtensionDays + k_NINETY_DAYS)).TotalDays);
+                    }
+                }
+            }
+            return CVExpiredDays;
+        }
 
         public static bool IsValidEmail(string _email)
         {
@@ -31,18 +76,21 @@ namespace Application.Utils
                 return false;
             }
         }
-        public static Uri GetUriBySite(int siteId) {
 
+        public static Uri GetUriBySite(int siteId)
+        {
             Uri Uri = new Uri("https://www.turijobs.com");
-            
+
             switch (siteId)
             {
                 case (int)Sites.SPAIN:
                     Uri = new Uri("https://www.turijobs.com");
                     break;
+
                 case (int)Sites.PORTUGAL:
-                    Uri = new Uri("https://www.turijobs.pt") ;
+                    Uri = new Uri("https://www.turijobs.pt");
                     break;
+
                 case (int)Sites.ITALY:
                     Uri = new Uri("https://www.turijobs.it");
                     break;
@@ -50,12 +98,34 @@ namespace Application.Utils
                 case (int)Sites.MEXICO:
                     Uri = new Uri("https://www.turijobs.com.mx");
                     break;
+
                 default:
-                    Uri = new Uri("https://www.turijobs.com");                    
+                    Uri = new Uri("https://www.turijobs.com");
                     break;
             }
             return Uri;
+        }
 
+        public string GetRegTypeBySiteAndLanguage(int lang, int type)
+        {
+            Dictionary<(int, int), string> regTypeMap = new Dictionary<(int, int), string>
+                {
+                    {(1, 14), "Classic"},
+                    {(1, 7), "Clásica"},
+                    {(1, 17), "Clássica"},
+                    {(1, 15), "Classico"},
+                    {(2, 14), "Express"},
+                    {(2, 7), "Express"},
+                    {(2, 17), "Express"},
+                    {(2, 15), "Express"}
+                };
+
+            if (regTypeMap.TryGetValue((type, lang), out string result))
+            {
+                return result;
+            }
+
+            return string.Empty;
         }
 
         public static string GetBrandBySite(int siteId)
@@ -66,46 +136,28 @@ namespace Application.Utils
                 case (int)Sites.SPAIN:
                     brand = "turijobs-spain";
                     break;
+
                 case (int)Sites.PORTUGAL:
-                    brand  = "turijobs-portugal";
+                    brand = "turijobs-portugal";
                     break;
+
                 case (int)Sites.ITALY:
-                    brand =  "turijobs-italy";
-                    break;  
+                    brand = "turijobs-italy";
+                    break;
 
                 case (int)Sites.MEXICO:
-                    brand =  "turijobs-mexico";
+                    brand = "turijobs-mexico";
                     break;
+
                 default:
                     brand = "turijobs-spain";
                     break;
             }
             return brand;
-
         }
 
-        public static Language GetLanguageBySite(int siteId)
-        {
-
-            switch (siteId) {
-                case (int)Sites.SPAIN:
-                    return Language.EsEs;
-                    
-                    case (int)Sites.PORTUGAL:
-                    return Language.PtPt;
-                    
-                case (int)Sites.ITALY:
-                    return Language.ItCh;
-                    
-                case (int)Sites.MEXICO:
-                    return Language.EsMx;
-                    default:return Language.EsEs;
-            }
-
-        }
         public static int GetTuriLanguageBySite(int siteId)
         {
-
             switch (siteId)
             {
                 case (int)Sites.SPAIN:
@@ -119,9 +171,9 @@ namespace Application.Utils
 
                 case (int)Sites.MEXICO:
                     return 7;
+
                 default: return 7;
             }
-
         }
 
         public static string GetShortCountryBySite(Sites site)
@@ -146,6 +198,56 @@ namespace Application.Utils
                     break;
             }
             return country;
+        }
+
+        public string BuildURLJobvacancy(OfferModel _offer)
+        {
+            StringBuilder sb = new StringBuilder();
+            StringBuilder tmpSb = new StringBuilder();
+
+            tmpSb.Clear();
+            string title = ApiUtils.FormatString(_offer.Title.Trim());
+            title = title.EndsWith("-") ? title.Remove(title.Length - 1, 1) : title;
+
+            tmpSb.Append(ApiUtils.GetUriBySite(_offer.Idsite)); //http://www.turijobs.com
+            tmpSb.Append(ApiUtils.GetSearchbySite(_offer.Idsite));
+            if (_offer.Idregion == 61 || _offer.Idcountry == ONBOARD)
+                tmpSb.Append(ApiUtils.GetAbroadTerm(_offer.Idsite));
+            if (_offer.Idcity != null && _offer.Idcity > 0)
+            {
+                var cityUrl = _zoneUrl.GetCityUrlByCityId((int)_offer.Idcity);
+                if (!string.IsNullOrEmpty(cityUrl))
+                {
+                    tmpSb.Append(string.Format("-{0}", ApiUtils.FormatString(cityUrl).Trim())); //http://www.turijobs.com/ofertas-trabajo-calella
+                }
+                else
+                {
+                    if (_offer.Idsite != (int)Sites.MEXICO)
+                    {
+                        var regionName = _regionRepo.GetRegionNameByID(_offer.Idregion, true);
+                        var ccaa = _regionRepo.GetCCAAByID(_offer.Idregion, true);
+                        if (_offer.Idcity == 0)
+                        {
+                            tmpSb.Append(string.Format("-{0}", StringUtils.FormatString(regionName).Trim())); //http://www.turijobs.com/ofertas-trabajo-cadiz
+                            if ((ccaa != "- Todo País" && ccaa != "- Todo Portugal") && ccaa != regionName)
+                                tmpSb.Append(string.Format("-{0}", StringUtils.FormatString(ccaa).Trim())); //http://www.turijobs.com/ofertas-trabajo-cadiz-andalucia
+                        }
+                        else
+                            tmpSb.Append(string.Format("-{0}", StringUtils.FormatString(regionName).Trim()));
+                    }
+                    else // méxico
+                    {
+                        tmpSb.Append(string.Format("-{0}", StringUtils.FormatString(_offer.City).Trim()));
+                    }
+                }
+            }
+
+            tmpSb.Append(string.Format("/{0}", StringUtils.FormatString(title.ToLower()).Trim())); //http://www.turijobs.com/ofertas-trabajo-cadiz/recepcionista
+            tmpSb.Append(string.Format("{0}", StringUtils.FormatString("-of").Trim())); //http://www.turijobs.com/ofertas-trabajo-cadiz/recepcionista-of
+            tmpSb.Append(string.Format("{0}", StringUtils.FormatString(_offer.IdjobVacancy.ToString().Trim()))); //http://www.turijobs.com/ofertas-trabajo-cadiz/recepcionista-of76008
+            sb.Append(ApiUtils.SanitizeURL(tmpSb).ToString());
+
+            return sb.ToString();
         }
 
         public static int GetCountryIdBySite(int site)
@@ -179,7 +281,7 @@ namespace Application.Utils
 
         /// <summary>
         /// Sanitiza una URL.
-        /// </summary>        
+        /// </summary>
         /// <param name="_cadena">String con la cadena a sanitizar.</param>
         /// <returns>Devuelve un String con la URL generada.</returns>
         public static string SanitizeURL(StringBuilder _cadena)
@@ -305,7 +407,7 @@ namespace Application.Utils
             return sb.ToString();
         }
 
-       public static string GetSearchbySite(int site)
+        public static string GetSearchbySite(int site)
         {
             string domain = string.Empty;
 
@@ -314,16 +416,18 @@ namespace Application.Utils
                 case 6:
                     domain = "ofertas-trabajo";
                     break;
+
                 case 8:
                     domain = "anuncios-emprego";
                     break;
+
                 case 11:
                     domain = "ofertas-trabajo";
                     break;
+
                 case 39:
                     domain = "offerte-lavoro";
                     break;
-
             }
 
             return domain;
@@ -337,16 +441,17 @@ namespace Application.Utils
                 case 8:
                     url = string.Format("/{0}", "anuncios-emprego-estrangeiro");
                     break;
+
                 case 6:
                 case 11:
                     url = string.Format("/{0}", "ofertas-trabajo-extranjero");
                     break;
+
                 case 39:
                     url = string.Format("/{0}", "offerte-lavoro-allestero");
                     break;
             }
             return url;
         }
- 
     }
 }
