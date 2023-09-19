@@ -592,5 +592,17 @@ namespace Persistence.Repositories
 
             return query.OrderByDescending(v => v.PublicationDate).ToList();
         }
+
+        public async Task<bool> OfferAllowCommns(int OfferId)
+        {
+            var offer = await _dataContext.JobVacancies.Where(a => a.IdjobVacancy == OfferId).FirstOrDefaultAsync();
+            if(offer == null)
+            {
+                return false;
+            }
+            else {
+                return offer.AllowChat ?? false;
+            }
+        }
     }
 }

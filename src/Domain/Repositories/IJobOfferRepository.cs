@@ -10,6 +10,7 @@ namespace Domain.Repositories
     public interface IJobOfferRepository
     {
         public IQueryable<JobVacancy> GetOffersByCompanyId(int companyId);
+
         public IQueryable<JobVacancy> GetActiveOffersByContract(int contractId);
 
         public IQueryable<JobVacancy> GetOffersByContract(int contractId);
@@ -37,6 +38,7 @@ namespace Domain.Repositories
         public IQueryable<JobVacancy> GetActiveOffers();
 
         public JobVacancy GetOfferById(int id);
+
         public List<JobVacancy> WP_GetOffersRelatedByCategory(int areaId, int siteId, int numOffers);
 
         Task<int> UpdateOffer(JobVacancy jobUpdated);
@@ -66,9 +68,11 @@ namespace Domain.Repositories
         public Task<List<OfferInfoMin>> GetOffersForView(int[] favoritesOfferIds, int lang);
 
         public Task<List<OfferModel>> GetOffersForActionDashboard(ManageJobsArgs args);
+
         public Dictionary<OfferDashboardStatus, int> GetOffersCounters(int companyId);
+
         public List<JobVacancy> GetAllOffersByCompany(int companyId);
 
-
+        public Task<bool> OfferAllowCommns(int OfferId);
     }
 }

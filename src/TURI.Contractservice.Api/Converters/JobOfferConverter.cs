@@ -120,7 +120,8 @@ namespace API.Converters
                 Title = item.Title,
                 UpdatingDate = item.UpdatingDate,
                 ZipCode = item.ZipCode,
-                ZipCodeCity = item.ZipCodeCity
+                ZipCodeCity = item.ZipCodeCity,
+                CanSeeFilters = item.CanSeeFilters
             };
         }
 

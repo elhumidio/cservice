@@ -12,10 +12,15 @@ namespace Domain.Repositories
         bool IsValidContract(int contractId);
 
         public IQueryable<ServiceTypeDto> GetServiceTypes(int contractId);
-        public Task<List<ContractsDistDto>> GetValidContracts(int companyId,int siteId, int langId);
+
+        public Task<List<ContractsDistDto>> GetValidContracts(int companyId, int siteId, int langId);
 
         public Task<List<RegEnterpriseContract>> GetWithReg(int contractId);
+
         public Task<List<ContractProductShortDto>> GetAllProductsByContract(int contractId, int lang, int site);
+
+        public Task<bool> IsAllowedContractForSeeingFilters(int contractId);
+
 
         public Task<int> CreateContract(Contract contract);
 

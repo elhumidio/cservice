@@ -59,6 +59,13 @@ namespace Persistence.Repositories
             return contracts != null && contracts.Any();
         }
 
+        public async Task<bool> IsAllowedContractForSeeingFilters(int contractId)
+        {
+            var contract = await _dataContext.Contracts.FirstOrDefaultAsync(c => c.Idcontract == contractId);
+            return contract != null && contract.FinishDate >= DateTime.Now.Date.AddDays(-30);
+        }
+
+
         public async Task<List<ContractProductShortDto>> GetAllProductsByContract(int contractId, int lang, int site)
         {
             var list = await _dataContext.Contracts
@@ -115,20 +122,22 @@ namespace Persistence.Repositories
 
         public async Task<int> CreateContract(Contract contract)
         {
-            try {
+            try
+            {
                 var a = _dataContext.Add(contract).Entity;
                 var saving = await _dataContext.SaveChangesAsync();
                 return contract.Idcontract;
-            }   
-            catch(Exception ex) {
+            }
+            catch (Exception ex)
+            {
                 var a = ex;
                 return -1;
-            }               
+            }
         }
 
         public async Task<bool> UpdateContractSalesforceId(int contractId, string salesforceId)
         {
-            var contract =await  _dataContext.Contracts.FirstOrDefaultAsync(c => c.Idcontract == contractId);
+            var contract = await _dataContext.Contracts.FirstOrDefaultAsync(c => c.Idcontract == contractId);
             contract.SalesforceId = salesforceId;
             var ret = await _dataContext.SaveChangesAsync();
             return ret > 0;
