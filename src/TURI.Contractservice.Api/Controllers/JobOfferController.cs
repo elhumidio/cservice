@@ -1,5 +1,4 @@
 using API.Converters;
-using Application.Aimwel.Interfaces;
 using Application.JobOffer.Commands;
 using Application.JobOffer.DTO;
 using Application.JobOffer.Queries;
@@ -15,14 +14,12 @@ using TURI.ContractService.Contracts.Contract.Models.Requests;
 namespace API.Controllers
 {
     public class JobOfferController : BaseApiController
-    {
-        private readonly IAimwelCampaign _aimwelCampaign;
+    {   
         private readonly IMemoryCache _cache;
         private readonly IMapper _mapper;
 
-        public JobOfferController(IAimwelCampaign aimwelCampaign, IMemoryCache cache, IMapper mapper)
-        {
-            _aimwelCampaign = aimwelCampaign;
+        public JobOfferController(IMemoryCache cache, IMapper mapper)
+        {            
             _cache = cache;
             _mapper = mapper;
         }

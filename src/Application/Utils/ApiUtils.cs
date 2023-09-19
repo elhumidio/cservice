@@ -1,7 +1,6 @@
 using Domain.DTO.ManageJobs;
 using Domain.Enums;
 using Domain.Repositories;
-using DPGRecruitmentCampaignClient;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -12,6 +11,7 @@ namespace Application.Utils
         public string BuildURLJobvacancy(OfferModel _offer);
 
         public string GetRegTypeBySiteAndLanguage(int lang, int type);
+
         public int GetCVExpiredDays(IsOldOfferArgs pParameters);
     }
 
@@ -35,7 +35,6 @@ namespace Application.Utils
 
         public int GetCVExpiredDays(IsOldOfferArgs pParameters)
         {
-
             int CVExpiredDays = 0;
             if (pParameters.ContractStartDate < Convert.ToDateTime(k_UNO_MARZO_DIECIOCHO).Date)
             {
@@ -155,26 +154,6 @@ namespace Application.Utils
                     break;
             }
             return brand;
-        }
-
-        public static Language GetLanguageBySite(int siteId)
-        {
-            switch (siteId)
-            {
-                case (int)Sites.SPAIN:
-                    return Language.EsEs;
-
-                case (int)Sites.PORTUGAL:
-                    return Language.PtPt;
-
-                case (int)Sites.ITALY:
-                    return Language.ItCh;
-
-                case (int)Sites.MEXICO:
-                    return Language.EsMx;
-
-                default: return Language.EsEs;
-            }
         }
 
         public static int GetTuriLanguageBySite(int siteId)

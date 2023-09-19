@@ -5,7 +5,6 @@ using System.Linq;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
-using static Grpc.Core.Metadata;
 
 namespace Application.Utils
 {
