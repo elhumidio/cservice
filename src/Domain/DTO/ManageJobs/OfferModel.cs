@@ -62,5 +62,6 @@ namespace Domain.DTO.ManageJobs
         public string? CCAA { get; set; }
         public string? OfferUrl { get; set; }
         public string? JobRegType { get; set; }
+        public bool? CanSeeFilters { get; set; }
     }
 }
