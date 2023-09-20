@@ -1,5 +1,6 @@
 using Refit;
 using TURI.ContractService.Contract.Models;
+using TURI.ContractService.Contracts.Contract.Models;
 using TURI.ContractService.Contracts.Contract.Models.ManageJobs;
 using TURI.ContractService.Contracts.Contract.Models.Requests;
 
@@ -18,4 +19,7 @@ public interface IJobOfferService
 
     [Post("/api/JobOffer/GetOffersForDashBoard")]
     public Task<ManageJobsResponse> GetOffersForDashBoard(GetOffersForDashBoardRequest dto);
+
+    [Post("/api/JobOffer/ListOffersAtsInfo")]
+    Task<List<OfferMinInfoAts>> ListOffersAtsInfo(OfferMinInfoAtsRequest request);
 }
