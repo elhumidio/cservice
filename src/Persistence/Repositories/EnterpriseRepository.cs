@@ -124,6 +124,21 @@ namespace Persistence.Repositories
             return query;
         }
 
+        public List<int> GetCompaniesWithActiveJobs()
+        {
+            var query = _dataContext.JobVacancies
+                .Where(vac =>
+                    vac.ChkFilled == false &&
+                    vac.ChkDeleted == false &&
+                    vac.ChkBlindVac == false &&
+                    vac.FinishDate < DateTime.Now)
+                .Select(vac => vac.Identerprise)
+                .Distinct()
+                .ToList();
+
+            return query;
+        }
+
         public string GetCompanyLogo(int companyId, int brandId, bool isBlind)
         {
             string logoURL = "https://www.turijobs.com/static/img/global/nologo.png";

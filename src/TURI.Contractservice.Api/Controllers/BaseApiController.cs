@@ -47,11 +47,14 @@ namespace API.Controllers
 
         protected IActionResult HandleResult(VerifyGoalsOfferResponse result)
         {
-
             return Ok(result);
+        }
 
-
-        }  
+        /// <summary>May as well make a generic return for non-Result types </summary>
+        protected IActionResult HandleResult<T>(T result)
+        {
+            return Ok(result);
+        }
 
     }
 }
