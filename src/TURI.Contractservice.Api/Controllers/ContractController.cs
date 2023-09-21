@@ -262,5 +262,13 @@ namespace API.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAllActiveCompanies()
+        {
+            var result = await Mediator.Send(new GetAllActiveCompanies.GetAll());
+
+            return HandleResult(result);
+        }
     }
 }
