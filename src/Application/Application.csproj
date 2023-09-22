@@ -17,12 +17,6 @@
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
     <PackageReference Include="FluentValidation.AspNetCore" Version="11.2.1" />
     <PackageReference Include="Google.Protobuf" Version="3.21.7" />
-    <PackageReference Include="Grpc.Core.Api" Version="2.49.0" />
-    <PackageReference Include="Grpc.Net.Client" Version="2.49.0" />
-    <PackageReference Include="Grpc.Tools" Version="2.49.1">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
     <PackageReference Include="HtmlAgilityPack" Version="1.11.43" />
     <PackageReference Include="MediatR" Version="10.0.1" />
     <PackageReference Include="MediatR.Extensions.FluentValidation.AspNetCore" Version="3.0.0" />
@@ -35,7 +29,7 @@
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="Refit" Version="7.0.0" />
-    <PackageReference Include="TURI.ApplicationService.Contracts" Version="1.0.1" />
+    <PackageReference Include="TURI.ApplicationService.Contracts" Version="1.0.4" />
     <PackageReference Include="TURI.EnterpriseService.Contracts" Version="1.0.2" />
     <PackageReference Include="TURI.SearchService.Contracts" Version="1.0.2" />
   </ItemGroup>
@@ -46,11 +40,7 @@
     <ProjectReference Include="..\TURI.ContractService.Contracts\TURI.ContractService.Contracts.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Protobuf Include="Protos\nl\dpgrecruitment\campaign\api.proto" ProtoRoot="Protos/" GrpcServices="Client" />    
-    <Protobuf Include="Protos\nl\dpgrecruitment\campaign\requests.proto" ProtoRoot="Protos/" GrpcServices="Client" />    
-    <Protobuf Include="Protos\nl\dpgrecruitment\campaign\responses.proto" ProtoRoot="Protos/" GrpcServices="Client" />    
-    <Protobuf Include="Protos\nl\dpgrecruitment\campaign\types.proto" ProtoRoot="Protos/" GrpcServices="Client" />    
+  <ItemGroup>    
     <Protobuf Include="Protos/validate/*.proto" ProtoRoot="Protos/" GrpcServices="Client" />
   </ItemGroup>
 
@@ -59,10 +49,6 @@
     <EmbeddedResource Remove="JobOffer\Interfaces\**" />
     <None Remove="JobOffer\Interfaces\**" />
     <Protobuf Remove="JobOffer\Interfaces\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="ContractCreation\Queries\" />
   </ItemGroup>
 
 </Project>

@@ -1,4 +1,3 @@
-using Application.Aimwel.Interfaces;
 using Application.Core;
 using Application.JobOffer.Commands;
 using AutoMapper;
@@ -21,7 +20,7 @@ namespace TURI.Contractservice.Tests.Unit.JobOffer.Commands
         private readonly Mock<IRegJobVacMatchingRepository> _regVacMatchingRepositoryMock;
         private readonly Mock<IEnterpriseRepository> _enterpriseRepositoryMock;
         private readonly IMediator _mediatr;
-        private readonly IAimwelCampaign _managecampaignMock;
+
 
         public CreateOfferCommandHandlerTest()
         {

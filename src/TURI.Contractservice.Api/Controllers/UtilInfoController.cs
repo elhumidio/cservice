@@ -10,7 +10,6 @@ using Application.Utils.Queries;
 using Domain.DTO;
 using Domain.Entities;
 using Domain.Repositories;
-using DPGRecruitmentCampaignClient;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;

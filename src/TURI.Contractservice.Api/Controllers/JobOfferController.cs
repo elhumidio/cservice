@@ -1,26 +1,27 @@
 using API.Converters;
-using Application.Aimwel.Interfaces;
 using Application.JobOffer.Commands;
 using Application.JobOffer.DTO;
 using Application.JobOffer.Queries;
 using Application.Utils.Queries.Equest;
+using AutoMapper;
 using Domain.DTO;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using TURI.ContractService.Contract.Models;
+using TURI.ContractService.Contracts.Contract.Models.ManageJobs;
 using TURI.ContractService.Contracts.Contract.Models.Requests;
 
 namespace API.Controllers
 {
     public class JobOfferController : BaseApiController
     {
-        private readonly IAimwelCampaign _aimwelCampaign;
         private readonly IMemoryCache _cache;
+        private readonly IMapper _mapper;
 
-        public JobOfferController(IAimwelCampaign aimwelCampaign, IMemoryCache cache)
+        public JobOfferController(IMemoryCache cache, IMapper mapper)
         {
-            _aimwelCampaign = aimwelCampaign;
             _cache = cache;
+            _mapper = mapper;
         }
 
         /// <summary>
@@ -570,6 +571,78 @@ namespace API.Controllers
             {
                 return BadRequest(result.Error);
             }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> GetOffersForDashBoard(GetOffersForDashBoardRequest dto)
+        {
+            var res = await Mediator.Send(new GetOffersForDashBoardQuery
+            {
+                Actives = dto.Actives,
+                All = dto.All,
+                CompanyId = dto.CompanyId,
+                Filed = dto.Filed,
+                LangId = dto.LangId,
+                Page = dto.Page,
+                PageSize = dto.PageSize,
+                Site = dto.Site,
+                BrandId = dto.BrandId,
+                Location = dto.Location,
+                Title = dto.Title
+            });
+            return Ok(res.Value.ToResponse());
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> GetOfferCounters(GetCountersQuery query)
+        {
+            var result = await Mediator.Send(query);
+            return Ok(result);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> GetCitiesByCompanyOffers(GetCitiesQuery query)
+        {
+            var result = await Mediator.Send(query);
+            return Ok(result);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> GetBrandsByCompanyOffers(GetBrandsQuery query)
+        {
+            var result = await Mediator.Send(query);
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Retrieve 3 offers related to Wordpress Blog category.
+        /// </summary>
+        /// <param name="categoryId">Wordpress Blog category.</param>
+        /// <returns>3 offers.</returns>
+        [HttpGet]
+        public async Task<IActionResult> WP_GetRelatedOffersByCategory(string categoryId, int siteId, int numOffers)
+        {
+            try
+            {
+                var response = await Mediator.Send(new WP_GetRelatedOffersByCategory.Command
+                {
+                    CategoryId = categoryId,
+                    SiteId = siteId,
+                    NumOffers = numOffers
+                });
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return Ok(ex.Message);
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> VerifyOfferComms(int _offerId)
+        {
+            var response = await Mediator.Send(new VerifyOfferCommsCommand() { Offerid = _offerId });
+            return HandleResult(response);
         }
     }
 }

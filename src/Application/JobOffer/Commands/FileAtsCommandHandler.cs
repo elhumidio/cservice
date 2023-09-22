@@ -1,4 +1,3 @@
-using Application.Aimwel.Interfaces;
 using Application.JobOffer.DTO;
 using AutoMapper;
 using Domain.Enums;
@@ -18,7 +17,6 @@ namespace Application.JobOffer.Commands
         private readonly ILogger<FileAtsCommandHandler> _logger;
         private readonly IMediator _mediatr;
         private readonly IMapper _mapper;
-        private readonly IAimwelCampaign _manageCampaign;
         private readonly IConfiguration _config;
 
         public FileAtsCommandHandler(IJobOfferRepository jobOfferRepository,
@@ -27,7 +25,6 @@ namespace Application.JobOffer.Commands
             IContractProductRepository contractProductRepo,
             ILogger<FileAtsCommandHandler> logger,
             IMediator mediatr, IMapper mapper,
-            IAimwelCampaign aimwelCampaign,
             IConfiguration config)
         {
             _regJobVacRepo = regJobVacMatchingRepository;
@@ -38,7 +35,6 @@ namespace Application.JobOffer.Commands
             _mediatr = mediatr;
             _mapper = mapper;
             _config = config;
-            _manageCampaign = aimwelCampaign;
         }
 
         public async Task<OfferModificationResult> Handle(FileAtsOfferCommand offer, CancellationToken cancellationToken)
@@ -58,19 +54,12 @@ namespace Application.JobOffer.Commands
                 foreach (var atsInfo in ats)
                 {
                     var job = _offerRepo.GetOfferById(atsInfo.IdjobVacancy);
-                    bool aimwelEnabled = Convert.ToBoolean(_config["Aimwel:EnableAimwel"]);
-                    int[] aimwelEnabledSites = _config["Aimwel:EnabledSites"].Split(',').Select(h => Int32.Parse(h)).ToArray();
-                    aimwelEnabled = aimwelEnabled && aimwelEnabledSites.Contains(job.Idsite);
-
-
                     isActiveOffer = !job.ChkFilled && !job.ChkDeleted
                         && job.FinishDate.Date >= DateTime.Now.Date
                         && (job.Idstatus == (int)OfferStatus.Active ||
                        _config["TestWorkAround:CompaniesTesting"].Split(',').Contains(job.Identerprise.ToString()));
                     if (isActiveOffer)
                     {
-                        if (aimwelEnabled)
-                            await _manageCampaign.StopCampaign(job);
                         var ret = _offerRepo.FileOffer(job);
                         if (ret > 0) filed++;
                     }

@@ -23,5 +23,7 @@ namespace Domain.Repositories
         public string GetCompanyNameByBrandId(int brandId);
 
         public string GetCompanyLogo(int companyId, int brandId, bool isBlind);
+
+        public List<int> GetCompaniesWithActiveJobs();
     }
 }

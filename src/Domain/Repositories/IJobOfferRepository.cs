@@ -1,12 +1,16 @@
 using Domain.Classes;
 using Domain.DTO;
+using Domain.DTO.ManageJobs;
+using Domain.DTO.Requests;
 using Domain.Entities;
+using Domain.Enums;
 
 namespace Domain.Repositories
 {
     public interface IJobOfferRepository
     {
         public IQueryable<JobVacancy> GetOffersByCompanyId(int companyId);
+
         public IQueryable<JobVacancy> GetActiveOffersByContract(int contractId);
 
         public IQueryable<JobVacancy> GetOffersByContract(int contractId);
@@ -35,6 +39,8 @@ namespace Domain.Repositories
 
         public JobVacancy GetOfferById(int id);
 
+        public List<JobVacancy> WP_GetOffersRelatedByCategory(int areaId, int siteId, int numOffers);
+
         Task<int> UpdateOffer(JobVacancy jobUpdated);
 
         public int FileOffer(JobVacancy job);
@@ -47,7 +53,7 @@ namespace Domain.Repositories
 
         public int DeleteOffer(JobVacancy job);
 
-        public Task<int> CountOffersPublished(int days);
+        public Task<int> GetCountOffersPublished(int days);
 
         public List<int>? GetoffersinCampaigns();
 
@@ -60,6 +66,13 @@ namespace Domain.Repositories
         public Task<IReadOnlyList<JobDataDefinition>> GetActiveJobsSinceADate(DateTime LastLoggin, int[] followedCompanies);
 
         public Task<List<OfferInfoMin>> GetOffersForView(int[] favoritesOfferIds, int lang);
-        
+
+        public Task<List<OfferModel>> GetOffersForActionDashboard(ManageJobsArgs args);
+
+        public Dictionary<OfferDashboardStatus, int> GetOffersCounters(int companyId);
+
+        public List<JobVacancy> GetAllOffersByCompany(int companyId);
+
+        public Task<bool> OfferAllowCommns(int OfferId);
     }
 }

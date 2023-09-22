@@ -8,5 +8,6 @@ namespace Domain.Repositories
 
         public IQueryable<Country> GetCountries(int siteId, int languageId);
         public Country GetCountryById(int countryId);
+        public string GetCountryNameById(int countryId);
     }
 }
