@@ -8,5 +8,6 @@ namespace Domain.Repositories
 
         public int GetCompanyUserIdByUserId(int userid);
         public UserInfoDto GetIDSUserByCompanyId(int companyId);
+        public List<EnterpriseAdmin> GetCompanyAdmins(int companyId, bool allowManagers = false);
     }
 }
