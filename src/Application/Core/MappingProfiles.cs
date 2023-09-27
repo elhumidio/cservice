@@ -21,6 +21,7 @@ namespace Application.Core
         public MappingProfiles()
         {
             CreateMap<JobVacancy, JobOfferDto>();
+            CreateMap<JobVacancy, JobOfferResponse>();
             CreateMap<EnterpriseUserJobVac, UnitsAssignmentDto>();
             CreateMap<Contract, ContractDto>();
             CreateMap<RegEnterpriseContract, RegEnterpriseContractDto>();
