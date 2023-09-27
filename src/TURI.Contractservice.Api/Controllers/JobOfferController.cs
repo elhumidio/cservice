@@ -7,9 +7,10 @@ using AutoMapper;
 using Domain.DTO;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
-using TURI.ContractService.Contract.Models;
+using Refit;
 using TURI.ContractService.Contracts.Contract.Models.ManageJobs;
 using TURI.ContractService.Contracts.Contract.Models.Requests;
+using JobOfferResponse = TURI.ContractService.Contract.Models.JobOfferResponse;
 
 namespace API.Controllers
 {
@@ -311,6 +312,14 @@ namespace API.Controllers
             return HandleResult(result);
         }
 
+        [HttpGet("{companyId}")]
+        public async Task<IActionResult> GetActiveJobOffersByCompanyForFeeds(int companyId)
+        {
+            var result = await Mediator.Send(new ListActivesByCompanyForFeeds.Query { CompanyId = companyId });
+
+            return HandleResult(result);
+        }
+
         /// <summary>
         /// Gets active offers full data by company.
         /// </summary>
@@ -497,6 +506,8 @@ namespace API.Controllers
 
             return HandleResult(result);
         }
+
+        
 
         /// <summary>
         /// It update job date
