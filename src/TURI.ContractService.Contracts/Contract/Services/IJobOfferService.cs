@@ -23,6 +23,6 @@ public interface IJobOfferService
     [Post("/api/JobOffer/ListOffersAtsInfo")]
     Task<List<OfferMinInfoAts>> ListOffersAtsInfo(OfferMinInfoAtsRequest request);
 
-    [Post("/api/JobOffer/GetActiveJobsForCompany")]
+    [Get("/api/JobOffer/GetActiveJobsForCompany")]
     Task<List<JobOfferResponse>> GetActiveJobsForCompany(int companyId);
 }
