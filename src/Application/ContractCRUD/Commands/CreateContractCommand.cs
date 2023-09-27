@@ -3,7 +3,7 @@ using Application.Core;
 using MediatR;
 using System.Runtime.Serialization;
 
-namespace Application.ContractCreation.Commands
+namespace Application.ContractCRUD.Commands
 {
     [DataContract]
     public class CreateContractCommand : IRequest<Result<ContractCreationDomainResponse>>

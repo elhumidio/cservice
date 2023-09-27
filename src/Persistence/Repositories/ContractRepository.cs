@@ -142,5 +142,27 @@ namespace Persistence.Repositories
             var ret = await _dataContext.SaveChangesAsync();
             return ret > 0;
         }
+
+        public async Task<bool> UpdateContract(Contract contract)
+        {
+            var currentContract = _dataContext.Contracts.First(c => c.Idcontract == contract.Idcontract);
+            
+            _dataContext.Contracts.Update(currentContract);
+            currentContract = contract;
+            var ret = _dataContext.SaveChanges();
+
+            return ret > 0;
+        }
+
+        public bool DisableContract(int contractId)
+        {
+            var currentContract = _dataContext.Contracts.First(c => c.Idcontract == contractId);
+
+            _dataContext.Contracts.Update(currentContract);
+            currentContract.ChkApproved = false;
+            var ret = _dataContext.SaveChanges();
+
+            return ret > 0;
+        }
     }
 }

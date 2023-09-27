@@ -1,7 +1,8 @@
 using API.DataContext;
 using Application.AuxiliaryData.DTO;
-using Application.ContractCreation.Commands;
 using Application.ContractCreation.Dto;
+using Application.ContractCRUD.Commands;
+using Application.ContractCRUD.Commands.Salesforce;
 using Application.ContractProducts.DTO;
 using Application.Contracts.DTO;
 using Application.EnterpriseContract.DTO;
@@ -23,6 +24,7 @@ namespace Application.Core
             CreateMap<JobVacancy, JobOfferDto>();
             CreateMap<EnterpriseUserJobVac, UnitsAssignmentDto>();
             CreateMap<Contract, ContractDto>();
+            CreateMap<UpdateContractCommand, Contract>();
             CreateMap<RegEnterpriseContract, RegEnterpriseContractDto>();
             CreateMap<ContractProduct, ContractProductDto>();
             CreateMap<CreateOfferCommand, JobVacancy>().MapOnlyIfChanged().ForMember(a => a.IdjobVacancy, opt => opt.Ignore()).

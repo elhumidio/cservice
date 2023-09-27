@@ -4,7 +4,7 @@ using Domain.DTO.Requests;
 using Domain.Repositories;
 using MediatR;
 
-namespace Application.ContractCreation.Commands
+namespace Application.ContractCRUD.Commands.Salesforce
 {
     public class UpdateContractProductSalesforceIdHandler : IRequestHandler<UpdateContractProductSalesforceIdRequest, Result<bool>>
     {
@@ -23,7 +23,7 @@ namespace Application.ContractCreation.Commands
 
         public async Task<Result<bool>> Handle(UpdateContractProductSalesforceIdRequest request, CancellationToken cancellationToken)
         {
-            var retContract =await contractRepository.UpdateContractSalesforceId(request.ContractId, request.ContractSalesForceId);
+            var retContract = await contractRepository.UpdateContractSalesforceId(request.ContractId, request.ContractSalesForceId);
             var args = new UpdateContractProductSForceId();
             args = mapper.Map(request, args);
             var ret = await contractProductrepository.UpdateContractProductSalesforceId(args);

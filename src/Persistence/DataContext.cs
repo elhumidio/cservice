@@ -71,6 +71,8 @@ namespace Persistence
 
         public virtual DbSet<ZoneUrl> ZoneUrls { get; set; } = null!;
 
+        public virtual DbSet<BackOfficeUser> BackOfficeUsers { get; set; } = null!;
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.UseCollation("Modern_Spanish_CI_AS");
@@ -78,6 +80,11 @@ namespace Persistence
 
             modelBuilder.HasSequence("GetNextSequenceValueFeedsLog");
 
+
+            modelBuilder.Entity<BackOfficeUser>(entity =>
+            {
+                entity.ToTable("TBoUser");
+            });
 
             modelBuilder.Entity<RegEnterpriseConsum>(entity =>
             {

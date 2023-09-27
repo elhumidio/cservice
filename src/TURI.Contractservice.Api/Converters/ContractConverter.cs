@@ -1,5 +1,6 @@
-using Application.ContractCreation.Commands;
 using Application.ContractCreation.Dto;
+using Application.ContractCRUD.Commands;
+using Application.ContractCRUD.Commands.Salesforce;
 using Application.Contracts.DTO;
 using AutoMapper;
 using Domain.DTO;
