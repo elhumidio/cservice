@@ -71,13 +71,13 @@ namespace Persistence
 
         public virtual DbSet<ZoneUrl> ZoneUrls { get; set; } = null!;
 
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.UseCollation("Modern_Spanish_CI_AS");
 
 
             modelBuilder.HasSequence("GetNextSequenceValueFeedsLog");
-
 
             modelBuilder.Entity<RegEnterpriseConsum>(entity =>
             {

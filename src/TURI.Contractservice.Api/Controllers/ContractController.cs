@@ -1,4 +1,5 @@
 using API.Converters;
+using Application.ContractCRUD.Commands;
 using Application.Contracts.DTO;
 using Application.Contracts.Queries;
 using Application.EnterpriseContract.Queries;
@@ -7,6 +8,7 @@ using Domain.Enums;
 using Microsoft.AspNetCore.Mvc;
 using TURI.ContractService.Contracts.Contract.Models.ContractCreationFolder;
 using TURI.ContractService.Contracts.Contract.Models.Requests;
+using UpdateContract = TURI.ContractService.Contracts.Contract.Models.Requests.UpdateContract;
 
 namespace API.Controllers
 {
@@ -239,6 +241,39 @@ namespace API.Controllers
                 var result = await Mediator.Send(requestToModel);
                 var convertedResult = result.Value.ToCommand();
                 return HandleResult(convertedResult);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(bool))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> UpdateContract(UpdateContract contract)
+        {
+            try
+            {
+                var message = contract.ToDomain();
+                var result = await Mediator.Send(message);
+                return HandleResult(result.Value);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpDelete]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(bool))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> DeleteContract(int contractId)
+        {
+            try
+            {
+                var result = await Mediator.Send(new DeleteContractCommand() { IdContract = contractId});
+                return HandleResult(result.Value);
             }
             catch (Exception ex)
             {

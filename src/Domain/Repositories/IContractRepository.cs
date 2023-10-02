@@ -25,5 +25,9 @@ namespace Domain.Repositories
         public Task<int> CreateContract(Contract contract);
 
         public Task<bool> UpdateContractSalesforceId(int contractId, string salesforceId);
+
+        public Task<bool> UpdateContract(Contract contract);
+
+        public bool DisableContract(int contractId);
     }
 }
