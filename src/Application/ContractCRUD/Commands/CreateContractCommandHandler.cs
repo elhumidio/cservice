@@ -7,7 +7,7 @@ using Domain.Entities;
 using Domain.Enums;
 using MediatR;
 
-namespace Application.ContractCreation.Commands
+namespace Application.ContractCRUD.Commands
 {
     public class CreateContractCommandHandler : IRequestHandler<CreateContractCommand, Result<ContractCreationDomainResponse>>
     {
@@ -159,7 +159,7 @@ namespace Application.ContractCreation.Commands
             return con;
         }
 
-        private async Task<RegEnterpriseConsum> SaveRegEnterPriseConsums(CreateContractCommand request, Domain.Entities.Product? product, int contractId)
+        private async Task<RegEnterpriseConsum> SaveRegEnterPriseConsums(CreateContractCommand request, Product? product, int contractId)
         {
             var regConsums = new RegEnterpriseConsum
             {
@@ -172,7 +172,7 @@ namespace Application.ContractCreation.Commands
             return regConsums;
         }
 
-        private async Task<RegEnterpriseContract> SaveRegEnterpriseContract(CreateContractCommand request, Domain.Entities.Product? product, int contractId, ProductLine pl)
+        private async Task<RegEnterpriseContract> SaveRegEnterpriseContract(CreateContractCommand request, Product? product, int contractId, ProductLine pl)
         {
             var regContract = new RegEnterpriseContract();
             mapper.Map(request, regContract);

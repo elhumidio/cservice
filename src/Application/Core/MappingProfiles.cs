@@ -1,7 +1,8 @@
 using API.DataContext;
 using Application.AuxiliaryData.DTO;
-using Application.ContractCreation.Commands;
 using Application.ContractCreation.Dto;
+using Application.ContractCRUD.Commands;
+using Application.ContractCRUD.Commands.Salesforce;
 using Application.ContractProducts.DTO;
 using Application.Contracts.DTO;
 using Application.EnterpriseContract.DTO;
@@ -13,6 +14,7 @@ using Domain.DTO;
 using Domain.DTO.Requests;
 using Domain.Entities;
 using TURI.ContractService.Contracts.Contract.Models.ManageJobs;
+using TURI.ContractService.Contracts.Contract.Models.Requests;
 
 namespace Application.Core
 {
@@ -24,6 +26,7 @@ namespace Application.Core
             CreateMap<JobVacancy, JobOfferResponse>();
             CreateMap<EnterpriseUserJobVac, UnitsAssignmentDto>();
             CreateMap<Contract, ContractDto>();
+            CreateMap<UpdateContractCommand, Contract>();
             CreateMap<RegEnterpriseContract, RegEnterpriseContractDto>();
             CreateMap<ContractProduct, ContractProductDto>();
             CreateMap<CreateOfferCommand, JobVacancy>().MapOnlyIfChanged().ForMember(a => a.IdjobVacancy, opt => opt.Ignore()).
@@ -81,6 +84,7 @@ namespace Application.Core
             CreateMap<ContractProductSalesforceId, ContractProdSForceId>();
             CreateMap<GetOffersForDashBoardQuery, ManageJobsArgs>();
             CreateMap<ManageJobsDto, ManageJobsResponse>();
+            CreateMap<UpdateContract, UpdateContractCommand>();
         }
     }
 }
