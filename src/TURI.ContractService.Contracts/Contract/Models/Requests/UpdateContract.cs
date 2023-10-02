@@ -1,10 +1,7 @@
-using Application.Core;
-using Domain.Entities;
-using MediatR;
 
-namespace Application.ContractCRUD.Commands
+namespace TURI.ContractService.Contracts.Contract.Models.Requests
 {
-    public class UpdateContractCommand : IRequest<Result<bool>>
+    public class UpdateContract
     {
         public int IdUser { get; set; }
         public int IdContract { get; set; }

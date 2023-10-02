@@ -28,6 +28,7 @@ namespace API.Converters
                 cfg.CreateMap<ContractCreateRequest, CreateContractCommand>();
                 cfg.CreateMap<ContractProductShortDto, ContractProductShortDtoResponse>();
                 cfg.CreateMap<ContractProductSalesforceIdRequest, ContractProductSalesforceId>();
+                cfg.CreateMap<UpdateContract, UpdateContractCommand>();
             });
 
             _mapper = configuration.CreateMapper();
@@ -50,6 +51,13 @@ namespace API.Converters
         public static CreateContractCommand ToDomain(this ContractCreateRequest item)
         {
             var response = new CreateContractCommand();
+            response = _mapper.Map(item, response);
+            return response;
+        }
+
+        public static UpdateContractCommand ToDomain(this UpdateContract item)
+        {
+            var response = new UpdateContractCommand();
             response = _mapper.Map(item, response);
             return response;
         }

@@ -14,6 +14,7 @@ using Domain.DTO;
 using Domain.DTO.Requests;
 using Domain.Entities;
 using TURI.ContractService.Contracts.Contract.Models.ManageJobs;
+using TURI.ContractService.Contracts.Contract.Models.Requests;
 
 namespace Application.Core
 {
@@ -82,6 +83,7 @@ namespace Application.Core
             CreateMap<ContractProductSalesforceId, ContractProdSForceId>();
             CreateMap<GetOffersForDashBoardQuery, ManageJobsArgs>();
             CreateMap<ManageJobsDto, ManageJobsResponse>();
+            CreateMap<UpdateContract, UpdateContractCommand>();
         }
     }
 }

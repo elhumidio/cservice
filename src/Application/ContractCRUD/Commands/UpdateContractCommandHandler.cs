@@ -10,14 +10,12 @@ namespace Application.ContractCRUD.Commands
     public class UpdateContractCommandHandler : IRequestHandler<UpdateContractCommand, Result<bool>>
     {
         private IContractRepository _contractRepository;
-        private IBackOfUserRepository _backOfUserRepository;
         private IEnterpriseRepository _enterpriseRepository;
         private IMapper _mapper;
 
-        public UpdateContractCommandHandler(IContractRepository contractRepository, IBackOfUserRepository backOfUserRepository, IEnterpriseRepository enterpriseRepository, IMapper mapper)
+        public UpdateContractCommandHandler(IContractRepository contractRepository, IEnterpriseRepository enterpriseRepository, IMapper mapper)
         {
             _contractRepository = contractRepository;
-            _backOfUserRepository = backOfUserRepository;
             _enterpriseRepository = enterpriseRepository;
             _mapper = mapper;
         }
@@ -25,7 +23,7 @@ namespace Application.ContractCRUD.Commands
         public Task<Result<bool>> Handle(UpdateContractCommand request, CancellationToken cancellationToken)
         {
 
-            //Check Backoffice user is 0 - If so, check first TBackOfUser with our user, then TEnterprise to get it.
+            //Check Backoffice user is 0 - If so, check TEnterprise to get it.
             request.IdBackOfUser = GetBackOfficeUser(in request);
 
             //Get chkApprovedOld and finishDateOld from TContract
@@ -38,7 +36,7 @@ namespace Application.ContractCRUD.Commands
             //If only just approved, set the date to today
             request.ApprovedDate = request.chkApproved == true && oldContract.ChkApproved == false
                 ? DateTime.Now
-                : null;
+                : request.ApprovedDate;
 
             //No pack logic
 
@@ -51,16 +49,7 @@ namespace Application.ContractCRUD.Commands
             if (result.Result == false)
                 return Task.FromResult(Result<bool>.Failure("Failed to update Contract"));
 
-
-            //If the finish Date is not the same, we now need to update all the offers for this contract with the new date
-            //SP_TcontractChangeOfferDates //TODO: Remove from here
-
-            //SP_TContractProduct_U
-
-            //Add new Units to RegEnterpriseConsums //Being changed from current usage in the future
-
-            //Logic to call SP_UpdateOffers if we've just unapproved the contract - Think this should be a separate call?
-
+            //TODO: Add new Units to RegEnterpriseConsums - Being changed from current usage in the future?
 
             return Task.FromResult(Result<bool>.Success(true));
         }
@@ -69,10 +58,6 @@ namespace Application.ContractCRUD.Commands
         {
             if (request.IdBackOfUser > 0)
                 return request.IdBackOfUser;
-
-            var registeredBOUser = _backOfUserRepository.GetUserBoID(request.IdUser);
-            if (registeredBOUser> 0)
-                return registeredBOUser ?? 0;
 
             var enterpriseUser = _enterpriseRepository.Get(request.IdEnterprise).IdbackOfUser;
 
