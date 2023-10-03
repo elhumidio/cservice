@@ -45,6 +45,8 @@ namespace Domain.Repositories
 
         public int FileOffer(JobVacancy job);
 
+        public IEnumerable<int> FileAllOffers(IEnumerable<JobVacancy> job);
+
         public IQueryable<JobVacancy> GetActiveOffersByContractAndType(int contractId, int type);
 
         public IQueryable<JobVacancy> GetActiveOffersByContractAndTypeNoPack(int contractId, int type);

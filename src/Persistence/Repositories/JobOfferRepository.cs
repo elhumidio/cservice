@@ -92,6 +92,11 @@ namespace Persistence.Repositories
             }
         }
 
+        public IEnumerable<int> FileAllOffers(IEnumerable<JobVacancy> jobs)
+        {
+            return jobs.Select(job => FileOffer(job));
+        }
+
         public int DeleteOffer(JobVacancy job)
         {
             try

@@ -3,7 +3,7 @@ using Application.Core;
 using MediatR;
 using System.Runtime.Serialization;
 
-namespace Application.ContractCreation.Commands
+namespace Application.ContractCRUD.Commands.Salesforce
 {
     [DataContract]
     public class UpdateContractProductSalesforceIdRequest : IRequest<Result<bool>>

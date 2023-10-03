@@ -5,6 +5,7 @@ using Domain.DTO;
 using Domain.DTO.ManageJobs;
 using TURI.ContractService.Contract.Models;
 using TURI.ContractService.Contracts.Contract.Models.ManageJobs;
+using JobOfferResponse = TURI.ContractService.Contract.Models.JobOfferResponse;
 
 namespace API.Converters
 {
