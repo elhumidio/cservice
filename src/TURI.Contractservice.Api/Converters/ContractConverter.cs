@@ -4,6 +4,7 @@ using Application.ContractCRUD.Commands.Salesforce;
 using Application.Contracts.DTO;
 using AutoMapper;
 using Domain.DTO;
+using Domain.DTO.Products;
 using Domain.DTO.Requests;
 using Domain.Entities;
 using TURI.ContractService.Contract.Models;
@@ -29,6 +30,7 @@ namespace API.Converters
                 cfg.CreateMap<ContractProductShortDto, ContractProductShortDtoResponse>();
                 cfg.CreateMap<ContractProductSalesforceIdRequest, ContractProductSalesforceId>();
                 cfg.CreateMap<UpdateContract, UpdateContractCommand>();
+                cfg.CreateMap<ProductUnitsRequest, ProductUnits>();
             });
 
             _mapper = configuration.CreateMapper();
