@@ -237,6 +237,10 @@ namespace API.Controllers
         {
             try
             {
+                if(contract.CountryId<1)
+                {
+                    return BadRequest("Country field is mandatory is mandatory");
+                }
                 var requestToModel = contract.ToDomain();
                 var result = await Mediator.Send(requestToModel);
                 var convertedResult = result.Value.ToCommand();

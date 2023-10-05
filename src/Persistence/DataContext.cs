@@ -49,6 +49,7 @@ namespace Persistence
         public virtual DbSet<City> Cities { get; set; } = null!;
         public virtual DbSet<FeaturedJob> FeaturedJobs { get; set; } = null!;
         public virtual DbSet<Logo> Logos{ get; set; } = null!;
+        public virtual DbSet<ProductCountryPrice> ProductCountryPrices { get; set; } = null!;
         public virtual DbSet<RegJobVacWorkPermit> RegJobVacWorkPermits { get; set; } = null!;
         public virtual DbSet<JobVacancyLanguage> JobVacancyLanguages { get; set; } = null!;
         public virtual DbSet<AtsmanagerAdminRegion> AtsmanagerAdminRegions { get; set; } = null!;
@@ -721,6 +722,19 @@ namespace Persistence
                 entity.Property(e => e.Idproduct).HasColumnName("IDProduct");
 
                 entity.Property(e => e.IdserviceType).HasColumnName("IDServiceType");
+            });
+
+            modelBuilder.Entity<ProductCountryPrice>(entity =>
+            {
+                entity.ToTable("ProductCountryPrice");
+
+                entity.Property(e => e.Discount).HasColumnType("decimal(10, 2)");
+
+                entity.Property(e => e.Idcountry).HasColumnName("IDCountry");
+
+                entity.Property(e => e.Idproduct).HasColumnName("IDProduct");
+
+                entity.Property(e => e.Price).HasColumnType("decimal(10, 2)");
             });
 
             modelBuilder.Entity<Brand>(entity =>
