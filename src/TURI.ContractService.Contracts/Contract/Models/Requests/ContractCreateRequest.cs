@@ -1,3 +1,5 @@
+using TURI.ContractService.Contracts.Contract.Models.ContractCreationFolder;
+
 namespace TURI.ContractService.Contracts.Contract.Models.Requests
 {
     public class ContractCreateRequest
@@ -16,10 +18,12 @@ namespace TURI.ContractService.Contracts.Contract.Models.Requests
 
         public string? SalesforceAccountId { get; set; }
 
-        public List<int>? ProductsList { get; set; }
+        public List<ProductUnitsRequest>? ProductsList { get; set; }
 
         public string? Concept { get; set; }
 
         public int? PaymentMethod { get; set; }
+
+        public int CountryId { get; set; }
     }
 }

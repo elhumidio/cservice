@@ -1,5 +1,6 @@
 using Application.ContractCreation.Dto;
 using Application.Core;
+using Domain.DTO.Products;
 using MediatR;
 using System.Runtime.Serialization;
 
@@ -30,12 +31,16 @@ namespace Application.ContractCRUD.Commands
         public string? SalesforceAccountId { get; set; }
 
         [DataMember]
-        public List<int>? ProductsList { get; set; }
+        public List<ProductUnits>? ProductsList { get; set; }
 
         [DataMember]
         public string? Concept { get; set; }
 
         [DataMember]
         public int? PaymentMethod { get; set; }
+
+        [DataMember]
+        public int CountryId { get; set; } // to get prices by country
+
     }
 }

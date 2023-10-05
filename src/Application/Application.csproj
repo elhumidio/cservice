@@ -51,4 +51,8 @@
     <Protobuf Remove="JobOffer\Interfaces\**" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Products\" />
+  </ItemGroup>
+
 </Project>
