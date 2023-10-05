@@ -70,7 +70,8 @@ namespace Application.ContractCRUD.Commands
                             Price = priceObj?.Price ?? 0,
                             Units = request.ProductsList.Where(p => p.Idproduct == pl.Key).First().Units
                         };
-                        mapper.Map(pl.First(), cp);
+                        var plineToMap = request.ProductsList.Where(p => p.Idproduct == pl.Key).First();
+                        cp.Units = plineToMap.Units;
                         cp.Idcontract = response.Contract.Idcontract;
 
                         var valueId = await uow.ContractProductRepository.CreateContractProduct(cp);
@@ -195,7 +196,8 @@ namespace Application.ContractCRUD.Commands
                 Identerprise = request.IDEnterprise,
                 UnitsUsed = 0,
                 Idcontract = contractId,
-                Units = request.ProductsList.Where(a => a.Idproduct == product.Idproduct).FirstOrDefault().Units
+                Units = request.ProductsList.Where(a => a.Idproduct == product.Idproduct).FirstOrDefault().Units,
+                Idproduct = product.Idproduct
             };
             await uow.RegEnterpriseConsumsRepository.Add(regConsums);
             return regConsums;
