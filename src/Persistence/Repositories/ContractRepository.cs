@@ -1,5 +1,6 @@
 using Domain.DTO;
 using Domain.Entities;
+using Domain.Enums;
 using Domain.Repositories;
 using Microsoft.EntityFrameworkCore;
 
@@ -105,6 +106,26 @@ namespace Persistence.Repositories
                 }).Distinct().ToListAsync();
 
             return list;
+        }
+
+        public async Task<IReadOnlyList<KeyValueResponse>> GetValidContractsByCompaniesIds(List<int> companiesIds)
+        {
+            var filteredQuery = _dataContext.Contracts
+                .Where(a => a.ChkApproved
+                && a.FinishDate >= DateTime.Now.Date
+                && a.StartDate <= DateTime.Now.Date
+                && a.SalesforceId != null
+                && a.Identerprise > 0 && companiesIds.Contains(a.Identerprise))
+                .GroupBy(a => a.Identerprise)
+                .Select(group => new KeyValueResponse
+                {
+                    Id = group.Key,
+                    Value = group.Count()
+                });
+
+            var result = await filteredQuery.ToListAsync();
+
+            return result;
         }
 
         public IQueryable<ServiceTypeDto> GetServiceTypes(int contractId)
