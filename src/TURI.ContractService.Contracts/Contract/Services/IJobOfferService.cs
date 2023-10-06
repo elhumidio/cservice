@@ -29,4 +29,7 @@ public interface IJobOfferService
 
     [Post("/api/JobOffer/GetActiveOffersForEmployerByCompaniesIds")]
     Task<KeyValuesResponse[]> GetActiveOffersForEmployerByCompaniesIds(ListCompaniesIdsRequest request);
+
+    [Post("/api/JobOffer/GetCompaniesOffersPerDay")]
+    Task<CompanyOffersPerDayResponse[]> GetCompaniesOffersPerDay(DateTimeRequest request);
 }

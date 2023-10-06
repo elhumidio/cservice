@@ -5,6 +5,7 @@ using Domain.DTO;
 using Domain.DTO.ManageJobs;
 using TURI.ContractService.Contract.Models;
 using TURI.ContractService.Contracts.Contract.Models.ManageJobs;
+using TURI.ContractService.Contracts.Contract.Models.Response;
 using JobOfferResponse = TURI.ContractService.Contract.Models.JobOfferResponse;
 
 namespace API.Converters
@@ -144,6 +145,16 @@ namespace API.Converters
                 NumApplies = item.NumApplies,
                 RegionId = item.RegionId,
                 RegionName = item.RegionName,
+            };
+        }
+
+        public static CompanyOffersPerDayResponse ToResponse(this CompanyOffersPerDayDto item)
+        {
+            return new CompanyOffersPerDayResponse
+            {
+                Date = item.Date,
+                EnterpriseId = item.EnterpriseId,
+                OffersPublished = item.OffersPublished
             };
         }
     }

@@ -77,5 +77,6 @@ namespace Domain.Repositories
         public List<JobVacancy> GetAllOffersByCompany(int companyId);
 
         public Task<bool> OfferAllowCommns(int OfferId);
+        public Task<List<CompanyOffersPerDayDto>> GetCompaniesOffersPerDay(DateTime sinceDate);
     }
 }

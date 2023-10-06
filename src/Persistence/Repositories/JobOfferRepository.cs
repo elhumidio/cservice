@@ -617,5 +617,19 @@ namespace Persistence.Repositories
                 return offer.AllowChat ?? false;
             }
         }
+
+        public async Task<List<CompanyOffersPerDayDto>> GetCompaniesOffersPerDay(DateTime sinceDate)
+        {
+            return await _dataContext.JobVacancies.Where(j => j.PublicationDate >= sinceDate)
+                .GroupBy(jv => new { jv.PublicationDate.Date, jv.Identerprise })
+                .OrderBy(group => group.Key.Date)
+                .ThenBy(group => group.Key.Identerprise)
+                .Select(group => new CompanyOffersPerDayDto()
+                {
+                    Date = group.Key.Date,
+                    EnterpriseId = group.Key.Identerprise,
+                    OffersPublished = group.Count()
+                }).ToListAsync();
+        }
     }
 }
