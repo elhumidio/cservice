@@ -677,5 +677,25 @@ namespace API.Controllers
 
             return BadRequest(result.Error);
         }
+
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CompanyOffersPerDayResponse[]))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetCompaniesOffersPerDay(DateTimeRequest request)
+        {
+            var result = await Mediator.Send(new GetCompaniesOffersPerDay.Get
+            {
+                SinceDate = request.SinceDate
+            });
+
+            if (result.IsSuccess)
+            {
+                var response = result.Value.Select(grData => grData.ToResponse()).ToArray();
+
+                return Ok(response);
+            }
+
+            return BadRequest(result.Error);
+        }
     }
 }
