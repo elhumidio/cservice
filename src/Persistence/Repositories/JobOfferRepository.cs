@@ -124,6 +124,14 @@ namespace Persistence.Repositories
             return offers;
         }
 
+        public List<JobVacancy> GetActiveOffersByCompaniesIds(List<int> ids)
+        {
+            var offers = _dataContext.JobVacancies.Where(a => a.Identerprise > 0 && ids.Contains(a.Identerprise) && !a.ChkDeleted
+                && !a.ChkFilled && a.FinishDate >= DateTime.Today && (a.Idstatus == (int)OfferStatus.Active || a.Idstatus == (int)OfferStatus.Pending)
+                ).ToList();
+            return offers;
+        }
+
         public JobVacancy GetOfferById(int id)
         {
             try

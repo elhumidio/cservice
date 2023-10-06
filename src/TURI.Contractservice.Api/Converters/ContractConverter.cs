@@ -11,6 +11,7 @@ using TURI.ContractService.Contract.Models;
 using TURI.ContractService.Contracts.Contract.Models.ContractCreationFolder;
 using TURI.ContractService.Contracts.Contract.Models.Partials;
 using TURI.ContractService.Contracts.Contract.Models.Requests;
+using TURI.ContractService.Contracts.Contract.Models.Response;
 
 namespace API.Converters
 {
@@ -153,6 +154,15 @@ namespace API.Converters
             response.ContractId = item.ContractId;
             response.ContractProductSalesforceIds = item.ContractProductSalesforceIds.Select(c => c.ToModel()).ToList();
             return response;
+        }
+
+        public static KeyValuesResponse ToResponse(this KeyValueResponse item)
+        {
+            return new KeyValuesResponse
+            {
+                Id = item.Id,
+                Value = item.Value,
+            };
         }
     }
 }

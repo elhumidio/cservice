@@ -20,6 +20,7 @@ namespace Domain.Repositories
         public Task<List<ContractProductShortDto>> GetAllProductsByContract(int contractId, int lang, int site);
 
         public Task<bool> IsAllowedContractForSeeingFilters(int contractId);
+        public Task<IReadOnlyList<KeyValueResponse>> GetValidContractsByCompaniesIds(List<int> companiesIds);
 
 
         public Task<int> CreateContract(Contract contract);
