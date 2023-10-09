@@ -36,8 +36,8 @@ namespace Domain.Entities
         public string Description { get; set; } = null!;
         public string? Requirements { get; set; }
         public string ScheduleTime { get; set; } = null!;
-        public string? SalaryMin { get; set; }
-        public string? SalaryMax { get; set; }
+        public decimal? SalaryMin { get; set; }
+        public decimal? SalaryMax { get; set; }
         public DateTime PublicationDate { get; set; }
         public DateTime ModificationDate { get; set; }
         public DateTime UpdatingDate { get; set; }

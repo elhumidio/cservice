@@ -6,7 +6,7 @@ namespace Domain.Repositories
     {
         public bool IsRightSalaryType(int salaryType);
 
-        public bool IsRightSalaryValue(string salary, int salaryType);
+        //public bool IsRightSalaryValue(string salary, int salaryType);
 
         public IQueryable<SalaryType> GetSalaryTypes(int siteId, int languageId);
 
