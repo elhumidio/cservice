@@ -1,8 +1,10 @@
+using Application.JobOffer.Commands;
 using Domain.DTO.ManageJobs;
 using Domain.Enums;
 using Domain.Repositories;
 using System.Text;
 using System.Text.RegularExpressions;
+using TURI.Seoservice.Contracts.Services;
 
 namespace Application.Utils
 {
@@ -13,6 +15,14 @@ namespace Application.Utils
         public string GetRegTypeBySiteAndLanguage(int lang, int type);
 
         public int GetCVExpiredDays(IsOldOfferArgs pParameters);
+
+        public void UpdateGoogleIndexingURL(OfferModel offer);
+
+        public void DeleteGoogleIndexingURL(OfferModel offer);
+
+        public OfferModel GetOfferModel(CreateOfferCommand offer);
+
+        public OfferModel GetOfferModel(UpdateOfferCommand offer);
     }
 
     public class ApiUtils : IApiUtils
@@ -20,6 +30,7 @@ namespace Application.Utils
         private const int ONBOARD = 226;
         private readonly IRegionRepository _regionRepo;
         private readonly IZoneUrl _zoneUrl;
+        private readonly ISeoService _seoService;
         private const string k_UNO_MARZO_DIECIOCHO = "01-03-2018";
         private const int k_ONE_YEAR = 1;
         private const int k_TEN_DAYS = 10;
@@ -27,10 +38,11 @@ namespace Application.Utils
         private const int k_THIRTY_DAYS = 30;
         private const int k_NINETY_DAYS = 90;
 
-        public ApiUtils(IRegionRepository regionRepository, IZoneUrl zoneUrl)
+        public ApiUtils(IRegionRepository regionRepository, IZoneUrl zoneUrl, ISeoService seoService)
         {
             _regionRepo = regionRepository;
             _zoneUrl = zoneUrl;
+            _seoService = seoService;
         }
 
         public int GetCVExpiredDays(IsOldOfferArgs pParameters)
@@ -452,6 +464,68 @@ namespace Application.Utils
                     break;
             }
             return url;
+        }
+
+        public OfferModel GetOfferModel(CreateOfferCommand offer)
+        {
+            return new OfferModel()
+            {
+                IdjobVacancy = offer.IdjobVacancy,
+                Title = offer.Title,
+                Idsite = offer.Idsite,
+                Idcountry = offer.Idcountry,
+                Idregion = offer.Idregion,
+                Idcity = offer.Idcity.GetValueOrDefault()
+            };
+        }
+
+        public OfferModel GetOfferModel(UpdateOfferCommand offer)
+        {
+            return new OfferModel()
+            {
+                IdjobVacancy = offer.IdjobVacancy,
+                Title = offer.Title,
+                Idsite = offer.Idsite,
+                Idcountry = offer.Idcountry,
+                Idregion = offer.Idregion,
+                Idcity = offer.Idcity.GetValueOrDefault()
+            };
+        }
+
+        /// <summary>
+        /// Call Google API Indexing for create/update URL index.
+        /// </summary>
+        /// <param name="offer"></param>
+        public void UpdateGoogleIndexingURL(OfferModel offer)
+        {
+            try
+            {
+                string offerURL = BuildURLJobvacancy(offer);
+
+                if (!string.IsNullOrEmpty(offerURL))
+                {
+                    _seoService.UpdateGoogleIndexingURL(offerURL);
+                }
+            }
+            catch { }
+        }
+
+        /// <summary>
+        /// Call Google API Indexing for delete URL index.
+        /// </summary>
+        /// <param name="offer"></param>
+        public void DeleteGoogleIndexingURL(OfferModel offer)
+        {
+            try
+            {
+                string offerURL = BuildURLJobvacancy(offer);
+
+                if (!string.IsNullOrEmpty(offerURL))
+                {
+                    _seoService.DeleteGoogleIndexingURL(offerURL);
+                }
+            }
+            catch { }
         }
     }
 }
