@@ -1,5 +1,6 @@
 using Domain.Entities;
 using Domain.Repositories;
+using Microsoft.EntityFrameworkCore;
 
 namespace Persistence.Repositories
 {
@@ -23,5 +24,13 @@ namespace Persistence.Repositories
             var product = _dataContext.Products.Where(p => p.Idproduct == idProduct).FirstOrDefault();
             return product == null ? 0 : product.Duration;
         }
+
+            
+        public async Task<ProductCountryPrice> GetPriceByProductIdAndCountryId(int idProduct, int idCountry)
+        {            
+            var price = await _dataContext.ProductCountryPrices.Where(p => p.Idproduct == idProduct && p.Idcountry == idCountry).FirstOrDefaultAsync();
+            return price;
+        }
+
     }
 }

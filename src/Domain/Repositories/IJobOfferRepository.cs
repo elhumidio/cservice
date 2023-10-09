@@ -64,6 +64,7 @@ namespace Domain.Repositories
         public Task<List<OfferMinInfoAtsDto>> GetOfferInfoByExternalId(string externalId, int companyId);
 
         public List<JobVacancy> GetOffersByIds(List<int> ids);
+        public List<JobVacancy> GetActiveOffersByCompaniesIds(List<int> ids);
 
         public Task<IReadOnlyList<JobDataDefinition>> GetActiveJobsSinceADate(DateTime LastLoggin, int[] followedCompanies);
 
@@ -76,5 +77,6 @@ namespace Domain.Repositories
         public List<JobVacancy> GetAllOffersByCompany(int companyId);
 
         public Task<bool> OfferAllowCommns(int OfferId);
+        public Task<List<CompanyOffersPerDayDto>> GetCompaniesOffersPerDay(DateTime sinceDate);
     }
 }

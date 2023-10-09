@@ -2,6 +2,7 @@ using Refit;
 using TURI.ContractService.Contract.Models;
 using TURI.ContractService.Contracts.Contract.Models.ContractCreationFolder;
 using TURI.ContractService.Contracts.Contract.Models.Requests;
+using TURI.ContractService.Contracts.Contract.Models.Response;
 
 namespace TURI.ContractService.Contracts.Contract.Services;
 
@@ -18,4 +19,7 @@ public interface IContractService
 
     [Post("/api/contract/UpdateContractSalesForceId")]
     Task<bool> UpdateContractSalesForceId(WrapperContractProductSalesforceIdRequest request);
+
+    [Post("/api/contract/GetValidContractsByCompaniesIds")]
+    Task<KeyValuesResponse[]> GetValidContractsByCompaniesIds(ListCompaniesIdsRequest request);
 }

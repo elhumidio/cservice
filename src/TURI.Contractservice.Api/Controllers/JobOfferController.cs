@@ -7,9 +7,9 @@ using AutoMapper;
 using Domain.DTO;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
-using Refit;
 using TURI.ContractService.Contracts.Contract.Models.ManageJobs;
 using TURI.ContractService.Contracts.Contract.Models.Requests;
+using TURI.ContractService.Contracts.Contract.Models.Response;
 using JobOfferResponse = TURI.ContractService.Contract.Models.JobOfferResponse;
 
 namespace API.Controllers
@@ -214,7 +214,7 @@ namespace API.Controllers
         [HttpGet("{contractId}")]
         public async Task<IActionResult> GetAllConsumedJobOffers(int contractId)
         {
-            var result = await Mediator.Send(new List.Query
+            var result = await Mediator.Send(new Application.JobOffer.Queries.List.Query
             {
                 ContractID = contractId,
             });
@@ -654,6 +654,48 @@ namespace API.Controllers
         {
             var response = await Mediator.Send(new VerifyOfferCommsCommand() { Offerid = _offerId });
             return HandleResult(response);
+        }
+
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(KeyValuesResponse[]))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetActiveOffersForEmployerByCompaniesIds(ListCompaniesIdsRequest request)
+        {
+            var result = await Mediator.Send(new GetOffersForEmployerByCompaniesIds.Get
+            {
+                CompaniesIds = request.CompaniesIds,
+                State = request.State,
+                MaxDate = request.MaxDate
+            });
+
+            if (result.IsSuccess)
+            {
+                var response = result.Value.ToArray();
+
+                return Ok(response);
+            }
+
+            return BadRequest(result.Error);
+        }
+
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CompanyOffersPerDayResponse[]))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetCompaniesOffersPerDay(DateTimeRequest request)
+        {
+            var result = await Mediator.Send(new GetCompaniesOffersPerDay.Get
+            {
+                SinceDate = request.SinceDate
+            });
+
+            if (result.IsSuccess)
+            {
+                var response = result.Value.Select(grData => grData.ToResponse()).ToArray();
+
+                return Ok(response);
+            }
+
+            return BadRequest(result.Error);
         }
     }
 }

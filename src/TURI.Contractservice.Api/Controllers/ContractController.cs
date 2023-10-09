@@ -8,6 +8,7 @@ using Domain.Enums;
 using Microsoft.AspNetCore.Mvc;
 using TURI.ContractService.Contracts.Contract.Models.ContractCreationFolder;
 using TURI.ContractService.Contracts.Contract.Models.Requests;
+using TURI.ContractService.Contracts.Contract.Models.Response;
 using UpdateContract = TURI.ContractService.Contracts.Contract.Models.Requests.UpdateContract;
 
 namespace API.Controllers
@@ -237,6 +238,10 @@ namespace API.Controllers
         {
             try
             {
+                if(contract.CountryId<1)
+                {
+                    return BadRequest("Country field is mandatory is mandatory");
+                }
                 var requestToModel = contract.ToDomain();
                 var result = await Mediator.Send(requestToModel);
                 var convertedResult = result.Value.ToCommand();
@@ -296,6 +301,26 @@ namespace API.Controllers
             {
                 return BadRequest(ex.Message);
             }
-        }        
+        }
+
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(KeyValuesResponse[]))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetValidContractsByCompaniesIds(ListCompaniesIdsRequest request)
+        {
+            var result = await Mediator.Send(new GetValidContractsByCompaniesIds.Get
+            {
+                CompaniesIds = request.CompaniesIds
+            });
+
+            if (result.IsSuccess)
+            {
+                var response = result.Value.Select(grData => grData.ToResponse()).ToArray();
+
+                return Ok(response);
+            }
+
+            return BadRequest(result.Error);
+        }
     }
 }
