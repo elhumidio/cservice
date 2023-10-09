@@ -1,5 +1,6 @@
 using Application.JobOffer.Commands;
 using Domain.DTO.ManageJobs;
+using Domain.Entities;
 using Domain.Enums;
 using Domain.Repositories;
 using System.Text;
@@ -23,6 +24,8 @@ namespace Application.Utils
         public OfferModel GetOfferModel(CreateOfferCommand offer);
 
         public OfferModel GetOfferModel(UpdateOfferCommand offer);
+
+        public OfferModel GetOfferModel(JobVacancy offer);
     }
 
     public class ApiUtils : IApiUtils
@@ -480,6 +483,19 @@ namespace Application.Utils
         }
 
         public OfferModel GetOfferModel(UpdateOfferCommand offer)
+        {
+            return new OfferModel()
+            {
+                IdjobVacancy = offer.IdjobVacancy,
+                Title = offer.Title,
+                Idsite = offer.Idsite,
+                Idcountry = offer.Idcountry,
+                Idregion = offer.Idregion,
+                Idcity = offer.Idcity.GetValueOrDefault()
+            };
+        }
+
+        public OfferModel GetOfferModel(JobVacancy offer)
         {
             return new OfferModel()
             {
