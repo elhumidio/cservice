@@ -32,4 +32,7 @@ public interface IJobOfferService
 
     [Post("/api/JobOffer/GetCompaniesOffersPerDay")]
     Task<CompanyOffersPerDayResponse[]> GetCompaniesOffersPerDay(DateTimeRequest request);
+
+    [Post("/api/JobOffer/GetOffersInfoBuildUrlByOffersIds")]
+    Task<OfferInfoBuildUrlResponse[]> GetOffersInfoBuildUrlByOffersIds(ListOffersIdsRequest request);
 }

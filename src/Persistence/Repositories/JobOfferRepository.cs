@@ -631,5 +631,14 @@ namespace Persistence.Repositories
                     OffersPublished = group.Count()
                 }).ToListAsync();
         }
+
+        public async Task<List<JobVacancy>> GetJobsInfoByIds(List<int>? offersIds)
+        {
+            var query = _dataContext.JobVacancies
+                         .Where(job => offersIds.Contains(job.IdjobVacancy)
+                        );
+
+            return await query.ToListAsync();
+        }
     }
 }
