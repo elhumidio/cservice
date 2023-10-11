@@ -728,13 +728,13 @@ namespace Persistence
             {
                 entity.ToTable("ProductCountryPrice");
 
-                entity.Property(e => e.Discount).HasColumnType("decimal(10, 2)");
+                entity.Property(e => e.Discount).HasColumnType("int");
 
                 entity.Property(e => e.Idcountry).HasColumnName("IDCountry");
 
                 entity.Property(e => e.Idproduct).HasColumnName("IDProduct");
 
-                entity.Property(e => e.Price).HasColumnType("decimal(10, 2)");
+                entity.Property(e => e.Price).HasColumnType("int");
             });
 
             modelBuilder.Entity<Brand>(entity =>

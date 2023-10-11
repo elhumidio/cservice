@@ -38,7 +38,20 @@ namespace Application.ContractCRUD.Commands
                 ContractCreationDomainResponse response = new();
                 var company = uow.EnterpriseRepository.Get(request.IDEnterprise);
                 var finishDate = GetContractDurationByProducts(request.ProductsList);
-                response.Contract = await CreateContract(finishDate, request, company);
+                decimal totalPrice = 0;
+                foreach (var product in request.ProductsList)
+                {
+                    var priceObj = await _productRepository.GetPriceByProductIdAndCountryId(product.Idproduct, request.CountryId);
+                    priceObj.Price = priceObj.Price * product.Units;
+                    if (priceObj == null)
+                    {
+                        priceObj = await _productRepository.GetPriceByProductIdAndCountryId(product.Idproduct, (int)CountriesTurijobsDefined.Spain);
+                        priceObj.Price = priceObj.Price * product.Units;
+                    }
+                    totalPrice += Convert.ToDecimal(priceObj.Price);
+                  
+                }
+                response.Contract = await CreateContract(finishDate, request, company, totalPrice);
                 foreach (var prod in request.ProductsList)
                 {                    
                     var prodObj = _productRepository.Get(prod.Idproduct).FirstOrDefault();
@@ -50,18 +63,15 @@ namespace Application.ContractCRUD.Commands
                         .Where(pl =>  (prodObj.ChkService ? pl.IdjobVacType == null : pl.IdjobVacType != null
                         && pl.Idslanguage == request.IDSLanguage)).GroupBy(g => g.Idproduct)
                         .ToList();
-
                     response.ProductLines.AddRange(uow.ProductLineRepository.GetProductLinesByProductId(prod.Idproduct)
                         .Where(pl => pl.Idsite == company.SiteId && (prodObj.ChkService ? pl.IdjobVacType == null : pl.IdjobVacType != null
-                        && pl.Idslanguage == request.IDSLanguage)).ToList());
+                        && pl.Idslanguage == request.IDSLanguage)).ToList());         
+           
                     foreach (var pl in productLines)
                     {
                         int price = 0;
                         var priceObj = await _productRepository.GetPriceByProductIdAndCountryId(pl.Key, request.CountryId);
-                        if(priceObj == null)
-                        {
-                            priceObj = await _productRepository.GetPriceByProductIdAndCountryId(pl.Key, (int)CountriesTurijobsDefined.Spain);
-                        }
+                        priceObj ??= await _productRepository.GetPriceByProductIdAndCountryId(pl.Key, (int)CountriesTurijobsDefined.Spain);
                         
                         var cp = new ContractProduct
                         {
@@ -174,7 +184,7 @@ namespace Application.ContractCRUD.Commands
             return enterpriseUserJobVac;
         }
 
-        private async Task<Contract> CreateContract(DateTime finishDate, CreateContractCommand request, Enterprise company)
+        private async Task<Contract> CreateContract(DateTime finishDate, CreateContractCommand request, Enterprise company, decimal price)
         {
             Contract con = new();
             con = mapper.Map(request, con);
@@ -185,7 +195,8 @@ namespace Application.ContractCRUD.Commands
             con.ContractDate = DateTime.Now.Date;
             con.Sftimestamp = DateTime.Now.Date;
             con.ChkApproved = true;
-            var contractId = await uow.ContractRepository.CreateContract(con);
+            con.Price = price;
+            var contractId = await uow.ContractRepository.CreateContract(con);            
             return con;
         }
 
