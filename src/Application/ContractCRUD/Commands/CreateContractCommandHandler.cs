@@ -39,18 +39,22 @@ namespace Application.ContractCRUD.Commands
                 var company = uow.EnterpriseRepository.Get(request.IDEnterprise);
                 var finishDate = GetContractDurationByProducts(request.ProductsList);
                 decimal totalPrice = 0;
+                int? pricePartial = 0;
                 foreach (var product in request.ProductsList)
                 {
                     var priceObj = await _productRepository.GetPriceByProductIdAndCountryId(product.Idproduct, request.CountryId);
-                    priceObj.Price = priceObj.Price * product.Units;
+                    pricePartial = priceObj.Price * product.Units;
                     if (priceObj == null)
                     {
                         priceObj = await _productRepository.GetPriceByProductIdAndCountryId(product.Idproduct, (int)CountriesTurijobsDefined.Spain);
-                        priceObj.Price = priceObj.Price * product.Units;
+                        pricePartial = priceObj.Price * product.Units;
                     }
-                    totalPrice += Convert.ToDecimal(priceObj.Price);
+                    totalPrice += Convert.ToDecimal(pricePartial);
+                    pricePartial = 0;
                   
                 }
+
+                //TODO discount logic missing...
                 response.Contract = await CreateContract(finishDate, request, company, totalPrice);
                 foreach (var prod in request.ProductsList)
                 {                    
@@ -196,6 +200,7 @@ namespace Application.ContractCRUD.Commands
             con.Sftimestamp = DateTime.Now.Date;
             con.ChkApproved = true;
             con.Price = price;
+            con.FinalPrice = price;
             var contractId = await uow.ContractRepository.CreateContract(con);            
             return con;
         }
