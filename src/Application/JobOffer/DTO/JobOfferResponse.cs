@@ -4,6 +4,7 @@ namespace Application.JobOffer.DTO
     public class JobOfferResponse
     {
         public string Title { get; set; }
+        public int IDContract { get; set; }
         public string CompanyName { get; set; }
         public int IDCountry { get; set; }
         public int IDRegion { get; set; }
