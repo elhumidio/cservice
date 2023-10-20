@@ -36,7 +36,7 @@ namespace Application.ContractCRUD.Commands
             try
             {
                 ContractCreationDomainResponse response = new();
-                var company = uow.EnterpriseRepository.Get(request.IDEnterprise);
+                var company = uow.EnterpriseRepository.Get(request.IDEnterprise);                
                 var finishDate = GetContractDurationByProducts(request.ProductsList);
                 decimal totalPrice = 0;
                 int? pricePartial = 0;
@@ -185,6 +185,7 @@ namespace Application.ContractCRUD.Commands
             mapper.Map(response.ProductLines.First(), enterpriseUserJobVac);
             mapper.Map(product, enterpriseUserJobVac);
             enterpriseUserJobVac.IdjobVacType = pl.IdjobVacType ?? 0;
+            enterpriseUserJobVac.IdenterpriseUser = request.IDEnterpriseUSer;
             var productInRequest = request.ProductsList.FirstOrDefault(a => a.Idproduct == product.Idproduct);
             if (productInRequest != null)
             {
@@ -231,7 +232,7 @@ namespace Application.ContractCRUD.Commands
         {
             var regContract = new RegEnterpriseContract();
             mapper.Map(request, regContract);
-            mapper.Map(product, regContract);
+            mapper.Map(product, regContract);           
             regContract.Idcontract = contractId;
             regContract.Units = request.ProductsList.Where(p => p.Idproduct == product.Idproduct).First().Units;
             regContract.IdjobVacType = pl.IdjobVacType ?? 0;
