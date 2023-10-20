@@ -1,4 +1,5 @@
 using Domain.Entities;
+using Domain.Enums;
 using Domain.Repositories;
 using Microsoft.EntityFrameworkCore;
 
@@ -29,6 +30,10 @@ namespace Persistence.Repositories
         public async Task<ProductCountryPrice> GetPriceByProductIdAndCountryId(int idProduct, int idCountry)
         {            
             var price = await _dataContext.ProductCountryPrices.Where(p => p.Idproduct == idProduct && p.Idcountry == idCountry).FirstOrDefaultAsync();
+            if(price == null)
+            {
+                price = await _dataContext.ProductCountryPrices.Where(p => p.Idproduct == idProduct && p.Idcountry == (int)CountriesTurijobsDefined.Spain).FirstOrDefaultAsync();
+            }
             return price;
         }
 
