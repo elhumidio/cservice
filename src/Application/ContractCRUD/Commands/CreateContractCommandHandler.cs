@@ -111,7 +111,7 @@ namespace Application.ContractCRUD.Commands
                         if (!prodObj.ChkService)
                         {
                             response.RegEnterpriseContracts.Add(await SaveRegEnterpriseContract(request, prodObj, response.Contract.Idcontract, pl.First()));
-                            var enterpriseUserJobVac = CreateUserJobVac(response, prodObj);
+                            var enterpriseUserJobVac = CreateUserJobVac(request,response, prodObj, pl.First());
                             await uow.EnterpriseUserJobVacRepository.Add(enterpriseUserJobVac);
                         }
 
@@ -178,15 +178,23 @@ namespace Application.ContractCRUD.Commands
 
         }
 
-        private EnterpriseUserJobVac CreateUserJobVac(ContractCreationDomainResponse response, Product? product)
+        private EnterpriseUserJobVac CreateUserJobVac(CreateContractCommand request, ContractCreationDomainResponse response, Product? product, ProductLine pl)
         {
-            EnterpriseUserJobVac enterpriseUserJobVac = new();
+            EnterpriseUserJobVac enterpriseUserJobVac = new();            
             mapper.Map(response.Contract, enterpriseUserJobVac);
             mapper.Map(response.ProductLines.First(), enterpriseUserJobVac);
             mapper.Map(product, enterpriseUserJobVac);
-            enterpriseUserJobVac.JobVacUsed = enterpriseUserJobVac.MaxJobVacancies;
+            enterpriseUserJobVac.IdjobVacType = pl.IdjobVacType ?? 0;
+            var productInRequest = request.ProductsList.FirstOrDefault(a => a.Idproduct == product.Idproduct);
+            if (productInRequest != null)
+            {
+                enterpriseUserJobVac.MaxJobVacancies = productInRequest.Units;
+                enterpriseUserJobVac.JobVacUsed = enterpriseUserJobVac.MaxJobVacancies;
+            }
+
             return enterpriseUserJobVac;
         }
+
 
         private async Task<Contract> CreateContract(DateTime finishDate, CreateContractCommand request, Enterprise company, decimal price)
         {
@@ -225,7 +233,7 @@ namespace Application.ContractCRUD.Commands
             mapper.Map(request, regContract);
             mapper.Map(product, regContract);
             regContract.Idcontract = contractId;
-            regContract.Units = pl.Units;
+            regContract.Units = request.ProductsList.Where(p => p.Idproduct == product.Idproduct).First().Units;
             regContract.IdjobVacType = pl.IdjobVacType ?? 0;
             var idreg = await uow.RegEnterpriseContractRepository.Add(regContract);
             return regContract;
