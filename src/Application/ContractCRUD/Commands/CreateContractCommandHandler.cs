@@ -174,7 +174,7 @@ namespace Application.ContractCRUD.Commands
             }
 
             return calculatedDate;
-
+    
 
         }
 

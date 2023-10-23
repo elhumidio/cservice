@@ -69,6 +69,7 @@ namespace API.DataContext
         public int? SiteId { get; set; }
         public int? OldIdenterprise { get; set; }
         public int? ParentAccount { get; set; }
+        public string? AccountStatus { get; set; }
         public int? ReplacedBy { get; set; }
         public int? DepartmentOf { get; set; }
         public int? MacroSector { get; set; }

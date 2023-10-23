@@ -33,11 +33,14 @@ namespace Application.GetCompanyInfo.Queries
                 {
                     IDSUser = _userRepository.GetUserIdByEmail(request.Email)
                 };
+                
                 obj.CompanyId = _enterpriseUserRepository.GetCompanyIdByUserId(obj.IDSUser);
+                var company = _enterpriseRepository.Get(obj.CompanyId);
                 obj.IDEnterpriseUser = _enterpriseUserRepository.GetCompanyUserIdByUserId(obj.IDSUser);
                 obj.Brands = _brandRepository.GetBrands(obj.CompanyId);
                 obj.UserEmail = request.Email;
                 obj.SiteId = _enterpriseRepository.GetSite(obj.CompanyId);
+                obj.AccountStatus = company.AccountStatus;
                 return Result<CompanyinfoDto>.Success(await Task.FromResult(obj));
             }
         }
