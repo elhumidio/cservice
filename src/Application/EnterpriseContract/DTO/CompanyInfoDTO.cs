@@ -8,5 +8,6 @@ namespace Application.EnterpriseContract.DTO
         public int IDEnterpriseUser { get; set; }
         public string? UserEmail { get; set; }
         public int SiteId { get; set; }
+        public string? AccountStatus { get; set; }
     }
 }
