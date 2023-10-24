@@ -2,6 +2,7 @@ using Application.DTO;
 using Application.EnterpriseContract.Queries;
 using Application.JobOffer.DTO;
 using Application.JobOffer.Queries;
+using Application.Utils;
 using AutoMapper;
 using Domain.Entities;
 using Domain.Enums;
@@ -25,6 +26,7 @@ namespace Application.JobOffer.Commands
         private readonly ICityRepository _cityRepository;
         private readonly IConfiguration _config;
         private readonly IEnterpriseRepository _enterpriseRepository;
+        private readonly IApiUtils _utils;
 
         #endregion PRIVATE PROPERTIES
 
@@ -37,7 +39,8 @@ namespace Application.JobOffer.Commands
             IRegJobVacWorkPermitRepository regJobVacWorkPermitRepo,
             ICityRepository cityRepository,
             IConfiguration config,
-            IEnterpriseRepository enterpriseRepository)
+            IEnterpriseRepository enterpriseRepository,
+            IApiUtils utils)
         {
             _contractProductRepo = contractProductRepo;
             _offerRepo = offerRepo;
@@ -49,6 +52,7 @@ namespace Application.JobOffer.Commands
             _cityRepository = cityRepository;
             _config = config;
             _enterpriseRepository = enterpriseRepository;
+            _utils = utils;
         }
 
         public async Task<OfferModificationResult> Handle(UpdateOfferCommand offer, CancellationToken cancellationToken)
@@ -116,7 +120,20 @@ namespace Application.JobOffer.Commands
             if (ret < 0)
                 return OfferModificationResult.Failure(new List<string> { "no update" });
             else
+            {
+                if (offer.Idstatus == (int)OfferStatus.Deleted)
+                {
+                    // Google API Indexing URL Delete.
+                    _utils.DeleteGoogleIndexingURL(_utils.GetOfferModel(offer));
+                }
+                else if (existentOffer.Idstatus == (int)OfferStatus.Deleted && offer.Idstatus == (int)OfferStatus.Active)
+                {
+                    // Google API Indexing URL Update.
+                    _utils.UpdateGoogleIndexingURL(_utils.GetOfferModel(offer));
+                }
+
                 return OfferModificationResult.Success(updatedOffer);
+            }
         }
 
         /// <summary>
