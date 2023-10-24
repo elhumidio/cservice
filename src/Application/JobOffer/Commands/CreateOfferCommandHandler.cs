@@ -1,6 +1,7 @@
 using Application.Interfaces;
 using Application.JobOffer.DTO;
 using Application.JobOffer.Queries;
+using Application.Utils;
 using AutoMapper;
 using Domain.Entities;
 using Domain.Enums;
@@ -28,6 +29,7 @@ namespace Application.JobOffer.Commands
         private readonly ICityRepository _cityRepository;
         private readonly IAreaRepository _areaRepository;
         private readonly IQuestService _questService;
+        private readonly IApiUtils _utils;
 
         #endregion PRIVATE PROPERTIES
 
@@ -43,7 +45,8 @@ namespace Application.JobOffer.Commands
             IRegJobVacWorkPermitRepository regJobVacWorkPermitRepository,
             ICityRepository cityRepository,
             IAreaRepository areaRepository,
-            IQuestService questService)
+            IQuestService questService,
+            IApiUtils utils)
         {
             _offerRepo = offerRepo;
             _mapper = mapper;
@@ -58,6 +61,7 @@ namespace Application.JobOffer.Commands
             _cityRepository = cityRepository;
             _areaRepository = areaRepository;
             _questService = questService;
+            _utils = utils;
         }
 
         public async Task<OfferModificationResult> Handle(CreateOfferCommand offer, CancellationToken cancellationToken)
@@ -156,6 +160,9 @@ namespace Application.JobOffer.Commands
                                 return OfferModificationResult.Failure(new List<string> { error });
                             }
                         }
+
+                        // Google API Indexing URL Create/Update.
+                        _utils.UpdateGoogleIndexingURL(_utils.GetOfferModel(offer));
 
                         return OfferModificationResult.Success(createdOffer);
                     }
