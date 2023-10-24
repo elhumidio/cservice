@@ -3,6 +3,7 @@ using Application.JobOffer.Queries;
 using Domain.Classes;
 using Domain.DTO;
 using Domain.DTO.ManageJobs;
+using Domain.Entities;
 using TURI.ContractService.Contract.Models;
 using TURI.ContractService.Contracts.Contract.Models.ManageJobs;
 using TURI.ContractService.Contracts.Contract.Models.Response;
@@ -155,6 +156,18 @@ namespace API.Converters
                 Date = item.Date,
                 EnterpriseId = item.EnterpriseId,
                 OffersPublished = item.OffersPublished
+            };
+        }
+
+        public static OfferInfoBuildUrlResponse ToResponse(this JobVacancy item)
+        {
+            return new OfferInfoBuildUrlResponse
+            {
+                OfferId = item.IdjobVacancy,
+                Title = item.Title,
+                RegionId = item.Idregion,
+                CityId = item.Idcity ?? 0,
+                SiteId = item.Idsite
             };
         }
     }

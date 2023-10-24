@@ -102,10 +102,10 @@ namespace Application.JobOffer.Commands
         public string ScheduleTime { get; set; }
 
         [DataMember]
-        public string? SalaryMin { get; set; } //to study
+        public decimal? SalaryMin { get; set; } //to study
 
         [DataMember]
-        public string? SalaryMax { get; set; } //to study
+        public decimal? SalaryMax { get; set; } //to study
 
         [DataMember]
         public DateTime? PublicationDate { get; set; } //getdate

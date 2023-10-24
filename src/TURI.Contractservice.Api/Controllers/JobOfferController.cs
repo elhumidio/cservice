@@ -697,5 +697,21 @@ namespace API.Controllers
 
             return BadRequest(result.Error);
         }
+
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(OfferInfoBuildUrlResponse[]))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetOffersInfoBuildUrlByOffersIds(ListOffersIdsRequest request)
+        {
+            var result = await Mediator.Send(new ListJobsInfoByIds.Query { OffersIds = request.OffersIds });
+            if (result.IsSuccess)
+            {
+                return Ok(result.Value.Select(grData => grData.ToResponse()).ToArray());
+            }
+            else
+            {
+                return BadRequest(result.Error);
+            }
+        }
     }
 }

@@ -18,11 +18,11 @@ namespace Persistence.Repositories
             return salaryTypes.Any();
         }
 
-        public bool IsRightSalaryValue(string _salary, int _salaryType)
-        {
-            var salary = _dataContext.Salaries.Where(s => s.Value == _salary && s.IdsalaryType == _salaryType);
-            return salary.Any();
-        }
+        //public bool IsRightSalaryValue(decimal _salary, int _salaryType)
+        //{
+        //    var salary = _dataContext.Salaries.Where(s => s.Value == _salary && s.IdsalaryType == _salaryType);
+        //    return salary.Any();
+        //}
 
         public IQueryable<SalaryType> GetSalaryTypes(int siteId, int languageId)
         {

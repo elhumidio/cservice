@@ -33,8 +33,8 @@ namespace TURI.Contractservice.Tests.Unit.Mocks
                 mockRepo.Setup(r => r.Add(It.IsAny<JobVacancy>())).Returns((JobVacancy job) =>
                 {
                     job.ChkBlindSalary = true;
-                    job.SalaryMax = "60000";
-                    job.SalaryMin = "40000";
+                    job.SalaryMax = (decimal?)60000.00;
+                    job.SalaryMin = (decimal?)40000.00;
                     job.Idbrand = 321;
                     job.Identerprise = 44;
                     listOffers.ToList().Add(job);

@@ -4,8 +4,8 @@ namespace Domain.Entities
     {
         public int Idproduct { get; set; }
         public int Idcountry { get; set; }
-        public decimal Price { get; set; }
-        public decimal? Discount { get; set; }
+        public int? Price { get; set; }
+        public int? Discount { get; set; }
         public int Id { get; set; }
     }
 }
