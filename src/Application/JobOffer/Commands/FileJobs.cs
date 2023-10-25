@@ -1,4 +1,5 @@
 using Application.JobOffer.DTO;
+using Application.Utils;
 using AutoMapper;
 using Domain.Repositories;
 using MediatR;
@@ -21,12 +22,13 @@ namespace Application.JobOffer.Commands
             private readonly IMediator _mediatr;
             private readonly IContractProductRepository _contractProductRepo;
             private readonly IMapper _mapper;
+            private readonly IApiUtils _utils;
 
             public Handler(IJobOfferRepository offerRepo,
                 IRegEnterpriseContractRepository regEnterpriseContractRepository,                
                 IConfiguration config,
                 IContractProductRepository contractProductRepo,
-                IMediator mediatr, IMapper mapper)
+                IMediator mediatr, IMapper mapper, IApiUtils utils)
             {
                 _offerRepo = offerRepo;
                 _regEnterpriseContractRepository = regEnterpriseContractRepository;                
@@ -34,6 +36,7 @@ namespace Application.JobOffer.Commands
                 _contractProductRepo = contractProductRepo;
                 _mediatr = mediatr;
                 _mapper = mapper;
+                _utils = utils;
             }
 
             public async Task<OfferModificationResult> Handle(Command request, CancellationToken cancellationToken)
@@ -60,6 +63,10 @@ namespace Application.JobOffer.Commands
                 }
                 OfferResultDto dto = new OfferResultDto();
                 dto = _mapper.Map(job, dto);
+
+                // Google API Indexing URL Delete.
+                _utils.DeleteGoogleIndexingURL(_utils.GetOfferModel(job));
+
                 return OfferModificationResult.Success(dto);
             }
         }
