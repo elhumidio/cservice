@@ -20,14 +20,16 @@ namespace Application.Contracts.Queries
             private readonly IContractProductRepository _contractProductRepo;
             private readonly IContractRepository _contractRepository;
             private readonly IMediator _mediator;
+            private readonly IContractPaymentRepository _paymentsRepository;
 
             public Handler(IContractRepository contractRepository,
                 IContractProductRepository contractProductRepository,
-                IMediator mediator)
+                IMediator mediator,IContractPaymentRepository contractPaymentRepository)
             {
                 _contractProductRepo = contractProductRepository;
                 _contractRepository = contractRepository;
-                _mediator = mediator;   
+                _mediator = mediator;
+                _paymentsRepository = contractPaymentRepository;
             }
 
             public async Task<Result<List<ContractsDistDto>>> Handle(Get request, CancellationToken cancellationToken)
@@ -52,12 +54,13 @@ namespace Application.Contracts.Queries
                 {
                     var reg =await _contractRepository.GetWithReg(cl.ContractId);
                     int[] standards = { 0, 2, 4, 5, 10 };     
-                    cl.TotalStandardUnits = reg.FirstOrDefault(u => standards.Contains(u.IdjobVacType)).Units;
-                    cl.TotalFeaturedUnits = reg.FirstOrDefault(u => !standards.Contains(u.IdjobVacType)).Units;
+                    cl.TotalStandardUnits = reg.FirstOrDefault(u => standards.Contains(u.IdjobVacType))?.Units ?? 0;
+                    cl.TotalFeaturedUnits = reg.FirstOrDefault(u => !standards.Contains(u.IdjobVacType))?.Units ?? 0;
                     var units =await _mediator.Send(new GetAvailableUnits.Query { ContractId = cl.ContractId });
-                    cl.TotalAvailablestandard = units.Value.Where(u => standards.Contains((int)u.type)).First().Units;
-                    cl.TotalAvailableFeatured = units.Value.Where(u => !standards.Contains((int)u.type)).First().Units;
+                    cl.TotalAvailablestandard = units.Value.Where(u => standards.Contains((int)u.type)).Count() > 0 ?  units.Value.Where(u => standards.Contains((int)u.type)).First().Units : 0;
+                    cl.TotalAvailableFeatured = units.Value.Where(u => !standards.Contains((int)u.type)).Count() >0 ?  units.Value.Where(u => !standards.Contains((int)u.type)).First().Units:0;
                     cl.IsPack = _contractProductRepo.IsPack(cl.ContractId);
+                    cl.IsPayed= _paymentsRepository.HasPayments(cl.ContractId);
                 }
 
                 return Result<List<ContractsDistDto>>.Success(clist);
