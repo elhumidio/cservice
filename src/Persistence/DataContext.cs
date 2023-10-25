@@ -12,6 +12,7 @@ namespace Persistence
         }
 
         public virtual DbSet<EquestCountryState> EquestCountryStates { get; set; } = null!;
+        public virtual DbSet<ContractPayment> ContractPayments { get; set; } = null!;
         public virtual DbSet<EquestDegreeEquivalent> EquestDegreeEquivalents { get; set; } = null!;
         public virtual DbSet<EquestIndustry> EquestIndustries { get; set; } = null!;
         public virtual DbSet<RegJobVacMatching> RegJobVacMatchings { get; set; } = null!;
@@ -79,6 +80,27 @@ namespace Persistence
 
 
             modelBuilder.HasSequence("GetNextSequenceValueFeedsLog");
+
+
+
+            modelBuilder.Entity<ContractPayment>(entity =>
+            {
+                entity.HasKey(e => e.IdcontractPayment);
+
+                entity.ToTable("TContractPayment");
+
+                entity.Property(e => e.IdcontractPayment).HasColumnName("IDContractPayment");
+
+                entity.Property(e => e.DataPayment).HasColumnType("datetime");
+
+                entity.Property(e => e.Idcontract).HasColumnName("IDContract");
+
+                entity.Property(e => e.Payment).HasColumnType("decimal(7, 2)");
+
+                entity.Property(e => e.PaymentWithoutTax)
+                    .HasColumnType("decimal(7, 2)")
+                    .HasColumnName("PaymentWithoutTAX");
+            });
 
             modelBuilder.Entity<RegEnterpriseConsum>(entity =>
             {

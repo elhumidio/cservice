@@ -95,6 +95,7 @@ namespace API.Extensions
             services.AddScoped<IQuestService, QuestService>();
             services.AddScoped<ICurrencyRepository, CurrencyRepository>();
             services.AddScoped<IFieldRepository, FieldRepository>();
+            services.AddScoped<IContractPaymentRepository, ContractPaymentRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IRegEnterpriseConsumsRepository, RegEnterpriseConsumsRepository>();
             services.AddScoped<IEnterpriseUserJobVacRepository, EnterpriseUserJobVacRepository>();

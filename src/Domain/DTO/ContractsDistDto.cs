@@ -1,9 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace Domain.DTO
 {
     public class ContractsDistDto
@@ -18,6 +12,6 @@ namespace Domain.DTO
         public int TotalStandardUnits { get; set; }
         public string FinishDate { get; set; }
         public bool IsRegionRestricted { get; set; }
-
+        public bool? IsPayed { get; set; }
     }
 }
