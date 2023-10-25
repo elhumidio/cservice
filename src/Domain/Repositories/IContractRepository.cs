@@ -30,5 +30,7 @@ namespace Domain.Repositories
         public Task<bool> UpdateContract(Contract contract);
 
         public bool DisableContract(int contractId);
+
+        
     }
 }
