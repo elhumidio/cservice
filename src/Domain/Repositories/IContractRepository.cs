@@ -1,4 +1,5 @@
 using Domain.DTO;
+using Domain.DTO.Products;
 using Domain.Entities;
 
 namespace Domain.Repositories
@@ -30,6 +31,7 @@ namespace Domain.Repositories
         public Task<bool> UpdateContract(Contract contract);
 
         public bool DisableContract(int contractId);
+        public DateTime GetContractFinishDate(List<ProductUnits> productUnits, int countryId = 40);
 
         
     }

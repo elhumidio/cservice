@@ -69,6 +69,8 @@ namespace Persistence
         public virtual DbSet<SalesforceTransaction> SalesforceTransactions { get; set; } = null!;
         public virtual DbSet<Culture> Cultures { get; set; } = null!;
         public virtual DbSet<WP_CategoryOfferRelation> WP_CategoryOfferRelations { get; set; } = null!;
+        public virtual DbSet<ContractDurationByProduct> ContractDurationByProducts { get; set; } = null!;
+        public virtual DbSet<Discount> Discounts { get; set; } = null!;
         //public DbSet<NextSqlValueFeedLog> NextSeqFeedLog { get; set; }
 
         public virtual DbSet<ZoneUrl> ZoneUrls { get; set; } = null!;
@@ -370,6 +372,25 @@ namespace Persistence
                 entity.Property(e => e.UrlBase).HasMaxLength(100);
             });
 
+            modelBuilder.Entity<ContractDurationByProduct>(entity =>
+            {
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.From).HasColumnName("FROM");
+
+                entity.Property(e => e.To).HasColumnName("TO");
+            });
+
+            modelBuilder.Entity<Discount>(entity =>
+            {
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.DiscountPercent).HasColumnType("decimal(5, 2)");
+
+                entity.Property(e => e.From).HasColumnName("FROM");
+
+                entity.Property(e => e.To).HasColumnName("TO");
+            });
 
             modelBuilder.Entity<City>(entity =>
             {

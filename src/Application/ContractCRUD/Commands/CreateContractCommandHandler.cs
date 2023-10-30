@@ -161,21 +161,9 @@ namespace Application.ContractCRUD.Commands
         }
 
         private DateTime GetContractDurationByProducts(List<ProductUnits> prods)
-        {
-            DateTime calculatedDate = DateTime.Now;
-
-            foreach (var prod in prods)
-            {
-               var dateByProd = DateTime.Now.AddDays(_productRepository.Get(prod.Idproduct).FirstOrDefault().Duration);
-               if(dateByProd > calculatedDate)
-                {
-                    calculatedDate = dateByProd;
-                }
-            }
-
-            return calculatedDate;
-    
-
+        {            
+            var calculatedDate = uow.ContractRepository.GetContractFinishDate(prods);            
+            return calculatedDate.Date;    
         }
 
         private EnterpriseUserJobVac CreateUserJobVac(CreateContractCommand request, ContractCreationDomainResponse response, Product? product, ProductLine pl)
