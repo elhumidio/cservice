@@ -27,15 +27,7 @@ namespace Persistence.Repositories
             return product == null ? 0 : product.Duration;
         }
 
-        public async Task<ProductCountryPrice> GetPriceByProductIdAndCountryId(int idProduct, int idCountry)
-        {
-            var price = await _dataContext.ProductCountryPrices.Where(p => p.Idproduct == idProduct && p.Idcountry == idCountry).FirstOrDefaultAsync();
-            if (price == null)
-            {
-                price = await _dataContext.ProductCountryPrices.Where(p => p.Idproduct == idProduct && p.Idcountry == (int)CountriesTurijobsDefined.Spain).FirstOrDefaultAsync();
-            }
-            return price;
-        }
+
 
         public async Task<List<ProductsPricesByQuantityAndCountryDto>> GetPricesByQuantityAndCountry(List<ProductUnits> products, int idCountry = 40)
         {
