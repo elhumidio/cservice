@@ -80,5 +80,7 @@ namespace Domain.Repositories
         public Task<List<CompanyOffersPerDayDto>> GetCompaniesOffersPerDay(DateTime sinceDate);
 
         public Task<List<JobVacancy>> GetJobsInfoByIds(List<int>? offersIds);
+
+        public Task<IReadOnlyList<KeyValueDateTimeDto>> GetLastPublishedDateByCompaniesIds(List<int> companiesIds);
     }
 }
