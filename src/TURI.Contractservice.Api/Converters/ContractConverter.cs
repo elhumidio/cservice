@@ -164,5 +164,14 @@ namespace API.Converters
                 Value = item.Value,
             };
         }
+
+        public static KeyValuesDateTimeResponse ToResponse(this KeyValueDateTimeDto item)
+        {
+            return new KeyValuesDateTimeResponse
+            {
+                Id = item.Id,
+                Value = item.Value,
+            };
+        }
     }
 }

@@ -30,7 +30,7 @@ namespace Domain.Repositories
         public Task<bool> UpdateContract(Contract contract);
 
         public bool DisableContract(int contractId);
-
-        
+        public Task<IReadOnlyList<EnterpriseListContractsIdsDto>> GetContractsByCompaniesIds(List<int> companiesIds);
+        public Task<IReadOnlyList<KeyValueDateTimeDto>> GetFinishDateContractClosingExpiringByCompaniesIds(List<int> companiesIds);
     }
 }

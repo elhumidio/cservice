@@ -220,5 +220,33 @@ namespace Persistence.Repositories
 
             return ret > 0;
         }
+
+        public async Task<IReadOnlyList<EnterpriseListContractsIdsDto>> GetContractsByCompaniesIds(List<int> companiesIds)
+        {
+            var filteredQuery = _dataContext.Contracts
+                .Where(c => companiesIds.Contains(c.Identerprise)
+                && c.FinishDate >= DateTime.Today)
+                .GroupBy(c => c.Identerprise)
+                .Select(x => new EnterpriseListContractsIdsDto { Id = x.Key, Value = x.Select(c => c.Idcontract).ToList() });
+
+            return await filteredQuery.ToListAsync();
+        }
+
+        public async Task<IReadOnlyList<KeyValueDateTimeDto>> GetFinishDateContractClosingExpiringByCompaniesIds(List<int> companiesIds)
+        {
+            var filteredQuery = _dataContext.Contracts
+                .Where(c => companiesIds.Contains(c.Identerprise)
+                && c.FinishDate >= DateTime.Today)
+                .GroupBy(c => c.Identerprise)
+                .Select(group => new KeyValueDateTimeDto
+                {
+                    Id = group.Key,
+                    Value = group.OrderBy(c => c.FinishDate).First().FinishDate
+                });
+
+            var result = await filteredQuery.ToListAsync();
+
+            return result;
+        }
     }
 }
