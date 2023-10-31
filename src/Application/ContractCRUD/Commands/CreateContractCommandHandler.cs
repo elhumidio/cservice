@@ -40,19 +40,20 @@ namespace Application.ContractCRUD.Commands
                 var finishDate = GetContractDurationByProducts(request.ProductsList);
                 decimal totalPrice = 0;
                 int? pricePartial = 0;
+
+                List<ProductUnits> list = new List<ProductUnits>();
                 foreach (var product in request.ProductsList)
                 {
-                    var priceObj = await _productRepository.GetPriceByProductIdAndCountryId(product.Idproduct, request.CountryId);
-                    pricePartial = priceObj.Price * product.Units;
-                    if (priceObj == null)
+                    ProductUnits obj = new()
                     {
-                        priceObj = await _productRepository.GetPriceByProductIdAndCountryId(product.Idproduct, (int)CountriesTurijobsDefined.Spain);
-                        pricePartial = priceObj.Price * product.Units;
-                    }
-                    totalPrice += Convert.ToDecimal(pricePartial);
-                    pricePartial = 0;
-                  
+                        Idproduct = product.Idproduct,
+                        Units = product.Units
+                    };  
+                    list.Add(obj);
                 }
+
+                var prices = await _productRepository.GetPricesByQuantityAndCountry(list,request.CountryId);
+
 
                 //TODO discount logic missing...
                 response.Contract = await CreateContract(finishDate, request, company, totalPrice);
@@ -74,14 +75,11 @@ namespace Application.ContractCRUD.Commands
                     foreach (var pl in productLines)
                     {
                         int price = 0;
-                        var priceObj = await _productRepository.GetPriceByProductIdAndCountryId(pl.Key, request.CountryId);
-                        priceObj ??= await _productRepository.GetPriceByProductIdAndCountryId(pl.Key, (int)CountriesTurijobsDefined.Spain);
-                        
                         var cp = new ContractProduct
                         {
                             Idproduct = prod.Idproduct,
                             Idcontract = response.Contract.Idcontract,
-                            Price = priceObj?.Price ?? 0,
+                            Price = prices.FirstOrDefault(p => p.ProductId == pl.Key).UnitPriceAfterDiscount,   // priceObj?.Price ?? 0,
                             Units = request.ProductsList.Where(p => p.Idproduct == pl.Key).First().Units
                         };
                         var plineToMap = request.ProductsList.Where(p => p.Idproduct == pl.Key).First();
@@ -161,21 +159,9 @@ namespace Application.ContractCRUD.Commands
         }
 
         private DateTime GetContractDurationByProducts(List<ProductUnits> prods)
-        {
-            DateTime calculatedDate = DateTime.Now;
-
-            foreach (var prod in prods)
-            {
-               var dateByProd = DateTime.Now.AddDays(_productRepository.Get(prod.Idproduct).FirstOrDefault().Duration);
-               if(dateByProd > calculatedDate)
-                {
-                    calculatedDate = dateByProd;
-                }
-            }
-
-            return calculatedDate;
-    
-
+        {            
+            var calculatedDate = uow.ContractRepository.GetContractFinishDate(prods);            
+            return calculatedDate.Date;    
         }
 
         private EnterpriseUserJobVac CreateUserJobVac(CreateContractCommand request, ContractCreationDomainResponse response, Product? product, ProductLine pl)

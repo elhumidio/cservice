@@ -1,8 +1,9 @@
 using Domain.DTO;
+using Domain.DTO.Products;
 using Domain.Entities;
-using Domain.Enums;
 using Domain.Repositories;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace Persistence.Repositories
 {
@@ -65,7 +66,6 @@ namespace Persistence.Repositories
             var contract = await _dataContext.Contracts.FirstOrDefaultAsync(c => c.Idcontract == contractId);
             return contract != null && contract.FinishDate >= DateTime.Now.Date.AddDays(-30);
         }
-
 
         public async Task<List<ContractProductShortDto>> GetAllProductsByContract(int contractId, int lang, int site)
         {
@@ -167,7 +167,7 @@ namespace Persistence.Repositories
         public async Task<bool> UpdateContract(Contract contract)
         {
             var currentContract = _dataContext.Contracts.First(c => c.Idcontract == contract.Idcontract);
-            
+
             _dataContext.Contracts.Update(currentContract);
             //currentContract.Idcontract = contract.Idcontract;
             //currentContract.Identerprise = contract.Identerprise;
@@ -219,6 +219,24 @@ namespace Persistence.Repositories
             var ret = _dataContext.SaveChanges();
 
             return ret > 0;
+        }
+
+        public DateTime GetContractFinishDate(List<ProductUnits> productUnits, int countryId = 40)
+        {
+            var maxDate = DateTime.MinValue;
+            var currentDate = DateTime.Now;
+            int daysDuration = 0;
+            foreach (var item in productUnits)
+            {
+                var durations = _dataContext.ContractDurationByProducts.Where(c => c.ProductId == item.Idproduct
+                && c.CountryId == countryId && item.Units >= c.From && item.Units <= c.To).FirstOrDefault();
+                if(durations != null)
+                    daysDuration = durations.Duration ?? 0;
+                var finishDate = currentDate.AddDays(daysDuration);               
+                maxDate = finishDate > maxDate ? finishDate : maxDate;
+            }
+
+            return maxDate;
         }
 
         public async Task<IReadOnlyList<EnterpriseListContractsIdsDto>> GetContractsByCompaniesIds(List<int> companiesIds)
