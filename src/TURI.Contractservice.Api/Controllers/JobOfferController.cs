@@ -2,6 +2,7 @@ using API.Converters;
 using Application.JobOffer.Commands;
 using Application.JobOffer.DTO;
 using Application.JobOffer.Queries;
+using Application.JobOffers.Queries;
 using Application.Utils.Queries.Equest;
 using AutoMapper;
 using Domain.DTO;
@@ -712,6 +713,26 @@ namespace API.Controllers
             {
                 return BadRequest(result.Error);
             }
+        }
+
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(KeyValuesDateTimeResponse[]))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetLastPublishedDateByCompaniesIds(ListCompaniesIdsRequest request)
+        {
+            var result = await Mediator.Send(new GetLastPublishedDateByCompaniesIds.Get
+            {
+                CompaniesIds = request.CompaniesIds
+            });
+
+            if (result.IsSuccess)
+            {
+                var response = result.Value.Select(grData => grData.ToResponse()).ToArray();
+
+                return Ok(response);
+            }
+
+            return BadRequest(result.Error);
         }
     }
 }

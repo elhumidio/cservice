@@ -322,5 +322,45 @@ namespace API.Controllers
 
             return BadRequest(result.Error);
         }
+
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(KeyValuesResponse[]))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetCountAvailableUnitsByCompaniesIds(ListCompaniesIdsRequest request)
+        {
+            var result = await Mediator.Send(new GetCountAvailableUnitsByCompaniesIds.Get
+            {
+                CompaniesIds = request.CompaniesIds
+            });
+
+            if (result.IsSuccess)
+            {
+                var response = result.Value.Select(grData => grData.ToResponse()).ToArray();
+
+                return Ok(response);
+            }
+
+            return BadRequest(result.Error);
+        }
+
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(KeyValuesDateTimeResponse[]))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetFinishDateContractClosingExpiringByCompaniesIds(ListCompaniesIdsRequest request)
+        {
+            var result = await Mediator.Send(new GetFinishDateContractClosingExpiringByCompaniesIds.Get
+            {
+                CompaniesIds = request.CompaniesIds
+            });
+
+            if (result.IsSuccess)
+            {
+                var response = result.Value.Select(grData => grData.ToResponse()).ToArray();
+
+                return Ok(response);
+            }
+
+            return BadRequest(result.Error);
+        }
     }
 }

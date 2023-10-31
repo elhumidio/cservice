@@ -22,4 +22,10 @@ public interface IContractService
 
     [Post("/api/contract/GetValidContractsByCompaniesIds")]
     Task<KeyValuesResponse[]> GetValidContractsByCompaniesIds(ListCompaniesIdsRequest request);
+
+    [Post("/api/contract/GetCountAvailableUnitsByCompaniesIds")]
+    Task<KeyValuesResponse[]> GetCountAvailableUnitsByCompaniesIds(ListCompaniesIdsRequest request);
+
+    [Post("/api/contract/GetFinishDateContractClosingExpiringByCompaniesIds")]
+    Task<KeyValuesDateTimeResponse[]> GetFinishDateContractClosingExpiringByCompaniesIds(ListCompaniesIdsRequest request);
 }

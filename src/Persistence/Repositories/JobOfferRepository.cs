@@ -640,5 +640,21 @@ namespace Persistence.Repositories
 
             return await query.ToListAsync();
         }
+
+        public async Task<IReadOnlyList<KeyValueDateTimeDto>> GetLastPublishedDateByCompaniesIds(List<int> companiesIds)
+        {
+            var filteredQuery = _dataContext.JobVacancies
+                .Where(a => companiesIds.Contains(a.Identerprise))
+                .GroupBy(a => a.Identerprise)
+                .Select(group => new KeyValueDateTimeDto
+                {
+                    Id = group.FirstOrDefault().Identerprise,
+                    Value = group.OrderByDescending(g => g.PublicationDate).FirstOrDefault().PublicationDate
+                });
+
+            var result = await filteredQuery.ToListAsync();
+
+            return result;
+        }
     }
 }
