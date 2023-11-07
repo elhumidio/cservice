@@ -34,5 +34,7 @@ namespace Domain.Repositories
         public DateTime GetContractFinishDate(List<ProductUnits> productUnits, int countryId = 40);
 
         
+        public Task<IReadOnlyList<EnterpriseListContractsIdsDto>> GetContractsByCompaniesIds(List<int> companiesIds);
+        public Task<IReadOnlyList<KeyValueDateTimeDto>> GetFinishDateContractClosingExpiringByCompaniesIds(List<int> companiesIds);
     }
 }
