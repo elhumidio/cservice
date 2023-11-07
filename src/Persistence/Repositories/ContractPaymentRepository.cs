@@ -1,4 +1,5 @@
-﻿using Domain.Repositories;
+using Domain.Entities;
+using Domain.Repositories;
 
 namespace Persistence.Repositories
 {
@@ -15,6 +16,13 @@ namespace Persistence.Repositories
             var payments = _dataContext.ContractPayments.Where(c => c.Idcontract == contractId).Count();
             return payments > 0;
                  
+        }
+
+        public async  Task<bool> AddPayment(ContractPayment payment)
+        {
+            var ret = _dataContext.Entry(payment).State = Microsoft.EntityFrameworkCore.EntityState.Added;
+            var ans = await _dataContext.SaveChangesAsync();
+            return ans > 0;
         }
     }
 }
