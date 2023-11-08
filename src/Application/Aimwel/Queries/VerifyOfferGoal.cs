@@ -72,7 +72,8 @@ namespace Application.Aimwel.Queries
                         var setting = settings.FirstOrDefault(a => a.AreaId == o.Idarea);
                         var retrievedApplicants = offerApplicants.results.FirstOrDefault(of => of.jobId == o.IdjobVacancy) == null ? 0
                             : offerApplicants.results.FirstOrDefault(of => of.jobId == o.IdjobVacancy).Applicants;
-                        if (retrievedApplicants < setting.Goal)
+                       
+                        if(setting != null && ( retrievedApplicants < setting.Goal))
                         {
                             response.GoalsOffersList.Add(new GoalsOffer { OfferId = o.IdjobVacancy, ReachedGoals = false });
                         }
@@ -95,7 +96,7 @@ namespace Application.Aimwel.Queries
 
                             offerRedireccions.results.FirstOrDefault(of => of.jobId == o.IdjobVacancy).Applicants;
 
-                        if (retrievedRedirections < setting?.Goal * 10)
+                        if (setting != null &&  (retrievedRedirections < setting?.Goal * 10))
                         {
                             response.GoalsOffersList.Add(new GoalsOffer { OfferId = o.IdjobVacancy, ReachedGoals = false });
                         }
