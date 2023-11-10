@@ -72,6 +72,7 @@ namespace Application.JobOffer.Commands
             }
             else
             {
+                offer.ExternalUrl = existentOffer.ExternalUrl;
                 error = $"IntegrationId: {offer.IntegrationData.IDIntegration} - Reference: {offer.IntegrationData.ApplicationReference}";
             }
             bool IsActivate = existentOffer.ChkFilled && IsIntegration;
