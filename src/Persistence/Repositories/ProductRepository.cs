@@ -47,9 +47,11 @@ namespace Persistence.Repositories
                     UnitPriceBeforeDiscount = priceBeforeDiscount.UnitPrice,
                     UnitPriceAfterDiscount = price.UnitPrice,
                     ProductId = pu.Idproduct,
-                     CountryId = idCountry,
-                      DiscountPercentage = (int)price.DiscountPercent,
-                    Units = pu.Units
+                    CountryId = idCountry,
+                    DiscountPercentage = (int)price.DiscountPercent,
+                    Units = pu.Units,
+                    From = price.From,
+                    To = price.To
                 };
                 prices.Add(prod);
             }
