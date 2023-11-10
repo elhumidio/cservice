@@ -4,6 +4,7 @@ using Application.Contracts.DTO;
 using Application.Contracts.Queries;
 using Application.EnterpriseContract.Queries;
 using Application.Managers.Queries;
+using Application.OnlineShop.Commands;
 using Domain.Enums;
 using Microsoft.AspNetCore.Mvc;
 using TURI.ContractService.Contracts.Contract.Models.ContractCreationFolder;
@@ -206,6 +207,14 @@ namespace API.Controllers
             {
                 Managers = managers
             });
+            return HandleResult(result);
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> AddPayment(AddPaymentCommand cmd)
+        {
+            var result = await Mediator.Send(cmd);            
             return HandleResult(result);
         }
 
