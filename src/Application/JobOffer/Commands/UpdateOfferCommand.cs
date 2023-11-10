@@ -57,7 +57,9 @@ namespace Application.JobOffer.Commands
 
         [DataMember]
         public int IdjobContractType { get; set; } //table
-        
+
+        [DataMember]
+        public string? ExternalUrl { get; set; }
 
         [DataMember]
         public int? IdworkDayType { get; set; } //table
