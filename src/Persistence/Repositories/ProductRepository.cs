@@ -1,6 +1,5 @@
 using Domain.DTO.Products;
 using Domain.Entities;
-using Domain.Enums;
 using Domain.Repositories;
 using Microsoft.EntityFrameworkCore;
 
@@ -27,10 +26,9 @@ namespace Persistence.Repositories
             return product == null ? 0 : product.Duration;
         }
 
-
-
         public async Task<List<ProductsPricesByQuantityAndCountryDto>> GetPricesByQuantityAndCountry(List<ProductUnits> products, int idCountry = 40)
         {
+            
             var prices = new List<ProductsPricesByQuantityAndCountryDto>();
             foreach (var pu in products)
             {
@@ -40,7 +38,7 @@ namespace Persistence.Repositories
                 && pu.Units >= p.From
                 && pu.Units <= p.To
                 && p.CountryId == idCountry).FirstOrDefaultAsync();
-                var prod = new ProductsPricesByQuantityAndCountryDto
+                var firstLine = new ProductsPricesByQuantityAndCountryDto
                 {
                     TotalPriceAfterDiscount = pu.Units * price.UnitPrice,
                     TotalPriceBeforeDiscount = pu.Units * priceBeforeDiscount.UnitPrice,
@@ -51,10 +49,41 @@ namespace Persistence.Repositories
                     DiscountPercentage = (int)price.DiscountPercent,
                     Units = pu.Units,
                     From = price.From,
-                    To = price.To
+                    To = price.To,
+                    id = price.Id
                 };
-                prices.Add(prod);
+
+                prices.Add(firstLine);
+                var nextId = firstLine.id +1;
+                var priceNext = await _dataContext.Discounts
+                  .Where(p => p.ProductId == pu.Idproduct && p.CountryId == idCountry && p.Id == nextId)                  
+                  .FirstOrDefaultAsync();
+                
+                if(priceNext != null)
+                {
+                    var secondLine = new ProductsPricesByQuantityAndCountryDto
+                    {
+                        TotalPriceAfterDiscount = pu.Units * priceNext.UnitPrice,
+                        TotalPriceBeforeDiscount = pu.Units * priceBeforeDiscount.UnitPrice,
+                        UnitPriceBeforeDiscount = priceBeforeDiscount.UnitPrice,
+                        UnitPriceAfterDiscount = priceNext.UnitPrice,
+                        ProductId = pu.Idproduct,
+                        CountryId = idCountry,
+                        DiscountPercentage = (int)priceNext.DiscountPercent,
+                        Units = pu.Units,
+                        From = priceNext.From,
+                        To = priceNext.To,
+                        id = priceNext.Id
+                    };
+                    prices.Add(secondLine);
+                    firstLine.UnitsNeededToGetDiscount = secondLine.From - firstLine.Units;
+                }
+                
+
             }
+            
+            //todo add next row (next id)
+
             return prices;
         }
 
@@ -80,6 +109,5 @@ namespace Persistence.Repositories
 
             return prices;
         }
-
     }
 }

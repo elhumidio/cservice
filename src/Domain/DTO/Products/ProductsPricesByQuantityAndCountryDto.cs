@@ -2,6 +2,7 @@ namespace Domain.DTO.Products
 {
     public class ProductsPricesByQuantityAndCountryDto
     {
+        public int id { get; set; }
         public int ProductId { get; set; }
         public int CountryId { get; set; }
         public decimal TotalPriceBeforeDiscount { get; set; }
@@ -12,5 +13,8 @@ namespace Domain.DTO.Products
         public int From { get; set; }
         public int To { get; set; }
         public int Units { get; set; }
+        public int UnitsNeededToGetDiscount { get; set; }
     }
+
+
 }
