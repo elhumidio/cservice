@@ -3,6 +3,7 @@ using Domain.DTO.Products;
 using Domain.Entities;
 using Domain.Repositories;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Linq;
 
 namespace Persistence.Repositories
@@ -53,7 +54,7 @@ namespace Persistence.Repositories
         {
             var contracts = _dataContext.Contracts
                 .Where(c => c.FinishDate >= DateTime.Today
-                && DateTime.Now.Date >= c.StartDate
+                && (c.StartDate.HasValue) ? DateTime.Now.Date >= ((DateTime)c.StartDate).Date : DateTime.Now.Date >= c.StartDate
                 && c.ChkApproved
                 && c.Idcontract == contractId
                 && !c.ChkCancel)
