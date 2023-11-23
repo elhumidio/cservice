@@ -54,7 +54,7 @@ namespace Persistence.Repositories
         {
             var contracts = _dataContext.Contracts
                 .Where(c => c.FinishDate >= DateTime.Today
-                && (c.StartDate.HasValue) ? DateTime.Now.Date >= (c.StartDate ?? DateTime.MaxValue).Date : DateTime.Now.Date >= c.StartDate
+                && (c.StartDate.HasValue) ? DateTime.Now.Date >= ((DateTime)c.StartDate).Date : DateTime.Now.Date >= (c.StartDate ?? DateTime.MaxValue).Date
                 && c.ChkApproved
                 && c.Idcontract == contractId
                 && !c.ChkCancel)
