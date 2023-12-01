@@ -196,6 +196,12 @@ namespace Application.JobOffer.Commands
         [DataMember]
         public string? ZipCode { get; set; }
 
+        [DataMember]
+        public int TitleId { get; set; }
+
+        [DataMember]
+        public int FieldId { get; set; }
+
         public IntegrationData IntegrationData { get; set; }
         public List<JobLanguages>? JobLanguages { get; set; }
 

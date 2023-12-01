@@ -74,6 +74,7 @@ namespace Domain.Entities
         public string? IntegrationId { get; set; }
         public int? Isco { get; set; }
         public int? TitleId { get; set; }
+        public int? FieldId { get; set; }
         public bool? AllowChat { get; set; }
     }
 }
