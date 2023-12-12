@@ -14,6 +14,7 @@ namespace Domain.DTO.Products
         public int To { get; set; }
         public int Units { get; set; }
         public int UnitsNeededToGetDiscount { get; set; }
+        public string StripeProductId { get; set; }
     }
 
 
