@@ -32,12 +32,20 @@ namespace Persistence.Repositories
             var prices = new List<ProductsPricesByQuantityAndCountryDto>();
             foreach (var pu in products)
             {
-                var priceBeforeDiscount = await _dataContext.Discounts.Where(p => p.ProductId == pu.Idproduct
-                && p.CountryId == idCountry).FirstOrDefaultAsync();
+                //Largest per unit price
+                var priceBeforeDiscount = await _dataContext.Discounts
+                    .Where(p => p.ProductId == pu.Idproduct && p.CountryId == idCountry)
+                    .OrderByDescending(p => p.UnitPrice)
+                    .FirstOrDefaultAsync();
+
+                //The correct Band for the number of units we have
                 var price = await _dataContext.Discounts.Where(p => p.ProductId == pu.Idproduct
-                && pu.Units >= p.From
-                && pu.Units <= p.To
-                && p.CountryId == idCountry).FirstOrDefaultAsync();
+                        && pu.Units >= p.From
+                        && pu.Units <= p.To
+                        && p.CountryId == idCountry)
+                    .FirstOrDefaultAsync();
+
+
                 var firstLine = new ProductsPricesByQuantityAndCountryDto
                 {
                     TotalPriceAfterDiscount = pu.Units * price.UnitPrice,
@@ -50,13 +58,14 @@ namespace Persistence.Repositories
                     Units = pu.Units,
                     From = price.From,
                     To = price.To,
-                    id = price.Id
+                    id = price.Id,
+                    StripeProductId = price.StripeProductId
                 };
 
                 prices.Add(firstLine);
-                var nextId = firstLine.id +1;
+                var nextBandMinUnits = firstLine.To + 1;
                 var priceNext = await _dataContext.Discounts
-                  .Where(p => p.ProductId == pu.Idproduct && p.CountryId == idCountry && p.Id == nextId)                  
+                  .Where(p => p.ProductId == pu.Idproduct && p.CountryId == idCountry && p.From == nextBandMinUnits)                  
                   .FirstOrDefaultAsync();
                 
                 if(priceNext != null)
@@ -73,16 +82,13 @@ namespace Persistence.Repositories
                         Units = pu.Units,
                         From = priceNext.From,
                         To = priceNext.To,
-                        id = priceNext.Id
+                        id = priceNext.Id,
+                        StripeProductId = "" //Not used
                     };
                     prices.Add(secondLine);
                     firstLine.UnitsNeededToGetDiscount = secondLine.From - firstLine.Units;
                 }
-                
-
             }
-            
-            //todo add next row (next id)
 
             return prices;
         }
@@ -102,7 +108,8 @@ namespace Persistence.Repositories
                     UnitPriceBeforeDiscount = a.UnitPrice,
                     From = a.From,
                     To = a.To,
-                    Units = 1
+                    Units = 1,
+                    StripeProductId = a.StripeProductId
                 });
 
             var prices = await query.ToListAsync();

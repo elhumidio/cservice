@@ -9,5 +9,6 @@ namespace Domain.Entities
         public int To { get; set; }
         public decimal DiscountPercent { get; set; }
         public int UnitPrice { get; set; }
+        public string StripeProductId { get; set; }
     }
 }
