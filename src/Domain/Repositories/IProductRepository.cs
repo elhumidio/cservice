@@ -10,6 +10,6 @@ namespace Domain.Repositories
         public Task<List<ProductsPricesByQuantityAndCountryDto>> GetPricesByQuantityAndCountry(List<ProductUnits> products, int idCountry = 40);
         public Task<List<ProductsPricesByQuantityAndCountryDto>> GetAllPricesByQuantityOrProduct(int idCountry = 40,int productId = 0);
 
-
+        public Task<List<ProductsPricesByQuantityAndCountryDto>> GetAllStripeProductIds();
     }
 }

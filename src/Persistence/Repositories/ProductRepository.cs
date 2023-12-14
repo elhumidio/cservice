@@ -116,5 +116,25 @@ namespace Persistence.Repositories
 
             return prices;
         }
+
+        public async Task<List<ProductsPricesByQuantityAndCountryDto>> GetAllStripeProductIds()
+        {
+            return _dataContext.Discounts.Select(a => new ProductsPricesByQuantityAndCountryDto
+            {
+                id = a.Id,
+                CountryId = a.CountryId,
+                DiscountPercentage = (int)a.DiscountPercent,
+                ProductId = a.ProductId,
+                TotalPriceAfterDiscount = a.UnitPrice,
+                TotalPriceBeforeDiscount = a.UnitPrice,
+                UnitPriceAfterDiscount = a.UnitPrice,
+                UnitPriceBeforeDiscount = a.UnitPrice,
+                From = a.From,
+                To = a.To,
+                Units = 1,
+                UnitsNeededToGetDiscount = 0,
+                StripeProductId = a.StripeProductId
+            }).ToList();
+        }
     }
 }
