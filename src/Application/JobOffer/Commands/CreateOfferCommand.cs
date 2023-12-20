@@ -214,6 +214,10 @@ namespace Application.JobOffer.Commands
 
         [DataMember]
         public int FieldId { get; set; }
+        [DataMember]
+        public decimal? Latitude { get; set; }
+        [DataMember]
+        public decimal? Longitude { get; set; }
 
 
         public CreateOfferCommand()

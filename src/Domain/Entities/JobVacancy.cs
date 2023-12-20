@@ -76,5 +76,7 @@ namespace Domain.Entities
         public int? TitleId { get; set; }
         public int? FieldId { get; set; }
         public bool? AllowChat { get; set; }
+        public decimal? Latitude { get; set; }
+        public decimal? Longitude { get; set; }
     }
 }
