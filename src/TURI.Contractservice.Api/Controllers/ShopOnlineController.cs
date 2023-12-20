@@ -19,5 +19,12 @@ namespace TURI.Contractservice.Controllers
             var result = await Mediator.Send(new GetAllProductsPricesAndDiscounts.GetAll { CountryId = countryId});
             return HandleResult(result);
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAllStripeProductIds()
+        {
+            var results = await Mediator.Send(new GetAllStripeProductIdsQuery());
+            return HandleResult(results);
+        }
     }
 }
