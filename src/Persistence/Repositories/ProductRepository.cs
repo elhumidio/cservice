@@ -59,7 +59,7 @@ namespace Persistence.Repositories
                     From = price.From,
                     To = price.To,
                     id = price.Id,
-                    StripeProductId = price.StripeProductId
+                    StripeProductId = price.StripeProductId ?? string.Empty
                 };
 
                 prices.Add(firstLine);
@@ -83,7 +83,7 @@ namespace Persistence.Repositories
                         From = priceNext.From,
                         To = priceNext.To,
                         id = priceNext.Id,
-                        StripeProductId = "" //Not used
+                        StripeProductId = string.Empty //Not used
                     };
                     prices.Add(secondLine);
                     firstLine.UnitsNeededToGetDiscount = secondLine.From - firstLine.Units;
