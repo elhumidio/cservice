@@ -202,6 +202,13 @@ namespace Application.JobOffer.Commands
         [DataMember]
         public int FieldId { get; set; }
 
+        [DataMember]
+        public decimal? Latitude { get; set; }
+        [DataMember]
+        public decimal? Longitude { get; set; }
+        [DataMember]
+        public string? Address { get; set; }
+
         public IntegrationData IntegrationData { get; set; }
         public List<JobLanguages>? JobLanguages { get; set; }
 

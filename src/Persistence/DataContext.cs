@@ -1548,6 +1548,7 @@ namespace Persistence
                 entity.Property(e => e.ShortDescription).HasMaxLength(100);
 
                 entity.Property(e => e.Title).HasMaxLength(100);
+                entity.Property(e => e.Address).HasMaxLength(300);
 
                 entity.Property(e => e.UpdatingDate).HasColumnType("datetime");
 

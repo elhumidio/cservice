@@ -218,6 +218,8 @@ namespace Application.JobOffer.Commands
         public decimal? Latitude { get; set; }
         [DataMember]
         public decimal? Longitude { get; set; }
+        [DataMember]
+        public string? Address { get; set; }
 
 
         public CreateOfferCommand()
