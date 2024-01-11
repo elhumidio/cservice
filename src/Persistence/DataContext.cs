@@ -1554,6 +1554,7 @@ namespace Persistence
 
                 entity.Property(e => e.Isco).HasColumnName("Isco");
                 entity.Property(e => e.TitleId).HasColumnName("TitleId");
+                entity.Property(e => e.TitleDenominationId).HasColumnName("TitleDenominationId");
             });
 
             modelBuilder.Entity<Product>(entity =>

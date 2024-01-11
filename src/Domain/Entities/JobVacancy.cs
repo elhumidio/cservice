@@ -74,6 +74,7 @@ namespace Domain.Entities
         public string? IntegrationId { get; set; }
         public int? Isco { get; set; }
         public int? TitleId { get; set; }
+        public int? TitleDenominationId { get; set; }
         public int? CreatorId { get; set; }
         public bool? AllowChat { get; set; }
         public decimal? SalaryMin { get; set; }

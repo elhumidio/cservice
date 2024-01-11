@@ -200,6 +200,9 @@ namespace Application.JobOffer.Commands
         public int TitleId { get; set; }
 
         [DataMember]
+        public int TitleDenominationId { get; set; }
+
+        [DataMember]
         public int FieldId { get; set; }
 
         [DataMember]
