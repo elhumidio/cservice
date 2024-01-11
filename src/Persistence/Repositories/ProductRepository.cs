@@ -26,6 +26,12 @@ namespace Persistence.Repositories
             return product == null ? 0 : product.Duration;
         }
 
+        public string GetProductName(int idProduct)
+        {
+            var product = _dataContext.Products.Where(p => p.Idproduct == idProduct).FirstOrDefault();
+            return product == null ? string.Empty : product.BaseName;
+        }
+
         public async Task<List<ProductsPricesByQuantityAndCountryDto>> GetPricesByQuantityAndCountry(List<ProductUnits> products, int idCountry = 40)
         {
             
