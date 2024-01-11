@@ -26,7 +26,7 @@ namespace Application.JobOffer.Validations
         {
             bool IsNotdefinedSalaries = obj.SalaryMax == ((decimal)SalaryType.NotSpecified) && obj.SalaryMin == ((decimal)SalaryType.NotSpecified);
 
-            if (IsNotdefinedSalaries)
+            if (IsNotdefinedSalaries && obj.IdsalaryType != (int)SalaryType.UnpaidWork)
             {
                 obj.IdsalaryType = (int)SalaryType.NotSpecified;
                 return true;
