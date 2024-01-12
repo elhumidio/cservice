@@ -25,5 +25,7 @@ namespace TURI.ContractService.Contracts.Contract.Models.Requests
         public int? PaymentMethod { get; set; }
 
         public int CountryId { get; set; }
+        public string? CheckoutSessionId { get; set; }
+
     }
 }

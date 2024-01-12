@@ -4,6 +4,7 @@ namespace Domain.DTO.Products
     {
         public int id { get; set; }
         public int ProductId { get; set; }
+        public string? ProductName { get; set; }
         public int CountryId { get; set; }
         public decimal TotalPriceBeforeDiscount { get; set; }
         public decimal TotalPriceAfterDiscount { get; set; }

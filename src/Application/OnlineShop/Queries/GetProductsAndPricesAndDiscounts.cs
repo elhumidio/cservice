@@ -25,6 +25,7 @@ namespace Application.OnlineShop.Queries
         public async Task<Result<List<ProductsPricesByQuantityAndCountryDto>>> Handle(GetProductsAndPricesAndDiscountsCommand request, CancellationToken cancellationToken)
         {
             var query = await _productsRepository.GetPricesByQuantityAndCountry( request.Products, request.CountryId ?? (int)CountriesTurijobsDefined.Spain);
+            query.ForEach(x => x.ProductName = _productsRepository.GetProductName(x.ProductId));
             return Result<List<ProductsPricesByQuantityAndCountryDto>>.Success(query);
         }
     }
