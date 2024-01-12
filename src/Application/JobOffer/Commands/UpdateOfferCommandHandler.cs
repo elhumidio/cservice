@@ -62,19 +62,9 @@ namespace Application.JobOffer.Commands
             bool IsIntegration = integrationInfo != null;
 
             var existentOffer = _offerRepo.GetOfferById(offer.IdjobVacancy);
-            if (!IsIntegration)
-            {
-                offer.Idcity = existentOffer.Idcity;
-                offer.Idregion = existentOffer.Idregion;
-                offer.Idcountry = existentOffer.Idcountry;
-                offer.City = existentOffer.City;
-                offer.IdzipCode = existentOffer.IdzipCode;
-            }
-            else
-            {
+            if (IsIntegration)
                 offer.ExternalUrl = existentOffer.ExternalUrl;
-                error = $"IntegrationId: {offer.IntegrationData.IDIntegration} - Reference: {offer.IntegrationData.ApplicationReference}";
-            }
+
             bool IsActivate = existentOffer.ChkFilled && IsIntegration;
             bool IsPack = _contractProductRepo.IsPack(existentOffer.Idcontract);
             offer.ChkPack = IsPack;

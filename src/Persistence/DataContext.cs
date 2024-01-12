@@ -1550,11 +1550,13 @@ namespace Persistence
                 entity.Property(e => e.ShortDescription).HasMaxLength(100);
 
                 entity.Property(e => e.Title).HasMaxLength(100);
+                entity.Property(e => e.Address).HasMaxLength(300);
 
                 entity.Property(e => e.UpdatingDate).HasColumnType("datetime");
 
                 entity.Property(e => e.Isco).HasColumnName("Isco");
                 entity.Property(e => e.TitleId).HasColumnName("TitleId");
+                entity.Property(e => e.TitleDenominationId).HasColumnName("TitleDenominationId");
             });
 
             modelBuilder.Entity<Product>(entity =>

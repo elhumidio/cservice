@@ -209,6 +209,22 @@ namespace Application.JobOffer.Commands
         [DataMember]
         public QuestDTO? QuestDTO { get; set; }
 
+        [DataMember]
+        public int TitleId { get; set; }
+
+        [DataMember]
+        public int TitleDenominationId { get; set; }
+
+        [DataMember]
+        public int FieldId { get; set; }
+        [DataMember]
+        public decimal? Latitude { get; set; }
+        [DataMember]
+        public decimal? Longitude { get; set; }
+        [DataMember]
+        public string? Address { get; set; }
+
+
         public CreateOfferCommand()
         {
             IntegrationData = new IntegrationData();
