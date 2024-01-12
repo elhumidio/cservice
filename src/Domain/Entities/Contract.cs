@@ -49,6 +49,7 @@ namespace Domain.Entities
         public DateTime? Sftimestamp { get; set; }
         public int? SiteId { get; set; }
         public int? OldIdcontract { get; set; }
+        public string? CheckoutSessionId { get; set; }
         [JsonIgnore]
         public virtual Contract? IdcontractParentNavigation { get; set; }
         [JsonIgnore]

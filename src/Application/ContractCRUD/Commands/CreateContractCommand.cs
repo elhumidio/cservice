@@ -42,5 +42,8 @@ namespace Application.ContractCRUD.Commands
         [DataMember]
         public int CountryId { get; set; } // to get prices by country
 
+        [DataMember]
+        public string? CheckoutSessionId { get; set; }
+
     }
 }

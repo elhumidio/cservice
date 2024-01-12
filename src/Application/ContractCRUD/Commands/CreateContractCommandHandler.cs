@@ -196,6 +196,7 @@ namespace Application.ContractCRUD.Commands
             con.ChkApproved = true;
             con.Price = price;
             con.FinalPrice = price;
+            
             var contractId = await uow.ContractRepository.CreateContract(con);            
             return con;
         }
