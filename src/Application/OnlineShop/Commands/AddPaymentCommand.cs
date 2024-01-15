@@ -9,5 +9,7 @@ namespace Application.OnlineShop.Commands
         public decimal Payment { get; set; }
         public decimal? PaymentWithoutTax { get; set; }
         public DateTime DataPayment { get; set; }
+        public string? CheckoutSessionId { get; set; }
+
     }
 }

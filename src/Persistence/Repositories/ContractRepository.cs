@@ -267,5 +267,12 @@ namespace Persistence.Repositories
 
             return result;
         }
+
+        public async Task<Contract> GetContractByStripeSessionId(string stripeSessionId)
+        {
+            //get contract by checkoutsessionid
+            var contract = await _dataContext.Contracts.Where(c => c.CheckoutSessionId == stripeSessionId).FirstOrDefaultAsync();
+            return contract;
+        }
     }
 }

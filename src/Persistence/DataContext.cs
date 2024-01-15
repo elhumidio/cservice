@@ -49,7 +49,7 @@ namespace Persistence
         public virtual DbSet<Site> Sites { get; set; } = null!;
         public virtual DbSet<City> Cities { get; set; } = null!;
         public virtual DbSet<FeaturedJob> FeaturedJobs { get; set; } = null!;
-        public virtual DbSet<Logo> Logos{ get; set; } = null!;
+        public virtual DbSet<Logo> Logos { get; set; } = null!;
         public virtual DbSet<ProductCountryPrice> ProductCountryPrices { get; set; } = null!;
         public virtual DbSet<RegJobVacWorkPermit> RegJobVacWorkPermits { get; set; } = null!;
         public virtual DbSet<JobVacancyLanguage> JobVacancyLanguages { get; set; } = null!;
@@ -75,15 +75,11 @@ namespace Persistence
 
         public virtual DbSet<ZoneUrl> ZoneUrls { get; set; } = null!;
 
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.UseCollation("Modern_Spanish_CI_AS");
 
-
             modelBuilder.HasSequence("GetNextSequenceValueFeedsLog");
-
-
 
             modelBuilder.Entity<ContractPayment>(entity =>
             {
@@ -98,10 +94,12 @@ namespace Persistence
                 entity.Property(e => e.Idcontract).HasColumnName("IDContract");
 
                 entity.Property(e => e.Payment).HasColumnType("decimal(7, 2)");
+                entity.Property(e => e.CouponDiscount).HasColumnType("decimal(7, 2)");
+                entity.Property(e => e.TaxAmount).HasColumnType("decimal(7, 2)");
 
                 entity.Property(e => e.PaymentWithoutTax)
-                    .HasColumnType("decimal(7, 2)")
-                    .HasColumnName("PaymentWithoutTAX");
+                            .HasColumnType("decimal(7, 2)")
+                            .HasColumnName("PaymentWithoutTAX");
             });
 
             modelBuilder.Entity<RegEnterpriseConsum>(entity =>
@@ -123,7 +121,6 @@ namespace Persistence
                     .HasConstraintName("FK_TRegEnterpriseConsums_TContract");
             });
 
-
             modelBuilder.Entity<SalesforceTransaction>(entity =>
             {
                 entity.HasKey(e => e.IdsalesforceTransaction);
@@ -142,7 +139,6 @@ namespace Persistence
 
                 entity.Property(e => e.TurijobsId).HasColumnName("TurijobsID");
             });
-
 
             modelBuilder.Entity<FeedsAggregatorsLog>(entity =>
             {
@@ -177,8 +173,6 @@ namespace Persistence
 
                 entity.Property(e => e.TotalOffers).HasColumnName("total_offers");
             });
-
-
 
             modelBuilder.Entity<ZoneUrl>(entity =>
             {
@@ -272,7 +266,6 @@ namespace Persistence
             {
                 entity.Property(e => e.Budget).HasColumnType("decimal(18, 0)");
                 entity.Property(e => e.SiteId).HasColumnName("SiteId");
-
             });
 
             modelBuilder.Entity<TitlesRelationship>(entity =>
@@ -281,9 +274,7 @@ namespace Persistence
                 entity.Property(e => e.JobTitleId).HasColumnName("JobTitleId");
                 entity.Property(e => e.JobTitleEquivalentId).HasColumnName("JobTitleEquivalentId");
                 entity.Property(e => e.Weight).HasColumnName("Weight");
-                
             });
-
 
             modelBuilder.Entity<Title>(entity =>
             {
@@ -297,7 +288,7 @@ namespace Persistence
                     .HasMaxLength(20)
                     .HasColumnName("ISCO-08")
                     .IsFixedLength();
-                
+
                 entity.Property(e => e.Isco88)
                     .HasMaxLength(20)
                     .HasColumnName("ISCO-88")
@@ -306,7 +297,6 @@ namespace Persistence
 
             modelBuilder.Entity<TitleLang>(entity =>
             {
-                
                 entity.ToTable("TitleLangs");
                 entity.HasKey(e => e.Id);
                 entity.Property(e => e.Id).ValueGeneratedOnAdd();
@@ -315,7 +305,7 @@ namespace Persistence
                     .HasMaxLength(100)
                     .IsUnicode(false)
                     .HasColumnName("LABEL");
-                
+
                 entity.Property(e => e.LanguageId).HasColumnName("LANGUAGE_ID");
 
                 entity.Property(e => e.TitleId).HasColumnName("TITLE_ID");
@@ -337,7 +327,6 @@ namespace Persistence
 
                 entity.Property(e => e.RegionId).HasColumnName("RegionID");
             });
-
 
             modelBuilder.Entity<Culture>(entity =>
             {
@@ -422,7 +411,6 @@ namespace Persistence
 
                 entity.Property(e => e.Name).HasMaxLength(255);
             });
-
 
             modelBuilder.Entity<RegJobVacWorkPermit>(entity =>
             {
@@ -1923,6 +1911,6 @@ namespace Persistence
             OnModelCreatingPartial(modelBuilder);
         }
 
-        partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
+        private partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
     }
 }

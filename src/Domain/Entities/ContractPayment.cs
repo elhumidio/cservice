@@ -7,5 +7,7 @@ namespace Domain.Entities
         public DateTime DataPayment { get; set; }
         public decimal Payment { get; set; }
         public decimal? PaymentWithoutTax { get; set; }
+        public decimal? CouponDiscount { get; set; }
+        public decimal? TaxAmount { get; set; }
     }
 }
