@@ -1206,6 +1206,8 @@ namespace Persistence
 
                 entity.Property(e => e.StartDate).HasColumnType("datetime");
 
+                entity.Property(e => e.CheckoutSessionId).HasColumnName("CheckoutSessionId");
+
                 entity.HasOne(d => d.IdcontractParentNavigation)
                     .WithMany(p => p.InverseIdcontractParentNavigation)
                     .HasForeignKey(d => d.IdcontractParent)

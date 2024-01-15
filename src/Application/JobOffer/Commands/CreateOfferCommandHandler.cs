@@ -74,12 +74,12 @@ namespace Application.JobOffer.Commands
             int jobVacancyId = 0;
             var job = new JobVacancy();
             var integrationInfo = await _regJobVacRepo.GetAtsIntegrationInfo(offer.IntegrationData.ApplicationReference);
-            var company = _enterpriseRepository.Get(offer.Identerprise);
-            if (company.Idstatus != (int)EnterpriseStatus.Active)
-            {
-                offer.Idstatus = (int)EnterpriseStatus.Pending;
-            }
-
+            // var company = _enterpriseRepository.Get(offer.Identerprise);
+            //if (company.Idstatus != (int)EnterpriseStatus.Active)
+            //{
+            //    offer.Idstatus = (int)EnterpriseStatus.Pending;
+            //}
+            offer.Idstatus = (int)OfferStatus.Active;
             if (integrationInfo != null)
                 error = $"IntegrationId: {offer.IntegrationData.IDIntegration} - Reference: {offer.IntegrationData.ApplicationReference}";
 

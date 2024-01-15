@@ -26,6 +26,12 @@ namespace Persistence.Repositories
             return product == null ? 0 : product.Duration;
         }
 
+        public string GetProductName(int idProduct)
+        {
+            var product = _dataContext.Products.Where(p => p.Idproduct == idProduct).FirstOrDefault();
+            return product == null ? string.Empty : product.BaseName;
+        }
+
         public async Task<List<ProductsPricesByQuantityAndCountryDto>> GetPricesByQuantityAndCountry(List<ProductUnits> products, int idCountry = 40)
         {
             
@@ -59,7 +65,7 @@ namespace Persistence.Repositories
                     From = price.From,
                     To = price.To,
                     id = price.Id,
-                    StripeProductId = price.StripeProductId
+                    StripeProductId = price.StripeProductId ?? string.Empty
                 };
 
                 prices.Add(firstLine);
@@ -83,7 +89,7 @@ namespace Persistence.Repositories
                         From = priceNext.From,
                         To = priceNext.To,
                         id = priceNext.Id,
-                        StripeProductId = "" //Not used
+                        StripeProductId = string.Empty //Not used
                     };
                     prices.Add(secondLine);
                     firstLine.UnitsNeededToGetDiscount = secondLine.From - firstLine.Units;
