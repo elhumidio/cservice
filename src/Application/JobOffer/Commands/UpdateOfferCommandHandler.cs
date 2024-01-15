@@ -20,6 +20,7 @@ namespace Application.JobOffer.Commands
         private readonly IJobOfferRepository _offerRepo;
         private readonly IRegJobVacMatchingRepository _regJobVacRepo;
         private readonly IRegEnterpriseContractRepository _regContractRepo;
+        private readonly IInternationalDiffusionCountryRepository _internationalDiffusionCountryRepository;
         private readonly IContractProductRepository _contractProductRepo;
         private readonly IMediator _mediatr;
         private readonly IRegJobVacWorkPermitRepository _regJobVacWorkPermitRepo;
@@ -32,6 +33,7 @@ namespace Application.JobOffer.Commands
 
         public UpdateOfferCommandHandler(IRegEnterpriseContractRepository regContractRepo,
             IRegJobVacMatchingRepository regJobVacRepo,
+            IInternationalDiffusionCountryRepository internationalDiffusionCountryRepository,
             IMapper mapper,
             IJobOfferRepository offerRepo,
             IContractProductRepository contractProductRepo,
@@ -46,6 +48,7 @@ namespace Application.JobOffer.Commands
             _offerRepo = offerRepo;
             _regContractRepo = regContractRepo;
             _regJobVacRepo = regJobVacRepo;
+            _internationalDiffusionCountryRepository = internationalDiffusionCountryRepository;
             _mediatr = mediatr;
             _mapper = mapper;
             _regJobVacWorkPermitRepo = regJobVacWorkPermitRepo;
@@ -112,6 +115,24 @@ namespace Application.JobOffer.Commands
                 return OfferModificationResult.Failure(new List<string> { "no update" });
             else
             {
+                if (offer.InternationalDiffusion ?? true)
+                {
+                    await _internationalDiffusionCountryRepository.RemoveByOffer(offer.IdjobVacancy);
+                    if (offer.InternationalDiffusionCountries?.Count > 0)
+                    {
+                        List<InternationalDiffusionCountry> listCountries = new List<InternationalDiffusionCountry>();
+                        foreach (int internationalDiffusionCountry in offer.InternationalDiffusionCountries)
+                        {
+                            listCountries.Add(new InternationalDiffusionCountry()
+                            {
+                                OfferId = offer.IdjobVacancy,
+                                CountryId = internationalDiffusionCountry
+                            });
+                        }
+                        await _internationalDiffusionCountryRepository.Add(listCountries);
+                    }
+                }
+
                 if (offer.Idstatus == (int)OfferStatus.Deleted)
                 {
                     // Google API Indexing URL Delete.
