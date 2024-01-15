@@ -83,5 +83,7 @@ namespace Domain.Entities
         public decimal? Latitude { get; set; }
         public decimal? Longitude { get; set; }
         public string? Address { get; set; }
+        public bool? NationalDiffusion { get; set; }
+        public bool? InternationalDiffusion { get; set; }
     }
 }

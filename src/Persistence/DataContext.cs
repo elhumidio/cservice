@@ -74,6 +74,7 @@ namespace Persistence
         //public DbSet<NextSqlValueFeedLog> NextSeqFeedLog { get; set; }
 
         public virtual DbSet<ZoneUrl> ZoneUrls { get; set; } = null!;
+        public virtual DbSet<InternationalDiffusionCountry> InternationalDiffusionCountries { get; set; } = null!;
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -1555,6 +1556,9 @@ namespace Persistence
                 entity.Property(e => e.Isco).HasColumnName("Isco");
                 entity.Property(e => e.TitleId).HasColumnName("TitleId");
                 entity.Property(e => e.TitleDenominationId).HasColumnName("TitleDenominationId");
+
+                entity.Property(e => e.NationalDiffusion).HasColumnName("NationalDiffusion");
+                entity.Property(e => e.InternationalDiffusion).HasColumnName("InternationalDiffusion");
             });
 
             modelBuilder.Entity<Product>(entity =>
@@ -1916,6 +1920,11 @@ namespace Persistence
                 entity.Property(e => e.RelationId);
 
                 entity.Property(e => e.RelationTypeId);
+            });
+
+            modelBuilder.Entity<InternationalDiffusionCountry>(entity =>
+            {
+                entity.ToTable("InternationalDiffusionCountry");
             });
 
             OnModelCreatingPartial(modelBuilder);
