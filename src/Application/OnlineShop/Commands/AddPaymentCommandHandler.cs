@@ -18,19 +18,21 @@ namespace Application.OnlineShop.Commands
 
         public async Task<Result<bool>> Handle(AddPaymentCommand request, CancellationToken cancellationToken)
         {
+            var contract = await _contractRepository.GetContractByStripeSessionId(request.SessionId);
+            _ = await _contractRepository.UpdateContract(contract);
             var ent = new ContractPayment
             {
-                Idcontract = request.Idcontract,
-                DataPayment = request.DataPayment,
-                Payment = request.Payment,
-                PaymentWithoutTax = request.PaymentWithoutTax
+                Idcontract = contract.Idcontract,
+                DataPayment = DateTime.Now,
+                Payment = request.amount_total,
+                PaymentWithoutTax = request.amount_subtotal,
+                CouponDiscount = request.amount_discount,
+                TaxAmount = request.amount_tax
             };
 
             var ret = await _contractPaymentRepository.AddPayment(ent);
-            //TODO approve contract
-            var contract =  _contractRepository.Get(request.Idcontract).FirstOrDefault();
-            contract.ChkApproved = true;
-            await _contractRepository.UpdateContract(contract);
+            
+           
             if (ret)
             {
                 return Result<bool>.Success(true);

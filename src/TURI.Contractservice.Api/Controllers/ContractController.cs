@@ -31,31 +31,14 @@ namespace API.Controllers
             return HandleResult(result);
         }
 
-        //[HttpGet]
-        //[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AvailableUnitsResponse[]))]
-        //[ProducesResponseType(StatusCodes.Status404NotFound)]
-        //public async Task<IActionResult> GetAvailableUnits(int contractId)
-        //{
-        //    var query = new GetAvailableUnits.Get
-        //    {
-        //        ContractId = contractId
-        //    };
 
-        //    var result = await Mediator.Send(query);
 
-        //    if (result.IsSuccess)
-        //    {
-        //        if (result.Value == null)
-        //            return NotFound();
-        //        else
-        //        {
-        //            var response = result.Value.Select(alert => alert.ToModel()).ToArray();
-        //            return Ok(response);
-        //        }
-        //    }
-
-        //    return BadRequest(result.Error);
-        //}
+        [HttpPost]
+        public async Task<IActionResult> UpdateContractAndPayment(UpdateContractPaymentCommand cmd)
+        {
+            var ret = await Mediator.Send(cmd);
+            return HandleResult(ret);
+        }
 
         /// <summary>
         /// It gets assignations by contract and owner
