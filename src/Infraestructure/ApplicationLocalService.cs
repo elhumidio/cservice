@@ -16,7 +16,7 @@ namespace Infraestructure
         public async Task<GenericOfferCounter> CountApplicantsByOffers(ListOffersRequest jobIds)
         {
             var serviceURL = _config["ApplicationService:CandidateApplication"];
-            Uri serviceUri = GetURL(serviceURL, $"CountApplicantsByOffers");
+            Uri serviceUri = GetURL(serviceURL, $"CountApplicantsByOffersFeeds");
             var json = JsonConvert.SerializeObject(jobIds);
             using var httpClient = new HttpClient();
             using var request = new HttpRequestMessage(new HttpMethod("POST"), serviceUri.ToString());
