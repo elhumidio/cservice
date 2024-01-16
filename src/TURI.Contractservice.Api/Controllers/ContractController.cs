@@ -213,6 +213,13 @@ namespace API.Controllers
             return HandleResult(result);
         }
 
+        [HttpPost]
+        public async Task<IActionResult> UpdateSessionId(UpdateStripeSessionCommand cmd)
+        {
+            var result = await Mediator.Send(cmd);
+            return HandleResult(result.Value);
+        }
+
         [HttpGet("{contractId}")]
         public async Task<IActionResult> GetRegionsAllowed(int contractId)
         {
