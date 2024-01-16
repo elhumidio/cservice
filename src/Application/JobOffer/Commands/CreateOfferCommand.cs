@@ -224,6 +224,15 @@ namespace Application.JobOffer.Commands
         [DataMember]
         public string? Address { get; set; }
 
+        [DataMember]
+        public bool? NationalDiffusion { get; set; }
+
+        [DataMember]
+        public bool? InternationalDiffusion { get; set; }
+
+        [DataMember]
+        public List<int>? InternationalDiffusionCountries { get; set; }
+
 
         public CreateOfferCommand()
         {
