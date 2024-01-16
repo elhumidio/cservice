@@ -28,18 +28,25 @@ namespace Application.Contracts.Queries
 
             public async Task<Result<List<AvailableUnitsDto>>> Handle(Query request, CancellationToken cancellationToken)
             {
+                return GetAvailableUnits(request.ContractId).Result;
+            }
+
+            public async Task<Result<List<AvailableUnitsDto>>> GetAvailableUnits(int contractId, VacancyType vacancyType = VacancyType.None)
+            {
                 var list = new List<AvailableUnitsDto>();
                 AvailableUnitsDto dto;
-                var isPack = _contractProductRepo.IsPack(request.ContractId);
-                var unitsAssigned = _unitsRepo.GetAssignmentsByContract(request.ContractId).ToList();
+                var isPack = _contractProductRepo.IsPack(contractId);
+                var unitsAssignedToUsers = _unitsRepo.GetAssignmentsByContract(contractId).ToList();
 
-                foreach (var units in unitsAssigned)
+                foreach (var units in unitsAssignedToUsers)
                 {
-                    var unitsConsumed = isPack ? _jobOfferRepo.GetActiveOffersByContractOwnerType(request.ContractId, units.IdenterpriseUser, units.IdjobVacType).Count()
-                         : _jobOfferRepo.GetActiveOffersByContractAndTypeNoPack(request.ContractId, units.IdjobVacType).Count();
+                    var vacancyTypetoUse = vacancyType == VacancyType.None ? units.IdjobVacType : (int)vacancyType;
+
+                    var unitsConsumed = isPack ? _jobOfferRepo.GetActiveOffersByContractOwnerType(contractId, units.IdenterpriseUser, vacancyTypetoUse).Count()
+                         : _jobOfferRepo.GetActiveOffersByContractAndTypeNoPack(contractId, units.IdjobVacType).Count();
                     dto = new AvailableUnitsDto
                     {
-                        ContractId = request.ContractId,
+                        ContractId = contractId,
                         IsPack = isPack,
                         OwnerId = units.IdenterpriseUser,
                         type = (VacancyType)units.IdjobVacType,

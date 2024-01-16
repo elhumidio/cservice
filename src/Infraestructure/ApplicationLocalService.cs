@@ -47,18 +47,24 @@ namespace Infraestructure
             {
                 JobOfferIds = jobIds.Offers.ToArray()
             };
-            var serviceURL = _config["ApplicationService:JobOfferRedirect"];
-            Uri serviceUri = GetURL(serviceURL, $"CountRedirectsByOffers");
-            var json = JsonConvert.SerializeObject(obj);
-            using var httpClient = new HttpClient();
-            using var request = new HttpRequestMessage(new HttpMethod("POST"), serviceUri.ToString());
-            request.Headers.TryAddWithoutValidation("Content-Transfer-Encoding", "binary");
-            request.Content = new StringContent(json);
-            request.Content.Headers.ContentType = MediaTypeHeaderValue.Parse("application/json");
-            HttpResponseMessage responseMessage = await httpClient.SendAsync(request);
-            var response = await responseMessage.Content.ReadAsStringAsync();
-            var responseDTO = JsonConvert.DeserializeObject<GenericOfferCounter>(response);
-            return responseDTO;
+            try {
+                var serviceURL = _config["ApplicationService:JobOfferRedirect"];
+                Uri serviceUri = GetURL(serviceURL, $"CountRedirectsByOffers");
+                var json = JsonConvert.SerializeObject(obj);
+                using var httpClient = new HttpClient();
+                using var request = new HttpRequestMessage(new HttpMethod("POST"), serviceUri.ToString());
+                request.Headers.TryAddWithoutValidation("Content-Transfer-Encoding", "binary");
+                request.Content = new StringContent(json);
+                request.Content.Headers.ContentType = MediaTypeHeaderValue.Parse("application/json");
+                HttpResponseMessage responseMessage = await httpClient.SendAsync(request);
+                var response = await responseMessage.Content.ReadAsStringAsync();
+                var responseDTO = JsonConvert.DeserializeObject<GenericOfferCounter>(response);
+                return responseDTO;
+            }
+            catch (Exception ex) {
+                var a = ex;
+            }
+            return null;
         }
 
         private Uri GetURL(string serviceUrl, string methodName)
