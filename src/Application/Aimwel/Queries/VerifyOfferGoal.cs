@@ -34,6 +34,7 @@ namespace Application.Aimwel.Queries
 
             public async Task<VerifyGoalsOfferResponse> Handle(Verifier request, CancellationToken cancellationToken)
             {
+                int areaOthers = 16;
                 var response = new VerifyGoalsOfferResponse();
                 var listRedirectOffers = new HashSet<JobVacancy>();
                 var listAppliesOffers = new HashSet<JobVacancy>();
@@ -118,8 +119,8 @@ namespace Application.Aimwel.Queries
                         Date = DateTime.Now,
                         AreaId = item.Key.Idarea,
                         RegionId = item.Key.Idregion,
-                        RegionName = _regionRepository.GetRegionNameByID(item.Key.Idregion, false),
-                        AreaName = _areaRepo.GetAreaName(item.Key.Idarea),
+                        RegionName = _regionRepository.GetRegionNameByID(item.Key.Idregion, false) ?? string.Empty,
+                        AreaName = item.Key.Idarea < 1 ? _areaRepo.GetAreaName(areaOthers)  : _areaRepo.GetAreaName(item.Key.Idarea),
                         FeedName = request.OffersToVerify.Feed
                     };
                     list.Add(obj);

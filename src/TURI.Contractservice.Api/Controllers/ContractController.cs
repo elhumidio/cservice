@@ -7,6 +7,7 @@ using Application.Managers.Queries;
 using Application.OnlineShop.Commands;
 using Domain.Enums;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Cryptography.X509Certificates;
 using TURI.ContractService.Contracts.Contract.Models.ContractCreationFolder;
 using TURI.ContractService.Contracts.Contract.Models.Requests;
 using TURI.ContractService.Contracts.Contract.Models.Response;
@@ -370,6 +371,19 @@ namespace API.Controllers
             }
 
             return BadRequest(result.Error);
+        }
+
+        /// <summary>
+        /// Selects a single contract with available units matching the Type. Chooses the one going to expire the soonest.
+        /// </summary>
+        /// <returns>ContractID</returns>
+        [HttpGet]
+        public async Task<IActionResult> GetContractForEnterprise(int enterpriseId, VacancyType contractType, int enterpriseUserId)
+        {
+            var result = await Mediator.Send(new GetContractForEnterprise.Query(contractType, enterpriseId, enterpriseUserId));
+
+            return Ok(result);
+
         }
     }
 }

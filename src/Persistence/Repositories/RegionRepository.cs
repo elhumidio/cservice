@@ -71,13 +71,24 @@ namespace Persistence.Repositories
         {
             var regionname = string.Empty;
             var lang = (int)Languages.English;
+
+            Region region;
+
             if (english)
             {
-                regionname = _dataContext.Regions.Where(a => a.Idregion == _region && a.Idslanguage == lang).FirstOrDefault().BaseName;
+                region = _dataContext.Regions
+                    .FirstOrDefault(a => a.Idregion == _region && a.Idslanguage == lang);
             }
             else
             {
-                regionname = _dataContext.Regions.Where(a => a.Idregion == _region && a.Idslanguage != lang).FirstOrDefault().BaseName;
+                region = _dataContext.Regions
+                    .FirstOrDefault(a => a.Idregion == _region && a.Idslanguage != lang);
+            }
+
+      
+            if (region != null)
+            {
+                regionname = region.BaseName;
             }
 
             return regionname;
