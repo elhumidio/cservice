@@ -198,8 +198,17 @@ namespace API.Controllers
         [HttpPost]
         public async Task<IActionResult> AddPayment(AddPaymentCommand cmd)
         {
-            var result = await Mediator.Send(cmd);            
-            return HandleResult(result);
+            try
+            {
+                var result = await Mediator.Send(cmd);
+                return HandleResult(result);
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            
+            
         }
 
         [HttpGet("{contractId}/{siteId}/{lang}")]
