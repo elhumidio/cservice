@@ -27,15 +27,22 @@ namespace Persistence.Repositories
 
         public async  Task<bool> AddPayment(ContractPayment payment)
         {
-            var ret = _dataContext.Entry(payment).State = Microsoft.EntityFrameworkCore.EntityState.Added;
-            var ans = await _dataContext.SaveChangesAsync();
-            return ans > 0;
+            try {
+                var ret = _dataContext.Entry(payment).State = EntityState.Added;
+                var ans = await _dataContext.SaveChangesAsync();
+                return ans > 0;
+            }
+            catch(Exception ex)
+            {
+                var a = ex;
+            }
+            return false;
         }
 
         public async Task<bool> UpdatePayment(ContractPayment payment)
         {
             //update payment
-            var ret = _dataContext.Entry(payment).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+            var ret = _dataContext.Entry(payment).State = EntityState.Modified;
             var ans = await _dataContext.SaveChangesAsync();
             return ans > 0;
         }

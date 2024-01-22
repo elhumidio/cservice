@@ -94,12 +94,12 @@ namespace Persistence
 
                 entity.Property(e => e.Idcontract).HasColumnName("IDContract");
 
-                entity.Property(e => e.Payment).HasColumnType("decimal(7, 2)");
-                entity.Property(e => e.CouponDiscount).HasColumnType("decimal(7, 2)");
-                entity.Property(e => e.TaxAmount).HasColumnType("decimal(7, 2)");
+                entity.Property(e => e.Payment).HasColumnType("decimal(11, 2)");
+                entity.Property(e => e.CouponDiscount).HasColumnType("decimal(11, 2)");
+                entity.Property(e => e.TaxAmount).HasColumnType("decimal(11, 2)");
 
                 entity.Property(e => e.PaymentWithoutTax)
-                            .HasColumnType("decimal(7, 2)")
+                            .HasColumnType("decimal(11, 2)")
                             .HasColumnName("PaymentWithoutTAX");
             });
 

@@ -12,12 +12,14 @@ namespace Application.OnlineShop.Commands
 
         public AddPaymentCommandHandler(IContractPaymentRepository contractPaymentRepository, IContractRepository contractRepository)
         {
-            _contractPaymentRepository = contractPaymentRepository;
+            _contractPaymentRepository = contractPaymentRepository; 
             _contractRepository = contractRepository;
         }
 
         public async Task<Result<bool>> Handle(AddPaymentCommand request, CancellationToken cancellationToken)
         {
+            //TODO see if divide by 100 is needed
+            bool ret = false;
             var contract = await _contractRepository.GetContractByStripeSessionId(request.SessionId);
             _ = await _contractRepository.UpdateContract(contract);
             var ent = new ContractPayment
@@ -25,14 +27,19 @@ namespace Application.OnlineShop.Commands
                 Idcontract = contract.Idcontract,
                 DataPayment = DateTime.Now,
                 Payment = request.amount_total,
-                PaymentWithoutTax = request.amount_subtotal,
-                CouponDiscount = request.amount_discount,
-                TaxAmount = request.amount_tax
+                PaymentWithoutTax = Convert.ToDecimal(request.amount_subtotal),
+                CouponDiscount = Convert.ToDecimal(request.amount_discount),
+                TaxAmount = Convert.ToDecimal(request.amount_tax)
             };
-
-            var ret = await _contractPaymentRepository.AddPayment(ent);
-            
-           
+            try
+            {
+                ret = await _contractPaymentRepository.AddPayment(ent);
+            }
+            catch (Exception ex) {
+                var a = ex;
+                return Result<bool>.Failure("Couldn't add payment");
+                
+            }
             if (ret)
             {
                 return Result<bool>.Success(true);
