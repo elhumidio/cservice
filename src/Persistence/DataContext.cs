@@ -97,7 +97,8 @@ namespace Persistence
                 entity.Property(e => e.Payment).HasColumnType("decimal(11, 2)");
                 entity.Property(e => e.CouponDiscount).HasColumnType("decimal(11, 2)");
                 entity.Property(e => e.TaxAmount).HasColumnType("decimal(11, 2)");
-
+                entity.Property(e => e.ConvertRate).HasColumnType("decimal(11, 2)");
+                entity.Property(e => e.Currency).HasColumnType("nvarchar(10)");
                 entity.Property(e => e.PaymentWithoutTax)
                             .HasColumnType("decimal(11, 2)")
                             .HasColumnName("PaymentWithoutTAX");

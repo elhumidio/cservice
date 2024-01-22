@@ -9,5 +9,7 @@ namespace Domain.Entities
         public decimal? PaymentWithoutTax { get; set; }
         public decimal? CouponDiscount { get; set; }
         public decimal? TaxAmount { get; set; }
+        public string? Currency { get; set; }
+        public decimal ConvertRate { get; set; }
     }
 }

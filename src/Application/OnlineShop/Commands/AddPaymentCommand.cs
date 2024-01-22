@@ -10,6 +10,7 @@ namespace Application.OnlineShop.Commands
         public int amount_subtotal { get; set; }
         public int amount_total { get; set; }
         public string? SessionId { get; set; }
+        public string? Currency { get; set; }
 
     }
 }
