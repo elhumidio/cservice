@@ -656,5 +656,20 @@ namespace Persistence.Repositories
 
             return result;
         }
+
+        public async Task<List<int?>> GetActiveOffersJobtitlesIds()
+        {
+            var query = _dataContext.JobVacancies
+                 .Where(a =>
+                        !a.ChkDeleted
+                        && !a.ChkFilled
+                        && a.FinishDate >= DateTime.Today
+                        && a.Idstatus == (int)OfferStatus.Active
+                        && a.TitleId != null
+                        && a.TitleId > 0)
+                .Select(t => t.TitleId).Distinct();
+               
+            return await query.ToListAsync();
+        }
     }
 }
