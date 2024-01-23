@@ -737,8 +737,6 @@ namespace API.Controllers
 
 
         [HttpPost]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(KeyValuesDateTimeResponse[]))]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetActiveOffersJobTitlesIds(GetActiveOffersJobTitlesCommand item)
         {
             try
