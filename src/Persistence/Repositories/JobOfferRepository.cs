@@ -665,8 +665,8 @@ namespace Persistence.Repositories
                         && !a.ChkFilled
                         && a.FinishDate >= DateTime.Today
                         && a.Idstatus == (int)OfferStatus.Active
-                        && a.TitleId > 0
-                        && a.TitleId != null)
+                        && a.TitleId != null
+                        && a.TitleId > 0)
                 .Select(t => t.TitleId).Distinct();
                
             return query.ToList();
