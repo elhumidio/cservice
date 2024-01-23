@@ -734,5 +734,24 @@ namespace API.Controllers
 
             return BadRequest(result.Error);
         }
+
+
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(KeyValuesDateTimeResponse[]))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetActiveOffersJobTitlesIds(GetActiveOffersJobTitlesCommand item)
+        {
+            try
+            {
+                var result = await Mediator.Send(item);
+                var ret = HandleResult(result);
+                return ret;
+            }
+            catch (Exception ex)
+            {
+                var ret = HandleResult(OfferModificationResult.Failure(new List<string> { ex.Message }));
+                return ret;
+            }
+        }
     }
 }
