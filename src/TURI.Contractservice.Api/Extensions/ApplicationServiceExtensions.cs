@@ -45,6 +45,7 @@ namespace API.Extensions
             services.AddSingleton(s => Refit.RestService.For<IEnterpriseService>(config["ExternalServices:EnterpriseService"] ?? ""));
             services.AddSingleton(s => Refit.RestService.For<ISearchService>(config["ExternalServices:SearchService"] ?? ""));
             services.AddSingleton(s => Refit.RestService.For<ISeoService>(config["ExternalServices:SeoService"] ?? ""));
+            services.AddSingleton(s => Refit.RestService.For<IAIService>(config["ExternalServices:AIService"] ?? ""));
             services.AddScoped<IApiUtils, ApiUtils>();
             #region MAPPING REPOSITORIES
 
@@ -103,6 +104,7 @@ namespace API.Extensions
             services.AddScoped<IEnterpriseUserJobVacRepository, EnterpriseUserJobVacRepository>();
             services.AddScoped<ISalesforceTransactionRepository, SalesforceTransactionRepository>();
             services.AddScoped<IWP_CategoryOfferRelationRepository, WP_CategoryOfferRelationRepository>();
+            services.AddScoped<IJobTitleDenominationsRepository, JobTitleDenominationsRepository>();
 
             #endregion MAPPING REPOSITORIES
 

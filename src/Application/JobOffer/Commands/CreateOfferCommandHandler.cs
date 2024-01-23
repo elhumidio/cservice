@@ -30,6 +30,8 @@ namespace Application.JobOffer.Commands
         private readonly IAreaRepository _areaRepository;
         private readonly IQuestService _questService;
         private readonly IApiUtils _utils;
+        private readonly IJobTitleDenominationsRepository _denominationsRepository;
+        private readonly IAIService _aiService;
 
         #endregion PRIVATE PROPERTIES
 
@@ -46,7 +48,9 @@ namespace Application.JobOffer.Commands
             ICityRepository cityRepository,
             IAreaRepository areaRepository,
             IQuestService questService,
-            IApiUtils utils)
+            IApiUtils utils,
+            IJobTitleDenominationsRepository denominationsRepository,
+            IAIService aiService)
         {
             _offerRepo = offerRepo;
             _mapper = mapper;
@@ -62,6 +66,8 @@ namespace Application.JobOffer.Commands
             _areaRepository = areaRepository;
             _questService = questService;
             _utils = utils;
+            _denominationsRepository = denominationsRepository;
+            _aiService = aiService;
         }
 
         public async Task<OfferModificationResult> Handle(CreateOfferCommand offer, CancellationToken cancellationToken)
@@ -79,6 +85,7 @@ namespace Application.JobOffer.Commands
             if (integrationInfo != null)
                 error = $"IntegrationId: {offer.IntegrationData.IDIntegration} - Reference: {offer.IntegrationData.ApplicationReference}";
 
+            //Fail conditions
             if (integrationInfo != null && integrationInfo.IdjobVacancy > 0) //caso update ATS
             {
                 var existentOfferAts = _offerRepo.GetOfferById(integrationInfo.IdjobVacancy);
@@ -86,100 +93,149 @@ namespace Application.JobOffer.Commands
                 _logger.LogError(error);
                 return OfferModificationResult.Failure(new List<string> { "Offer already exists" });
             }
-            else if (offer.IdjobVacancy == 0)
-            {
-                CityValidation(offer);
-                var entity = _mapper.Map(offer, job);
-                entity.IntegrationId = offer.IntegrationData.IDIntegration;
-                jobVacancyId = _offerRepo.Add(entity);
-
-                bool canSaveLanguages = jobVacancyId > 0
-                     && offer.JobLanguages.Any()
-                     && (offer.IntegrationData == null || string.IsNullOrEmpty(offer.IntegrationData.ApplicationReference));
-
-                bool canSaveWorkPermit = jobVacancyId > 0
-                    && offer.IdworkPermit.Any()
-                    && offer.IntegrationData == null;
-
-                if (canSaveLanguages)
-                {
-                    Savelanguages(offer, jobVacancyId);
-                }
-
-                if (canSaveWorkPermit)
-                {
-                    foreach (var permit in offer.IdworkPermit)
-                    {
-                        var ret = await _regJobVacWorkPermitRepo.Add(new RegJobVacWorkPermit() { IdjobVacancy = jobVacancyId, IdworkPermit = permit });
-                    }
-                }
-
-                if (jobVacancyId == -1)
-                {
-                    error = "Failed to create offer";
-                    _logger.LogError(error);
-                    return OfferModificationResult.Failure(new List<string> { error });
-                }
-                else
-                {
-                    try
-                    {        
-                        await _regContractRepo.UpdateUnits(job.Idcontract, job.IdjobVacType);
-
-                        if (!string.IsNullOrEmpty(offer.IntegrationData.ApplicationReference))
-                        {
-                            await IntegrationActions(offer, job);
-                        }
-                        var createdOffer = await _mediatr.Send(new GetResult.Query
-                        {
-                            ExternalId = offer.IntegrationData.ApplicationReference,
-                            OfferId = jobVacancyId
-                        });
-                        _enterpriseRepository.UpdateATS(entity.Identerprise);                       
-
-                        // QUESTIONNAIRE.
-                        if (offer.QuestDTO != null)
-                        {
-                            int questId = await _questService.CreateQuest(offer.QuestDTO);
-                            if (questId > 0)
-                            {
-                                job = _offerRepo.GetOfferById(jobVacancyId);
-                                job.Idquest = questId;
-                                await _offerRepo.UpdateOffer(job);
-                            }
-                            else
-                            {
-                                job = _offerRepo.GetOfferById(jobVacancyId);
-                                job.Idstatus = 2;
-                                await _offerRepo.UpdateOffer(job);
-                                RegJobVacMatching jobReg = await _regJobVacRepo.GetAtsIntegrationInfoByJobId(jobVacancyId);
-                                jobReg.ExternalId = $"{jobReg.ExternalId}_OLD";
-                                await _regJobVacRepo.Update(jobReg);
-                                error = "Failed to creating questionnaire";
-                                _logger.LogError(error);
-                                return OfferModificationResult.Failure(new List<string> { error });
-                            }
-                        }
-
-                        // Google API Indexing URL Create/Update.
-                        _utils.UpdateGoogleIndexingURL(_utils.GetOfferModel(offer));
-
-                        return OfferModificationResult.Success(createdOffer);
-                    }
-                    catch (Exception ex)
-                    {
-                        error = $"message: Couldn't add Offer - Exception: {ex.Message} - {ex.InnerException}";
-                        _logger.LogError(error);
-                        return OfferModificationResult.Failure(new List<string> { error });
-                    }
-                }
-            }
-            else
+            if (offer.IdjobVacancy != 0)
             {
                 error = $"Couldn't perform any operations, the offer {offer.IdjobVacancy} already exists.";
                 _logger.LogError(error);
                 return OfferModificationResult.Failure(new List<string> { error });
             }
+
+            CityValidation(offer);
+            ValidateJobTitle(ref offer);
+            var entity = _mapper.Map(offer, job);
+            entity.IntegrationId = offer.IntegrationData.IDIntegration;
+
+            
+
+            //ADD VACANCY
+            jobVacancyId = _offerRepo.Add(entity);
+
+            bool canSaveLanguages = jobVacancyId > 0
+                 && offer.JobLanguages.Any()
+                 && (offer.IntegrationData == null || string.IsNullOrEmpty(offer.IntegrationData.ApplicationReference));
+
+            bool canSaveWorkPermit = jobVacancyId > 0
+                && offer.IdworkPermit.Any()
+                && offer.IntegrationData == null;
+
+            if (canSaveLanguages)
+            {
+                Savelanguages(offer, jobVacancyId);
+            }
+
+            if (canSaveWorkPermit)
+            {
+                foreach (var permit in offer.IdworkPermit)
+                {
+                    var ret = await _regJobVacWorkPermitRepo.Add(new RegJobVacWorkPermit() { IdjobVacancy = jobVacancyId, IdworkPermit = permit });
+                }
+            }
+
+            if (jobVacancyId == -1)
+            {
+                error = "Failed to create offer";
+                _logger.LogError(error);
+                return OfferModificationResult.Failure(new List<string> { error });
+            }
+            
+            try
+            {
+                await _regContractRepo.UpdateUnits(job.Idcontract, job.IdjobVacType);
+
+                if (!string.IsNullOrEmpty(offer.IntegrationData.ApplicationReference))
+                {
+                    await IntegrationActions(offer, job);
+                }
+                var createdOffer = await _mediatr.Send(new GetResult.Query
+                {
+                    ExternalId = offer.IntegrationData.ApplicationReference,
+                    OfferId = jobVacancyId
+                });
+                _enterpriseRepository.UpdateATS(entity.Identerprise);
+
+                // QUESTIONNAIRE.
+                if (offer.QuestDTO != null)
+                {
+                    int questId = await _questService.CreateQuest(offer.QuestDTO);
+                    if (questId > 0)
+                    {
+                        job = _offerRepo.GetOfferById(jobVacancyId);
+                        job.Idquest = questId;
+                        await _offerRepo.UpdateOffer(job);
+                    }
+                    else
+                    {
+                        job = _offerRepo.GetOfferById(jobVacancyId);
+                        job.Idstatus = 2;
+                        await _offerRepo.UpdateOffer(job);
+                        RegJobVacMatching jobReg = await _regJobVacRepo.GetAtsIntegrationInfoByJobId(jobVacancyId);
+                        jobReg.ExternalId = $"{jobReg.ExternalId}_OLD";
+                        await _regJobVacRepo.Update(jobReg);
+                        error = "Failed to creating questionnaire";
+                        _logger.LogError(error);
+                        return OfferModificationResult.Failure(new List<string> { error });
+                    }
+                }
+
+                // Google API Indexing URL Create/Update.
+                _utils.UpdateGoogleIndexingURL(_utils.GetOfferModel(offer));
+
+                return OfferModificationResult.Success(createdOffer);
+            }
+            catch (Exception ex)
+            {
+                error = $"message: Couldn't add Offer - Exception: {ex.Message} - {ex.InnerException}";
+                _logger.LogError(error);
+                return OfferModificationResult.Failure(new List<string> { error });
+            }
+            
+        }
+
+        /// <summary>
+        /// Confirms we have a job title ID and Denomination ID - if not, uses the rest of the info in the job to add one.
+        /// </summary>
+        /// <param name="offer"></param>
+        private void ValidateJobTitle(ref CreateOfferCommand offer)
+        {
+            if (offer.IdJobTitle > 0 && offer.IDDenomination > 0)
+                return;
+
+            //Missing Denominations will be set to the default for the JobTitle
+            if (offer.IDDenomination <= 0 && offer.IdJobTitle > 0)
+            {
+                offer.IDDenomination = _denominationsRepository.GetDefaultDenomination(offer.IdJobTitle, offer.Idsite).FK_JobTitle;
+                return;
+            }
+
+            //Otherwise we'll set the Job title by asking ChatGPT.
+            //Get the list of denominations that match the Area we have
+            var denominationsForArea = _denominationsRepository.GetAllForArea(offer.Idarea, offer.Idsite);
+
+            //Give them all to ChatGPT along with our TitleString, and make it pick.
+            var prompt = FillPrompt(denominationsForArea, offer.Title);
+            var gptResult = _aiService.DoGPTRequest(prompt, string.Empty);
+
+            //Match the result back with our list to get the IdJobTitle, then the Default Denomination.
+            var selectedValue = denominationsForArea.FirstOrDefault(d => d.Denomination == gptResult);
+            if (selectedValue == null)
+            {
+                _logger.LogError($"JobTitleDenomination Failed to find match when posting job. GPT Result: {gptResult}, Title: {offer.Title}");
+                offer.IDDenomination = -1;
+                offer.IdJobTitle = -1;
+                return;
+            }
+
+            offer.IDDenomination = selectedValue.ID;
+            offer.IdJobTitle = selectedValue.FK_JobTitle;
+            return;
+        }
+
+        private string FillPrompt(List<JobTitleDenomination> denominationsForArea, string title)
+        {
+            const string basePrompt = "You will be given a list of job titles between the characters '|', separated by ','. From this list, choose and return one entry that best matches the string marked as Target. Return only the entire selected string from the list. Select a string that matches the language of the Target. Target:'{1}'. |{2}|";
+
+            var denominations = denominationsForArea.Select(d => d.Denomination).Aggregate((a, b) => a + $", {b}");
+            return basePrompt.Replace("{1}", title).Replace("{2}", denominations);
         }
 
         /// <summary>

@@ -75,6 +75,9 @@ namespace Persistence
 
         public virtual DbSet<ZoneUrl> ZoneUrls { get; set; } = null!;
 
+        public virtual DbSet<JobTitleDenomination> JobTitleDenominations { get; set; } = null!;
+        public virtual DbSet<JobTitleArea> JobTitleAreas { get; set; } = null!;
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -83,7 +86,17 @@ namespace Persistence
 
             modelBuilder.HasSequence("GetNextSequenceValueFeedsLog");
 
+            modelBuilder.Entity<JobTitleDenomination>(entity =>
+            {
+                entity.ToTable("JobTitlesDenominations");
+                entity.HasKey(e => e.ID);
+            });
 
+            modelBuilder.Entity<JobTitleArea>(entity =>
+            {
+                entity.ToTable("JobTitles_Areas");
+                entity.HasKey(e => new { e.FK_JobTitleID, e.FK_AreaID });
+            });
 
             modelBuilder.Entity<ContractPayment>(entity =>
             {
