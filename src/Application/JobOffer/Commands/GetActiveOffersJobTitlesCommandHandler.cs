@@ -1,5 +1,5 @@
 using Application.Core;
-using Application.JobOffer.DTO;
+using Domain.DTO;
 using AutoMapper;
 using Domain.Repositories;
 using MediatR;
@@ -7,7 +7,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Application.JobOffer.Commands
 {
-    public class GetActiveOffersJobTitlesCommandHandler : IRequestHandler<GetActiveOffersJobTitlesCommand, Result<List<int?>>>
+    public class GetActiveOffersJobTitlesCommandHandler : IRequestHandler<GetActiveOffersJobTitlesCommand, Result<JobTitlesIdsDTO>>
     {
         private readonly IJobOfferRepository _jobOffer;
         private readonly IMapper _mapper;
@@ -20,7 +20,7 @@ namespace Application.JobOffer.Commands
             _logger = logger;
         }
 
-        public async Task<Result<List<int?>>> Handle(GetActiveOffersJobTitlesCommand request, CancellationToken cancellationToken)
+        public async Task<Result<JobTitlesIdsDTO>> Handle(GetActiveOffersJobTitlesCommand request, CancellationToken cancellationToken)
         {
             try
             {
@@ -28,13 +28,17 @@ namespace Application.JobOffer.Commands
 
                 jobtitlesIds = await _jobOffer.GetActiveOffersJobtitlesIds();
 
-                return Result<List<int?>>.Success(jobtitlesIds);
+                JobTitlesIdsDTO dto = new JobTitlesIdsDTO();
+
+                dto.TitlesIds = jobtitlesIds;
+
+                return Result<JobTitlesIdsDTO>.Success(dto);
             }
             catch (Exception ex)
             {
                 string error = $"message: Couldn't found active offers - Exception: {ex.Message} - {ex.InnerException}";
                 _logger.LogError(error);
-                return Result<List<int?>>.Failure(error);
+                return Result<JobTitlesIdsDTO>.Failure(error);
             }
         }
     }
