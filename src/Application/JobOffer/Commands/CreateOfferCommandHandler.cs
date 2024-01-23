@@ -1,3 +1,4 @@
+using Application.AuxiliaryData.Queries;
 using Application.Interfaces;
 using Application.JobOffer.DTO;
 using Application.JobOffer.Queries;
@@ -21,6 +22,7 @@ namespace Application.JobOffer.Commands
         private readonly IJobOfferRepository _offerRepo;
         private readonly IRegJobVacMatchingRepository _regJobVacRepo;
         private readonly IRegEnterpriseContractRepository _regContractRepo;
+        private readonly IInternationalDiffusionCountryRepository _internationalDiffusionCountryRepository;
         private readonly IEnterpriseRepository _enterpriseRepository;
         private readonly IMediator _mediatr;
         private readonly IConfiguration _config;
@@ -37,6 +39,7 @@ namespace Application.JobOffer.Commands
 
         public CreateOfferCommandHandler(IRegEnterpriseContractRepository regContractRepo,
             IRegJobVacMatchingRepository regJobVacRepo,
+            IInternationalDiffusionCountryRepository internationalDiffusionCountryRepository,
             IMapper mapper,
             IJobOfferRepository offerRepo,
             IEnterpriseRepository enterpriseRepository,
@@ -56,6 +59,7 @@ namespace Application.JobOffer.Commands
             _mapper = mapper;
             _regContractRepo = regContractRepo;
             _regJobVacRepo = regJobVacRepo;
+            _internationalDiffusionCountryRepository = internationalDiffusionCountryRepository;
             _enterpriseRepository = enterpriseRepository;
             _logger = logger;
             _mediatr = mediatr;            
@@ -105,7 +109,6 @@ namespace Application.JobOffer.Commands
             var entity = _mapper.Map(offer, job);
             entity.IntegrationId = offer.IntegrationData.IDIntegration;
 
-            
 
             //ADD VACANCY
             jobVacancyId = _offerRepo.Add(entity);
@@ -137,9 +140,27 @@ namespace Application.JobOffer.Commands
                 _logger.LogError(error);
                 return OfferModificationResult.Failure(new List<string> { error });
             }
-            
+
             try
             {
+                if (offer.InternationalDiffusion.HasValue && offer.InternationalDiffusion.Value)
+                {
+                    await _internationalDiffusionCountryRepository.RemoveByOffer(jobVacancyId);
+                    if (offer.InternationalDiffusionCountries?.Count > 0)
+                    {
+                        List<InternationalDiffusionCountry> listCountries = new List<InternationalDiffusionCountry>();
+                        foreach (int internationalDiffusionCountry in offer.InternationalDiffusionCountries)
+                        {
+                            listCountries.Add(new InternationalDiffusionCountry()
+                            {
+                                OfferId = jobVacancyId,
+                                CountryId = internationalDiffusionCountry
+                            });
+                        }
+                        await _internationalDiffusionCountryRepository.Add(listCountries);
+                    }
+                }
+                         
                 await _regContractRepo.UpdateUnits(job.Idcontract, job.IdjobVacType);
 
                 if (!string.IsNullOrEmpty(offer.IntegrationData.ApplicationReference))

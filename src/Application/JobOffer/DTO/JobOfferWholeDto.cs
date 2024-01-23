@@ -78,6 +78,7 @@ namespace Application.JobOffer.DTO
             public string? IntegrationId { get; set; }
             public int? Isco { get; set; }
             public int? TitleId { get; set; }
+            public int? TitleDenominationId { get; set; }
         
     }
 }

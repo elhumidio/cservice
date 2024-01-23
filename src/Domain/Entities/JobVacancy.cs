@@ -33,11 +33,11 @@ namespace Domain.Entities
         public string? City { get; set; }
         public int VacancyNumber { get; set; }
         public int VisitorNumber { get; set; }
-        public string Description { get; set; } = null!;
+        public string? Description { get; set; }
         public string? Requirements { get; set; }
         public string ScheduleTime { get; set; } = null!;
-        public decimal? SalaryMin { get; set; }
-        public decimal? SalaryMax { get; set; }
+        public string? OldsalaryMin { get; set; }
+        public string? OldsalaryMax { get; set; }
         public DateTime PublicationDate { get; set; }
         public DateTime ModificationDate { get; set; }
         public DateTime UpdatingDate { get; set; }
@@ -74,6 +74,16 @@ namespace Domain.Entities
         public string? IntegrationId { get; set; }
         public int? Isco { get; set; }
         public int? TitleId { get; set; }
+        public int? TitleDenominationId { get; set; }
+        public int? CreatorId { get; set; }
         public bool? AllowChat { get; set; }
+        public decimal? SalaryMin { get; set; }
+        public decimal? SalaryMax { get; set; }
+        public int? FieldId { get; set; }
+        public decimal? Latitude { get; set; }
+        public decimal? Longitude { get; set; }
+        public string? Address { get; set; }
+        public bool? NationalDiffusion { get; set; }
+        public bool? InternationalDiffusion { get; set; }
     }
 }

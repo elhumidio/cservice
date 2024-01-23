@@ -72,10 +72,12 @@ namespace Persistence.Repositories
             }
             else
             {
-                var name = _dataContext.Enterprises.Where(c => c.Identerprise == companyId).FirstOrDefault().Name;
-                if (!string.IsNullOrEmpty(name))
+                var item = _dataContext.Enterprises.Where(c => c.Identerprise == companyId).FirstOrDefault();
+                if(item != null)
                 {
-                    CorporateName = name;
+                    var name = item.Name;
+                    if (!string.IsNullOrEmpty(name))
+                        CorporateName = name;
                 }
             }
             return CorporateName;
