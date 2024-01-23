@@ -669,7 +669,7 @@ namespace Persistence.Repositories
                         && a.TitleId > 0)
                 .Select(t => t.TitleId).Distinct();
                
-            return query.ToList();
+            return await query.ToListAsync();
         }
     }
 }
