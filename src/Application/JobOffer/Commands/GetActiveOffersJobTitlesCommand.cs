@@ -1,13 +1,13 @@
 using Application.Core;
-using Application.JobOffer.DTO;
 using MediatR;
 using System.Runtime.Serialization;
+using Domain.DTO;
 
 
 namespace Application.JobOffer.Commands
 {
     [DataContract]
-    public class GetActiveOffersJobTitlesCommand : IRequest<Result<List<int?>>>
+    public class GetActiveOffersJobTitlesCommand : IRequest<Result<JobTitlesIdsDTO>>
     {
     }
 }
