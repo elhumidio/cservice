@@ -194,7 +194,7 @@ namespace Application.ContractCRUD.Commands
             con.ApprovedDate = DateTime.Now.Date;
             con.ContractDate = DateTime.Now.Date;
             con.Sftimestamp = DateTime.Now.Date;
-            con.ChkApproved = true;
+            con.ChkApproved = false;
             con.Price = price;
             con.FinalPrice = price;
             

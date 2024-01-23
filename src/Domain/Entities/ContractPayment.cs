@@ -11,5 +11,6 @@ namespace Domain.Entities
         public decimal? TaxAmount { get; set; }
         public string? Currency { get; set; }
         public decimal ConvertRate { get; set; }
+        public bool? Finished { get; set; }
     }
 }

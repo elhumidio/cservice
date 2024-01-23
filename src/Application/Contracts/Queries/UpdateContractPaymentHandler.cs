@@ -48,10 +48,7 @@ namespace Application.Contracts.Queries
         private ContractPayment UpdateProperties(UpdateContractPaymentCommand request,ContractPayment contractPayment)
         {
             contractPayment.DataPayment = DateTime.Now;
-            contractPayment.TaxAmount = request.amount_tax;
-            contractPayment.CouponDiscount = request.amount_discount;
-            contractPayment.PaymentWithoutTax = request.amount_subtotal;
-            contractPayment.Payment = request.amount_total;
+            contractPayment.Finished = true;
             return contractPayment;
         }
 
