@@ -737,9 +737,9 @@ namespace API.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> GetActiveOffersJobTitlesIds(GetActiveOffersJobTitlesCommand item)
+        public async Task<IActionResult> GetActiveOffersJobTitlesIds()
         {
-            var result = await Mediator.Send(item);
+            var result = await Mediator.Send(new GetActiveOffersJobTitlesCommand());
             return HandleResult(result);
         }
     }
