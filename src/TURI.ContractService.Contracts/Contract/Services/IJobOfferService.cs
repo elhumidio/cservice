@@ -40,5 +40,5 @@ public interface IJobOfferService
     Task<KeyValuesDateTimeResponse[]> GetLastPublishedDateByCompaniesIds(ListCompaniesIdsRequest request);
 
     [Post("/api/JobOffer/GetActiveOffersJobTitlesIds")]
-    Task<List<int?>> GetActiveOffersJobTitlesIds();
+    Task<JobTitlesIdsDTO> GetActiveOffersJobTitlesIds();
 }
