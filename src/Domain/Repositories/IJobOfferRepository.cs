@@ -83,6 +83,5 @@ namespace Domain.Repositories
 
         public Task<IReadOnlyList<KeyValueDateTimeDto>> GetLastPublishedDateByCompaniesIds(List<int> companiesIds);
 
-        public Task<List<int?>> GetActiveOffersJobtitlesIds();
     }
 }

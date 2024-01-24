@@ -735,12 +735,5 @@ namespace API.Controllers
             return BadRequest(result.Error);
         }
 
-
-        [HttpPost]
-        public async Task<IActionResult> GetActiveOffersJobTitlesIds()
-        {
-            var result = await Mediator.Send(new GetActiveOffersJobTitlesCommand());
-            return HandleResult(result);
-        }
     }
 }

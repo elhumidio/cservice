@@ -56,7 +56,7 @@ namespace Persistence
         public virtual DbSet<AtsmanagerAdminRegion> AtsmanagerAdminRegions { get; set; } = null!;
         public virtual DbSet<AimwelCreationError> AimwelCreationErrors { get; set; } = null!;
         public virtual DbSet<TypeUser> TypeUsers { get; set; } = null!;
-        public virtual DbSet<Title> Titles { get; set; } = null!;
+        public virtual DbSet<JobTitle> Titles { get; set; } = null!;
         public virtual DbSet<TitleLang> TitleLangs { get; set; } = null!;
         public virtual DbSet<TitlesRelationship> TitlesRelationships { get; set; } = null!;
         public virtual DbSet<CampaignsManagement> CampaignManagements { get; set; } = null!;
@@ -79,6 +79,9 @@ namespace Persistence
         public virtual DbSet<JobTitleDenomination> JobTitleDenominations { get; set; } = null!;
         public virtual DbSet<JobTitleArea> JobTitleAreas { get; set; } = null!;
 
+        public virtual DbSet<Benefit> Benefits { get; set; } = null!;
+        public virtual DbSet<CompanyBenefit> CompanyBenefits { get; set; } = null!;
+        public virtual DbSet<TranslationsWeb> TranslationsWebs { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -294,23 +297,29 @@ namespace Persistence
                 entity.Property(e => e.Weight).HasColumnName("Weight");
             });
 
-            modelBuilder.Entity<Title>(entity =>
+
+            modelBuilder.Entity<JobTitle>(entity =>
             {
-                entity.ToTable("Titles");
-                entity.HasKey(e => e.Id);
                 entity.Property(e => e.Id).HasColumnName("ID");
 
                 entity.Property(e => e.Description).HasMaxLength(100);
 
+                entity.Property(e => e.FkTranslationDescription).HasColumnName("FK_TranslationDescription");
+
                 entity.Property(e => e.Isco08)
                     .HasMaxLength(20)
-                    .HasColumnName("ISCO-08")
+                    .HasColumnName("ISCO08")
                     .IsFixedLength();
 
                 entity.Property(e => e.Isco88)
                     .HasMaxLength(20)
-                    .HasColumnName("ISCO-88")
+                    .HasColumnName("ISCO88")
                     .IsFixedLength();
+
+                entity.HasOne(d => d.FkTranslationDescriptionNavigation)
+                    .WithMany(p => p.JobTitles)
+                    .HasForeignKey(d => d.FkTranslationDescription)
+                    .HasConstraintName("FK_JobTitles_Description_Translation");
             });
 
             modelBuilder.Entity<TitleLang>(entity =>
@@ -1932,6 +1941,55 @@ namespace Persistence
             modelBuilder.Entity<InternationalDiffusionCountry>(entity =>
             {
                 entity.ToTable("InternationalDiffusionCountry");
+            });
+
+            modelBuilder.Entity<Benefit>(entity =>
+            {
+                entity.Property(e => e.Description).HasMaxLength(100);
+
+                entity.Property(e => e.TranslationId).HasColumnName("translation_id");
+
+                entity.HasOne(d => d.Translation)
+                    .WithMany(p => p.Benefits)
+                    .HasForeignKey(d => d.TranslationId)
+                    .HasConstraintName("FK_translation_id");
+            });
+
+            modelBuilder.Entity<CompanyBenefit>(entity =>
+            {
+                entity.HasKey(e => new { e.CompanyId, e.BenefitId });
+
+                entity.ToTable("Company_Benefits");
+
+                entity.HasIndex(e => e.CompanyId, "IX_Company_Benefits");
+
+                entity.Property(e => e.CompanyId).HasColumnName("Company_Id");
+
+                entity.Property(e => e.BenefitId).HasColumnName("Benefit_Id");
+
+                entity.HasOne(d => d.Benefit)
+                    .WithMany(p => p.CompanyBenefits)
+                    .HasForeignKey(d => d.BenefitId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Company_Benefits_Benefits");
+            });
+
+            modelBuilder.Entity<TranslationsWeb>(entity =>
+            {
+                entity.ToTable("TranslationsWeb");
+
+                entity.HasIndex(e => new { e.TextName, e.TextScope }, "unique_constraint_name")
+                    .IsUnique();
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.TextName)
+                    .HasMaxLength(100)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.TextScope)
+                    .HasMaxLength(255)
+                    .IsUnicode(false);
             });
 
             OnModelCreatingPartial(modelBuilder);
