@@ -1,6 +1,6 @@
 namespace TURI.ContractService.Contracts.Contract.Models.Response
 {
-    public class JobTitlesIdsDTO
+    public class JobTitlesIdsResponseDTO
     {
         public List<int?> TitlesIds { get; set; }
     }
