@@ -5,9 +5,12 @@ namespace Application.OnlineShop.Commands
 {
     public class AddPaymentCommand : IRequest<Result<bool>>
     {
-        public int Idcontract { get; set; }
-        public decimal Payment { get; set; }
-        public decimal? PaymentWithoutTax { get; set; }
-        public DateTime DataPayment { get; set; }
+        public decimal amount_discount { get; set; }
+        public decimal amount_tax { get; set; }
+        public decimal amount_subtotal { get; set; }
+        public decimal amount_total { get; set; }
+        public string? SessionId { get; set; }
+        public string? Currency { get; set; }
+
     }
 }

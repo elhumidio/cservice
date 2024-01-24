@@ -169,10 +169,7 @@ namespace Persistence.Repositories
         {
             var currentContract = _dataContext.Contracts.First(c => c.Idcontract == contract.Idcontract);
 
-            _dataContext.Contracts.Update(currentContract);
-            //currentContract.Idcontract = contract.Idcontract;
-            //currentContract.Identerprise = contract.Identerprise;
-            //currentContract.OldIdcontract = contract.OldIdcontract;
+            _dataContext.Contracts.Update(currentContract);            
             currentContract.IdenterpriseUser = contract.IdenterpriseUser;
             currentContract.IdcontractParent = contract.IdcontractParent;
             currentContract.IdpayMethod = contract.IdpayMethod;
@@ -181,7 +178,7 @@ namespace Persistence.Repositories
             currentContract.StartDate = contract.StartDate;
             currentContract.FinishDate = contract.FinishDate;
             currentContract.Comment = contract.Comment;
-            currentContract.ChkApproved = contract.ChkApproved;
+            currentContract.ChkApproved = true;
             currentContract.Concept = contract.Concept;
             currentContract.Discount = contract.Discount;
             currentContract.Price = contract.Price;
@@ -266,6 +263,13 @@ namespace Persistence.Repositories
             var result = await filteredQuery.ToListAsync();
 
             return result;
+        }
+
+        public async Task<Contract> GetContractByStripeSessionId(string stripeSessionId)
+        {
+            //get contract by checkoutsessionid
+            var contract = await _dataContext.Contracts.Where(c => c.CheckoutSessionId.Contains(stripeSessionId)).FirstOrDefaultAsync();
+            return contract;
         }
     }
 }

@@ -36,5 +36,7 @@ namespace Domain.Repositories
         
         public Task<IReadOnlyList<EnterpriseListContractsIdsDto>> GetContractsByCompaniesIds(List<int> companiesIds);
         public Task<IReadOnlyList<KeyValueDateTimeDto>> GetFinishDateContractClosingExpiringByCompaniesIds(List<int> companiesIds);
+
+        public Task<Contract> GetContractByStripeSessionId(string stripeSessionId);
     }
 }

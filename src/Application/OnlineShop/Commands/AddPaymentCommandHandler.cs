@@ -12,25 +12,35 @@ namespace Application.OnlineShop.Commands
 
         public AddPaymentCommandHandler(IContractPaymentRepository contractPaymentRepository, IContractRepository contractRepository)
         {
-            _contractPaymentRepository = contractPaymentRepository;
+            _contractPaymentRepository = contractPaymentRepository; 
             _contractRepository = contractRepository;
         }
 
         public async Task<Result<bool>> Handle(AddPaymentCommand request, CancellationToken cancellationToken)
         {
+            //TODO see if divide by 100 is needed
+            bool ret = false;
+            var contract = await _contractRepository.GetContractByStripeSessionId(request.SessionId);
+            _ = await _contractRepository.UpdateContract(contract);
             var ent = new ContractPayment
             {
-                Idcontract = request.Idcontract,
-                DataPayment = request.DataPayment,
-                Payment = request.Payment,
-                PaymentWithoutTax = request.PaymentWithoutTax
+                Idcontract = contract.Idcontract,
+                DataPayment = DateTime.Now,
+                Payment = (request.amount_total/100),
+                PaymentWithoutTax = (Convert.ToDecimal(request.amount_subtotal)),
+                CouponDiscount = Convert.ToDecimal(request.amount_discount),
+                TaxAmount = Convert.ToDecimal(request.amount_tax),
+                Currency = request.Currency 
             };
-
-            var ret = await _contractPaymentRepository.AddPayment(ent);
-            //TODO approve contract
-            var contract =  _contractRepository.Get(request.Idcontract).FirstOrDefault();
-            contract.ChkApproved = true;
-            await _contractRepository.UpdateContract(contract);
+            try
+            {
+                ret = await _contractPaymentRepository.AddPayment(ent);
+            }
+            catch (Exception ex) {
+                var a = ex;
+                return Result<bool>.Failure("Couldn't add payment");
+                
+            }
             if (ret)
             {
                 return Result<bool>.Success(true);

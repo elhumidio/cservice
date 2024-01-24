@@ -34,7 +34,7 @@ namespace Persistence.Repositories
 
         public async Task<List<ProductsPricesByQuantityAndCountryDto>> GetPricesByQuantityAndCountry(List<ProductUnits> products, int idCountry = 40)
         {
-            
+            idCountry = 40;
             var prices = new List<ProductsPricesByQuantityAndCountryDto>();
             foreach (var pu in products)
             {
