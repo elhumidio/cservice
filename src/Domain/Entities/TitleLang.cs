@@ -12,6 +12,6 @@ namespace Domain.Entities
         public string? Label { get; set; }
         public int Id { get; set; }
 
-        public virtual Title Title { get; set; } = null!;
+        public virtual JobTitle Title { get; set; } = null!;
     }
 }

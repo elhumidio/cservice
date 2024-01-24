@@ -5,6 +5,7 @@ using TURI.ContractService.Contracts.Contract.Models.ManageJobs;
 using TURI.ContractService.Contracts.Contract.Models.Requests;
 using TURI.ContractService.Contracts.Contract.Models.Response;
 
+
 namespace TURI.ContractService.Contracts.Contract.Services;
 
 public interface IJobOfferService
@@ -40,5 +41,5 @@ public interface IJobOfferService
     Task<KeyValuesDateTimeResponse[]> GetLastPublishedDateByCompaniesIds(ListCompaniesIdsRequest request);
 
     [Post("/api/JobOffer/GetActiveOffersJobTitlesIds")]
-    Task<JobTitlesIdsDTO> GetActiveOffersJobTitlesIds();
+    Task<JobTitlesIdsResponseDTO> GetActiveOffersJobTitlesIds();
 }

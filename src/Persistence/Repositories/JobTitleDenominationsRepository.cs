@@ -1,15 +1,20 @@
+using Domain.DTO;
+using Domain.EnterpriseDtos;
 using Domain.Entities;
 using Domain.Repositories;
+using Microsoft.Extensions.Logging;
 
 namespace Persistence.Repositories
 {
     public class JobTitleDenominationsRepository : IJobTitleDenominationsRepository
     {
-        public DataContext _dataContext { get; }
+        private readonly DataContext _dataContext;
+        private readonly ILogger<JobTitleDenominationsRepository> _logger;
 
-        public JobTitleDenominationsRepository(DataContext dataContext)
+        public JobTitleDenominationsRepository(DataContext dataContext, ILogger<JobTitleDenominationsRepository> logger)
         {
             _dataContext = dataContext;
+            _logger = logger;
         }
 
         public List<JobTitleDenomination> GetAllForArea(int idArea, int idSite)
@@ -39,8 +44,143 @@ namespace Persistence.Repositories
             }
 
             return _dataContext.JobTitleDenominations.FirstOrDefault(d => d.ID == idJobTitle && d.LanguageId == languageId);
-
             
+        }
+
+        public IQueryable<JobTitle> GetAll()
+        {
+            var jobTitles = _dataContext.Titles;
+            return jobTitles.AsQueryable();
+        }
+
+        public async Task<List<JobTitleDenominationsDto>> GetAllDenominations()
+        {
+            try
+            {
+                var jobTitlesBasicData = _dataContext.JobTitleDenominations
+                   .Join(_dataContext.Titles, d => d.FK_JobTitle, a => a.Id, (d, a) => new { d, a })
+                   .Select(jd => new
+                   {
+                       Id = jd.d.ID,
+                       FkJobTitle = jd.a.Id,
+                       Denomination = jd.d.Denomination,
+                       LanguageId = jd.d.LanguageId,
+                       BaseName = jd.d.BaseName,
+                       Isco08 = jd.a.Isco08.Trim(),
+                       Isco88 = jd.a.Isco88.Trim()
+                   })
+                   .ToList();
+
+                // Fetching job titles area IDs
+                var jobTitlesAreaIds = _dataContext.JobTitleAreas
+                    .Select(jta => new { jta.FK_JobTitleID, jta.FK_AreaID })
+                    .ToList();
+
+                // Mapping area IDs to job titles
+                var jobTitles = jobTitlesBasicData.Select(jd => new JobTitleDenominationsDto
+                {
+                    Id = jd.Id,
+                    Denomination = jd.Denomination,
+                    LanguageId = jd.LanguageId,
+                    BaseName = jd.BaseName,
+                    FkJobTitle = jd.FkJobTitle,
+                    Isco08 = jd.Isco08,
+                    Isco88 = jd.Isco88,
+                    JobTitlesAreas = jobTitlesAreaIds.Where(jta => jta.FK_JobTitleID == jd.FkJobTitle)
+                                                       .Select(jta => jta.FK_AreaID)
+                                                       .ToList()
+                }).ToList();
+
+                return jobTitles.ToList();
+            }
+            catch (Exception ex)
+            {
+                string message = $"Message: {ex.Message} - InnerException: {ex.InnerException} - StackTrace: {ex.StackTrace}";
+                _logger.LogError(message: message);
+                return null;
+            }
+
+        }
+
+        public async Task<List<JobTitleDenominationsDto>> GetAllDenominationsByLanguage(int languageId)
+        {
+            try
+            {
+                var jobTitlesBasicData = _dataContext.JobTitleDenominations
+                   .Join(_dataContext.Titles, d => d.FK_JobTitle, a => a.Id, (d, a) => new { d, a })
+                   .Select(jd => new
+                   {
+                       Id = jd.d.ID,
+                       FkJobTitle = jd.a.Id,
+                       Denomination = jd.d.Denomination,
+                       LanguageId = jd.d.LanguageId,
+                       BaseName = jd.d.BaseName,
+                       Isco08 = jd.a.Isco08.Trim(),
+                       Isco88 = jd.a.Isco88.Trim()
+                   })
+                   .Where(a => a.LanguageId == languageId)
+                   .ToList();
+
+                // Fetching job titles area IDs
+                var jobTitlesAreaIds = _dataContext.JobTitleAreas
+                    .Select(jta => new { jta.FK_JobTitleID, jta.FK_AreaID })
+                    .ToList();
+
+                // Mapping area IDs to job titles
+                var jobTitles = jobTitlesBasicData.Select(jd => new JobTitleDenominationsDto
+                {
+                    Id = jd.Id,
+                    Denomination = jd.Denomination,
+                    LanguageId = jd.LanguageId,
+                    BaseName = jd.BaseName,
+                    FkJobTitle = jd.FkJobTitle,
+                    Isco08 = jd.Isco08,
+                    Isco88 = jd.Isco88,
+                    JobTitlesAreas = jobTitlesAreaIds.Where(jta => jta.FK_JobTitleID == jd.FkJobTitle)
+                                                       .Select(jta => jta.FK_AreaID)
+                                                       .ToList()
+                }).ToList();
+
+                return jobTitles.ToList();
+            }
+            catch (Exception ex)
+            {
+                string message = $"Message: {ex.Message} - InnerException: {ex.InnerException} - StackTrace: {ex.StackTrace}";
+                _logger.LogError(message: message);
+                return null;
+            }
+
+        }
+
+        public async Task<List<JobTitleDenominationsDto>> GetAllDenominationsActiveOffersByLanguage(int languageId, TitlesIdsDTO titles)
+        {
+            try
+            {
+                var jobTitlesBasicData = _dataContext.JobTitleDenominations
+                   .Join(_dataContext.Titles, d => d.FK_JobTitle, a => a.Id, (d, a) => new { d, a })
+                   .Select(jd => new JobTitleDenominationsDto
+                   {
+                       Id = jd.d.ID,
+                       FkJobTitle = jd.a.Id,
+                       Denomination = jd.d.Denomination,
+                       LanguageId = jd.d.LanguageId,
+                       BaseName = jd.d.BaseName,
+                       Isco08 = jd.a.Isco08.Trim(),
+                       Isco88 = jd.a.Isco88.Trim()
+                   })
+                   .Where(a => a.LanguageId == languageId && titles.TitlesIds.Contains(a.FkJobTitle))
+                   .ToList();
+
+
+                return jobTitlesBasicData;
+            }
+            catch (Exception ex)
+            {
+                string message = $"Message: {ex.Message} - InnerException: {ex.InnerException} - StackTrace: {ex.StackTrace}";
+                _logger.LogError(message: message);
+                return null;
+            }
+
         }
     }
 }
