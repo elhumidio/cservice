@@ -1,5 +1,6 @@
 using Domain.Entities;
 using Domain.Repositories;
+using Microsoft.EntityFrameworkCore;
 
 namespace Persistence.Repositories
 {
@@ -18,9 +19,30 @@ namespace Persistence.Repositories
                  
         }
 
+        public async Task<ContractPayment> GetPaymentByContractId(int contractId)
+        {
+            var payment = await _dataContext.ContractPayments.Where(c => c.Idcontract == contractId).FirstOrDefaultAsync();
+            return payment;
+        }
+
         public async  Task<bool> AddPayment(ContractPayment payment)
         {
-            var ret = _dataContext.Entry(payment).State = Microsoft.EntityFrameworkCore.EntityState.Added;
+            try {
+                var ret = _dataContext.Entry(payment).State = EntityState.Added;
+                var ans = await _dataContext.SaveChangesAsync();
+                return ans > 0;
+            }
+            catch(Exception ex)
+            {
+                var a = ex;
+            }
+            return false;
+        }
+
+        public async Task<bool> UpdatePayment(ContractPayment payment)
+        {
+            //update payment
+            var ret = _dataContext.Entry(payment).State = EntityState.Modified;
             var ans = await _dataContext.SaveChangesAsync();
             return ans > 0;
         }

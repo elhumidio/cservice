@@ -168,7 +168,8 @@ namespace Application.ContractCRUD.Commands
         {
             EnterpriseUserJobVac enterpriseUserJobVac = new();            
             mapper.Map(response.Contract, enterpriseUserJobVac);
-            mapper.Map(response.ProductLines.First(), enterpriseUserJobVac);
+            enterpriseUserJobVac.Idproduct = pl.Idproduct;
+            mapper.Map(pl, enterpriseUserJobVac);
             mapper.Map(product, enterpriseUserJobVac);
             enterpriseUserJobVac.IdjobVacType = pl.IdjobVacType ?? 0;
             enterpriseUserJobVac.IdenterpriseUser = request.IDEnterpriseUSer;
