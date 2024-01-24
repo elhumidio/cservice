@@ -19,36 +19,71 @@ namespace Application.OnlineShop.Commands
         public async Task<Result<bool>> Handle(AddPaymentCommand request, CancellationToken cancellationToken)
         {
             //TODO see if divide by 100 is needed
+            Contract contract;
             bool ret = false;
-            var contract = await _contractRepository.GetContractByStripeSessionId(request.SessionId);
-            _ = await _contractRepository.UpdateContract(contract);
-            var ent = new ContractPayment
+            if(string.IsNullOrEmpty(request.SessionId))
             {
-                Idcontract = contract.Idcontract,
-                DataPayment = DateTime.Now,
-                Payment = (request.amount_total/100),
-                PaymentWithoutTax = (Convert.ToDecimal(request.amount_subtotal)),
-                CouponDiscount = Convert.ToDecimal(request.amount_discount),
-                TaxAmount = Convert.ToDecimal(request.amount_tax),
-                Currency = request.Currency 
-            };
-            try
-            {
-                ret = await _contractPaymentRepository.AddPayment(ent);
-            }
-            catch (Exception ex) {
-                var a = ex;
-                return Result<bool>.Failure("Couldn't add payment");
-                
-            }
-            if (ret)
-            {
-                return Result<bool>.Success(true);
+                //get contract by id
+                contract = _contractRepository.Get(request.ContractId).FirstOrDefault();
+                if(contract != null)
+                {
+                    _ = await _contractRepository.UpdateContract(contract);
+                    var ent = new ContractPayment
+                    {
+                        Idcontract = contract.Idcontract,
+                        DataPayment = DateTime.Now,
+                        Payment = request.amount_total,
+                        PaymentWithoutTax = (Convert.ToDecimal(request.amount_subtotal)),
+                        CouponDiscount = Convert.ToDecimal(request.amount_discount),
+                        TaxAmount = Convert.ToDecimal(request.amount_tax),
+                        Currency = request.Currency
+                    };
+                    try
+                    {
+                        ret = await _contractPaymentRepository.AddPayment(ent);
+                    }
+                    catch (Exception ex)
+                    {
+                        var a = ex;
+                        return Result<bool>.Failure("Couldn't add payment");
+
+                    }
+                }
             }
             else
             {
-                return Result<bool>.Failure("Couldn't add payment");
+                contract = await _contractRepository.GetContractByStripeSessionId(request.SessionId);
+                _ = await _contractRepository.UpdateContract(contract);
+                var ent = new ContractPayment
+                {
+                    Idcontract = contract.Idcontract,
+                    DataPayment = DateTime.Now,
+                    Payment = (request.amount_total / 100),
+                    PaymentWithoutTax = (Convert.ToDecimal(request.amount_subtotal)),
+                    CouponDiscount = Convert.ToDecimal(request.amount_discount),
+                    TaxAmount = Convert.ToDecimal(request.amount_tax),
+                    Currency = request.Currency
+                };
+                try
+                {
+                    ret = await _contractPaymentRepository.AddPayment(ent);
+                }
+                catch (Exception ex)
+                {
+                    var a = ex;
+                    return Result<bool>.Failure("Couldn't add payment");
+
+                }
+                if (ret)
+                {
+                    return Result<bool>.Success(true);
+                }
+                else
+                {
+                    return Result<bool>.Failure("Couldn't add payment");
+                }
             }
+            return Result<bool>.Success(ret);
         }
     }
 }

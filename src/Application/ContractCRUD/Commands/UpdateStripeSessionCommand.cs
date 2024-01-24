@@ -6,7 +6,7 @@ namespace Application.ContractCRUD.Commands
 {
     public class UpdateStripeSessionCommand : IRequest<Result<bool>>
     {
-        public string SessionId { get; set; }
+        public string? SessionId { get; set; }
         public int ContractId { get; set; }
     }
 

@@ -97,7 +97,7 @@ namespace Persistence.Repositories
                 && a.pl.p.c.StartDate <= DateTime.Now.Date
                 && a.ppl.Idsite == siteId && a.ppl.Idslanguage == langId
                 && a.pl.pr.Idsite == siteId && a.pl.pr.Idslanguage == langId
-                && a.pl.p.c.SalesforceId != null)
+                /*&& a.pl.p.c.SalesforceId != null*/)
                 .Select(res => new ContractsDistDto
                 {
                     BaseName = res.pl.pr.BaseName,

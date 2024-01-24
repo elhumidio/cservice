@@ -11,6 +11,7 @@ namespace Application.OnlineShop.Commands
         public decimal amount_total { get; set; }
         public string? SessionId { get; set; }
         public string? Currency { get; set; }
+        public int ContractId { get; set; }
 
     }
 }
