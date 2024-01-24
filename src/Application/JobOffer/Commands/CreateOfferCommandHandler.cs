@@ -218,13 +218,14 @@ namespace Application.JobOffer.Commands
         /// <param name="offer"></param>
         private void ValidateJobTitle(ref CreateOfferCommand offer)
         {
-            if (offer.IdJobTitle > 0 && offer.IDDenomination > 0)
+
+            if (offer.TitleDenominationId > 0 )
                 return;
 
-            //Missing Denominations will be set to the default for the JobTitle
-            if (offer.IDDenomination <= 0 && offer.IdJobTitle > 0)
+            //Missing Denominations will be set to the default for the JobTitle, if set
+            if (offer.TitleDenominationId <= 0 && offer.TitleId > 0)
             {
-                offer.IDDenomination = _denominationsRepository.GetDefaultDenomination(offer.IdJobTitle, offer.Idsite).FK_JobTitle;
+                offer.TitleDenominationId = _denominationsRepository.GetDefaultDenomination(offer.TitleId, offer.Idsite).FK_JobTitle;
                 return;
             }
 
@@ -241,13 +242,13 @@ namespace Application.JobOffer.Commands
             if (selectedValue == null)
             {
                 _logger.LogError($"JobTitleDenomination Failed to find match when posting job. GPT Result: {gptResult}, Title: {offer.Title}");
-                offer.IDDenomination = -1;
-                offer.IdJobTitle = -1;
+                offer.TitleDenominationId = -1;
+                offer.TitleId = -1;
                 return;
             }
 
-            offer.IDDenomination = selectedValue.ID;
-            offer.IdJobTitle = selectedValue.FK_JobTitle;
+            offer.TitleDenominationId = selectedValue.ID;
+            offer.TitleId = selectedValue.FK_JobTitle;
             return;
         }
 
