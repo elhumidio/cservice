@@ -18,16 +18,16 @@ namespace Application.JobTitles.Command
         private readonly IJobTitleDenominationsRepository _jobTitleRepository;
         private readonly ILogger<GetJobTitlesDenominationsFromActiveOffersCommandHandler> _logger;
         private readonly IMemoryCache _memoryCache;
-        private readonly IJobOfferService _jobOfferService;
         private readonly IMapper _mapper;
+        private readonly IJobOfferRepository _jobOfferRepository;
 
-        public GetJobTitlesDenominationsFromActiveOffersCommandHandler(IJobTitleDenominationsRepository jobTitleRepository, ILogger<GetJobTitlesDenominationsFromActiveOffersCommandHandler> logger, IMemoryCache memoryCache, IJobOfferService jobOfferService,  IMapper mapper)
+        public GetJobTitlesDenominationsFromActiveOffersCommandHandler(IJobTitleDenominationsRepository jobTitleRepository, ILogger<GetJobTitlesDenominationsFromActiveOffersCommandHandler> logger, IMemoryCache memoryCache, IJobOfferRepository jobOfferRepository,  IMapper mapper)
         {
             _jobTitleRepository = jobTitleRepository;
             _logger = logger;
             _mapper = mapper;
             _memoryCache = memoryCache ?? throw new ArgumentNullException(nameof(memoryCache));
-            _jobOfferService = jobOfferService;
+            _jobOfferRepository = jobOfferRepository;
         }
 
         public async Task<Result<JobTitleDenominationsDto[]>> Handle(GetJobTitlesDenominationsFromActiveOffersCommand request, CancellationToken cancellationToken)
@@ -62,12 +62,12 @@ namespace Application.JobTitles.Command
                     return Result<JobTitleDenominationsDto[]>.Success(jobTitlesDnominations.ToArray()); ;
                 }
 
-                JobTitlesIdsResponseDTO titleslist = await _jobOfferService.GetActiveOffersJobTitlesIds();
+                //JobTitlesIdsResponseDTO titleslist = await _jobOfferRepository.GetActiveOffersJobTitlesIds();
 
-                TitlesIdsDTO titles = _mapper.Map(titleslist, new TitlesIdsDTO());
+               // TitlesIdsDTO titles = _mapper.Map(titleslist, new TitlesIdsDTO());
 
                 // Cache miss, fetch job titles denominations from the data source
-                var jobTitlesList = await _jobTitleRepository.GetAllDenominationsActiveOffersByLanguage(request.LanguageId, titles);
+                var jobTitlesList = await _jobTitleRepository.GetAllDenominationsActiveOffersByLanguage(request.LanguageId);
                
                 // Store job titles denominations in the cache with a specific expiration time (e.g., 30 minutes)
                 var cacheEntryOptions = new MemoryCacheEntryOptions

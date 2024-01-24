@@ -1,6 +1,7 @@
 using Domain.DTO;
 using Domain.EnterpriseDtos;
 using Domain.Entities;
+using Domain.Enums;
 using Domain.Repositories;
 using Microsoft.Extensions.Logging;
 
@@ -152,10 +153,20 @@ namespace Persistence.Repositories
 
         }
 
-        public async Task<List<JobTitleDenominationsDto>> GetAllDenominationsActiveOffersByLanguage(int languageId, TitlesIdsDTO titles)
+        public async Task<List<JobTitleDenominationsDto>> GetAllDenominationsActiveOffersByLanguage(int languageId)
         {
             try
             {
+                var titles = _dataContext.JobVacancies
+                 .Where(a =>
+                        !a.ChkDeleted
+                        && !a.ChkFilled
+                        && a.FinishDate >= DateTime.Today
+                        && a.Idstatus == (int)OfferStatus.Active
+                        && a.TitleId != null
+                        && a.TitleId > 0)
+                .Select(t => t.TitleId).Distinct();
+
                 var jobTitlesBasicData = _dataContext.JobTitleDenominations
                    .Join(_dataContext.Titles, d => d.FK_JobTitle, a => a.Id, (d, a) => new { d, a })
                    .Select(jd => new JobTitleDenominationsDto
@@ -168,7 +179,7 @@ namespace Persistence.Repositories
                        Isco08 = jd.a.Isco08.Trim(),
                        Isco88 = jd.a.Isco88.Trim()
                    })
-                   .Where(a => a.LanguageId == languageId && titles.TitlesIds.Contains(a.FkJobTitle))
+                   .Where(a => a.LanguageId == languageId && titles.Contains(a.FkJobTitle))
                    .ToList();
 
 
