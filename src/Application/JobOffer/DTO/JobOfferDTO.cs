@@ -22,5 +22,10 @@ namespace Application.JobOffer.DTO
         public DateTime? LastVisitorDate { get; set; }
         public bool chkFilled { get; set; }
         public string? AimwelCampaignId { get; set; }
+        public int TitleId { get; set; }
+        public int TitleDenominationId { get; set; }
+        public int FieldId { get; set; }
+        public decimal? Latitude { get; set; }
+        public decimal? Longitude { get; set; }
     }
 }

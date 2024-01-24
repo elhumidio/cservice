@@ -196,6 +196,31 @@ namespace Application.JobOffer.Commands
         [DataMember]
         public string? ZipCode { get; set; }
 
+        [DataMember]
+        public int TitleId { get; set; }
+
+        [DataMember]
+        public int TitleDenominationId { get; set; }
+
+        [DataMember]
+        public int FieldId { get; set; }
+
+        [DataMember]
+        public decimal? Latitude { get; set; }
+        [DataMember]
+        public decimal? Longitude { get; set; }
+        [DataMember]
+        public string? Address { get; set; }
+
+        [DataMember]
+        public bool? NationalDiffusion { get; set; }
+
+        [DataMember]
+        public bool? InternationalDiffusion { get; set; }
+
+        [DataMember]
+        public List<int>? InternationalDiffusionCountries { get; set; }
+
         public IntegrationData IntegrationData { get; set; }
         public List<JobLanguages>? JobLanguages { get; set; }
 

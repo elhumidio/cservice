@@ -1,9 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace Application.JobOffer.DTO
 {
     public class FlowOfferDTO
@@ -13,6 +7,7 @@ namespace Application.JobOffer.DTO
         public string CompanyName { get; set; }
         public string ExternalURL { get; set; }
         public int AreaId { get; set; }
+        public int TitleId { get; set; }
         public int CountryId { get; set; }
         public int RegionId { get; set; }
         public int QuestId { get; set; }
