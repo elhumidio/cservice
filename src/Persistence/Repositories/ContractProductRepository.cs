@@ -1,3 +1,4 @@
+using Domain.DTO.Products;
 using Domain.DTO.Requests;
 using Domain.Entities;
 using Domain.Repositories;
@@ -29,40 +30,55 @@ namespace Persistence.Repositories
             return isPack;
         }
 
-        public int GetIdProductByContract(int contractId)
+        public List<ProductUnits> GetProductsAndUnitsByContract(int contractId)
         {
-            var res = _dataContext.ContractProducts
-            .Join(_dataContext.Products, p => new { p.Idproduct }, cp => new { cp.Idproduct },
-                (p, cp) => new { p, cp })
-            .Join(_dataContext.ProductLines, ppl => ppl.p.Idproduct, pl => pl.Idproduct, (ppl, pl) => new { ppl, pl })
-            .Where(o => o.ppl.p.Idcontract == contractId && o.pl.IdjobVacType != null)
-            .Select(o => o.ppl.cp.Idproduct)
-            .First();
-            return res;
+            int[] prods = { 87, 125, 4, 110, 130 };
+            var productUnitsList = (
+                from contractProduct in _dataContext.ContractProducts
+                join regEnterpriseContract in _dataContext.RegEnterpriseContracts on contractProduct.Idcontract equals regEnterpriseContract.Idcontract
+                where contractProduct.Idcontract == contractId && prods.Contains(contractProduct.Idproduct) 
+                select new ProductUnits
+                {
+                    Idproduct = contractProduct.Idproduct,
+                    Units = regEnterpriseContract.Units
+                }
+            ).ToList();
+            return productUnitsList;
         }
 
-        public async Task<int> CreateContractProduct(ContractProduct contractProduct)
-        {
-            var ret = await _dataContext.Set<ContractProduct>().AddAsync(contractProduct);            
-            return contractProduct.Idcontract;
-        }
 
-        public async Task<bool> UpdateContractProductSalesforceId(UpdateContractProductSForceId items)
-        {
-            
-            var contractProduct = await _dataContext.ContractProducts.Where(c => c.Idcontract == items.ContractId).ToListAsync();
-            int ret = -1;
-            foreach (var item in contractProduct)
+            public int GetIdProductByContract(int contractId)
             {
-                var a =  items.ContractProductSalesforceIds.Where(i => i.ProductId == item.Idproduct).FirstOrDefault();
-                if (a == null)
-                    continue;
-                item.IdsalesForce = a.SalesforceId;
-                ret = await _dataContext.SaveChangesAsync();
+                var res = _dataContext.ContractProducts
+                .Join(_dataContext.Products, p => new { p.Idproduct }, cp => new { cp.Idproduct },
+                    (p, cp) => new { p, cp })
+                .Join(_dataContext.ProductLines, ppl => ppl.p.Idproduct, pl => pl.Idproduct, (ppl, pl) => new { ppl, pl })
+                .Where(o => o.ppl.p.Idcontract == contractId && o.pl.IdjobVacType != null)
+                .Select(o => o.ppl.cp.Idproduct)
+                .First();
+                return res;
             }
-            
-           
-            return ret > 0;
+
+            public async Task<int> CreateContractProduct(ContractProduct contractProduct)
+            {
+                var ret = await _dataContext.Set<ContractProduct>().AddAsync(contractProduct);
+                return contractProduct.Idcontract;
+            }
+
+            public async Task<bool> UpdateContractProductSalesforceId(UpdateContractProductSForceId items)
+            {
+                var contractProduct = await _dataContext.ContractProducts.Where(c => c.Idcontract == items.ContractId).ToListAsync();
+                int ret = -1;
+                foreach (var item in contractProduct)
+                {
+                    var a = items.ContractProductSalesforceIds.Where(i => i.ProductId == item.Idproduct).FirstOrDefault();
+                    if (a == null)
+                        continue;
+                    item.IdsalesForce = a.SalesforceId;
+                    ret = await _dataContext.SaveChangesAsync();
+                }
+
+                return ret > 0;
+            }
         }
     }
-}

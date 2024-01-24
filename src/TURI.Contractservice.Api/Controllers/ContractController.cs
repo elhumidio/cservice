@@ -1,5 +1,6 @@
 using API.Converters;
 using Application.ContractCRUD.Commands;
+using Application.ContractProducts.Queries;
 using Application.Contracts.DTO;
 using Application.Contracts.Queries;
 using Application.EnterpriseContract.Queries;
