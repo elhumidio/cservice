@@ -194,15 +194,6 @@ namespace Application.JobOffer.Commands
         [DataMember]
         public int Idsite { get; set; }
 
-        /// <summary>
-        /// Not saved in Job Offer, but can be used to get default Denomination
-        /// </summary>
-        [DataMember]
-        public int IdJobTitle { get; set; }
-
-        [DataMember]
-        public int IDDenomination { get; set; }
-
         [DataMember]
         public DateTime? LastVisitorDate { get; set; }
 
