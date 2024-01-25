@@ -30,7 +30,7 @@ Int-(@= team @)(@= suffix @):
         #! Add an additional variable
         props.AWS_ECS_CPU: 8
         props.AWS_ECS_RAM: 256
-        props.AWS_ECS_RAM_HARD: 256
+        props.AWS_ECS_RAM_HARD: 512
 #@ end
 
 #@ for type in ["Plan", "Apply"]:
@@ -40,13 +40,13 @@ Preprod-(@= type @)(@= suffix @):
     variables:
         #! Add an additional variable
         props.AWS_ECS_CPU: 8
-        props.AWS_ECS_RAM: 256
+        props.AWS_ECS_RAM: 512
         props.AWS_ECS_RAM_HARD: 512
 #@ end
 Preprod-Apply-Infrastructure:
     variables:
         props.AWS_ECS_CPU: 8
-        props.AWS_ECS_RAM: 256
+        props.AWS_ECS_RAM: 512
         props.AWS_ECS_RAM_HARD: 512
 
 #@ for type in ["Plan", "Apply"]:
@@ -56,13 +56,13 @@ Prod-(@= type @)(@= suffix @):
     variables:
         #! Add an additional variable
         props.AWS_ECS_CPU: 8
-        props.AWS_ECS_RAM: 256
+        props.AWS_ECS_RAM: 512
         props.AWS_ECS_RAM_HARD: 512
 #@ end
 Prod-Apply-Infrastructure:
     variables:
         props.AWS_ECS_CPU: 8
-        props.AWS_ECS_RAM: 256
+        props.AWS_ECS_RAM: 512
         props.AWS_ECS_RAM_HARD: 512
 #@ end
 

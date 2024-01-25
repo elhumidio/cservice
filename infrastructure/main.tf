@@ -12,7 +12,6 @@ module "ecs-service" {
   version = ">= 2.4.3, < 3.0.0"
 
   service_name                = var.service_name
-  desired_count               = var.desired_count
   ecs_cluster_id              = var.ecs_cluster_id
   aws_lb_name                 = var.aws_lb_name
   vpc_id                      = var.vpc_id
@@ -21,7 +20,15 @@ module "ecs-service" {
   target_group_name           = var.target_group_name
   health_check_path           = "/ping"
   health_check_matcher        = "200"
-  enable_service_auto_scaling = var.enable_service_auto_scaling
+  enable_service_auto_scaling = true
+  create_log_group            = true
+  service_max_capacity        = local.task_max_number[var.environment]
+  predefined_metric_type      = "ECSServiceAverageMemoryUtilization"
+  service_min_capacity        = local.task_min_number[var.environment]
+  desired_count               = local.task_desired_number[var.environment]
+  service_scale_in_cooldown   = local.service_scale_in_cooldown[var.environment]
+  service_scale_out_cooldown  = local.service_scale_out_cooldown[var.environment]
+  service_scaling_target      = local.service_scaling_target[var.environment]
 }
 
 variable "service_name" {}
@@ -36,6 +43,3 @@ variable "target_group_name" {}
 variable "environment" {}
 variable "namespace" {}
 variable "team_name" {}
-variable "enable_service_auto_scaling" {
-  type = bool
-}
