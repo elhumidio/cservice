@@ -534,15 +534,15 @@ namespace Persistence
                 entity.Property(e => e.BaseName).HasMaxLength(50);
 
                 entity.Property(e => e.ChkActive).HasColumnName("chkActive");
-                entity.Property(e => e.IscoDefault).HasColumnName("IscoDefault");
+
+                entity.Property(e => e.FkTranslationId).HasColumnName("FK_TranslationID");
 
                 entity.Property(e => e.Subdomain).HasMaxLength(50);
 
-                entity.HasOne(d => d.Ids)
+                entity.HasOne(d => d.FkTranslation)
                     .WithMany(p => p.Tareas)
-                    .HasForeignKey(d => new { d.Idslanguage, d.Idsite })
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_TArea_TSTuriJobsLang");
+                    .HasForeignKey(d => d.FkTranslationId)
+                    .HasConstraintName("FK_TArea_TranslationsWeb");
             });
 
             modelBuilder.Entity<RegJobVacMatching>(entity =>
