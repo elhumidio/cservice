@@ -111,6 +111,10 @@ namespace Application.JobOffer.Commands
 
 
             //ADD VACANCY
+            if(entity.TitleId > 0)
+                entity.Idarea = _denominationsRepository.GetAreaByJobTitle((int)entity.TitleId);
+
+
             jobVacancyId = _offerRepo.Add(entity);
 
             bool canSaveLanguages = jobVacancyId > 0

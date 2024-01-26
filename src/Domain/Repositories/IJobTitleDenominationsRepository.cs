@@ -10,6 +10,7 @@ namespace Domain.Repositories
         public JobTitleDenomination GetDefaultDenomination(int idJobTitle, int idSite);
 
         public List<JobTitleDenomination> GetAllForArea(int idArea, int idSite);
+        public int GetAreaByJobTitle(int titleId);
         public IQueryable<JobTitle> GetAll();
         public Task<List<JobTitleDenominationsDto>> GetAllDenominations();
         public Task<List<JobTitleDenominationsDto>> GetAllDenominationsByLanguage(int languageId);

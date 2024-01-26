@@ -3,6 +3,7 @@ using Domain.EnterpriseDtos;
 using Domain.Entities;
 using Domain.Enums;
 using Domain.Repositories;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace Persistence.Repositories
@@ -29,6 +30,18 @@ namespace Persistence.Repositories
             .Where(v => v.IDArea == idArea && v.IDSite == idSite)
             .Select(d => d.Denom)
             .ToList();
+        }
+
+        public int GetAreaByJobTitle(int titleId)
+        {
+            var result = _dataContext.JobTitleAreas
+            .Where(v => v.FK_JobTitleID == titleId)
+            .FirstOrDefault();
+
+            if (result == null)
+                return 0;
+            else
+                return result.FK_AreaID;
         }
 
         public JobTitleDenomination GetDefaultDenomination(int idJobTitle, int idSite)
