@@ -224,7 +224,7 @@ namespace Application.JobOffer.Commands
         private void ValidateJobTitle(ref CreateOfferCommand offer)
         {
 
-            if (offer.TitleDenominationId > 0 )
+            if (offer.TitleDenominationId > 0 && offer.TitleId > 0)
                 return;
 
             //Missing Denominations will be set to the default for the JobTitle, if set
