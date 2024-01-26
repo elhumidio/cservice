@@ -47,4 +47,10 @@
     <None Remove="Proto\publish.proto" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="rawPrompt.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
