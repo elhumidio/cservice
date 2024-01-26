@@ -21,11 +21,23 @@ namespace Persistence.Repositories
 
         public List<JobTitleDenomination> GetAllForArea(int idArea, int idSite)
         {
-            return _dataContext.JobTitlesDenominations.Join(_dataContext.JobTitlesAreas, inner => inner.FkJobTitle, outer => outer.FkJobTitleId, (inner, outer) => new
+            //NOTE: Select here **mandatory** as some link broken with EF, thinks a random column exists
+            return _dataContext.JobTitlesDenominations.Select(a => new JobTitleDenomination
             {
-                Denom = inner,
-                IDArea = outer.FkAreaId,
-                IDSite = outer.FkIdsite
+                Id = a.Id,
+                BaseName = a.BaseName,
+                Denomination = a.Denomination,
+                FkJobTitle = a.FkJobTitle,
+                LanguageId = a.LanguageId,
+                SiteMap = a.SiteMap
+            })
+                .Join(_dataContext.JobTitlesAreas,
+                denom => denom.FkJobTitle,
+                area => area.FkJobTitleId, (denom, area) => new
+            {
+                Denom = denom,
+                IDArea = area.FkAreaId,
+                IDSite = area.FkIdsite
             })
             .Where(v => v.IDArea == idArea && v.IDSite == idSite)
             .Select(d => d.Denom)

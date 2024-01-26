@@ -10,6 +10,7 @@ using Domain.Repositories;
 using MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using System.Text.RegularExpressions;
 
 namespace Application.JobOffer.Commands
 {
@@ -240,9 +241,13 @@ namespace Application.JobOffer.Commands
             //Give them all to ChatGPT along with our TitleString, and make it pick.
             var prompt = FillPrompt(denominationsForArea, offer.Title);
             var gptResult = _aiService.DoGPTRequest(prompt, string.Empty);
+            var match = new Regex("\"content\": \"(?<content>.+?)\"");
+            var parsed = match.IsMatch(gptResult)
+                ? match.Match(gptResult).Groups["content"].Value.Replace("'", "")
+                : string.Empty;
 
             //Match the result back with our list to get the IdJobTitle, then the Default Denomination.
-            var selectedValue = denominationsForArea.FirstOrDefault(d => d.Denomination == gptResult);
+            var selectedValue = denominationsForArea.FirstOrDefault(d => d.Denomination == parsed);
             if (selectedValue == null)
             {
                 _logger.LogError($"JobTitleDenomination Failed to find match when posting job. GPT Result: {gptResult}, Title: {offer.Title}");
