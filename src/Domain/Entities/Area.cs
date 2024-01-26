@@ -19,8 +19,10 @@ namespace Domain.Entities
         public int? NumVacancies { get; set; }
         public int? Threshold { get; set; }
         public int IscoDefault { get; set; }
+        public int? FkTranslationId { get; set; }
 
-        public virtual TsturijobsLang Ids { get; set; } = null!;
         public virtual ICollection<TsubArea> TsubAreas { get; set; }
+
+        public virtual TranslationsWeb? FkTranslation { get; set; }
     }
 }
