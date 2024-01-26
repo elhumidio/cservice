@@ -170,7 +170,13 @@ namespace Application.JobOffer.Validations
                     obj.JobLocation = region != null ? region.BaseName : string.Empty;
                     ret = true;
                 }
-                else ret = false;
+                else
+                {
+                    if(obj.IdzipCode > 0)
+                        ret = true;
+                    else
+                        ret = false;
+                }
             }
             return ret;
         }
