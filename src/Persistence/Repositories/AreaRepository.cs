@@ -21,7 +21,7 @@ namespace Persistence.Repositories
         public int GetIscoDefaultFromArea(int _area)
         {
             var area = _dataContext.Areas.Where(a => a.Idarea == _area).FirstOrDefault();
-            return area.IscoDefault;      
+            return (((area == null) || (area.IscoDefault == null)) ? 0 : (int)area.IscoDefault);
         }
 
         public string GetAreaName(int areaId)

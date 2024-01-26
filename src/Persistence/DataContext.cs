@@ -76,8 +76,10 @@ namespace Persistence
         public virtual DbSet<ZoneUrl> ZoneUrls { get; set; } = null!;
         public virtual DbSet<InternationalDiffusionCountry> InternationalDiffusionCountries { get; set; } = null!;
 
-        public virtual DbSet<JobTitleDenomination> JobTitleDenominations { get; set; } = null!;
-        public virtual DbSet<JobTitleArea> JobTitleAreas { get; set; } = null!;
+        public virtual DbSet<JobTitle> JobTitles { get; set; } = null!;
+        public virtual DbSet<JobTitleArea> JobTitlesAreas { get; set; } = null!;
+        public virtual DbSet<JobTitleDenomination> JobTitlesDenominations { get; set; } = null!;
+        public virtual DbSet<JobTitlesRelationship> JobTitlesRelationships { get; set; } = null!;
 
         public virtual DbSet<Benefit> Benefits { get; set; } = null!;
         public virtual DbSet<CompanyBenefit> CompanyBenefits { get; set; } = null!;
@@ -89,17 +91,7 @@ namespace Persistence
 
             modelBuilder.HasSequence("GetNextSequenceValueFeedsLog");
 
-            modelBuilder.Entity<JobTitleDenomination>(entity =>
-            {
-                entity.ToTable("JobTitlesDenominations");
-                entity.HasKey(e => e.ID);
-            });
-
-            modelBuilder.Entity<JobTitleArea>(entity =>
-            {
-                entity.ToTable("JobTitles_Areas");
-                entity.HasKey(e => new { e.FK_JobTitleID, e.FK_AreaID });
-            });
+            
 
             modelBuilder.Entity<ContractPayment>(entity =>
             {
@@ -287,39 +279,6 @@ namespace Persistence
             {
                 entity.Property(e => e.Budget).HasColumnType("decimal(18, 0)");
                 entity.Property(e => e.SiteId).HasColumnName("SiteId");
-            });
-
-            modelBuilder.Entity<TitlesRelationship>(entity =>
-            {
-                entity.Property(e => e.Id).HasColumnName("Id");
-                entity.Property(e => e.JobTitleId).HasColumnName("JobTitleId");
-                entity.Property(e => e.JobTitleEquivalentId).HasColumnName("JobTitleEquivalentId");
-                entity.Property(e => e.Weight).HasColumnName("Weight");
-            });
-
-
-            modelBuilder.Entity<JobTitle>(entity =>
-            {
-                entity.Property(e => e.Id).HasColumnName("ID");
-
-                entity.Property(e => e.Description).HasMaxLength(100);
-
-                entity.Property(e => e.FkTranslationDescription).HasColumnName("FK_TranslationDescription");
-
-                entity.Property(e => e.Isco08)
-                    .HasMaxLength(20)
-                    .HasColumnName("ISCO08")
-                    .IsFixedLength();
-
-                entity.Property(e => e.Isco88)
-                    .HasMaxLength(20)
-                    .HasColumnName("ISCO88")
-                    .IsFixedLength();
-
-                entity.HasOne(d => d.FkTranslationDescriptionNavigation)
-                    .WithMany(p => p.JobTitles)
-                    .HasForeignKey(d => d.FkTranslationDescription)
-                    .HasConstraintName("FK_JobTitles_Description_Translation");
             });
 
             modelBuilder.Entity<TitleLang>(entity =>
@@ -517,32 +476,6 @@ namespace Persistence
                 entity.Property(e => e.EquivalentId).HasColumnName("EquivalentID");
 
                 entity.Property(e => e.Name).HasMaxLength(255);
-            });
-
-            modelBuilder.Entity<Area>(entity =>
-            {
-                entity.HasKey(e => new { e.Idarea, e.Idsite, e.Idslanguage });
-
-                entity.ToTable("TArea");
-
-                entity.Property(e => e.Idarea).HasColumnName("IDArea");
-
-                entity.Property(e => e.Idsite).HasColumnName("IDSite");
-
-                entity.Property(e => e.Idslanguage).HasColumnName("IDSLanguage");
-
-                entity.Property(e => e.BaseName).HasMaxLength(50);
-
-                entity.Property(e => e.ChkActive).HasColumnName("chkActive");
-                entity.Property(e => e.IscoDefault).HasColumnName("IscoDefault");
-
-                entity.Property(e => e.Subdomain).HasMaxLength(50);
-
-                entity.HasOne(d => d.Ids)
-                    .WithMany(p => p.Tareas)
-                    .HasForeignKey(d => new { d.Idslanguage, d.Idsite })
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_TArea_TSTuriJobsLang");
             });
 
             modelBuilder.Entity<RegJobVacMatching>(entity =>
@@ -1990,6 +1923,97 @@ namespace Persistence
                 entity.Property(e => e.TextScope)
                     .HasMaxLength(255)
                     .IsUnicode(false);
+            }); modelBuilder.Entity<JobTitle>(entity =>
+            {
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.Description).HasMaxLength(100);
+
+                entity.Property(e => e.FkTranslationDescription).HasColumnName("FK_TranslationDescription");
+
+                entity.Property(e => e.Isco08)
+                    .HasMaxLength(20)
+                    .HasColumnName("ISCO08")
+                    .IsFixedLength();
+
+                entity.Property(e => e.Isco88)
+                    .HasMaxLength(20)
+                    .HasColumnName("ISCO88")
+                    .IsFixedLength();
+            });
+
+            modelBuilder.Entity<JobTitleArea>(entity =>
+            {
+                entity.HasKey(e => new { e.FkJobTitleId, e.FkAreaId });
+
+                entity.ToTable("JobTitles_Areas");
+
+                entity.Property(e => e.FkJobTitleId).HasColumnName("FK_JobTitleID");
+
+                entity.Property(e => e.FkAreaId).HasColumnName("FK_AreaID");
+
+                entity.Property(e => e.FkIdsite).HasColumnName("FK_IDSite");
+
+                entity.Property(e => e.FkIdslanguage).HasColumnName("FK_IDSLanguage");
+
+                entity.HasOne(d => d.FkJobTitle)
+                    .WithMany(p => p.JobTitlesAreas)
+                    .HasForeignKey(d => d.FkJobTitleId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_JobTitles_Areas_JobTitles");
+
+                entity.HasOne(d => d.Fk)
+                    .WithMany(p => p.JobTitlesAreas)
+                    .HasForeignKey(d => new { d.FkAreaId, d.FkIdsite, d.FkIdslanguage })
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_JobTitles_Areas_TArea");
+            });
+
+            modelBuilder.Entity<JobTitleDenomination>(entity =>
+            {
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.Denomination).HasMaxLength(80);
+
+                entity.Property(e => e.FkJobTitle).HasColumnName("FK_JobTitle");
+
+                entity.Property(e => e.LanguageId).HasDefaultValueSql("((7))");
+
+                entity.HasOne(d => d.FkJobTitleNavigation)
+                    .WithMany(p => p.JobTitlesDenominations)
+                    .HasForeignKey(d => d.FkJobTitle)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_JobTitlesDenominations_JobTitles");
+            });
+
+            modelBuilder.Entity<JobTitlesRelationship>(entity =>
+            {
+                entity.HasKey(e => new { e.FkJobTitleId, e.FkJobTitleRelatedId });
+
+                entity.Property(e => e.FkJobTitleId).HasColumnName("FK_JobTitleID");
+
+                entity.Property(e => e.FkJobTitleRelatedId).HasColumnName("FK_JobTitleRelatedID");
+            });
+
+            modelBuilder.Entity<Area>(entity =>
+            {
+                entity.HasKey(e => new { e.Idarea, e.Idsite, e.Idslanguage });
+
+                entity.ToTable("TArea");
+
+                entity.Property(e => e.Idarea).HasColumnName("IDArea");
+
+                entity.Property(e => e.Idsite).HasColumnName("IDSite");
+
+                entity.Property(e => e.Idslanguage).HasColumnName("IDSLanguage");
+
+                entity.Property(e => e.BaseName).HasMaxLength(50);
+
+                entity.Property(e => e.ChkActive).HasColumnName("chkActive");
+
+                entity.Property(e => e.FkTranslationId).HasColumnName("FK_TranslationID");
+
+                entity.Property(e => e.Subdomain).HasMaxLength(50);
             });
 
             OnModelCreatingPartial(modelBuilder);

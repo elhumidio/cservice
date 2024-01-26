@@ -1,4 +1,6 @@
 
+using System.Threading;
+
 namespace Domain.Entities
 {
     public partial class TranslationsWeb
@@ -7,6 +9,7 @@ namespace Domain.Entities
         {
             JobTitles = new HashSet<JobTitle>();
             JobTitlesDenominations = new HashSet<JobTitleDenomination>();
+            Tareas = new HashSet<Area>();
         }
 
         public string? TextName { get; set; }
@@ -20,5 +23,7 @@ namespace Domain.Entities
 
         public virtual ICollection<JobTitle> JobTitles { get; set; }
         public virtual ICollection<JobTitleDenomination> JobTitlesDenominations { get; set; }
+
+        public virtual ICollection<Area> Tareas { get; set; }
     }
 }

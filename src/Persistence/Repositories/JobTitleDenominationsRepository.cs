@@ -3,6 +3,7 @@ using Domain.EnterpriseDtos;
 using Domain.Entities;
 using Domain.Enums;
 using Domain.Repositories;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace Persistence.Repositories
@@ -20,15 +21,27 @@ namespace Persistence.Repositories
 
         public List<JobTitleDenomination> GetAllForArea(int idArea, int idSite)
         {
-            return _dataContext.JobTitleDenominations.Join(_dataContext.JobTitleAreas, inner => inner.FK_JobTitle, outer => outer.FK_JobTitleID, (inner, outer) => new
+            return _dataContext.JobTitlesDenominations.Join(_dataContext.JobTitlesAreas, inner => inner.FkJobTitle, outer => outer.FkJobTitleId, (inner, outer) => new
             {
                 Denom = inner,
-                IDArea = outer.FK_AreaID,
-                IDSite = outer.FK_IDSite
+                IDArea = outer.FkAreaId,
+                IDSite = outer.FkIdsite
             })
             .Where(v => v.IDArea == idArea && v.IDSite == idSite)
             .Select(d => d.Denom)
             .ToList();
+        }
+
+        public int GetAreaByJobTitle(int titleId)
+        {
+            var result = _dataContext.JobTitlesAreas
+            .Where(v => v.FkJobTitleId == titleId)
+            .FirstOrDefault();
+
+            if (result == null)
+                return 0;
+            else
+                return result.FkAreaId;
         }
 
         public JobTitleDenomination GetDefaultDenomination(int idJobTitle, int idSite)
@@ -44,7 +57,7 @@ namespace Persistence.Repositories
                     languageId = 14; break;
             }
 
-            return _dataContext.JobTitleDenominations.FirstOrDefault(d => d.ID == idJobTitle && d.LanguageId == languageId);
+            return _dataContext.JobTitlesDenominations.FirstOrDefault(d => d.Id == idJobTitle && d.LanguageId == languageId);
             
         }
 
@@ -58,11 +71,11 @@ namespace Persistence.Repositories
         {
             try
             {
-                var jobTitlesBasicData = _dataContext.JobTitleDenominations
-                   .Join(_dataContext.Titles, d => d.FK_JobTitle, a => a.Id, (d, a) => new { d, a })
+                var jobTitlesBasicData = _dataContext.JobTitlesDenominations
+                   .Join(_dataContext.Titles, d => d.FkJobTitle, a => a.Id, (d, a) => new { d, a })
                    .Select(jd => new
                    {
-                       Id = jd.d.ID,
+                       Id = jd.d.Id,
                        FkJobTitle = jd.a.Id,
                        Denomination = jd.d.Denomination,
                        LanguageId = jd.d.LanguageId,
@@ -73,8 +86,8 @@ namespace Persistence.Repositories
                    .ToList();
 
                 // Fetching job titles area IDs
-                var jobTitlesAreaIds = _dataContext.JobTitleAreas
-                    .Select(jta => new { jta.FK_JobTitleID, jta.FK_AreaID })
+                var jobTitlesAreaIds = _dataContext.JobTitlesAreas
+                    .Select(jta => new { jta.FkJobTitleId, jta.FkAreaId })
                     .ToList();
 
                 // Mapping area IDs to job titles
@@ -87,8 +100,8 @@ namespace Persistence.Repositories
                     FkJobTitle = jd.FkJobTitle,
                     Isco08 = jd.Isco08,
                     Isco88 = jd.Isco88,
-                    JobTitlesAreas = jobTitlesAreaIds.Where(jta => jta.FK_JobTitleID == jd.FkJobTitle)
-                                                       .Select(jta => jta.FK_AreaID)
+                    JobTitlesAreas = jobTitlesAreaIds.Where(jta => jta.FkJobTitleId == jd.FkJobTitle)
+                                                       .Select(jta => jta.FkAreaId)
                                                        .ToList()
                 }).ToList();
 
@@ -107,11 +120,11 @@ namespace Persistence.Repositories
         {
             try
             {
-                var jobTitlesBasicData = _dataContext.JobTitleDenominations
-                   .Join(_dataContext.Titles, d => d.FK_JobTitle, a => a.Id, (d, a) => new { d, a })
+                var jobTitlesBasicData = _dataContext.JobTitlesDenominations
+                   .Join(_dataContext.Titles, d => d.FkJobTitle, a => a.Id, (d, a) => new { d, a })
                    .Select(jd => new
                    {
-                       Id = jd.d.ID,
+                       Id = jd.d.Id,
                        FkJobTitle = jd.a.Id,
                        Denomination = jd.d.Denomination,
                        LanguageId = jd.d.LanguageId,
@@ -123,8 +136,8 @@ namespace Persistence.Repositories
                    .ToList();
 
                 // Fetching job titles area IDs
-                var jobTitlesAreaIds = _dataContext.JobTitleAreas
-                    .Select(jta => new { jta.FK_JobTitleID, jta.FK_AreaID })
+                var jobTitlesAreaIds = _dataContext.JobTitlesAreas
+                    .Select(jta => new { jta.FkJobTitleId, jta.FkAreaId })
                     .ToList();
 
                 // Mapping area IDs to job titles
@@ -137,8 +150,8 @@ namespace Persistence.Repositories
                     FkJobTitle = jd.FkJobTitle,
                     Isco08 = jd.Isco08,
                     Isco88 = jd.Isco88,
-                    JobTitlesAreas = jobTitlesAreaIds.Where(jta => jta.FK_JobTitleID == jd.FkJobTitle)
-                                                       .Select(jta => jta.FK_AreaID)
+                    JobTitlesAreas = jobTitlesAreaIds.Where(jta => jta.FkJobTitleId == jd.FkJobTitle)
+                                                       .Select(jta => jta.FkAreaId)
                                                        .ToList()
                 }).ToList();
 
@@ -167,11 +180,11 @@ namespace Persistence.Repositories
                         && a.TitleId > 0)
                 .Select(t => t.TitleId).Distinct();
 
-                var jobTitlesBasicData = _dataContext.JobTitleDenominations
-                   .Join(_dataContext.Titles, d => d.FK_JobTitle, a => a.Id, (d, a) => new { d, a })
+                var jobTitlesBasicData = _dataContext.JobTitlesDenominations
+                   .Join(_dataContext.Titles, d => d.FkJobTitle, a => a.Id, (d, a) => new { d, a })
                    .Select(jd => new JobTitleDenominationsDto
                    {
-                       Id = jd.d.ID,
+                       Id = jd.d.Id,
                        FkJobTitle = jd.a.Id,
                        Denomination = jd.d.Denomination,
                        LanguageId = jd.d.LanguageId,
