@@ -173,10 +173,9 @@ namespace Application.JobOffer.Validations
                 else
                 {
                     if(obj.IdzipCode > 0)
-                    {
                         ret = true;
-                    }
-                    else ret = false;
+                    else
+                        ret = false;
                 }
             }
             return ret;
