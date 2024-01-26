@@ -18,12 +18,12 @@ namespace TURI.Contractservice.Controllers
             return HandleResult(result);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> GetAllJobTitlesDenominations(GetAllJobTitlesDenominationsCommand item)
-        {
-            var result = await Mediator.Send(item);
-            return HandleResult(result);
-        }
+        //[HttpPost]
+        //public async Task<IActionResult> GetAllJobTitlesDenominations(GetAllJobTitlesDenominationsCommand item)
+        //{
+        //    var result = await Mediator.Send(item);
+        //    return HandleResult(result);
+        //}
 
         [HttpPost]
         public async Task<IActionResult> GetAllJobTitlesDenominationsByLanguage(GetAllJobTitlesDenominationsByLanguageCommand item)

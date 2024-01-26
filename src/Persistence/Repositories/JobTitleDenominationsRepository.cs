@@ -95,14 +95,7 @@ namespace Persistence.Repositories
                 {
                     Id = jd.Id,
                     Denomination = jd.Denomination,
-                    LanguageId = jd.LanguageId,
-                    BaseName = jd.BaseName,
                     FkJobTitle = jd.FkJobTitle,
-                    Isco08 = jd.Isco08,
-                    Isco88 = jd.Isco88,
-                    JobTitlesAreas = jobTitlesAreaIds.Where(jta => jta.FkJobTitleId == jd.FkJobTitle)
-                                                       .Select(jta => jta.FkAreaId)
-                                                       .ToList()
                 }).ToList();
 
                 return jobTitles.ToList();
@@ -145,14 +138,7 @@ namespace Persistence.Repositories
                 {
                     Id = jd.Id,
                     Denomination = jd.Denomination,
-                    LanguageId = jd.LanguageId,
-                    BaseName = jd.BaseName,
                     FkJobTitle = jd.FkJobTitle,
-                    Isco08 = jd.Isco08,
-                    Isco88 = jd.Isco88,
-                    JobTitlesAreas = jobTitlesAreaIds.Where(jta => jta.FkJobTitleId == jd.FkJobTitle)
-                                                       .Select(jta => jta.FkAreaId)
-                                                       .ToList()
                 }).ToList();
 
                 return jobTitles.ToList();
@@ -182,17 +168,13 @@ namespace Persistence.Repositories
 
                 var jobTitlesBasicData = _dataContext.JobTitlesDenominations
                    .Join(_dataContext.Titles, d => d.FkJobTitle, a => a.Id, (d, a) => new { d, a })
+                   .Where(a => a.d.LanguageId == languageId && titles.Contains(a.d.FkJobTitle))
                    .Select(jd => new JobTitleDenominationsDto
                    {
                        Id = jd.d.Id,
                        FkJobTitle = jd.a.Id,
                        Denomination = jd.d.Denomination,
-                       LanguageId = jd.d.LanguageId,
-                       BaseName = jd.d.BaseName,
-                       Isco08 = jd.a.Isco08.Trim(),
-                       Isco88 = jd.a.Isco88.Trim()
                    })
-                   .Where(a => a.LanguageId == languageId && titles.Contains(a.FkJobTitle))
                    .ToList();
 
 

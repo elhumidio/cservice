@@ -50,8 +50,9 @@ namespace Application.JobTitles.Command
                 // Try to get job titles denominations from the cache
                 if (cachedDenominations)
                 {
+                    GC.Collect();
                     // Cache hit, return job titles from the cache
-                    return Result<JobTitleDenominationsDto[]>.Success(jobTitlesDnominations.ToArray()); ;
+                    return Result<JobTitleDenominationsDto[]>.Success(jobTitlesDnominations.ToArray());
                 }
 
                 // Cache miss, fetch job titles denominations from the data source
@@ -65,6 +66,7 @@ namespace Application.JobTitles.Command
 
                 _memoryCache.Set(cacheKey, jobTitlesList, cacheEntryOptions);
 
+                GC.Collect();
                 return Result<JobTitleDenominationsDto[]>.Success(jobTitlesList.ToArray());
             }
             catch (Exception ex)
