@@ -21,7 +21,6 @@ namespace Domain.Entities
         public int? FkTranslationDescription { get; set; }
 
         public virtual ICollection<JobTitleArea> JobTitlesAreas { get; set; }
-        public virtual TranslationsWeb? FkTranslationDescriptionNavigation { get; set; }
         public virtual ICollection<JobTitleDenomination> JobTitlesDenominations { get; set; }
     }
 }

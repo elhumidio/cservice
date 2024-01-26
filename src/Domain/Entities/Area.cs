@@ -7,6 +7,7 @@ namespace Domain.Entities
     {
         public Area()
         {
+            JobTitlesAreas = new HashSet<JobTitleArea>();
             TsubAreas = new HashSet<TsubArea>();
         }
 
@@ -18,11 +19,10 @@ namespace Domain.Entities
         public int? ChkActive { get; set; }
         public int? NumVacancies { get; set; }
         public int? Threshold { get; set; }
-        public int IscoDefault { get; set; }
+        public int? IscoDefault { get; set; }
         public int? FkTranslationId { get; set; }
 
+        public virtual ICollection<JobTitleArea> JobTitlesAreas { get; set; }
         public virtual ICollection<TsubArea> TsubAreas { get; set; }
-
-        public virtual TranslationsWeb? FkTranslation { get; set; }
     }
 }

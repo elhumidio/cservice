@@ -229,7 +229,7 @@ namespace Application.JobOffer.Commands
             //Missing Denominations will be set to the default for the JobTitle, if set
             if (offer.TitleDenominationId <= 0 && offer.TitleId > 0)
             {
-                offer.TitleDenominationId = _denominationsRepository.GetDefaultDenomination(offer.TitleId, offer.Idsite).FK_JobTitle;
+                offer.TitleDenominationId = _denominationsRepository.GetDefaultDenomination(offer.TitleId, offer.Idsite).FkJobTitle;
                 return;
             }
 
@@ -251,8 +251,8 @@ namespace Application.JobOffer.Commands
                 return;
             }
 
-            offer.TitleDenominationId = selectedValue.ID;
-            offer.TitleId = selectedValue.FK_JobTitle;
+            offer.TitleDenominationId = selectedValue.Id;
+            offer.TitleId = selectedValue.FkJobTitle;
             return;
         }
 
