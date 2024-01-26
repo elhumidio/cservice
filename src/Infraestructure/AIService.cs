@@ -20,8 +20,12 @@ namespace Infraestructure
         public string DoGPTRequest(string prompt, string data)
         {
             var serviceURL = _config["ExternalServices:AIService"];
-            Uri serviceUri = GetURL(serviceURL, $"ChatGPT/DoRequest");
-            return RestClient.Post<SendGPTRequest, string>(serviceUri.AbsoluteUri, new SendGPTRequest(prompt, data)).Result;
+            Uri serviceUri = GetURL(serviceURL, $"api/ChatGPT/DoGPTRequest");
+            var rawPrompt = new StreamReader(File.OpenRead("rawPrompt.txt")).ReadToEnd();
+            var args = new List<string> { prompt };
+
+            var body = string.Format(rawPrompt, args.ToArray());
+            return RestClient.Post<SendGPTRequest, string>(serviceUri.AbsoluteUri, new SendGPTRequest(body, data)).Result;
             throw new NotImplementedException();
         }
 

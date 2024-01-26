@@ -76,7 +76,6 @@ namespace Persistence
         public virtual DbSet<ZoneUrl> ZoneUrls { get; set; } = null!;
         public virtual DbSet<InternationalDiffusionCountry> InternationalDiffusionCountries { get; set; } = null!;
 
-        public virtual DbSet<JobTitle> JobTitles { get; set; } = null!;
         public virtual DbSet<JobTitleArea> JobTitlesAreas { get; set; } = null!;
         public virtual DbSet<JobTitleDenomination> JobTitlesDenominations { get; set; } = null!;
         public virtual DbSet<JobTitlesRelationship> JobTitlesRelationships { get; set; } = null!;
