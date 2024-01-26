@@ -21,7 +21,7 @@
 
   <ItemGroup>
     <None Update="rawPrompt.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 
