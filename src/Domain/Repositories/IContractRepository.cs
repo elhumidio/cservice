@@ -21,8 +21,8 @@ namespace Domain.Repositories
         public Task<List<ContractProductShortDto>> GetAllProductsByContract(int contractId, int lang, int site);
 
         public Task<bool> IsAllowedContractForSeeingFilters(int contractId);
-        public Task<IReadOnlyList<KeyValueResponse>> GetValidContractsByCompaniesIds(List<int> companiesIds);
 
+        public Task<IReadOnlyList<KeyValueResponse>> GetValidContractsByCompaniesIds(List<int> companiesIds);
 
         public Task<int> CreateContract(Contract contract);
 
@@ -31,12 +31,15 @@ namespace Domain.Repositories
         public Task<bool> UpdateContract(Contract contract);
 
         public bool DisableContract(int contractId);
+
         public DateTime GetContractFinishDate(List<ProductUnits> productUnits, int countryId = 40);
 
-        
         public Task<IReadOnlyList<EnterpriseListContractsIdsDto>> GetContractsByCompaniesIds(List<int> companiesIds);
+
         public Task<IReadOnlyList<KeyValueDateTimeDto>> GetFinishDateContractClosingExpiringByCompaniesIds(List<int> companiesIds);
 
         public Task<Contract> GetContractByStripeSessionId(string stripeSessionId);
+
+        public bool DeleteContractInfo(int contractId);
     }
 }

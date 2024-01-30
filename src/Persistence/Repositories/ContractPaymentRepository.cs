@@ -14,7 +14,7 @@ namespace Persistence.Repositories
         }
         public bool HasPayments(int contractId)
         {
-            var payments = _dataContext.ContractPayments.Where(c => c.Idcontract == contractId).Count();
+            var payments = _dataContext.ContractPayments.Where(c => c.Idcontract == contractId  && (bool)c.Finished).Count();
             return payments > 0;
                  
         }
