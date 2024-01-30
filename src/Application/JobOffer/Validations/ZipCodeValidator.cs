@@ -26,81 +26,91 @@ namespace Application.JobOffer.Validations
 
         private bool IsRightPostalCode(CreateOfferCommand obj)
         {
-            var ret = false;            
-            var country = _regionRepo.GetCountry(obj.Idregion);
-            if (obj.Idcountry <= 1)
-            {
-                obj.Idcountry = country;
-            }
-            else obj.Idcountry = obj.Idcountry;
+            var ret = false;
 
-            var countryCode = GetCountryIsoByIdCountry(obj.Idcountry);            
-
-            if (!string.IsNullOrEmpty(countryCode))
+            if (obj.IntegrationData.IDIntegration != null)
             {
-                var ans = _geoNames.GetPostalCodesCollection(obj.ZipCode, GetCountryIsoByIdCountry(obj.Idcountry));
-                if (ans != null && ans.postalCodes.Any())
+                var country = _regionRepo.GetCountry(obj.Idregion);
+                if (obj.Idcountry <= 1)
                 {
-                    var IdzipCode = obj.ZipCode != null ? _zipCodeRepo.GetZipCodeIdByCodeAndCountry(obj.ZipCode, obj.Idcountry) : 0;
+                    obj.Idcountry = country;
+                }
+                else obj.Idcountry = obj.Idcountry;
 
-                    if (IdzipCode != 0)
-                        obj.IdzipCode = IdzipCode;
-                    else if (IdzipCode == 0)
+                var countryCode = GetCountryIsoByIdCountry(obj.Idcountry);
+
+                if (!string.IsNullOrEmpty(countryCode))
+                {
+                    var ans = _geoNames.GetPostalCodesCollection(obj.ZipCode, GetCountryIsoByIdCountry(obj.Idcountry));
+                    if (ans != null && ans.postalCodes.Any())
                     {
-                        //go for another id based on location name
-                        IdzipCode = _zipCodeRepo.GetZipCodeIdByCity(obj.City);
+                        var IdzipCode = obj.ZipCode != null ? _zipCodeRepo.GetZipCodeIdByCodeAndCountry(obj.ZipCode, obj.Idcountry) : 0;
+
                         if (IdzipCode != 0)
                             obj.IdzipCode = IdzipCode;
-                        if (IdzipCode == 0)
+                        else if (IdzipCode == 0)
                         {
-                            obj.Idcity = _zipCodeRepo.GetCityIdByName(ans.postalCodes.First().placeName);
-
-                            ZipCode zip = new ZipCode
+                            //go for another id based on location name
+                            IdzipCode = _zipCodeRepo.GetZipCodeIdByCity(obj.City);
+                            if (IdzipCode != 0)
+                                obj.IdzipCode = IdzipCode;
+                            if (IdzipCode == 0)
                             {
-                                Zip = ans.postalCodes.First().postalCode,
-                                Idcountry = obj.Idcountry,
-                                Idregion = obj.Idregion,
-                                Idcity = obj.Idcity,
-                                Longitude = Convert.ToDecimal(ans.postalCodes.First().lng),
-                                Latitude = Convert.ToDecimal(ans.postalCodes.First().lat),
-                                City = ans.postalCodes.First().placeName
-                            };
-                            var idZipcode = _zipCodeRepo.Add(zip);
-                            obj.IdzipCode = idZipcode;
-                        }
-                    }
+                                obj.Idcity = _zipCodeRepo.GetCityIdByName(ans.postalCodes.First().placeName);
 
-                    ret = true;
+                                ZipCode zip = new ZipCode
+                                {
+                                    Zip = ans.postalCodes.First().postalCode,
+                                    Idcountry = obj.Idcountry,
+                                    Idregion = obj.Idregion,
+                                    Idcity = obj.Idcity,
+                                    Longitude = Convert.ToDecimal(ans.postalCodes.First().lng),
+                                    Latitude = Convert.ToDecimal(ans.postalCodes.First().lat),
+                                    City = ans.postalCodes.First().placeName
+                                };
+                                var idZipcode = _zipCodeRepo.Add(zip);
+                                obj.IdzipCode = idZipcode;
+                            }
+                        }
+
+                        ret = true;
+                    }
+                    else
+                    {
+                        var IdzipCode = _zipCodeRepo.GetZipCodeIdByCity(obj.City);
+                        var zipCodeEntity = _zipCodeRepo.GetZipCodeEntity(obj.ZipCode, obj.Idcountry);
+                        if (zipCodeEntity != null)
+                        {
+                            obj.IdzipCode = zipCodeEntity.IdzipCode;
+                            var region = _regionRepo.Get(zipCodeEntity.Idregion);
+                            obj.JobLocation = region != null ? region.BaseName : string.Empty;
+                            obj.Idcity = zipCodeEntity.Idcity;
+                        }
+                        else if (IdzipCode > 0)
+                        {
+                            obj.IdzipCode = IdzipCode;
+                            var zip = _zipCodeRepo.GetZipById(IdzipCode);
+                            var region = _regionRepo.Get(zip.Idregion);
+                            obj.JobLocation = region != null ? region.BaseName : string.Empty;
+                            obj.Idcity = zip.Idcity;
+                        }
+                        ret = true;
+                    }
+                    if (obj.Idcity == null || obj.Idcity < 1)
+                    {
+
+                        var cityId = _zipCodeRepo.GetIdCityByZipCodeAnCountry(obj.ZipCode, obj.Idcountry);
+                        obj.Idcity = cityId;
+                    }
                 }
                 else
                 {
-                    var IdzipCode = _zipCodeRepo.GetZipCodeIdByCity(obj.City);
-                    var zipCodeEntity = _zipCodeRepo.GetZipCodeEntity(obj.ZipCode, obj.Idcountry);
-                    if (zipCodeEntity != null)
-                    {
-                        obj.IdzipCode = zipCodeEntity.IdzipCode;
-                        var region = _regionRepo.Get(zipCodeEntity.Idregion);
-                        obj.JobLocation = region != null ? region.BaseName : string.Empty;
-                        obj.Idcity = zipCodeEntity.Idcity;
-                    }
-                    else if (IdzipCode > 0) {
-                        obj.IdzipCode = IdzipCode;
-                        var zip = _zipCodeRepo.GetZipById(IdzipCode);
-                        var region = _regionRepo.Get(zip.Idregion);
-                        obj.JobLocation = region != null ? region.BaseName : string.Empty;
-                        obj.Idcity = zip.Idcity;
-                    }
-                    ret = true;
-                }
-                if (obj.Idcity == null || obj.Idcity < 1) {
-
-                    var cityId = _zipCodeRepo.GetIdCityByZipCodeAnCountry(obj.ZipCode, obj.Idcountry);
-                    obj.Idcity = cityId;
+                    ret = false;
                 }
             }
             else
             {
-                ret = false;
+                ret = true;
             }
 
             return ret;
