@@ -27,12 +27,22 @@ namespace API.Controllers
         public async Task<IActionResult> GetAvailableUnits(int contractId)
         {
             var result = await Mediator.Send(new GetAvailableUnits.Query
-            {
+            {   
                 ContractId = contractId
             });
             return HandleResult(result);
         }
 
+
+        [HttpGet("{contractId}")]
+        public async Task<IActionResult> DeleteContractAndRelated(int contractId)
+        {
+            var ret = await Mediator.Send(new DeleteContractAndRelated.Query
+            {
+                ContractID = contractId
+            });
+            return HandleResult(ret);
+        }
 
 
         [HttpPost]

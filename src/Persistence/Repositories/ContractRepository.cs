@@ -23,6 +23,47 @@ namespace Persistence.Repositories
             return query;
         }
 
+        public bool DeleteContractInfo(int contractId)
+        {
+            // Obtener las entidades
+            var contract = _dataContext.Contracts.FirstOrDefault(c => c.Idcontract == contractId);
+            var contractProduct = _dataContext.ContractProducts.FirstOrDefault(c => c.Idcontract == contractId);
+            var regenterprisecontracts = _dataContext.RegEnterpriseContracts.FirstOrDefault(c => c.Idcontract == contractId);
+            var enterpriseuserjobvac = _dataContext.EnterpriseUserJobVacs.FirstOrDefault(c => c.Idcontract == contractId);
+            var contractpayment = _dataContext.ContractPayments.FirstOrDefault(c => c.Idcontract == contractId);
+
+            // Eliminar las entidades si existen
+            if (contract != null)
+            {
+                _dataContext.Contracts.Remove(contract);
+            }
+
+            if (contractProduct != null)
+            {
+                _dataContext.ContractProducts.Remove(contractProduct);
+            }
+
+            if (regenterprisecontracts != null)
+            {
+                _dataContext.RegEnterpriseContracts.Remove(regenterprisecontracts);
+            }
+
+            if (enterpriseuserjobvac != null)
+            {
+                _dataContext.EnterpriseUserJobVacs.Remove(enterpriseuserjobvac);
+            }
+
+            if (contractpayment != null)
+            {
+                _dataContext.ContractPayments.Remove(contractpayment);
+            }
+
+            var ret = _dataContext.SaveChanges();
+
+            return ret > 0;
+
+        }
+
         public IQueryable<Contract> GetContracts(int companyId)
         {
             var query = _dataContext.Contracts.Where(c => c.Identerprise == companyId
