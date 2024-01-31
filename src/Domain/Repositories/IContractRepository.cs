@@ -40,6 +40,6 @@ namespace Domain.Repositories
 
         public Task<Contract> GetContractByStripeSessionId(string stripeSessionId);
 
-        public bool DeleteContractInfo(int contractId);
+        public bool DeleteContractInfo(int contractId, bool IsContractPreserved);
     }
 }

@@ -1,4 +1,4 @@
-﻿using Application.Core;
+using Application.Core;
 using Domain.Repositories;
 using MediatR;
 
@@ -9,6 +9,7 @@ namespace Application.Contracts.Queries
         public class Query : IRequest<Result<bool>>
         {
             public int ContractID { get; set; }
+            public bool HasToDeleteContract { get; set; }
        
         }
 
@@ -22,7 +23,7 @@ namespace Application.Contracts.Queries
 
             public async Task<Result<bool>> Handle(Query request, CancellationToken cancellationToken)
             {
-                var ret = _contract.DeleteContractInfo(request.ContractID);
+                var ret = _contract.DeleteContractInfo(request.ContractID,request.HasToDeleteContract);
                     
                 return Result<bool>.Success(ret);
             }

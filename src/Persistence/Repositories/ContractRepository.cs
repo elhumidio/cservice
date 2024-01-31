@@ -23,7 +23,7 @@ namespace Persistence.Repositories
             return query;
         }
 
-        public bool DeleteContractInfo(int contractId)
+        public bool DeleteContractInfo(int contractId, bool HasToDeleteContract)
         {
             // Obtener las entidades
             var contract = _dataContext.Contracts.FirstOrDefault(c => c.Idcontract == contractId);
@@ -33,7 +33,7 @@ namespace Persistence.Repositories
             var contractpayment = _dataContext.ContractPayments.FirstOrDefault(c => c.Idcontract == contractId);
 
             // Eliminar las entidades si existen
-            if (contract != null)
+            if (contract != null && HasToDeleteContract)
             {
                 _dataContext.Contracts.Remove(contract);
             }
@@ -312,5 +312,7 @@ namespace Persistence.Repositories
             var contract = await _dataContext.Contracts.Where(c => c.CheckoutSessionId.Contains(stripeSessionId)).FirstOrDefaultAsync();
             return contract;
         }
+
+
     }
 }

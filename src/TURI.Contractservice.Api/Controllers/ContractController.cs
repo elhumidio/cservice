@@ -34,12 +34,13 @@ namespace API.Controllers
         }
 
 
-        [HttpGet("{contractId}")]
-        public async Task<IActionResult> DeleteContractAndRelated(int contractId)
+        [HttpGet("{contractId}/{IsContractPreserved}")]
+        public async Task<IActionResult> DeleteContractAndRelated(int contractId, bool IsContractPreserved)
         {
             var ret = await Mediator.Send(new DeleteContractAndRelated.Query
             {
-                ContractID = contractId
+                ContractID = contractId,
+                HasToDeleteContract = IsContractPreserved
             });
             return HandleResult(ret);
         }

@@ -8,7 +8,6 @@ using Domain.Entities;
 using Domain.Enums;
 using Domain.Repositories;
 using MediatR;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace Application.ContractCRUD.Commands
 {
@@ -36,7 +35,7 @@ namespace Application.ContractCRUD.Commands
             try
             {
                 ContractCreationDomainResponse response = new();
-                var company = uow.EnterpriseRepository.Get(request.IDEnterprise);                
+                var company = uow.EnterpriseRepository.Get(request.IDEnterprise);
                 var finishDate = GetContractDurationByProducts(request.ProductsList);
                 decimal totalPrice = 0;
                 int? pricePartial = 0;
@@ -48,30 +47,37 @@ namespace Application.ContractCRUD.Commands
                     {
                         Idproduct = product.Idproduct,
                         Units = product.Units
-                    };  
+                    };
                     list.Add(obj);
                 }
 
-                var prices = await _productRepository.GetPricesByQuantityAndCountry(list,request.CountryId);
+                var prices = await _productRepository.GetPricesByQuantityAndCountry(list, request.CountryId);
 
+                if (request.IDContract > 0)
+                {
+                    response.Contract = await CreateContract(finishDate, request, company, totalPrice);
+                }
+                else
+                {
+                    //get contract by id
+                    response.Contract = uow.ContractRepository.Get(request.IDContract).FirstOrDefault();
+                }
 
-                //TODO discount logic missing...
-                response.Contract = await CreateContract(finishDate, request, company, totalPrice);
                 foreach (var prod in request.ProductsList)
-                {                    
+                {
                     var prodObj = _productRepository.Get(prod.Idproduct).FirstOrDefault();
                     if (response.Contract == null)
                     {
                         return Result<ContractCreationDomainResponse>.Failure("Couldn't create contract");
                     }
                     var productLines = uow.ProductLineRepository.GetProductLinesByProductId(prod.Idproduct)
-                        .Where(pl =>  (prodObj.ChkService ? pl.IdjobVacType == null : pl.IdjobVacType != null
+                        .Where(pl => (prodObj.ChkService ? pl.IdjobVacType == null : pl.IdjobVacType != null
                         && pl.Idslanguage == request.IDSLanguage)).GroupBy(g => g.Idproduct)
                         .ToList();
                     response.ProductLines.AddRange(uow.ProductLineRepository.GetProductLinesByProductId(prod.Idproduct)
                         .Where(pl => pl.Idsite == company.SiteId && (prodObj.ChkService ? pl.IdjobVacType == null : pl.IdjobVacType != null
-                        && pl.Idslanguage == request.IDSLanguage)).ToList());         
-           
+                        && pl.Idslanguage == request.IDSLanguage)).ToList());
+
                     foreach (var pl in productLines)
                     {
                         int price = 0;
@@ -109,7 +115,7 @@ namespace Application.ContractCRUD.Commands
                         if (!prodObj.ChkService)
                         {
                             response.RegEnterpriseContracts.Add(await SaveRegEnterpriseContract(request, prodObj, response.Contract.Idcontract, pl.First()));
-                            var enterpriseUserJobVac = CreateUserJobVac(request,response, prodObj, pl.First());
+                            var enterpriseUserJobVac = CreateUserJobVac(request, response, prodObj, pl.First());
                             await uow.EnterpriseUserJobVacRepository.Add(enterpriseUserJobVac);
                         }
 
@@ -159,14 +165,14 @@ namespace Application.ContractCRUD.Commands
         }
 
         private DateTime GetContractDurationByProducts(List<ProductUnits> prods)
-        {            
-            var calculatedDate = uow.ContractRepository.GetContractFinishDate(prods);            
-            return calculatedDate.Date;    
+        {
+            var calculatedDate = uow.ContractRepository.GetContractFinishDate(prods);
+            return calculatedDate.Date;
         }
 
         private EnterpriseUserJobVac CreateUserJobVac(CreateContractCommand request, ContractCreationDomainResponse response, Product? product, ProductLine pl)
         {
-            EnterpriseUserJobVac enterpriseUserJobVac = new();            
+            EnterpriseUserJobVac enterpriseUserJobVac = new();
             mapper.Map(response.Contract, enterpriseUserJobVac);
             enterpriseUserJobVac.Idproduct = pl.Idproduct;
             mapper.Map(pl, enterpriseUserJobVac);
@@ -183,7 +189,6 @@ namespace Application.ContractCRUD.Commands
             return enterpriseUserJobVac;
         }
 
-
         private async Task<Contract> CreateContract(DateTime finishDate, CreateContractCommand request, Enterprise company, decimal price)
         {
             Contract con = new();
@@ -197,8 +202,8 @@ namespace Application.ContractCRUD.Commands
             con.ChkApproved = true;
             con.Price = price;
             con.FinalPrice = price;
-            
-            var contractId = await uow.ContractRepository.CreateContract(con);            
+
+            var contractId = await uow.ContractRepository.CreateContract(con);
             return con;
         }
 
@@ -220,7 +225,7 @@ namespace Application.ContractCRUD.Commands
         {
             var regContract = new RegEnterpriseContract();
             mapper.Map(request, regContract);
-            mapper.Map(product, regContract);           
+            mapper.Map(product, regContract);
             regContract.Idcontract = contractId;
             regContract.Units = request.ProductsList.Where(p => p.Idproduct == product.Idproduct).First().Units;
             regContract.IdjobVacType = pl.IdjobVacType ?? 0;

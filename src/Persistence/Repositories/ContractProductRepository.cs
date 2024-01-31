@@ -42,7 +42,7 @@ namespace Persistence.Repositories
                     Idproduct = contractProduct.Idproduct,
                     Units = regEnterpriseContract.Units
                 }
-            ).ToList();
+            ).Distinct().ToList();
             return productUnitsList;
         }
 

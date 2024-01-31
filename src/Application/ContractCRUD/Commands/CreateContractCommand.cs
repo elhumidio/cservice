@@ -10,6 +10,8 @@ namespace Application.ContractCRUD.Commands
     public class CreateContractCommand : IRequest<Result<ContractCreationDomainResponse>>
     {
         [DataMember]
+        public int IDContract { get; set; } = -1;
+        [DataMember]
         public int IDSUser { get; set; } = -1;
 
         [DataMember]
