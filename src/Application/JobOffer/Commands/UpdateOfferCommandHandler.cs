@@ -28,6 +28,7 @@ namespace Application.JobOffer.Commands
         private readonly IConfiguration _config;
         private readonly IEnterpriseRepository _enterpriseRepository;
         private readonly IApiUtils _utils;
+        private readonly IJobTitleDenominationsRepository _denominationsRepository;
 
         #endregion PRIVATE PROPERTIES
 
@@ -42,6 +43,7 @@ namespace Application.JobOffer.Commands
             ICityRepository cityRepository,
             IConfiguration config,
             IEnterpriseRepository enterpriseRepository,
+            IJobTitleDenominationsRepository denominationsRepository,
             IApiUtils utils)
         {
             _contractProductRepo = contractProductRepo;
@@ -56,6 +58,7 @@ namespace Application.JobOffer.Commands
             _config = config;
             _enterpriseRepository = enterpriseRepository;
             _utils = utils;
+            _denominationsRepository = denominationsRepository;
         }
 
         public async Task<OfferModificationResult> Handle(UpdateOfferCommand offer, CancellationToken cancellationToken)
@@ -80,6 +83,9 @@ namespace Application.JobOffer.Commands
             var entity = _mapper.Map(offer, existentOffer);
             CityValidation(offer);
             var company = _enterpriseRepository.Get(offer.Identerprise);
+
+            if (existentOffer.TitleId > 0)
+                existentOffer.Idarea = _denominationsRepository.GetAreaByJobTitle((int)entity.TitleId);
 
             if (company.Idstatus != (int)EnterpriseStatus.Active)
             {
