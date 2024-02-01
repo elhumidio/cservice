@@ -22,20 +22,27 @@ namespace Infraestructure
         {
             var serviceURL = _config["ExternalServices:AIService"];
             Uri serviceUri = GetURL(serviceURL, $"api/ChatGPT/DoGPTJobTitleFromAreaRequest");
-            using (var reader = new StreamReader(File.OpenRead("rawPrompt.txt")))
+            try
             {
-                var rawPrompt = reader.ReadToEnd();
-                var modifiedPrompt = rawPrompt.Replace("|0|", '"' + title + '"').Replace("|1|", "\"" + denominationList + "\"");
-
-                using (var client = new HttpClient())
+                using (var reader = new StreamReader(File.OpenRead("rawPrompt.txt")))
                 {
-                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                    var response = client.PostAsync(serviceUri.AbsoluteUri, new StringContent(modifiedPrompt, Encoding.UTF8, "application/json")).Result;
-                    string strResponse = response.Content.ReadAsStringAsync().Result;
-                    var responseObj = JsonConvert.DeserializeObject<ChatGPTResponseObject>(strResponse);
-                    return responseObj?.results[0] ?? "-1";
-                }
-            };
+                    var rawPrompt = reader.ReadToEnd();
+                    var modifiedPrompt = rawPrompt.Replace("|0|", '"' + title + '"').Replace("|1|", "\"" + denominationList + "\"");
+
+                    using (var client = new HttpClient())
+                    {
+                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                        var response = client.PostAsync(serviceUri.AbsoluteUri, new StringContent(modifiedPrompt, Encoding.UTF8, "application/json")).Result;
+                        string strResponse = response.Content.ReadAsStringAsync().Result;
+                        var responseObj = JsonConvert.DeserializeObject<ChatGPTResponseObject>(strResponse);
+                        return responseObj?.results[0] ?? "-1";
+                    }
+                };
+            }
+            catch
+            {
+                return "-1";
+            }            
         }
 
         private Uri GetURL(string serviceUrl, string methodName)
