@@ -8,6 +8,6 @@ namespace Application.Interfaces
 {
     public interface IAIService
     {
-        public string DoGPTRequest(string prompt, string data);
+        public string DoGPTRequestDynamic(string prompt, string data);
     }
 }

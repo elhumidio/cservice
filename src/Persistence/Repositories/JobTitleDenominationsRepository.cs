@@ -19,7 +19,7 @@ namespace Persistence.Repositories
             _logger = logger;
         }
 
-        public List<JobTitleDenomination> GetAllForArea(int idArea, int idSite)
+        public List<JobTitleDenomination> GetAllForArea(int idArea)
         {
             //NOTE: Select here **mandatory** as some link broken with EF, thinks a random column exists
             return _dataContext.JobTitlesDenominations.Select(a => new JobTitleDenomination
@@ -39,7 +39,7 @@ namespace Persistence.Repositories
                 IDArea = area.FkAreaId,
                 IDSite = area.FkIdsite
             })
-            .Where(v => v.IDArea == idArea && v.IDSite == idSite)
+            .Where(v => v.IDArea == idArea)
             .Select(d => d.Denom)
             .ToList();
         }

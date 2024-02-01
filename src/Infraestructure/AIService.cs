@@ -1,9 +1,10 @@
-using ApisClient.DTO;
 using Application.Core;
 using Application.Interfaces;
-using Application.Utils;
 using MediatR;
 using Microsoft.Extensions.Configuration;
+using System.Net.Http.Headers;
+using System.Text;
+using Newtonsoft.Json;
 
 namespace Infraestructure
 {
@@ -17,16 +18,31 @@ namespace Infraestructure
             _config = config;
         }
 
-        public string DoGPTRequest(string prompt, string data)
+        public string DoGPTRequestDynamic(string denominationList, string title)
         {
             var serviceURL = _config["ExternalServices:AIService"];
-            Uri serviceUri = GetURL(serviceURL, $"api/ChatGPT/DoGPTRequest");
-            var rawPrompt = new StreamReader(File.OpenRead("rawPrompt.txt")).ReadToEnd();
-            var args = new List<string> { prompt };
+            Uri serviceUri = GetURL(serviceURL, $"api/ChatGPT/DoGPTJobTitleFromAreaRequest");
+            try
+            {
+                using (var reader = new StreamReader(File.OpenRead("rawPrompt.txt")))
+                {
+                    var rawPrompt = reader.ReadToEnd();
+                    var modifiedPrompt = rawPrompt.Replace("|0|", '"' + title + '"').Replace("|1|", "\"" + denominationList + "\"");
 
-            var body = string.Format(rawPrompt, args.ToArray());
-            return RestClient.Post<SendGPTRequest, string>(serviceUri.AbsoluteUri, new SendGPTRequest(body, data)).Result;
-            throw new NotImplementedException();
+                    using (var client = new HttpClient())
+                    {
+                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                        var response = client.PostAsync(serviceUri.AbsoluteUri, new StringContent(modifiedPrompt, Encoding.UTF8, "application/json")).Result;
+                        string strResponse = response.Content.ReadAsStringAsync().Result;
+                        var responseObj = JsonConvert.DeserializeObject<ChatGPTResponseObject>(strResponse);
+                        return responseObj?.results[0] ?? "-1";
+                    }
+                };
+            }
+            catch
+            {
+                return "-1";
+            }            
         }
 
         private Uri GetURL(string serviceUrl, string methodName)
@@ -51,5 +67,12 @@ namespace Infraestructure
             Prompt = prompt;
             Data = data;
         }
+    }
+
+    public class ChatGPTResponseObject
+    {
+        public string generationId { get; set; }
+        public string prompt { get; set; }
+        public string[] results { get; set; }
     }
 }

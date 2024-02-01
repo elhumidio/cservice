@@ -236,37 +236,38 @@ namespace Application.JobOffer.Commands
 
             //Otherwise we'll set the Job title by asking ChatGPT.
             //Get the list of denominations that match the Area we have
-            var denominationsForArea = _denominationsRepository.GetAllForArea(offer.Idarea, offer.Idsite);
+            var denominationsForArea = _denominationsRepository.GetAllForArea(offer.Idarea);
 
-            //Give them all to ChatGPT along with our TitleString, and make it pick.
-            var prompt = FillPrompt(denominationsForArea, offer.Title);
-            var gptResult = _aiService.DoGPTRequest(prompt, string.Empty);
-            var match = new Regex("\"content\": \"(?<content>.+?)\"");
-            var parsed = match.IsMatch(gptResult)
-                ? match.Match(gptResult).Groups["content"].Value.Replace("'", "")
-                : string.Empty;
-
-            //Match the result back with our list to get the IdJobTitle, then the Default Denomination.
-            var selectedValue = denominationsForArea.FirstOrDefault(d => d.Denomination == parsed);
-            if (selectedValue == null)
+            if (!denominationsForArea.Any())
             {
-                _logger.LogError($"JobTitleDenomination Failed to find match when posting job. GPT Result: {gptResult}, Title: {offer.Title}");
+                _logger.LogError($"No Denominations for the given Area {offer.Idarea}, Title: {offer.Title}");
                 offer.TitleDenominationId = -1;
                 offer.TitleId = -1;
                 return;
             }
 
-            offer.TitleDenominationId = selectedValue.Id;
-            offer.TitleId = selectedValue.FkJobTitle;
-            return;
+            //Give them all to ChatGPT along with our TitleString, and make it pick.
+            var denominationListString = MakeDenominationList(denominationsForArea);
+            var gptResult = _aiService.DoGPTRequestDynamic(denominationListString, offer.Title);
+            if (gptResult != null && int.TryParse(gptResult, out var gptId))
+            {
+                var selectedValue = denominationsForArea.FirstOrDefault(d => d.Id == gptId);
+                if (selectedValue != null)
+                {
+                    offer.TitleDenominationId = selectedValue.Id;
+                    offer.TitleId = selectedValue.FkJobTitle;
+                    return;
+                }
+            }
+            _logger.LogError($"JobTitleDenomination Failed to find match when posting job. GPT Result: {gptResult}, Title: {offer.Title}");
+            offer.TitleDenominationId = -1;
+            offer.TitleId = -1;
+            return;            
         }
 
-        private string FillPrompt(List<JobTitleDenomination> denominationsForArea, string title)
+        private string MakeDenominationList(List<JobTitleDenomination> denominationsForArea)
         {
-            const string basePrompt = "You will be given a list of job titles between the characters '|', separated by ','. From this list, choose and return one entry that best matches the string marked as Target. Return only the entire selected string from the list. Select a string that matches the language of the Target. Target:'{1}'. |{2}|";
-
-            var denominations = denominationsForArea.Select(d => d.Denomination).Aggregate((a, b) => a + $", {b}");
-            return basePrompt.Replace("{1}", title).Replace("{2}", denominations);
+            return denominationsForArea.Select(d => $"{d.Id} : {d.Denomination}").Aggregate((a, b) => a + $", {b}");
         }
 
         /// <summary>
