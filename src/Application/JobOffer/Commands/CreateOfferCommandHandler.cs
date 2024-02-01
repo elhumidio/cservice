@@ -236,29 +236,25 @@ namespace Application.JobOffer.Commands
 
             //Otherwise we'll set the Job title by asking ChatGPT.
             //Get the list of denominations that match the Area we have
-            var denominationsForArea = _denominationsRepository.GetAllForArea(offer.Idarea, offer.Idsite);
+            var denominationsForArea = _denominationsRepository.GetAllForArea(offer.Idarea);
 
             //Give them all to ChatGPT along with our TitleString, and make it pick.
             var denominationListString = MakeDenominationList(denominationsForArea);
             var gptResult = _aiService.DoGPTRequestDynamic(denominationListString, offer.Title);
-            var match = new Regex("\"content\": \"(?<content>.+?)\"");
-            var parsed = match.IsMatch(gptResult)
-                ? match.Match(gptResult).Groups["content"].Value.Replace("'", "")
-                : string.Empty;
-
-            //Match the result back with our list to get the IdJobTitle, then the Default Denomination.
-            var selectedValue = denominationsForArea.FirstOrDefault(d => d.Denomination == parsed);
-            if (selectedValue == null)
+            if (gptResult != null && int.TryParse(gptResult, out var gptId))
             {
-                _logger.LogError($"JobTitleDenomination Failed to find match when posting job. GPT Result: {gptResult}, Title: {offer.Title}");
-                offer.TitleDenominationId = -1;
-                offer.TitleId = -1;
-                return;
+                var selectedValue = denominationsForArea.FirstOrDefault(d => d.Id == gptId);
+                if (selectedValue != null)
+                {
+                    offer.TitleDenominationId = selectedValue.Id;
+                    offer.TitleId = selectedValue.FkJobTitle;
+                    return;
+                }
             }
-
-            offer.TitleDenominationId = selectedValue.Id;
-            offer.TitleId = selectedValue.FkJobTitle;
-            return;
+            _logger.LogError($"JobTitleDenomination Failed to find match when posting job. GPT Result: {gptResult}, Title: {offer.Title}");
+            offer.TitleDenominationId = -1;
+            offer.TitleId = -1;
+            return;            
         }
 
         private string MakeDenominationList(List<JobTitleDenomination> denominationsForArea)

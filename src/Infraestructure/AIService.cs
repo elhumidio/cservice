@@ -1,9 +1,10 @@
-using ApisClient.DTO;
 using Application.Core;
 using Application.Interfaces;
-using Application.Utils;
 using MediatR;
 using Microsoft.Extensions.Configuration;
+using System.Net.Http.Headers;
+using System.Text;
+using Newtonsoft.Json;
 
 namespace Infraestructure
 {
@@ -20,13 +21,20 @@ namespace Infraestructure
         public string DoGPTRequestDynamic(string denominationList, string title)
         {
             var serviceURL = _config["ExternalServices:AIService"];
-            Uri serviceUri = GetURL(serviceURL, $"api/ChatGPT/DoGPTDynamicRequest");
+            Uri serviceUri = GetURL(serviceURL, $"api/ChatGPT/DoGPTJobTitleFromAreaRequest");
             using (var reader = new StreamReader(File.OpenRead("rawPrompt.txt")))
             {
                 var rawPrompt = reader.ReadToEnd();
                 var modifiedPrompt = rawPrompt.Replace("|0|", '"' + title + '"').Replace("|1|", "\"" + denominationList + "\"");
-                
-                return RestClient.Post<string, string>(serviceUri.AbsoluteUri, modifiedPrompt).Result;
+
+                using (var client = new HttpClient())
+                {
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    var response = client.PostAsync(serviceUri.AbsoluteUri, new StringContent(modifiedPrompt, Encoding.UTF8, "application/json")).Result;
+                    string strResponse = response.Content.ReadAsStringAsync().Result;
+                    var responseObj = JsonConvert.DeserializeObject<ChatGPTResponseObject>(strResponse);
+                    return responseObj?.results[0] ?? "-1";
+                }
             };
         }
 
@@ -52,5 +60,12 @@ namespace Infraestructure
             Prompt = prompt;
             Data = data;
         }
+    }
+
+    public class ChatGPTResponseObject
+    {
+        public string generationId { get; set; }
+        public string prompt { get; set; }
+        public string[] results { get; set; }
     }
 }
