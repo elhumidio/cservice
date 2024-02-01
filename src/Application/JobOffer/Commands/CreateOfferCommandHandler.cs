@@ -238,6 +238,14 @@ namespace Application.JobOffer.Commands
             //Get the list of denominations that match the Area we have
             var denominationsForArea = _denominationsRepository.GetAllForArea(offer.Idarea);
 
+            if (!denominationsForArea.Any())
+            {
+                _logger.LogError($"No Denominations for the given Area {offer.Idarea}, Title: {offer.Title}");
+                offer.TitleDenominationId = -1;
+                offer.TitleId = -1;
+                return;
+            }
+
             //Give them all to ChatGPT along with our TitleString, and make it pick.
             var denominationListString = MakeDenominationList(denominationsForArea);
             var gptResult = _aiService.DoGPTRequestDynamic(denominationListString, offer.Title);
