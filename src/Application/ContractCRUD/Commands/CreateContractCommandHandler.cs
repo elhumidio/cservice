@@ -53,8 +53,9 @@ namespace Application.ContractCRUD.Commands
 
                 var prices = await _productRepository.GetPricesByQuantityAndCountry(list, request.CountryId);
 
-                if (request.IDContract > 0)
+                if (request.IDContract < 0)
                 {
+
                     response.Contract = await CreateContract(finishDate, request, company, totalPrice);
                 }
                 else
@@ -194,6 +195,7 @@ namespace Application.ContractCRUD.Commands
             Contract con = new();
             con = mapper.Map(request, con);
             con = mapper.Map(company, con);
+            con.Idcontract = 0;
             con.StartDate = DateTime.Now.Date;
             con.FinishDate = finishDate;
             con.ApprovedDate = DateTime.Now.Date;
@@ -202,8 +204,7 @@ namespace Application.ContractCRUD.Commands
             con.ChkApproved = true;
             con.Price = price;
             con.FinalPrice = price;
-
-            var contractId = await uow.ContractRepository.CreateContract(con);
+            var contractId = await uow.ContractRepository.CreateContract(con);            
             return con;
         }
 
