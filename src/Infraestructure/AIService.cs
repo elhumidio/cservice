@@ -17,16 +17,17 @@ namespace Infraestructure
             _config = config;
         }
 
-        public string DoGPTRequest(string prompt, string data)
+        public string DoGPTRequestDynamic(string denominationList, string title)
         {
             var serviceURL = _config["ExternalServices:AIService"];
-            Uri serviceUri = GetURL(serviceURL, $"api/ChatGPT/DoGPTRequest");
-            var rawPrompt = new StreamReader(File.OpenRead("rawPrompt.txt")).ReadToEnd();
-            var args = new List<string> { prompt };
-
-            var body = string.Format(rawPrompt, args.ToArray());
-            return RestClient.Post<SendGPTRequest, string>(serviceUri.AbsoluteUri, new SendGPTRequest(body, data)).Result;
-            throw new NotImplementedException();
+            Uri serviceUri = GetURL(serviceURL, $"api/ChatGPT/DoGPTDynamicRequest");
+            using (var reader = new StreamReader(File.OpenRead("rawPrompt.txt")))
+            {
+                var rawPrompt = reader.ReadToEnd();
+                var modifiedPrompt = rawPrompt.Replace("|0|", '"' + title + '"').Replace("|1|", "\"" + denominationList + "\"");
+                
+                return RestClient.Post<string, string>(serviceUri.AbsoluteUri, modifiedPrompt).Result;
+            };
         }
 
         private Uri GetURL(string serviceUrl, string methodName)

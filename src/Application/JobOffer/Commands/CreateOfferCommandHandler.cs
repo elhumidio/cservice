@@ -239,8 +239,8 @@ namespace Application.JobOffer.Commands
             var denominationsForArea = _denominationsRepository.GetAllForArea(offer.Idarea, offer.Idsite);
 
             //Give them all to ChatGPT along with our TitleString, and make it pick.
-            var prompt = FillPrompt(denominationsForArea, offer.Title);
-            var gptResult = _aiService.DoGPTRequest(prompt, string.Empty);
+            var denominationListString = MakeDenominationList(denominationsForArea);
+            var gptResult = _aiService.DoGPTRequestDynamic(denominationListString, offer.Title);
             var match = new Regex("\"content\": \"(?<content>.+?)\"");
             var parsed = match.IsMatch(gptResult)
                 ? match.Match(gptResult).Groups["content"].Value.Replace("'", "")
@@ -261,12 +261,9 @@ namespace Application.JobOffer.Commands
             return;
         }
 
-        private string FillPrompt(List<JobTitleDenomination> denominationsForArea, string title)
+        private string MakeDenominationList(List<JobTitleDenomination> denominationsForArea)
         {
-            const string basePrompt = "You will be given a list of job titles between the characters '|', separated by ','. From this list, choose and return one entry that best matches the string marked as Target. Return only the entire selected string from the list. Select a string that matches the language of the Target. Target:'{1}'. |{2}|";
-
-            var denominations = denominationsForArea.Select(d => d.Denomination).Aggregate((a, b) => a + $", {b}");
-            return basePrompt.Replace("{1}", title).Replace("{2}", denominations);
+            return denominationsForArea.Select(d => $"{d.Id} : {d.Denomination}").Aggregate((a, b) => a + $", {b}");
         }
 
         /// <summary>
