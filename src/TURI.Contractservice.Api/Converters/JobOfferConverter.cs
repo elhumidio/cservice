@@ -30,7 +30,8 @@ namespace API.Converters
                 Description = item.Description,
                 IDSite = item.IDSite,
                 City = item.City,
-                ChkBlindVac = item.ChkBlindVac
+                ChkBlindVac = item.ChkBlindVac,
+                TitleId = item.TitleId,
             };
         }
 
