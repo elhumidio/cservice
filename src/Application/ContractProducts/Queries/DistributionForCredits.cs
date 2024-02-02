@@ -92,7 +92,18 @@ namespace Application.ContractProducts.Queries
                         });
                     }
                 }
-
+                unitsContainer.AssignedUnitsBasic = unitsContainer.TotalUnitsAssignedByType(VacancyTypesCredits.Basic);
+                unitsContainer.AsssignedUnitsSuperior = unitsContainer.TotalUnitsAssignedByType(VacancyTypesCredits.Superior);
+                unitsContainer.AssignedUnitsPremium = unitsContainer.TotalUnitsAssignedByType(VacancyTypesCredits.Premium);
+                unitsContainer.AssignedUnitsPremiumInternational = unitsContainer.TotalUnitsAssignedByType(VacancyTypesCredits.PremiumInternational);
+                unitsContainer.AssignedUnitsInternship = unitsContainer.TotalUnitsAssignedByType(VacancyTypesCredits.Internship);
+                unitsContainer.PurchasedUnitsBasic = unitsContainer.TotalUnitsPurchasedByType(VacancyTypesCredits.Basic);
+                unitsContainer.PurchasedUnitsSuperior = unitsContainer.TotalUnitsPurchasedByType(VacancyTypesCredits.Superior);
+                unitsContainer.PurchasedUnitsPremium = unitsContainer.TotalUnitsPurchasedByType(VacancyTypesCredits.Premium);
+                unitsContainer.PurchasedUnitsPremiumInternational = unitsContainer.TotalUnitsPurchasedByType(VacancyTypesCredits.PremiumInternational);
+                unitsContainer.PurchasedUnitsInternship = unitsContainer.TotalUnitsPurchasedByType(VacancyTypesCredits.Internship);
+                
+                unitsContainer.TotalUnitsAssignedByType(VacancyTypesCredits.Superior);
                 return Result<UnitsContainer>.Success(unitsContainer);
             }
         }

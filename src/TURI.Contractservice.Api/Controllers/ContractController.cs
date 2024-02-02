@@ -154,6 +154,13 @@ namespace API.Controllers
             });
             return HandleResult(contracts);
         }
+        [HttpGet("{companyId}")]
+        public async Task<IActionResult> GetUnitsDistributionByCompany(int companyId)
+        {
+            var dist = await Mediator.Send(new DistributionForCredits.Query { CompanyId = companyId });            
+            return HandleResult(dist);
+        }
+
 
         /// <summary>
         /// Get users that contrats expire soon

@@ -131,21 +131,26 @@ namespace Persistence.Repositories
                 .Join(_dataContext.ContractProducts, c => new { c.Idcontract }, cp => new { cp.Idcontract }, (c, cp) => new { c, cp })
                 .Join(_dataContext.Products, p => p.cp.Idproduct, pr => pr.Idproduct, (p, pr) => new { p, pr })
                 .Join(_dataContext.ProductLines, pl => pl.pr.Idproduct, ppl => ppl.Idproduct, (pl, ppl) => new { pl, ppl })
-                .Where(a => a.ppl.IdserviceType == null
-                && a.pl.p.c.Identerprise == companyId
-                && a.pl.p.c.ChkApproved
-                && a.pl.p.c.FinishDate >= DateTime.Now.Date
-                && a.pl.p.c.StartDate <= DateTime.Now.Date
-                && a.ppl.Idsite == siteId && a.ppl.Idslanguage == langId
-                && a.pl.pr.Idsite == siteId && a.pl.pr.Idslanguage == langId
-                /*&& a.pl.p.c.SalesforceId != null*/)
+                .Join(_dataContext.ContractPayments, cp => cp.pl.p.c.Idcontract, cp => cp.Idcontract, (cp, cpayment) => new { cp, cpayment })
+                .Where(a => a.cp.ppl.IdserviceType == null
+                            && a.cp.pl.p.c.Identerprise == companyId
+                            && a.cp.pl.p.c.ChkApproved
+                            && a.cp.pl.p.c.FinishDate >= DateTime.Now.Date
+                            && a.cp.pl.p.c.StartDate <= DateTime.Now.Date
+                            && a.cp.ppl.Idsite == siteId && a.cp.ppl.Idslanguage == langId
+                            && a.cp.pl.pr.Idsite == siteId && a.cp.pl.pr.Idslanguage == langId
+                            && a.cpayment.Finished == true
+                )
                 .Select(res => new ContractsDistDto
                 {
-                    BaseName = res.pl.pr.BaseName,
-                    ContractId = res.pl.p.c.Idcontract,
-                    ProductId = res.pl.pr.Idproduct,
-                    FinishDate = res.pl.p.c.FinishDate != null ? Convert.ToDateTime(res.pl.p.c.FinishDate).ToString("dd/MM/yyyy") : string.Empty,
-                }).Distinct().ToListAsync();
+                    BaseName = res.cp.pl.pr.BaseName,
+                    ContractId = res.cp.pl.p.c.Idcontract,
+                    ProductId = res.cp.pl.pr.Idproduct,
+                    FinishDate = res.cp.pl.p.c.FinishDate != null ? Convert.ToDateTime(res.cp.pl.p.c.FinishDate).ToString("dd/MM/yyyy") : string.Empty,
+                })
+                .Distinct()
+                .ToListAsync();
+
 
             return list;
         }
