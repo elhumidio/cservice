@@ -1,5 +1,6 @@
 using Domain.Entities;
 using Domain.Repositories;
+using Microsoft.EntityFrameworkCore;
 
 namespace Persistence.Repositories
 {
@@ -15,6 +16,14 @@ namespace Persistence.Repositories
         {
             var ret = await _dataContext.AddAsync(ujobvac);
             return ret.Entity.Idcontract;
+        }
+
+        public async Task<List<EnterpriseUserJobVac>> GetAssignmentsByUserProductAndContract(int idEnterpriseUser, int idjobvactype, int idcontract)
+        {
+            var dist = await _dataContext.EnterpriseUserJobVacs.Where(x => x.IdjobVacType == idjobvactype
+            && x.Idcontract == idcontract && x.IdenterpriseUser == idEnterpriseUser).ToListAsync();
+            return dist;
+            
         }
     }
 }

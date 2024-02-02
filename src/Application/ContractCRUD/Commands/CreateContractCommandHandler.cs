@@ -116,8 +116,17 @@ namespace Application.ContractCRUD.Commands
                         if (!prodObj.ChkService)
                         {
                             response.RegEnterpriseContracts.Add(await SaveRegEnterpriseContract(request, prodObj, response.Contract.Idcontract, pl.First()));
-                            var enterpriseUserJobVac = CreateUserJobVac(request, response, prodObj, pl.First());
-                            await uow.EnterpriseUserJobVacRepository.Add(enterpriseUserJobVac);
+                            //Get active users by enterprise
+                            var enterpriseUsers = uow.EnterpriseUserRepository.GetCompanyAdmins(request.IDEnterprise,true);
+                            foreach (var enterpriseUser in enterpriseUsers)
+                            {
+                                var evac = CreateUserJobVac(request, response, prodObj, pl.First(),enterpriseUser.IsAdmin);
+                                evac.IdenterpriseUser = enterpriseUser.UserId;
+                                await uow.EnterpriseUserJobVacRepository.Add(evac);
+                            }
+                            //   var enterpriseUserJobVac = CreateUserJobVac(request, response, prodObj, pl.First());
+                            // await uow.EnterpriseUserJobVacRepository.Add(enterpriseUserJobVac);
+                            uow.Commit();
                         }
 
                         var products = await _mediator.Send(new GetAllProductsByContract.GetProducts
@@ -171,7 +180,7 @@ namespace Application.ContractCRUD.Commands
             return calculatedDate.Date;
         }
 
-        private EnterpriseUserJobVac CreateUserJobVac(CreateContractCommand request, ContractCreationDomainResponse response, Product? product, ProductLine pl)
+        private EnterpriseUserJobVac CreateUserJobVac(CreateContractCommand request, ContractCreationDomainResponse response, Product? product, ProductLine pl, bool isAdmin)
         {
             EnterpriseUserJobVac enterpriseUserJobVac = new();
             mapper.Map(response.Contract, enterpriseUserJobVac);
@@ -179,6 +188,7 @@ namespace Application.ContractCRUD.Commands
             mapper.Map(pl, enterpriseUserJobVac);
             mapper.Map(product, enterpriseUserJobVac);
             enterpriseUserJobVac.IdjobVacType = pl.IdjobVacType ?? 0;
+      
             enterpriseUserJobVac.IdenterpriseUser = request.IDEnterpriseUSer;
             var productInRequest = request.ProductsList.FirstOrDefault(a => a.Idproduct == product.Idproduct);
             if (productInRequest != null)
@@ -186,7 +196,10 @@ namespace Application.ContractCRUD.Commands
                 enterpriseUserJobVac.MaxJobVacancies = productInRequest.Units;
                 enterpriseUserJobVac.JobVacUsed = enterpriseUserJobVac.MaxJobVacancies;
             }
-
+            if (!isAdmin)
+            {
+                enterpriseUserJobVac.JobVacUsed = 0;
+            }
             return enterpriseUserJobVac;
         }
 
