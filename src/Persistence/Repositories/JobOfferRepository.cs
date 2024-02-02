@@ -361,7 +361,8 @@ namespace Persistence.Repositories
                              UpdatingDate = job.UpdatingDate,
                              IDCity = job.Idcity ?? 0,
                              ChkBlindVac = job.ChkBlindVac,
-                             City = job.City ?? ""
+                             City = job.City ?? "",
+                             TitleId = job.TitleId ?? 0
                              //Description = "",
                          });
 

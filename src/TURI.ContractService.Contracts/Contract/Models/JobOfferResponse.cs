@@ -17,4 +17,5 @@ public class JobOfferResponse
     public int IDSite { get; set; }
     public bool ChkBlindVac { get; set; }
     public string City { get; set; }
+    public int TitleId { get; set; }
 }
