@@ -12,6 +12,7 @@ public interface IUnitOfWork : IDisposable
     IProductRepository ProductRepository { get; }
     IEnterpriseRepository EnterpriseRepository { get; }
     IProductLineRepository ProductLineRepository { get; }
+    IEnterpriseUserRepository EnterpriseUserRepository { get; }
 
     void Commit();
 

@@ -24,6 +24,8 @@ public class UnitOfWork : IUnitOfWork
 
     public IProductLineRepository ProductLineRepository { get; set; }
 
+    public IEnterpriseUserRepository EnterpriseUserRepository { get; set; }
+
     public UnitOfWork(DataContext dbContext, IContractRepository contractRepository,
         IContractProductRepository contractProductRepository,
         IRegEnterpriseContractRepository regEnterpriseContract,
@@ -33,7 +35,8 @@ public class UnitOfWork : IUnitOfWork
         IProductRepository productRepository,
         IEnterpriseRepository enterpriseRepository,
         IProductLineRepository productLineRepository,
-        IContractPublicationRegionRepository contractPublicationRegionRepository)
+        IContractPublicationRegionRepository contractPublicationRegionRepository,
+        IEnterpriseUserRepository enterpriseUserRepository)
     {
         _dbContext = dbContext;
         ContractRepository = contractRepository;
@@ -46,6 +49,7 @@ public class UnitOfWork : IUnitOfWork
         EnterpriseRepository = enterpriseRepository;
         ProductLineRepository = productLineRepository;
         ContractPublicationRegionRepository = contractPublicationRegionRepository;
+        EnterpriseUserRepository = enterpriseUserRepository;
     }
 
     public void Save()

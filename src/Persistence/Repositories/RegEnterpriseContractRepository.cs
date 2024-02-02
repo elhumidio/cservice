@@ -40,6 +40,15 @@ namespace Persistence.Repositories
             return Task.FromResult(units);
         }
 
+        public int GetUnitsByCreditType(int contractId, VacancyTypesCredits type)
+        {
+            var units = 0;
+            var unitsReg = _dataContext.RegEnterpriseContracts.Where(reg => reg.Idcontract == contractId && reg.IdjobVacType == (int)type);
+            if (unitsReg.Any())
+                units = unitsReg.First().Units;
+            return units;
+        }
+
         public async Task<int> Add(RegEnterpriseContract regContract)
         {
             var ret = await _dataContext.Set<RegEnterpriseContract>().AddAsync(regContract);

@@ -53,7 +53,7 @@ namespace Application.Contracts.Queries
                 foreach (var cl in clist)
                 {
                     var reg =await _contractRepository.GetWithReg(cl.ContractId);
-                    int[] standards = { 0, 2, 4, 5, 10 };     
+                    int[] standards = { 0, 2, 6, 4 };     
                     cl.TotalStandardUnits = reg.FirstOrDefault(u => standards.Contains(u.IdjobVacType))?.Units ?? 0;
                     cl.TotalFeaturedUnits = reg.FirstOrDefault(u => !standards.Contains(u.IdjobVacType))?.Units ?? 0;
                     var units =await _mediator.Send(new GetAvailableUnits.Query { ContractId = cl.ContractId });

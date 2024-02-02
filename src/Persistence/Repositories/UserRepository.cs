@@ -1,11 +1,9 @@
-using API.DataContext;
 using Domain.Classes;
+using Domain.DTO;
 using Domain.Entities;
 using Domain.Enums;
 using Domain.Repositories;
 using Microsoft.EntityFrameworkCore;
-using System.Diagnostics.Contracts;
-using System.Net.NetworkInformation;
 
 namespace Persistence.Repositories
 {
@@ -36,6 +34,25 @@ namespace Persistence.Repositories
                 IsAdmin = user.First().IdstypeUser == (int)UserTypes.AdministradorEmpresa;
             }
             return IsAdmin;
+        }
+
+        public List<UserDto> GetCompanyValidUsers(int companyId)
+        {
+            var users = (from user in _dataContext.Users
+                         join enterprise_user in _dataContext.EnterpriseUsers on user.Idsuser equals enterprise_user.Idsuser
+                         where enterprise_user.Identerprise == companyId
+                         select new UserDto
+                         {
+                             Idsuser = user.Idsuser,
+                             IdEnterpriseUser = enterprise_user.IdenterpriseUser,
+                             Email = user.Email,
+                             Name = enterprise_user.ContactName,                             
+                             ChkActive = user.ChkActive,
+                             IdstypeUser = user.IdstypeUser,
+                             
+                         }).ToList();
+
+            return users;
         }
 
         public Task<List<UserContractExpireSoonData>> GetUsersContractExpireSoon(int days)
@@ -73,11 +90,11 @@ namespace Persistence.Repositories
 
             var query = (from enterprise_user_job_vacs in _dataContext.EnterpriseUserJobVacs
                          let chkPack =
-                                    ( from cp in _dataContext.ContractProducts
-                                      join p in _dataContext.Products on cp.Idproduct equals p.Idproduct
-                                      join pl in _dataContext.ProductLines on p.Idproduct equals pl.Idproduct
-                                      where cp.Idcontract == enterprise_user_job_vacs.Idcontract
-                                      select p.ChkPack).FirstOrDefault()
+                                    (from cp in _dataContext.ContractProducts
+                                     join p in _dataContext.Products on cp.Idproduct equals p.Idproduct
+                                     join pl in _dataContext.ProductLines on p.Idproduct equals pl.Idproduct
+                                     where cp.Idcontract == enterprise_user_job_vacs.Idcontract
+                                     select p.ChkPack).FirstOrDefault()
                          let maxJobVacancies =
                            (from euj in _dataContext.EnterpriseUserJobVacs
                             where euj.IdenterpriseUser == enterprise_user_job_vacs.IdenterpriseUser
@@ -168,18 +185,17 @@ namespace Persistence.Repositories
                     IDUser = x.Idsuser
                 }); //.Take(100)
 
-
             return allCandidates.ToListAsync();
         }
 
         public int GetIdsuserByManagerId(int managerId)
         {
             var userId = (from user in _dataContext.Users
-                         join eu in _dataContext.EnterpriseUsers on user.Idsuser equals eu.Idsuser
-                         where eu.IdenterpriseUser == managerId
-                         select eu.Idsuser).FirstOrDefault();
+                          join eu in _dataContext.EnterpriseUsers on user.Idsuser equals eu.Idsuser
+                          where eu.IdenterpriseUser == managerId
+                          select eu.Idsuser).FirstOrDefault();
 
-            return userId;  
+            return userId;
         }
 
         public bool UpdateUserGetResponse(User request)
