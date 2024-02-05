@@ -22,7 +22,7 @@ namespace Application.Behaviors
             catch (Exception ex)
             {
                 _logger.LogError("----- Command {CommandName} Failed ({@Command})", request.GetGenericTypeName(), request);
-                throw ex;
+                throw;
             }
         }
     }
