@@ -245,16 +245,15 @@ namespace Application.JobOffer.Commands
             //Give them all to ChatGPT along with our TitleString, and make it pick.
             var denominationListString = MakeDenominationList(denominationsForArea);
             var gptResult = _aiService.DoGPTRequestDynamic(denominationListString, offer.Title);
-            if (gptResult != null && int.TryParse(gptResult, out var gptId))
+            
+            var selectedValue = denominationsForArea.FirstOrDefault(d => d.Id == gptResult);
+            if (selectedValue != null)
             {
-                var selectedValue = denominationsForArea.FirstOrDefault(d => d.Id == gptId);
-                if (selectedValue != null)
-                {
-                    offer.TitleDenominationId = selectedValue.Id;
-                    offer.TitleId = selectedValue.FkJobTitle;
-                    return;
-                }
+                offer.TitleDenominationId = selectedValue.Id;
+                offer.TitleId = selectedValue.FkJobTitle;
+                return;
             }
+            
             _logger.LogError($"JobTitleDenomination Failed to find match when posting job. GPT Result: {gptResult}, Title: {offer.Title}");
             offer.TitleDenominationId = -1;
             offer.TitleId = -1;
