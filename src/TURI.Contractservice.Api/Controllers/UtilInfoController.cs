@@ -4,6 +4,7 @@ using Application.AuxiliaryData.Queries;
 using Application.Core;
 using Application.EnterpriseContract.Queries;
 using Application.GetCompanyInfo.Queries;
+using Application.Interfaces;
 using Application.JobOffer.Queries;
 using Application.Utils;
 using Application.Utils.Queries;
@@ -23,12 +24,14 @@ namespace API.Controllers
         private readonly IMemoryCache _cache;
         public IHostEnvironment _env;
         private readonly ISafetyModeration _moderation;
+        private readonly IGeoNamesConector _geonames;
 
-        public UtilInfoController(IHostEnvironment env, IMemoryCache memoryCache,ISafetyModeration moderation)
+        public UtilInfoController(IHostEnvironment env, IMemoryCache memoryCache,ISafetyModeration moderation, IGeoNamesConector geoNamesConector)
         {
             _env = env;
             _cache = memoryCache;
             _moderation = moderation;
+            _geonames = geoNamesConector;
         }
 
         [HttpGet]
@@ -191,6 +194,15 @@ namespace API.Controllers
             });
             return HandleResult(result);
         }
+
+
+        [HttpGet]
+        public async Task<IActionResult> GetDataFromZipCode(string zipcode, string countryIso)
+        {
+            var result = _geonames.GetPostalCodesCollection(zipcode, countryIso);
+            return Ok(result);
+        }
+
         [HttpGet]
         public async Task<IActionResult> GetCompanies() {
 

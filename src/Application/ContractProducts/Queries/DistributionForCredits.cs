@@ -59,14 +59,35 @@ namespace Application.ContractProducts.Queries
                 var consumedPremiumInternational = contracts.Sum(c => _jobOfferRepo.GetActiveOffersByContractAndType(c.ContractId, 3).Count());
                 var consumedInternship = contracts.Sum(c => _jobOfferRepo.GetActiveOffersByContractAndType(c.ContractId, 4).Count());
 
+
+                var assignedBasic = 0;
+                var assignedSuperior = 0;
+                var assignedPremium = 0;
+                var assignedPremiumInternational = 0;
+                var assignedInternship = 0;
+
+                //pass the nested foreach to linq
+
+
+                foreach(var c in contracts)
+                {
+                    foreach(var u in users)
+                    {
+
+                        var assBasic = await _enterpriseUserJobVacRepository.GetAssignmentsByUserProductAndContract(u.IdEnterpriseUser, (int)VacancyTypesCredits.Basic, c.ContractId);
+                        assignedBasic += assBasic.Sum(b => b.JobVacUsed);
+                        var assSuperior = await _enterpriseUserJobVacRepository.GetAssignmentsByUserProductAndContract(u.IdEnterpriseUser, (int)VacancyTypesCredits.Superior, c.ContractId);
+                        assignedSuperior += assSuperior.Sum(b => b.JobVacUsed);
+                        var assPremium = await _enterpriseUserJobVacRepository.GetAssignmentsByUserProductAndContract(u.IdEnterpriseUser, (int)VacancyTypesCredits.Premium, c.ContractId);
+                        assignedPremium += assPremium.Sum(b => b.JobVacUsed);
+                        var assPremiumInternational = await _enterpriseUserJobVacRepository.GetAssignmentsByUserProductAndContract(u.IdEnterpriseUser, (int)VacancyTypesCredits.PremiumInternational, c.ContractId);
+                        assignedPremiumInternational = assPremiumInternational.Sum(b => b.JobVacUsed);
+                        var assInternship = await _enterpriseUserJobVacRepository.GetAssignmentsByUserProductAndContract(u.IdEnterpriseUser, (int)VacancyTypesCredits.Internship, c.ContractId);
+                        assignedInternship += assInternship.Sum(b => b.JobVacUsed);
+                    }
+                }
                 foreach (var u in users)
                 {
-                    var assignedBasic = 0;
-                    var assignedSuperior = 0;
-                    var assignedPremium = 0;
-                    var assignedPremiumInternational = 0;
-                    var assignedInternship = 0;
-
                     AssignedUnitsByUserAndProduct userUnitsInfo = new AssignedUnitsByUserAndProduct();
                     userUnitsInfo.UserId = u.Idsuser;
                     userUnitsInfo.Email = u.Email;
@@ -76,34 +97,79 @@ namespace Application.ContractProducts.Queries
                         foreach (var c in contracts)
                         {
                             var a = await _enterpriseUserJobVacRepository.GetAssignmentsByUserProductAndContract(u.IdEnterpriseUser, (int)type, c.ContractId);
-                            AssignedUnits = a.Sum(b => b.JobVacUsed);
+                            AssignedUnits += a.Sum(b => b.JobVacUsed);
                         }
 
                         userUnitsInfo.UnitsInfoByProduct.Add(new ProductUnitsDistribution
                         {
+                            ProductName = type == VacancyTypesCredits.Basic ? "Basic"
+                            : type == VacancyTypesCredits.Premium ? "Premium"
+                            : type == VacancyTypesCredits.Superior ? "Superior"
+                            : type == VacancyTypesCredits.PremiumInternational ? "Premium International"
+                            : type == VacancyTypesCredits.Internship ? "Internship" : "",
+
                             Type = type,
-                            UnitsPurchasedAndValid = purchasedBasic,
+                            UnitsPurchasedAndValid = type  == VacancyTypesCredits.Basic ?  purchasedBasic
+                            : type == VacancyTypesCredits.Premium ? purchasedPremium
+                            : type == VacancyTypesCredits.Superior ? purchasedSuperior
+                            : type == VacancyTypesCredits.PremiumInternational ? purchasedPremiumInternational
+                            : type == VacancyTypesCredits.Internship ? purchasedInternship : 0,
+
+
                             ConsumedUnits = type == VacancyTypesCredits.Basic ? consumedBasic
                             : type == VacancyTypesCredits.Premium ? consumedPremium
                             : type == VacancyTypesCredits.Superior ? consumedSuperior
                             : type == VacancyTypesCredits.PremiumInternational ? consumedPremiumInternational
                             : type == VacancyTypesCredits.Internship ? consumedInternship : 0,
-                            AssignedUnits = AssignedUnits
+                            AssignedUnits = AssignedUnits,
+                            AvailableUnits = type == VacancyTypesCredits.Basic ? purchasedBasic - consumedBasic
+                            : type == VacancyTypesCredits.Premium ? purchasedPremium - consumedPremium
+                            : type == VacancyTypesCredits.Superior ? purchasedSuperior - consumedSuperior
+                            : type == VacancyTypesCredits.PremiumInternational ? purchasedPremiumInternational - consumedPremiumInternational
+                            : type == VacancyTypesCredits.Internship ? purchasedInternship - consumedInternship : 0
+
+                           
                         });
                     }
+
+
+                    unitsContainer.UnitsInfoByUser.Add(userUnitsInfo);
+
                 }
-                unitsContainer.AssignedUnitsBasic = unitsContainer.TotalUnitsAssignedByType(VacancyTypesCredits.Basic);
-                unitsContainer.AsssignedUnitsSuperior = unitsContainer.TotalUnitsAssignedByType(VacancyTypesCredits.Superior);
-                unitsContainer.AssignedUnitsPremium = unitsContainer.TotalUnitsAssignedByType(VacancyTypesCredits.Premium);
-                unitsContainer.AssignedUnitsPremiumInternational = unitsContainer.TotalUnitsAssignedByType(VacancyTypesCredits.PremiumInternational);
-                unitsContainer.AssignedUnitsInternship = unitsContainer.TotalUnitsAssignedByType(VacancyTypesCredits.Internship);
-                unitsContainer.PurchasedUnitsBasic = unitsContainer.TotalUnitsPurchasedByType(VacancyTypesCredits.Basic);
-                unitsContainer.PurchasedUnitsSuperior = unitsContainer.TotalUnitsPurchasedByType(VacancyTypesCredits.Superior);
-                unitsContainer.PurchasedUnitsPremium = unitsContainer.TotalUnitsPurchasedByType(VacancyTypesCredits.Premium);
-                unitsContainer.PurchasedUnitsPremiumInternational = unitsContainer.TotalUnitsPurchasedByType(VacancyTypesCredits.PremiumInternational);
-                unitsContainer.PurchasedUnitsInternship = unitsContainer.TotalUnitsPurchasedByType(VacancyTypesCredits.Internship);
-                
-                unitsContainer.TotalUnitsAssignedByType(VacancyTypesCredits.Superior);
+
+
+                unitsContainer.PurchasedUnitsBasic = purchasedBasic;
+                unitsContainer.PurchasedUnitsPremium = purchasedPremium;
+                unitsContainer.PurchasedUnitsPremiumInternational = purchasedPremiumInternational;
+                unitsContainer.PurchasedUnitsSuperior = purchasedSuperior;
+                unitsContainer.PurchasedUnitsInternship = purchasedInternship;
+
+                unitsContainer.ConsumedUnitsBasic = consumedBasic;
+                unitsContainer.ConsumedUnitsInternship = consumedInternship;
+                unitsContainer.ConsumedUnitsSuperior = consumedSuperior;
+                unitsContainer.ConsumedUnitsPremium = consumedPremium;
+                unitsContainer.ConsumedUnitsPremiumInternational = consumedPremiumInternational;
+
+                unitsContainer.AvailableUnitsInternship = purchasedInternship - consumedInternship;
+                unitsContainer.AvailableUnitsBasic = purchasedBasic - consumedBasic;
+                unitsContainer.AvailableUnitsPremium = purchasedPremium - consumedPremium;
+                unitsContainer.AvailableUnitsPremiumInternational = purchasedPremiumInternational - consumedPremiumInternational;
+                unitsContainer.AvailableUnitsSuperior = purchasedSuperior - consumedSuperior;
+
+                unitsContainer.AssignedUnitsBasic = assignedBasic;
+                unitsContainer.AssignedUnitsPremium = assignedPremium;
+                unitsContainer.AssignedUnitsPremiumInternational = assignedPremiumInternational;
+                unitsContainer.AssignedUnitsSuperior = assignedSuperior;
+                unitsContainer.AssignedUnitsInternship = assignedInternship;
+
+                unitsContainer.AvailableToAssignBasic = purchasedBasic - consumedBasic - assignedBasic;
+                unitsContainer.AvailableToAssignPremium = purchasedPremium - consumedPremium - assignedPremium;
+                unitsContainer.AvailableToAssignPremiumInternational = purchasedPremiumInternational - consumedPremiumInternational - assignedPremiumInternational;
+                unitsContainer.AvailableToAssignSuperior = purchasedSuperior - consumedSuperior - assignedSuperior;
+                unitsContainer.AvailableToAssignInternship = purchasedInternship - consumedInternship - assignedInternship;
+
+
+
                 return Result<UnitsContainer>.Success(unitsContainer);
             }
         }

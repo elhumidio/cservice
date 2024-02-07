@@ -1,4 +1,5 @@
 using Domain.Enums;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 
 namespace Application.ContractProducts.DTO
 {
@@ -20,6 +21,7 @@ namespace Application.ContractProducts.DTO
 
     public class ProductUnitsDistribution
     {
+        public string? ProductName { get; set; }
         public VacancyTypesCredits Type { get; set; }
         public int UnitsPurchasedAndValid { get; set; }
         public int AssignedUnits { get; set; }
@@ -32,6 +34,7 @@ namespace Application.ContractProducts.DTO
         public int AssignedUnitsBasic { get; set; }
         public int AsssignedUnitsSuperior { get; set; }
         public int AssignedUnitsPremium { get; set; }
+        public int AssignedUnitsSuperior { get; set;}
         public int AssignedUnitsPremiumInternational { get; set; }
         public int AssignedUnitsInternship { get; set; }
         public int PurchasedUnitsBasic { get; set; }
@@ -45,24 +48,23 @@ namespace Application.ContractProducts.DTO
         public int ConsumedUnitsPremiumInternational { get; set; }
         public int ConsumedUnitsInternship { get; set; }
 
-        public AssignedUnitsByUserAndProduct? UnitsInfoByUser { get; set; } = new AssignedUnitsByUserAndProduct();
+        public int AvailableUnitsBasic { get; set; }
+        public int AvailableUnitsSuperior { get; set; }
+        public int AvailableUnitsPremium { get; set; }
+        public int AvailableUnitsPremiumInternational { get; set; }
+        public int AvailableUnitsInternship { get; set; }
 
-        public int TotalUnitsAssignedByType(VacancyTypesCredits type)
-        {
-            var ret = UnitsInfoByUser.UnitsInfoByProduct.Sum(p => p.Type == type ? p.AssignedUnits : 0);
-            return ret;
-        }
+        public int AvailableToAssignBasic { get; set; }
+        public int AvailableToAssignSuperior { get; set; }
+        public int AvailableToAssignPremium { get; set; }
+        public int AvailableToAssignPremiumInternational { get; set; }
+        public int AvailableToAssignInternship { get; set; }
 
-        public int TotalUnitsPurchasedByType(VacancyTypesCredits type)
-        {
-            var ret = UnitsInfoByUser.UnitsInfoByProduct.Sum(p => p.Type == type ? p.UnitsPurchasedAndValid : 0);
-            return ret;
-        }
 
-        public int TotalUnitsAvailableByType(VacancyTypesCredits type)
-        {
-            var ret = UnitsInfoByUser.UnitsInfoByProduct.Sum(p => p.Type == type ? p.AvailableUnits : 0);
-            return ret;
-        }
+
+
+        public List<AssignedUnitsByUserAndProduct>? UnitsInfoByUser { get; set; } = new List<AssignedUnitsByUserAndProduct>();
+
+        
     }
 }
