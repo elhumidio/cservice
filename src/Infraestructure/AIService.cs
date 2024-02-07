@@ -18,7 +18,7 @@ namespace Infraestructure
             _config = config;
         }
 
-        public string DoGPTRequestDynamic(string denominationList, string title)
+        public int DoGPTRequestDynamic(string denominationList, string title)
         {
             var serviceURL = _config["ExternalServices:AIService"];
             Uri serviceUri = GetURL(serviceURL, $"api/ChatGPT/DoGPTJobTitleFromAreaRequest");
@@ -34,14 +34,17 @@ namespace Infraestructure
                         client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                         var response = client.PostAsync(serviceUri.AbsoluteUri, new StringContent(modifiedPrompt, Encoding.UTF8, "application/json")).Result;
                         string strResponse = response.Content.ReadAsStringAsync().Result;
-                        var responseObj = JsonConvert.DeserializeObject<ChatGPTResponseObject>(strResponse);
-                        return responseObj?.results[0] ?? "-1";
+                        if (int.TryParse(strResponse, out int result))
+                            return result;
+
+                        return -1;                        
                     }
                 };
             }
             catch
             {
-                return "-1";
+
+                return -1;
             }            
         }
 
