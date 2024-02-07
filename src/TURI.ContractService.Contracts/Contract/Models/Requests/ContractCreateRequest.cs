@@ -4,6 +4,7 @@ namespace TURI.ContractService.Contracts.Contract.Models.Requests
 {
     public class ContractCreateRequest
     {
+        public int IDContract { get; set; } = -1;
         public int IDSUser { get; set; } = -1;
 
         public int IDEnterprise { get; set; } = -1;
