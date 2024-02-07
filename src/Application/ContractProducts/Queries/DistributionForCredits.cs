@@ -88,9 +88,12 @@ namespace Application.ContractProducts.Queries
                 }
                 foreach (var u in users)
                 {
-                    AssignedUnitsByUserAndProduct userUnitsInfo = new AssignedUnitsByUserAndProduct();
-                    userUnitsInfo.UserId = u.Idsuser;
-                    userUnitsInfo.Email = u.Email;
+                    AssignedUnitsByUserAndProduct userUnitsInfo = new()
+                    {
+                        UserId = u.Idsuser,
+                        IDEnterpriseUser = u.IdEnterpriseUser,
+                        Email = u.Email
+                    };
                     foreach (var type in vacancyTypes)
                     {
                         var AssignedUnits = 0;

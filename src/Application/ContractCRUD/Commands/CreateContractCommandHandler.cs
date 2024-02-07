@@ -53,7 +53,7 @@ namespace Application.ContractCRUD.Commands
 
                 var prices = await _productRepository.GetPricesByQuantityAndCountry(list, request.CountryId);
 
-                if (request.IDContract < 0)
+                if (request.IDContract <= 0)
                 {
 
                     response.Contract = await CreateContract(finishDate, request, company, totalPrice);

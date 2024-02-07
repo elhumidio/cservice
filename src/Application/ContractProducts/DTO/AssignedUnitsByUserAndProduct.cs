@@ -7,6 +7,7 @@ namespace Application.ContractProducts.DTO
     {
         public int UserId { get; set; }
         public string? Email { get; set; }
+        public int IDEnterpriseUser { get; set; }
         public List<ProductUnitsDistribution>? UnitsInfoByProduct { get; set; } = new List<ProductUnitsDistribution>();
     }
 
