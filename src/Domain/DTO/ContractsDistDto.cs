@@ -13,5 +13,7 @@ namespace Domain.DTO
         public string FinishDate { get; set; }
         public bool IsRegionRestricted { get; set; }
         public bool? IsPayed { get; set; }
+        public DateTime StartDate { get; set; }
+        public int IdJobVacType { get; set; }
     }
 }

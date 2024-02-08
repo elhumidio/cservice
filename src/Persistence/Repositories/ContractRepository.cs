@@ -147,6 +147,8 @@ namespace Persistence.Repositories
                     ContractId = res.cp.pl.p.c.Idcontract,
                     ProductId = res.cp.pl.pr.Idproduct,
                     FinishDate = res.cp.pl.p.c.FinishDate != null ? Convert.ToDateTime(res.cp.pl.p.c.FinishDate).ToString("dd/MM/yyyy") : string.Empty,
+                    StartDate = res.cp.pl.p.c.StartDate != null ? Convert.ToDateTime(res.cp.pl.p.c.StartDate) : DateTime.Now,
+                    IdJobVacType = res.cp.ppl.IdjobVacType ?? -1,
                 })
                 .Distinct()
                 .ToListAsync();
