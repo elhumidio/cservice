@@ -1,5 +1,6 @@
 using API.Converters;
 using Application.ContractCRUD.Commands;
+using Application.ContractProducts.Commands;
 using Application.ContractProducts.Queries;
 using Application.Contracts.DTO;
 using Application.Contracts.Queries;
@@ -8,7 +9,6 @@ using Application.Managers.Queries;
 using Application.OnlineShop.Commands;
 using Domain.Enums;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Cryptography.X509Certificates;
 using TURI.ContractService.Contracts.Contract.Models.ContractCreationFolder;
 using TURI.ContractService.Contracts.Contract.Models.Requests;
 using TURI.ContractService.Contracts.Contract.Models.Response;
@@ -27,12 +27,11 @@ namespace API.Controllers
         public async Task<IActionResult> GetAvailableUnits(int contractId)
         {
             var result = await Mediator.Send(new GetAvailableUnits.Query
-            {   
+            {
                 ContractId = contractId
             });
             return HandleResult(result);
         }
-
 
         [HttpGet("{contractId}/{IsContractPreserved}")]
         public async Task<IActionResult> DeleteContractAndRelated(int contractId, bool IsContractPreserved)
@@ -44,7 +43,6 @@ namespace API.Controllers
             });
             return HandleResult(ret);
         }
-
 
         [HttpPost]
         public async Task<IActionResult> UpdateContractAndPayment(UpdateContractPaymentCommand cmd)
@@ -154,13 +152,13 @@ namespace API.Controllers
             });
             return HandleResult(contracts);
         }
+
         [HttpGet("{companyId}")]
         public async Task<IActionResult> GetUnitsDistributionByCompany(int companyId)
         {
-            var dist = await Mediator.Send(new DistributionForCredits.Query { CompanyId = companyId });            
+            var dist = await Mediator.Send(new DistributionForCredits.Query { CompanyId = companyId });
             return HandleResult(dist);
         }
-
 
         /// <summary>
         /// Get users that contrats expire soon
@@ -213,7 +211,6 @@ namespace API.Controllers
             return HandleResult(result);
         }
 
-
         [HttpPost]
         public async Task<IActionResult> AddPayment(AddPaymentCommand cmd)
         {
@@ -222,12 +219,10 @@ namespace API.Controllers
                 var result = await Mediator.Send(cmd);
                 return HandleResult(result);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
-            
-            
         }
 
         [HttpGet("{contractId}/{siteId}/{lang}")]
@@ -266,7 +261,7 @@ namespace API.Controllers
         {
             try
             {
-                if(contract.CountryId<1)
+                if (contract.CountryId < 1)
                 {
                     return BadRequest("Country field is mandatory is mandatory");
                 }
@@ -305,7 +300,7 @@ namespace API.Controllers
         {
             try
             {
-                var result = await Mediator.Send(new DeleteContractCommand() { IdContract = contractId});
+                var result = await Mediator.Send(new DeleteContractCommand() { IdContract = contractId });
                 return HandleResult(result.Value);
             }
             catch (Exception ex)
@@ -401,7 +396,13 @@ namespace API.Controllers
             var result = await Mediator.Send(new GetContractForEnterprise.Query(contractType, enterpriseId, enterpriseUserId));
 
             return Ok(result);
+        }
 
+        [HttpPost]
+        public async Task<IActionResult> GetCreditsInfoAvailableByCompanyAndUser(AvailableCreditsByTypeCompanyAndUserRequest cmd)
+        {
+            var result = await Mediator.Send(cmd);
+            return HandleResult(result);
         }
     }
 }
