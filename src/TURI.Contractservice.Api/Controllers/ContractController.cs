@@ -404,5 +404,12 @@ namespace API.Controllers
             var result = await Mediator.Send(cmd);
             return HandleResult(result);
         }
+
+        [HttpPost]
+        public async Task<IActionResult> AddSubtractUnitsManager(AddSubtractCreditsManagerCommand cmd)
+        {
+            var result = await Mediator.Send(cmd);
+            return HandleResult(result);
+        }
     }
 }
