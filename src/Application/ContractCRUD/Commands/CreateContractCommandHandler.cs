@@ -16,6 +16,7 @@ namespace Application.ContractCRUD.Commands
         private readonly IUnitOfWork uow;
         private readonly IMapper mapper;
         private const int WELCOME_PRODUCT = 110;
+        private const int LANG = 7;
         private readonly IMediator _mediator;
         private readonly IProductRepository _productRepository;
 
@@ -73,7 +74,7 @@ namespace Application.ContractCRUD.Commands
                     }
                     var productLines = uow.ProductLineRepository.GetProductLinesByProductId(prod.Idproduct)
                         .Where(pl => (prodObj.ChkService ? pl.IdjobVacType == null : pl.IdjobVacType != null
-                        && pl.Idslanguage == request.IDSLanguage)).GroupBy(g => g.Idproduct)
+                        && pl.Idslanguage == LANG)).GroupBy(g => g.Idproduct)
                         .ToList();
                     response.ProductLines.AddRange(uow.ProductLineRepository.GetProductLinesByProductId(prod.Idproduct)
                         .Where(pl => pl.Idsite == company.SiteId && (prodObj.ChkService ? pl.IdjobVacType == null : pl.IdjobVacType != null
