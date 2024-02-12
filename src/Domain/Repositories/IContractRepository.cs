@@ -41,5 +41,6 @@ namespace Domain.Repositories
         public Task<Contract> GetContractByStripeSessionId(string stripeSessionId);
 
         public bool DeleteContractInfo(int contractId, bool IsContractPreserved);
+        public Task<List<ContractsDistDto>> GetValidContractsByProduct(int companyId, int productId, int siteId, int langId);
     }
 }

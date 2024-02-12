@@ -157,6 +157,41 @@ namespace Persistence.Repositories
             return list;
         }
 
+
+        public async Task<List<ContractsDistDto>> GetValidContractsByProduct(int companyId, int productId, int siteId, int langId)
+        {
+            bool isPack = false;
+            var list = await _dataContext.Contracts
+                .Join(_dataContext.ContractProducts, c => new { c.Idcontract }, cp => new { cp.Idcontract }, (c, cp) => new { c, cp })
+                .Join(_dataContext.Products, p => p.cp.Idproduct, pr => pr.Idproduct, (p, pr) => new { p, pr })
+                .Join(_dataContext.ProductLines, pl => pl.pr.Idproduct, ppl => ppl.Idproduct, (pl, ppl) => new { pl, ppl })
+                .Join(_dataContext.ContractPayments, cp => cp.pl.p.c.Idcontract, cp => cp.Idcontract, (cp, cpayment) => new { cp, cpayment })
+                .Where(a => a.cp.ppl.IdserviceType == null
+                            && a.cp.pl.p.c.Identerprise == companyId
+                            && a.cp.pl.p.c.ChkApproved
+                            && a.cp.pl.p.c.FinishDate >= DateTime.Now.Date
+                            && a.cp.pl.p.c.StartDate <= DateTime.Now.Date
+                            && a.cp.ppl.Idsite == siteId && a.cp.ppl.Idslanguage == langId
+                            && a.cp.pl.pr.Idsite == siteId && a.cp.pl.pr.Idslanguage == langId
+                            && a.cp.pl.pr.Idproduct == productId
+                            && a.cpayment.Finished == true
+                )
+                .Select(res => new ContractsDistDto
+                {
+                    BaseName = res.cp.pl.pr.BaseName,
+                    ContractId = res.cp.pl.p.c.Idcontract,
+                    ProductId = res.cp.pl.pr.Idproduct,
+                    FinishDate = res.cp.pl.p.c.FinishDate != null ? Convert.ToDateTime(res.cp.pl.p.c.FinishDate).ToString("dd/MM/yyyy") : string.Empty,
+                    StartDate = res.cp.pl.p.c.StartDate != null ? Convert.ToDateTime(res.cp.pl.p.c.StartDate) : DateTime.Now,
+                    IdJobVacType = res.cp.ppl.IdjobVacType ?? -1,
+                })
+                .Distinct()
+                .ToListAsync();
+
+
+            return list;
+        }
+
         public async Task<IReadOnlyList<KeyValueResponse>> GetValidContractsByCompaniesIds(List<int> companiesIds)
         {
             var filteredQuery = _dataContext.Contracts

@@ -25,5 +25,20 @@ namespace Persistence.Repositories
             return dist;
             
         }
+
+        public async Task<bool> UpdateUnitsAssigned(EnterpriseUserJobVac jvac)
+        {
+            var ret = _dataContext.Update(jvac);
+            var ent = await _dataContext.SaveChangesAsync();
+            return ent > 0;
+        }
+
+        public async Task<List<EnterpriseUserJobVac>> GetAssignmentsByUserIDProductAndContract(int idEnterpriseUser, int idprod, int idcontract)
+        {
+            var dist = await _dataContext.EnterpriseUserJobVacs.Where(x => x.Idproduct == idprod
+            && x.Idcontract == idcontract && x.IdenterpriseUser == idEnterpriseUser).ToListAsync();
+            return dist;
+
+        }
     }
 }
