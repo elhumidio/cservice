@@ -1507,6 +1507,10 @@ namespace Persistence
 
                 entity.Property(e => e.NationalDiffusion).HasColumnName("NationalDiffusion");
                 entity.Property(e => e.InternationalDiffusion).HasColumnName("InternationalDiffusion");
+
+                entity.Property(e => e.Latitude).HasColumnType("decimal(10, 7)");
+
+                entity.Property(e => e.Longitude).HasColumnType("decimal(10, 7)");
             });
 
             modelBuilder.Entity<Product>(entity =>
