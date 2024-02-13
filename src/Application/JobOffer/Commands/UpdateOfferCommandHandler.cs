@@ -121,9 +121,9 @@ namespace Application.JobOffer.Commands
                 return OfferModificationResult.Failure(new List<string> { "no update" });
             else
             {
+                await _internationalDiffusionCountryRepository.RemoveByOffer(offer.IdjobVacancy);
                 if (offer.InternationalDiffusion ?? true)
                 {
-                    await _internationalDiffusionCountryRepository.RemoveByOffer(offer.IdjobVacancy);
                     if (offer.InternationalDiffusionCountries?.Count > 0)
                     {
                         List<InternationalDiffusionCountry> listCountries = new List<InternationalDiffusionCountry>();
