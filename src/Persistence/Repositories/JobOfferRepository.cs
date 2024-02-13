@@ -306,7 +306,7 @@ namespace Persistence.Repositories
         {
             var query = _dataContext.JobVacancies.Where(a => a.Idcontract == contractId
             && a.IdjobVacType == type
-            && a.Idstatus != (int)OfferStatus.Deleted);
+            );
             return query;
         }
 
@@ -315,7 +315,7 @@ namespace Persistence.Repositories
             var query = _dataContext.JobVacancies.Where(a => a.Idcontract == contractId
             && a.IdenterpriseUserG == owner
             && a.IdjobVacType == type
-            && a.Idstatus != (int)OfferStatus.Deleted);
+            );
             return query;
         }
 

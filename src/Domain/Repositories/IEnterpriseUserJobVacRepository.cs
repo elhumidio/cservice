@@ -1,3 +1,4 @@
+using Domain.DTO.Distribution;
 using Domain.Entities;
 
 namespace Domain.Repositories
@@ -11,5 +12,6 @@ namespace Domain.Repositories
         public Task<List<EnterpriseUserJobVac>> GetAssignmentsByUserIDProductAndContract(int idEnterpriseUser, int idprod, int idcontract);
 
         public Task<bool> UpdateUnitsAssigned(EnterpriseUserJobVac jvac);
+        public Task<List<EnterpriseUserJobVacDto>> GetAssignmentsByUserProductAndContractForOffers(int idEnterpriseUser, int idjobvactype, int idcontract);
     }
 }

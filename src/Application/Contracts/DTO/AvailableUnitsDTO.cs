@@ -9,6 +9,8 @@ namespace Application.Contracts.DTO
         public bool IsPack { get; set; }
         public VacancyType type { get; set; }
         public int OwnerId { get; set; }
+        public DateTime StartDate { get; set; }
+
     }
 
     public class AvailableUnitsResult

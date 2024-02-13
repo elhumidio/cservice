@@ -29,6 +29,7 @@ namespace Application.ContractProducts.Commands
             if (request.action == "added")
             {
                 var assignment = distribution.FirstOrDefault();
+
                 if (assignment != null)
                 {
                     assigned = assignment.JobVacUsed + 1;

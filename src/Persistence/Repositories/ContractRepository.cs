@@ -91,6 +91,12 @@ namespace Persistence.Repositories
             }
         }
 
+        public DateTime GetStartDateByContract(int idcontract)
+        {
+            var date = _dataContext.Contracts.FirstOrDefault(c => c.Idcontract == idcontract)?.StartDate ?? DateTime.Now;
+            return date;
+        }
+
         public bool IsValidContract(int contractId)
         {
             var contracts = _dataContext.Contracts
