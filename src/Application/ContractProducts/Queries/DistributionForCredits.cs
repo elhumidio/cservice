@@ -3,6 +3,7 @@ using Application.Core;
 using Domain.Enums;
 using Domain.Repositories;
 using MediatR;
+using Newtonsoft.Json;
 
 namespace Application.ContractProducts.Queries
 {
@@ -45,20 +46,77 @@ namespace Application.ContractProducts.Queries
                 VacancyTypesCredits[] vacancyTypes = { VacancyTypesCredits.Basic, VacancyTypesCredits.Superior, VacancyTypesCredits.Premium, VacancyTypesCredits.PremiumInternational, VacancyTypesCredits.Internship };
                 //Get all valid contracts for the company
                 var contracts = await _contractRepository.GetValidContracts(request.CompanyId, SITE, LANGUAGE);
+                var json = JsonConvert.SerializeObject(contracts);
                 var users = _userRepository.GetCompanyValidUsers(request.CompanyId);
+                var purchasedBasic = 0;
+                var purchasedSuperior = 0;
+                var purchasedPremium = 0;
+                var purchasedPremiumInternational = 0;
+                var purchasedInternship = 0;
 
-                var purchasedBasic = contracts.Sum(c => _regEnterpriseContract.GetUnitsByCreditType(c.ContractId, VacancyTypesCredits.Basic));
-                var purchasedSuperior = contracts.Sum(c => _regEnterpriseContract.GetUnitsByCreditType(c.ContractId, VacancyTypesCredits.Superior));
-                var purchasedPremium = contracts.Sum(c => _regEnterpriseContract.GetUnitsByCreditType(c.ContractId, VacancyTypesCredits.Premium));
-                var purchasedPremiumInternational = contracts.Sum(c => _regEnterpriseContract.GetUnitsByCreditType(c.ContractId, VacancyTypesCredits.PremiumInternational));
-                var purchasedInternship = contracts.Sum(c => _regEnterpriseContract.GetUnitsByCreditType(c.ContractId, VacancyTypesCredits.Internship));
+                var consumedBasic = 0;
+                var consumedSuperior = 0;
+                var consumedPremium = 0;
+                var consumedPremiumInternational = 0;
+                var consumedInternship = 0;
 
-                var consumedBasic = contracts.Sum(c => _jobOfferRepo.GetActiveOffersByContractAndType(c.ContractId, 0).Count());
-                var consumedSuperior = contracts.Sum(c => _jobOfferRepo.GetActiveOffersByContractAndType(c.ContractId, 2).Count());
-                var consumedPremium = contracts.Sum(c => _jobOfferRepo.GetActiveOffersByContractAndType(c.ContractId, 1).Count());
-                var consumedPremiumInternational = contracts.Sum(c => _jobOfferRepo.GetActiveOffersByContractAndType(c.ContractId, 3).Count());
-                var consumedInternship = contracts.Sum(c => _jobOfferRepo.GetActiveOffersByContractAndType(c.ContractId, 4).Count());
+                foreach (var c in contracts)
+                {
+                    if(c.IdJobVacType == (int)VacancyTypesCredits.Basic)
+                    {
+                        purchasedBasic+= _regEnterpriseContract.GetUnitsByCreditType(c.ContractId, VacancyTypesCredits.Basic);
+                    }
+                    if(c.IdJobVacType == (int)VacancyTypesCredits.Superior)
+                    {
+                        purchasedSuperior += _regEnterpriseContract.GetUnitsByCreditType(c.ContractId, VacancyTypesCredits.Superior);
+                    }
+                    if(c.IdJobVacType == (int)VacancyTypesCredits.Premium)
+                    {
+                        purchasedPremium += _regEnterpriseContract.GetUnitsByCreditType(c.ContractId, VacancyTypesCredits.Premium);
+                    }
+                    if(c.IdJobVacType == (int)VacancyTypesCredits.PremiumInternational)
+                    {
+                        purchasedPremiumInternational += _regEnterpriseContract.GetUnitsByCreditType(c.ContractId, VacancyTypesCredits.PremiumInternational);
+                    }
+                    if(c.IdJobVacType == (int)VacancyTypesCredits.Internship)
+                    {
+                        purchasedInternship += _regEnterpriseContract.GetUnitsByCreditType(c.ContractId, VacancyTypesCredits.Internship);
+                    }
+                    if (c.IdJobVacType == (int)VacancyTypesCredits.StandardWelcome)
+                    {
+                        purchasedInternship += _regEnterpriseContract.GetUnitsByCreditType(c.ContractId, VacancyTypesCredits.StandardWelcome);
+                    }
+                }
 
+                foreach (var c in contracts)
+                {
+                    if(c.IdJobVacType == (int)VacancyTypesCredits.Basic)
+                    {
+                        consumedBasic += _jobOfferRepo.GetActiveOffersByContractAndType(c.ContractId, (int)VacancyTypesCredits.Basic).Count();
+                    }
+                    if(c.IdJobVacType == (int)VacancyTypesCredits.Superior)
+                    {
+                        consumedSuperior += _jobOfferRepo.GetActiveOffersByContractAndType(c.ContractId, (int)VacancyTypesCredits.Superior).Count();
+                    }
+                    if(c.IdJobVacType == (int)VacancyTypesCredits.Premium)
+                    {
+                        consumedPremium += _jobOfferRepo.GetActiveOffersByContractAndType(c.ContractId, (int)VacancyTypesCredits.Premium).Count();
+                    }
+                    if(c.IdJobVacType == (int)VacancyTypesCredits.PremiumInternational)
+                    {
+                        consumedPremiumInternational += _jobOfferRepo.GetActiveOffersByContractAndType(c.ContractId, (int)VacancyTypesCredits.PremiumInternational).Count();
+                    }
+                    if(c.IdJobVacType == (int)VacancyTypesCredits.Internship)
+                    {
+                        consumedInternship += _jobOfferRepo.GetActiveOffersByContractAndType(c.ContractId, (int)VacancyTypesCredits.Internship).Count();
+                    }
+                    if (c.IdJobVacType == (int)VacancyTypesCredits.StandardWelcome)
+                    {
+                        consumedInternship += _jobOfferRepo.GetActiveOffersByContractAndType(c.ContractId, (int)VacancyTypesCredits.StandardWelcome).Count();
+                    }
+
+                }
+                
 
                 var assignedBasic = 0;
                 var assignedSuperior = 0;
@@ -96,11 +154,46 @@ namespace Application.ContractProducts.Queries
                     };
                     foreach (var type in vacancyTypes)
                     {
-                        var AssignedUnits = 0;
+                        var AssignedUnitsBasic = 0;
+                        var AssignedUnitsSuperior = 0;
+                        var AssignedUnitsPremium = 0;
+                        var AssignedUnitsPremiumInternational = 0;
+                        var AssignedUnitsInternship = 0;
+                        var AssignedUnitsWelcome = 0;
                         foreach (var c in contracts)
                         {
-                            var a = await _enterpriseUserJobVacRepository.GetAssignmentsByUserProductAndContract(u.IdEnterpriseUser, (int)type, c.ContractId);
-                            AssignedUnits += a.Sum(b => b.JobVacUsed);
+                            if(c.IdJobVacType == (int) VacancyTypesCredits.Basic)
+                            {
+                                var a = await _enterpriseUserJobVacRepository.GetAssignmentsByUserProductAndContract(u.IdEnterpriseUser, (int)type, c.ContractId);
+                                AssignedUnitsBasic += a.Sum(b => b.JobVacUsed);
+                            }
+                            if(c.IdJobVacType == (int) VacancyTypesCredits.Superior)
+                            {
+                                var a = await _enterpriseUserJobVacRepository.GetAssignmentsByUserProductAndContract(u.IdEnterpriseUser, (int)type, c.ContractId);
+                                AssignedUnitsSuperior += a.Sum(b => b.JobVacUsed);
+                            }
+                            if(c.IdJobVacType == (int) VacancyTypesCredits.Premium)
+                            {
+                                var a = await _enterpriseUserJobVacRepository.GetAssignmentsByUserProductAndContract(u.IdEnterpriseUser, (int)type, c.ContractId);
+                                AssignedUnitsPremium += a.Sum(b => b.JobVacUsed);
+                            }
+                            if(c.IdJobVacType == (int) VacancyTypesCredits.PremiumInternational)
+                            {
+                                var a = await _enterpriseUserJobVacRepository.GetAssignmentsByUserProductAndContract(u.IdEnterpriseUser, (int)type, c.ContractId);
+                                AssignedUnitsPremiumInternational += a.Sum(b => b.JobVacUsed);
+                            }
+                            if(c.IdJobVacType == (int) VacancyTypesCredits.Internship)
+                            {
+                                var a = await _enterpriseUserJobVacRepository.GetAssignmentsByUserProductAndContract(u.IdEnterpriseUser, (int)type, c.ContractId);
+                                AssignedUnitsInternship += a.Sum(b => b.JobVacUsed);
+                            }
+                            if(c.IdJobVacType == (int) VacancyTypesCredits.StandardWelcome)
+                            {
+                                var a = await _enterpriseUserJobVacRepository.GetAssignmentsByUserProductAndContract(u.IdEnterpriseUser, (int)type, c.ContractId);
+                                AssignedUnitsWelcome += a.Sum(b => b.JobVacUsed);
+                            }
+
+                            
                         }
 
                         userUnitsInfo.UnitsInfoByProduct.Add(new ProductUnitsDistribution
@@ -124,7 +217,12 @@ namespace Application.ContractProducts.Queries
                             : type == VacancyTypesCredits.Superior ? consumedSuperior
                             : type == VacancyTypesCredits.PremiumInternational ? consumedPremiumInternational
                             : type == VacancyTypesCredits.Internship ? consumedInternship : 0,
-                            AssignedUnits = AssignedUnits,
+                            AssignedUnits = type == VacancyTypesCredits.Basic  ?  AssignedUnitsBasic
+                            : type == VacancyTypesCredits.Superior ? AssignedUnitsSuperior
+                            : type == VacancyTypesCredits.Premium ? AssignedUnitsPremium
+                            : type==VacancyTypesCredits.PremiumInternational  ? AssignedUnitsPremiumInternational
+                            : type== VacancyTypesCredits.Internship ? AssignedUnitsInternship
+                            : type == VacancyTypesCredits.StandardWelcome ? AssignedUnitsWelcome :  0,
                             AvailableUnits = type == VacancyTypesCredits.Basic ? purchasedBasic - consumedBasic
                             : type == VacancyTypesCredits.Premium ? purchasedPremium - consumedPremium
                             : type == VacancyTypesCredits.Superior ? purchasedSuperior - consumedSuperior
@@ -136,7 +234,7 @@ namespace Application.ContractProducts.Queries
                     }
 
 
-                    unitsContainer.UnitsInfoByUser.Add(userUnitsInfo);
+                        unitsContainer.UnitsInfoByUser.Add(userUnitsInfo);
 
                 }
 

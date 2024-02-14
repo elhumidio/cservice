@@ -21,6 +21,12 @@ namespace Persistence.Repositories
             return ret.Entity.Idcontract;
         }
 
+        public EnterpriseUserJobVac GetDistributionByProdUserAndContract(int prod, int user, int contract)
+        {
+            var dist = _dataContext.EnterpriseUserJobVacs.FirstOrDefault(x => x.Idproduct == prod && x.IdenterpriseUser == user && x.Idcontract == contract);
+            return dist;
+        }
+
 
         public async Task<List<EnterpriseUserJobVacDto>> GetCreditsAssignedFromValidContracts(List<int> contracts, int idEnterpriseUser)
         {

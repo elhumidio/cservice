@@ -23,21 +23,31 @@ namespace Application.ContractProducts.Commands
         {
             var assigned = 0;
 
-            var contracts = await _contractRepository.GetValidContractsByProduct((int)request.identerprise,(int)request.idprod, SITE, LANG);
-            var olderContract = contracts.OrderByDescending(x => x.StartDate).FirstOrDefault();
-            var distribution = await _enterpriseUserJobVacRepository.GetAssignmentsByUserProductAndContract((int)request.identerpriseuser, (int)request.type, olderContract.ContractId);
+            var contracts = await _contractRepository.GetValidContractsByProduct((int)request.identerprise, (int)request.idprod, SITE, LANG);
+            var contractsIds = contracts.Select(a => a.ContractId).ToList();
+            var distribution = await _enterpriseUserJobVacRepository.GetCreditsAssignedFromValidContracts(contractsIds, (int)request.identerpriseuser);
+            var distributionByType = distribution.Where(d => d.Idproduct == request.idprod).ToList();
+            var actualContractsFromDistribution = distributionByType.Select(a => a.Idcontract).ToList();
+            var actualContractsFromDistributionForSubtract = distributionByType.Where(c => c.JobVacUsed > 0).Select(a => a.Idcontract).ToList();
+
+
+
+
             if (request.action == "added")
             {
-                var assignment = distribution.FirstOrDefault();
+                var olderContract = _contractRepository.GetOlderContractFromList(actualContractsFromDistribution);
+                var distr = _enterpriseUserJobVacRepository.GetDistributionByProdUserAndContract((int)request.idprod, (int)request.identerpriseuser, olderContract);
+                var assignment = distributionByType.FirstOrDefault();
 
                 if (assignment != null)
-                {
-                    assigned = assignment.JobVacUsed + 1;
-                    assignment.JobVacUsed = assigned;
-                    var ret = await _enterpriseUserJobVacRepository.UpdateUnitsAssigned(assignment);
+                {//todo get distribution for update
+                   
+                    distr.JobVacUsed = distr.JobVacUsed + 1;
+                    
+                    var ret = await _enterpriseUserJobVacRepository.UpdateUnitsAssigned(distr);
                     if (ret)
                     {
-                        return Result<AddSubtractCreditsManagerResponse>.Success(new AddSubtractCreditsManagerResponse { Updated=true, ContractId = olderContract.ContractId  });;
+                        return Result<AddSubtractCreditsManagerResponse>.Success(new AddSubtractCreditsManagerResponse { Updated = true, ContractId = olderContract }); ;
                     }
                     else
                     {
@@ -47,22 +57,23 @@ namespace Application.ContractProducts.Commands
             }
             else
             {
-                var assignment = distribution.FirstOrDefault();
+                var olderContract = _contractRepository.GetOlderContractFromList(actualContractsFromDistributionForSubtract);
+                var distr = _enterpriseUserJobVacRepository.GetDistributionByProdUserAndContract((int)request.idprod, (int)request.identerpriseuser, olderContract);
+                var assignment = distributionByType.FirstOrDefault();
                 if (assignment != null)
                 {
-                    assigned = assignment.JobVacUsed - 1;
-                    assignment.JobVacUsed = assigned;
-                    var ret = await _enterpriseUserJobVacRepository.UpdateUnitsAssigned(assignment);
+                    distr.JobVacUsed = distr.JobVacUsed - 1;
+                    
+                    var ret = await _enterpriseUserJobVacRepository.UpdateUnitsAssigned(distr);
                     if (ret)
                     {
-                        return Result<AddSubtractCreditsManagerResponse>.Success(new AddSubtractCreditsManagerResponse { Updated = true, ContractId = olderContract.ContractId }); ;
+                        return Result<AddSubtractCreditsManagerResponse>.Success(new AddSubtractCreditsManagerResponse { Updated = true, ContractId = olderContract }); ;
                     }
                     else
                     {
                         return Result<AddSubtractCreditsManagerResponse>.Failure("couldn't subtract units");
                     }
                 }
-               
             }
             return Result<AddSubtractCreditsManagerResponse>.Failure("couldn't find distribution");
         }

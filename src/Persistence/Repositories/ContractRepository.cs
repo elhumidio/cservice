@@ -308,6 +308,15 @@ namespace Persistence.Repositories
             return ret > 0;
         }
 
+
+        public int GetOlderContractFromList(List<int> contracts)
+        {
+            var cs = _dataContext.Contracts.Where(c => contracts.Contains(c.Idcontract)).OrderByDescending(d => d.StartDate).FirstOrDefault();
+            if (cs == null)
+                return -1;
+            return cs.Idcontract;
+        }
+
         public DateTime GetContractFinishDate(List<ProductUnits> productUnits, int countryId = 40)
         {
             var maxDate = DateTime.MinValue;
