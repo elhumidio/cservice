@@ -8,16 +8,39 @@ namespace Persistence.Repositories
     public class EnterpriseUserJobVacRepository : IEnterpriseUserJobVacRepository
     {
         private readonly DataContext _dataContext;
+        private readonly IContractRepository _contractRepo;
 
-        public EnterpriseUserJobVacRepository(DataContext dataContext)
+        public EnterpriseUserJobVacRepository(DataContext dataContext, IContractRepository contractRepository)
         {
             _dataContext = dataContext;
+            _contractRepo = contractRepository;
         }
         public async Task<int> Add(EnterpriseUserJobVac ujobvac)
         {
             var ret = await _dataContext.AddAsync(ujobvac);
             return ret.Entity.Idcontract;
         }
+
+
+        public async Task<List<EnterpriseUserJobVacDto>> GetCreditsAssignedFromValidContracts(List<int> contracts, int idEnterpriseUser)
+        {
+            var assignments = await _dataContext.EnterpriseUserJobVacs
+                .Where(a => a.IdenterpriseUser == idEnterpriseUser && contracts.Contains(a.Idcontract))
+                .ToListAsync();
+
+            var result = assignments.Select(ass => new EnterpriseUserJobVacDto
+            {
+                Idcontract = ass.Idcontract,
+                IdenterpriseUser = ass.IdenterpriseUser,
+                Idproduct = ass.Idproduct,
+                JobVacUsed = ass.JobVacUsed,
+                IdjobVacType = ass.IdjobVacType,
+                StartDate = _contractRepo.GetStartDateByContract(ass.Idcontract)
+            }).ToList();
+
+            return result;
+        }
+
 
         public async Task<List<EnterpriseUserJobVacDto>> GetAssignmentsByUserProductAndContractForOffers(int idEnterpriseUser, int idjobvactype, int idcontract)
         {
