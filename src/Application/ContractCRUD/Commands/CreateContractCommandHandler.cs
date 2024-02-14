@@ -53,6 +53,13 @@ namespace Application.ContractCRUD.Commands
                 }
 
                 var prices = await _productRepository.GetPricesByQuantityAndCountry(list, request.CountryId);
+                var groupedPrices = prices.GroupBy(p => p.ProductId).ToList();
+                foreach (var price in groupedPrices)
+                {
+                    totalPrice += price.Sum(p => p.UnitPriceAfterDiscount);
+                    
+                }
+
 
                 if (request.IDContract <= 0)
                 {
