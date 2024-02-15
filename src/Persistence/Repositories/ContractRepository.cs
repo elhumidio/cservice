@@ -130,7 +130,7 @@ namespace Persistence.Repositories
             return list;
         }
 
-        public async Task<List<ContractsDistDto>> GetValidContracts(int companyId, int siteId, int langId)
+        public async Task<List<ContractsDistDto>> GetValidContracts(int companyId, int siteId, int langId, bool isWelcome = false)
         {
             bool isPack = false;
             var list = await _dataContext.Contracts
@@ -145,7 +145,7 @@ namespace Persistence.Repositories
                             && a.cp.pl.p.c.StartDate <= DateTime.Now.Date
                             && a.cp.ppl.Idsite == siteId && a.cp.ppl.Idslanguage == langId
                             && a.cp.pl.pr.Idsite == siteId && a.cp.pl.pr.Idslanguage == langId
-                            && a.cpayment.Finished == true
+                             && (!isWelcome || a.cpayment.Finished == true)
                 )
                 .Select(res => new ContractsDistDto
                 {
