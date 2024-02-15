@@ -42,8 +42,7 @@ namespace Application.Contracts.Queries
                 {
                     var vacancyTypetoUse = vacancyType == VacancyType.None ? units.IdjobVacType : (int)vacancyType;
 
-                    var unitsConsumed = isPack ? _jobOfferRepo.GetActiveOffersByContractOwnerType(contractId, units.IdenterpriseUser, vacancyTypetoUse).Count()
-                         : _jobOfferRepo.GetActiveOffersByContractAndTypeNoPack(contractId, units.IdjobVacType).Count();
+                    var unitsConsumed = _jobOfferRepo.GetActiveOffersByContractOwnerType(contractId, units.IdenterpriseUser, vacancyTypetoUse).Count();
                     dto = new AvailableUnitsDto
                     {
                         ContractId = contractId,
