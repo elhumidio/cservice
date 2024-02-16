@@ -65,14 +65,20 @@ namespace Persistence.Repositories
                     From = price.From,
                     To = price.To,
                     id = price.Id,
-                    StripeProductId = price.StripeProductId ?? string.Empty
+                    StripeProductId = price.StripeProductId ?? string.Empty,
+                    SpecialPriceWelcome = price.WelcomeSpecialPrice
                 };
 
                 prices.Add(firstLine);
                 var nextBandMinUnits = firstLine.To + 1;
-                var priceNext = await _dataContext.Discounts
-                  .Where(p => p.ProductId == pu.Idproduct && p.CountryId == idCountry && p.From == nextBandMinUnits)                  
+                Discount priceNext = null;
+                if(pu.Idproduct != 110)
+                {
+                    priceNext = await _dataContext.Discounts
+                  .Where(p => p.ProductId == pu.Idproduct && p.CountryId == idCountry && p.From == nextBandMinUnits)
                   .FirstOrDefaultAsync();
+                }
+                
                 
                 if(priceNext != null)
                 {
@@ -89,7 +95,8 @@ namespace Persistence.Repositories
                         From = priceNext.From,
                         To = priceNext.To,
                         id = priceNext.Id,
-                        StripeProductId = string.Empty //Not used
+                        StripeProductId = string.Empty, //Not used
+                        SpecialPriceWelcome = price.WelcomeSpecialPrice
                     };
                     prices.Add(secondLine);
                     firstLine.UnitsNeededToGetDiscount = secondLine.From - firstLine.Units;
@@ -115,7 +122,8 @@ namespace Persistence.Repositories
                     From = a.From,
                     To = a.To,
                     Units = 1,
-                    StripeProductId = a.StripeProductId
+                    StripeProductId = a.StripeProductId,
+                    SpecialPriceWelcome = a.WelcomeSpecialPrice
                 });
 
             var prices = await query.ToListAsync();
@@ -139,7 +147,8 @@ namespace Persistence.Repositories
                 To = a.To,
                 Units = 1,
                 UnitsNeededToGetDiscount = 0,
-                StripeProductId = a.StripeProductId
+                StripeProductId = a.StripeProductId,
+                SpecialPriceWelcome = a.WelcomeSpecialPrice
             }).ToList();
         }
     }
