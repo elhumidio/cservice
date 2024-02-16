@@ -16,6 +16,6 @@ namespace Domain.DTO.Products
         public int Units { get; set; }
         public int UnitsNeededToGetDiscount { get; set; }
         public string? StripeProductId { get; set; }
-        public int SpecialPriceWelcome { get; set; }
+        public int? SpecialPriceWelcome { get; set; }
     }
 }

@@ -364,7 +364,10 @@ namespace Persistence
                 entity.Property(e => e.From).HasColumnName("FROM");
 
                 entity.Property(e => e.To).HasColumnName("TO");
+                entity.Property(e => e.WelcomeSpecialPrice).HasColumnName("WelcomeSpecialPrice");
+
             });
+
 
             modelBuilder.Entity<City>(entity =>
             {

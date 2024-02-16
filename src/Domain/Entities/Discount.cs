@@ -10,6 +10,6 @@ namespace Domain.Entities
         public decimal DiscountPercent { get; set; }
         public int UnitPrice { get; set; }
         public string? StripeProductId { get; set; }
-        public int WelcomeSpecialPrice { get; set; }
+        public int? WelcomeSpecialPrice { get; set; }
     }
 }
