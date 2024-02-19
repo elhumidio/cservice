@@ -34,6 +34,16 @@ namespace API.Controllers
             _geonames = geoNamesConector;
         }
 
+        [HttpGet("{countryIso}")]
+        public async Task<IActionResult> GetCOuntryNameByIso(string countryIso)
+        {
+            var result = await Mediator.Send(new GetCountryNameByIso.Get
+            {
+                IsoCode = countryIso
+            });
+            return HandleResult(result);
+        }
+
         [HttpGet]
         public async Task<IActionResult> GetConfigValuesOther()
         {
