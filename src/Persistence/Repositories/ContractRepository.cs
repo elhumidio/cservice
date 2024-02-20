@@ -146,6 +146,8 @@ namespace Persistence.Repositories
                             && a.cp.ppl.Idsite == siteId && a.cp.ppl.Idslanguage == langId
                             && a.cp.pl.pr.Idsite == siteId && a.cp.pl.pr.Idslanguage == langId
                              && (!isWelcome || a.cpayment.Finished == true)
+                             && (bool)a.cpayment.Finished
+                             && !string.IsNullOrEmpty(a.cp.pl.p.c.CheckoutSessionId)  //contract
                 )
                 .Select(res => new ContractsDistDto
                 {
