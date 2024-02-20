@@ -12,6 +12,14 @@ namespace Persistence.Repositories
             _dataContext = dataContext;
         }
 
+        public string CountryNameByIso(string isoCode)
+        {
+            var country = _dataContext.CountryIsos.Where(c => c.Iso == isoCode).FirstOrDefault();
+            if (country != null)
+                return country.Name;
+            else return string.Empty;
+        }
+
         public string GetIsobyCountryId(int countryId)
         {
             var countries = _dataContext.CountryIsos.Where(c => c.Idcountry == countryId);
@@ -20,9 +28,6 @@ namespace Persistence.Repositories
             else return string.Empty;
         }
 
-        /*public string GetCountryNameByCountryId(int countryId)
-        {
-            var countries = _dataContext.CountryIsos.Where(c => c.Idcountry == countryId);
-        }*/
+        
     }
 }

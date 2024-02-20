@@ -132,11 +132,10 @@ namespace Application.ContractCRUD.Commands
                                 evac.IdenterpriseUser = enterpriseUser.UserId;
                                 await uow.EnterpriseUserJobVacRepository.Add(evac);
                             }
-                            //   var enterpriseUserJobVac = CreateUserJobVac(request, response, prodObj, pl.First());
-                            // await uow.EnterpriseUserJobVacRepository.Add(enterpriseUserJobVac);
+
                             uow.Commit();
                         }
-
+                            
                         var products = await _mediator.Send(new GetAllProductsByContract.GetProducts
                         {
                             ContractId = response.Contract.Idcontract,
