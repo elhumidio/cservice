@@ -132,7 +132,7 @@ namespace Persistence.Repositories
 
         public async Task<List<ContractsDistDto>> GetValidContracts(int companyId, int siteId, int langId, bool isWelcome = false)
         {
-            bool isPack = false;
+
             var list = await _dataContext.Contracts
                 .Join(_dataContext.ContractProducts, c => new { c.Idcontract }, cp => new { cp.Idcontract }, (c, cp) => new { c, cp })
                 .Join(_dataContext.Products, p => p.cp.Idproduct, pr => pr.Idproduct, (p, pr) => new { p, pr })
@@ -145,9 +145,8 @@ namespace Persistence.Repositories
                             && a.cp.pl.p.c.StartDate <= DateTime.Now.Date
                             && a.cp.ppl.Idsite == siteId && a.cp.ppl.Idslanguage == langId
                             && a.cp.pl.pr.Idsite == siteId && a.cp.pl.pr.Idslanguage == langId
-                             && (!isWelcome || a.cpayment.Finished == true)
-                             && (bool)a.cpayment.Finished
-                             && !string.IsNullOrEmpty(a.cp.pl.p.c.CheckoutSessionId)  //contract
+                            && (a.cp.pl.p.cp.Idproduct == 110 || a.cpayment.Finished == true)
+                             && (a.cp.pl.p.cp.Idproduct == 110 || !string.IsNullOrEmpty(a.cp.pl.p.c.CheckoutSessionId))   //contract
                 )
                 .Select(res => new ContractsDistDto
                 {
