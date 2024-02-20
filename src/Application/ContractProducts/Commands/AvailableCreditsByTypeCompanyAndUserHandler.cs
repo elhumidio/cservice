@@ -159,7 +159,7 @@ namespace Application.ContractProducts.Commands
                         InternationalDifusion = true,
                         NationalDifusion = true,
                         IsBlindable = true,
-                        IdJobVacType = 1,
+                        IdJobVacType = 3,
                     };
                     if(productUnitsForPublishOffer.Credits >0 && productUnitsForPublishOffer.OlderContractId> 0)
                     {
