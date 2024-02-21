@@ -208,7 +208,7 @@ namespace Application.ContractProducts.Commands
                         OlderContractId = await GetOlderContractWithAvailableUnitsByType(contracts.ToList(), VacancyTypesCredits.StandardWelcome, request.IDEnterpriseUser),
                         InternationalDifusion = false,
                         NationalDifusion = false,
-                        IsBlindable = false,
+                        IsBlindable = true,
                         IdJobVacType = 6
                     };
                     if(productUnitsForPublishOffer.Credits >0 && productUnitsForPublishOffer.OlderContractId> 0)
