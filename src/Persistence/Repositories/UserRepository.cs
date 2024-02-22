@@ -40,7 +40,7 @@ namespace Persistence.Repositories
         {
             var users = (from user in _dataContext.Users
                          join enterprise_user in _dataContext.EnterpriseUsers on user.Idsuser equals enterprise_user.Idsuser
-                         where enterprise_user.Identerprise == companyId
+                         where enterprise_user.Identerprise == companyId && (bool)user.ChkActive
                          select new UserDto
                          {
                              Idsuser = user.Idsuser,
