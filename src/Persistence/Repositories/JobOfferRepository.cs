@@ -32,6 +32,28 @@ namespace Persistence.Repositories
             return query;
         }
 
+        public bool ToggleOfferStatus(int offerId)
+        {
+            try
+            {
+                var offer = _dataContext.JobVacancies.FirstOrDefault(o => o.IdjobVacancy == offerId);
+
+                if (offer == null)
+                    return false;
+
+                offer.Idstatus = (offer.Idstatus == 1) ? 2 : 1;
+                _dataContext.SaveChanges();
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return false;
+            }
+        }
+
+
         public IQueryable<JobVacancy> GetOffersByContract(int contractId)
         {
             var query = _dataContext.JobVacancies.Where(a => a.Idcontract == contractId && a.Idstatus == (int)OfferStatus.Active);

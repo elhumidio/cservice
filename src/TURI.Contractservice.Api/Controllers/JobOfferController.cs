@@ -64,6 +64,17 @@ namespace API.Controllers
             return HandleResult(result);
         }
 
+        [HttpGet("{offerId}")]
+        public async Task<IActionResult> TogglePlayPauseOffer(int offerId)
+        {
+            var result = await Mediator.Send(new ToggleOfferStatus.Toggle
+            {
+                OfferId = offerId
+            });
+
+            return HandleResult(result);
+        }
+
         /// <summary>
         /// File Ats Offer
         /// </summary>
