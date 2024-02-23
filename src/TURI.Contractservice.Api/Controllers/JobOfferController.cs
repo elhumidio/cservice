@@ -76,6 +76,23 @@ namespace API.Controllers
         }
 
         /// <summary>
+        /// Sets the state to the given value
+        /// </summary>
+        /// <param name="offerId">JobVacancyId of the offer to change</param>
+        /// <param name="state">1 for Play/Visible, 2 for Pause/Hidden</param>
+        [HttpPost("{offerId}/{state}")]
+        public async Task<IActionResult> SetPlayPauseState(int offerId, int state)
+        {
+            var result = await Mediator.Send(new SetPlayPauseOfferStatus.Query
+            {
+                State = state,
+                OfferId = offerId
+            });
+
+            return HandleResult(result);
+        }
+
+        /// <summary>
         /// File Ats Offer
         /// </summary>
         /// <param name="offer"></param>

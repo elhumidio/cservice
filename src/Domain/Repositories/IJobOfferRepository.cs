@@ -83,6 +83,7 @@ namespace Domain.Repositories
 
         public Task<IReadOnlyList<KeyValueDateTimeDto>> GetLastPublishedDateByCompaniesIds(List<int> companiesIds);
         public bool ToggleOfferStatus(int offerId);
+        public bool SetPlayPauseOfferStatus(int offerId, int status);
 
     }
 }
