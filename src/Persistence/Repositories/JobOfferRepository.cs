@@ -53,6 +53,29 @@ namespace Persistence.Repositories
             }
         }
 
+        public bool SetPlayPauseOfferStatus(int offerId, int status)
+        {
+            try
+            {
+                var offer = _dataContext.JobVacancies.FirstOrDefault(o => o.IdjobVacancy == offerId);
+
+                if (offer == null)
+                    return false;
+
+                //Only 1 and 2 allowed to be set for now
+                offer.Idstatus = status == 1
+                    ? 1
+                    : 2;
+                _dataContext.SaveChanges();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return false;
+            }
+        }
+
 
         public IQueryable<JobVacancy> GetOffersByContract(int contractId)
         {
