@@ -58,6 +58,13 @@ namespace Persistence.Repositories
                 .First();
                 return res;
             }
+        
+        public List<ContractProduct> GetContractProducts(int contractId)
+        {
+            var cp = _dataContext.ContractProducts.Where(c => c.Idcontract == contractId).ToList();
+            return cp;
+        }
+
 
             public async Task<int> CreateContractProduct(ContractProduct contractProduct)
             {

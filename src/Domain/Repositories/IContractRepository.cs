@@ -44,5 +44,6 @@ namespace Domain.Repositories
         public Task<List<ContractsDistDto>> GetValidContractsByProduct(int companyId, int productId, int siteId, int langId);
         public DateTime GetStartDateByContract(int idcontract);
         public int GetOlderContractFromList(List<int> contracts);
+        public Contract GetById(int contractId);
     }
 }

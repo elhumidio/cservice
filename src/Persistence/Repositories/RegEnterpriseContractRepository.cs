@@ -49,6 +49,12 @@ namespace Persistence.Repositories
             return units;
         }
 
+        public List<RegEnterpriseContract> GetRegByContract(int contractId)
+        {
+            var cp = _dataContext.RegEnterpriseContracts.Where(reg => reg.Idcontract == contractId).ToList();
+            return cp;
+        }
+
         public async Task<int> Add(RegEnterpriseContract regContract)
         {
             var ret = await _dataContext.Set<RegEnterpriseContract>().AddAsync(regContract);

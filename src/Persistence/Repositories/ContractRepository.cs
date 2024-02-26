@@ -74,6 +74,12 @@ namespace Persistence.Repositories
             return query;
         }
 
+        public Contract GetById(int contractId)
+        {
+            var query = _dataContext.Contracts.Where(c => c.Idcontract == contractId).FirstOrDefault();            
+            return query;
+        }
+
         public async Task<List<RegEnterpriseContract>> GetWithReg(int contractId)
         {
             try

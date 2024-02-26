@@ -13,6 +13,7 @@ using AutoMapper;
 using Domain.DTO;
 using Domain.DTO.Requests;
 using Domain.Entities;
+using TURI.ContractService.Contracts.Contract.Models.ContractCreationFolder;
 using TURI.ContractService.Contracts.Contract.Models.ManageJobs;
 using TURI.ContractService.Contracts.Contract.Models.Requests;
 
@@ -39,6 +40,14 @@ namespace Application.Core
                 .ForMember(a => a.FinishDate, opt => opt.Ignore())
                 .ForMember(a => a.FilledDate, opt => opt.Ignore());
             CreateMap<RegJobVacMatching, RegJobVacMatchingDto>();
+            CreateMap<Contract, ContractResponse>();
+            CreateMap<ContractProduct, ContractProductResponse>();
+            CreateMap<RegEnterpriseContract, RegEnterpriseContractResponse>();
+            CreateMap<RegEnterpriseConsum, RegEnterpriseConsumResponse>();
+            CreateMap<ProductLine, ProductLineResponse>();
+            CreateMap<ContractProductShortDto, ContractProductShortDtoResponse>();
+            CreateMap<ContractCreationResponse, ContractCreationResponse>();
+
             CreateMap<Area, AreaDTO>();
             CreateMap<Degree, DegreeDTO>();
             CreateMap<Brand, BrandDTO>();

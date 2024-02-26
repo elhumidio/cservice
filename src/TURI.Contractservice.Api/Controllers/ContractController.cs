@@ -1,5 +1,6 @@
 using API.Converters;
 using Application.ContractCRUD.Commands;
+using Application.ContractCRUD.Query;
 using Application.ContractProducts.Commands;
 using Application.ContractProducts.Queries;
 using Application.Contracts.DTO;
@@ -248,6 +249,17 @@ namespace API.Controllers
         public async Task<IActionResult> GetRegionsAllowed(int contractId)
         {
             var result = await Mediator.Send(new GetRegionsAllowed.GetRegions
+            {
+                ContractId = contractId
+            });
+            return HandleResult(result);
+        }
+
+
+        [HttpGet("{contractId}")]
+        public async Task<IActionResult> GetContractFullInfo(int contractId)
+        {
+            var result = await Mediator.Send(new GetContractAndRelated.Query
             {
                 ContractId = contractId
             });

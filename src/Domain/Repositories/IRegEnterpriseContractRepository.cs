@@ -12,5 +12,6 @@ namespace Domain.Repositories
         public Task<int> GetUnitsByType(int contractId, VacancyType type);
         public Task<int> Add(RegEnterpriseContract contract);
         public int GetUnitsByCreditType(int contractId, VacancyTypesCredits type);
+        public List<RegEnterpriseContract> GetRegByContract(int contractId);
     }
 }

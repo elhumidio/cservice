@@ -12,5 +12,6 @@ namespace Domain.Repositories
         public Task<int> CreateContractProduct(ContractProduct contract);
         public Task<bool> UpdateContractProductSalesforceId(UpdateContractProductSForceId obj);
         public List<ProductUnits> GetProductsAndUnitsByContract(int contractId);
+        public List<ContractProduct> GetContractProducts(int contractId);
     }
 }
