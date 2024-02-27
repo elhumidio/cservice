@@ -328,18 +328,17 @@ namespace Persistence.Repositories
         {
             var maxDate = DateTime.MinValue;
             var currentDate = DateTime.Now;
+            DateTime finishDate = DateTime.Now;
             int daysDuration = 0;
-            foreach (var item in productUnits)
+            if(productUnits.Sum(a => a.Units) == 1)
             {
-                var durations = _dataContext.ContractDurationByProducts.Where(c => c.ProductId == item.Idproduct
-                && c.CountryId == countryId && item.Units >= c.From && item.Units <= c.To).FirstOrDefault();
-                if(durations != null)
-                    daysDuration = durations.Duration ?? 0;
-                var finishDate = currentDate.AddDays(daysDuration);               
-                maxDate = finishDate > maxDate ? finishDate : maxDate;
+                finishDate = currentDate.AddDays(30);
             }
-
-            return maxDate;
+            else if(productUnits.Sum(a => a.Units) > 1)
+            {
+                finishDate = currentDate.AddDays(90);
+            }
+            return finishDate;
         }
 
         public async Task<IReadOnlyList<EnterpriseListContractsIdsDto>> GetContractsByCompaniesIds(List<int> companiesIds)
