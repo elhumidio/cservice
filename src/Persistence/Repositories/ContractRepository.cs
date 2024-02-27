@@ -32,11 +32,7 @@ namespace Persistence.Repositories
             var enterpriseuserjobvac = _dataContext.EnterpriseUserJobVacs.FirstOrDefault(c => c.Idcontract == contractId);
             var contractpayment = _dataContext.ContractPayments.FirstOrDefault(c => c.Idcontract == contractId);
 
-            // Eliminar las entidades si existen
-            if (contract != null && HasToDeleteContract)
-            {
-                _dataContext.Contracts.Remove(contract);
-            }
+            // Eliminar las entidades si existen  
 
             if (contractProduct != null)
             {
@@ -57,7 +53,10 @@ namespace Persistence.Repositories
             {
                 _dataContext.ContractPayments.Remove(contractpayment);
             }
-
+            if (contract != null && HasToDeleteContract)
+            {
+                _dataContext.Contracts.Remove(contract);
+            }
             var ret = _dataContext.SaveChanges();
 
             return ret > 0;
