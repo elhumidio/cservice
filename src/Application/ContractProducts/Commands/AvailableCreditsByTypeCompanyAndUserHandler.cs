@@ -3,7 +3,6 @@ using Application.Contracts.DTO;
 using Application.Contracts.Queries;
 using Application.Core;
 using Domain.DTO;
-using Domain.DTO.Distribution;
 using Domain.DTO.Products;
 using Domain.Enums;
 using Domain.Repositories;
@@ -14,27 +13,21 @@ namespace Application.ContractProducts.Commands
     public class AvailableCreditsByTypeCompanyAndUserHandler : IRequestHandler<AvailableCreditsByTypeCompanyAndUserRequest, Result<CreditsAvailableByTypeCompanyAndUser>>
     {
         private readonly IContractRepository _contractRepository;
-        private readonly IRegEnterpriseContractRepository _regEnterpriseContract;
         private readonly IJobOfferRepository _jobOfferRepo;
-        private readonly IUserRepository _userRepo;
         private readonly IEnterpriseUserJobVacRepository _enterpriseUserJobVacRepository;
         private readonly IMediator _mediatr;
 
         public AvailableCreditsByTypeCompanyAndUserHandler(IContractRepository contractRepository,
             IJobOfferRepository jobOfferRepository,
-            IRegEnterpriseContractRepository regEnterpriseContractRepository,
-            IUserRepository userRepo,
             IEnterpriseUserJobVacRepository enterpriseUserJobVacRepository, IMediator mediator)
         {
             _contractRepository = contractRepository;
             _jobOfferRepo = jobOfferRepository;
-            _regEnterpriseContract = regEnterpriseContractRepository;
-            _userRepo = userRepo;
             _enterpriseUserJobVacRepository = enterpriseUserJobVacRepository;
             _mediatr = mediator;
         }
 
-        private async Task<int> GetOlderContractWithAvailableUnitsByType(List<ContractsDistDto> contracts, VacancyTypesCredits type, int ownerId)
+        private async Task<int> GetSoonestFinishingContractWithAvailableUnitsByType(List<ContractsDistDto> contracts, VacancyTypesCredits type, int ownerId)
         {
             List<AvailableUnitsDto> dto = new List<AvailableUnitsDto>();
             foreach (var c in contracts)
@@ -44,17 +37,18 @@ namespace Application.ContractProducts.Commands
                     ContractId = c.ContractId,
                     OwnerId = ownerId
                 });
-                if (data != null && data.Value.Count() > 0 && data.Value.Sum(a => a.Units) > 0)
+                if (data != null && data.Value.Count > 0 && data.Value.Sum(a => a.Units) > 0)
                 {
                     var d = data.Value.Where(c => (int)c.type == (int)type).ToList();
-                    if (d != null && d.Count() > 0)
+                    if (d != null && d.Count > 0)
                     {
-                        d.FirstOrDefault().StartDate = _contractRepository.GetStartDateByContract(c.ContractId);
-                        dto.Add(d.FirstOrDefault());
+                        var line = d.First(); //should only be one?
+                        line.FinishDate = _contractRepository.GetFinishDateByContract(c.ContractId);
+                        dto.Add(line);
                     }
                 }
             }
-            return dto?.OrderByDescending(a => a.StartDate).FirstOrDefault()?.ContractId ?? 0;
+            return dto?.OrderBy(a => a.FinishDate).FirstOrDefault()?.ContractId ?? 0;
         }
 
         public async Task<Result<CreditsAvailableByTypeCompanyAndUser>> Handle(AvailableCreditsByTypeCompanyAndUserRequest request, CancellationToken cancellationToken)
@@ -82,14 +76,14 @@ namespace Application.ContractProducts.Commands
                         ProductId = 130,
                         ProductName = "Basic",
                         Credits = sumAssigned - consumedBasic,
-                        OlderContractId = await GetOlderContractWithAvailableUnitsByType(contracts.ToList(), VacancyTypesCredits.Basic, request.IDEnterpriseUser),
+                        ContractIdFinishingSoonest = await GetSoonestFinishingContractWithAvailableUnitsByType(contracts.ToList(), VacancyTypesCredits.Basic, request.IDEnterpriseUser),
                         InternationalDifusion = false,
                         NationalDifusion = false,
                         IsBlindable = false,
                         IsFeatured = false,
                         IdJobVacType = 0
                     };
-                    if(productUnitsForPublishOffer.Credits >0 && productUnitsForPublishOffer.OlderContractId> 0)
+                    if(productUnitsForPublishOffer.Credits >0 && productUnitsForPublishOffer.ContractIdFinishingSoonest> 0)
                     {
                         creditsAvailableByTypeCompanyAndUser.ProductCredits.Add(productUnitsForPublishOffer);
                     }
@@ -108,14 +102,14 @@ namespace Application.ContractProducts.Commands
                         ProductId = 4,
                         ProductName = "Superior",
                         Credits = sumAssigned - consumedSuperior,
-                        OlderContractId = await GetOlderContractWithAvailableUnitsByType(contracts.ToList(), VacancyTypesCredits.Superior, request.IDEnterpriseUser),
+                        ContractIdFinishingSoonest = await GetSoonestFinishingContractWithAvailableUnitsByType(contracts.ToList(), VacancyTypesCredits.Superior, request.IDEnterpriseUser),
                         InternationalDifusion = false,
                         NationalDifusion = false,
                         IsBlindable = true,
                         IsFeatured = false,
                         IdJobVacType = 2,
                     };
-                    if(productUnitsForPublishOffer.Credits >0 && productUnitsForPublishOffer.OlderContractId> 0)
+                    if(productUnitsForPublishOffer.Credits >0 && productUnitsForPublishOffer.ContractIdFinishingSoonest> 0)
                     {
                         creditsAvailableByTypeCompanyAndUser.ProductCredits.Add(productUnitsForPublishOffer);
                     }
@@ -133,14 +127,14 @@ namespace Application.ContractProducts.Commands
                         ProductId = 87,
                         ProductName = "Premium",
                         Credits = sumAssigned - consumedPremium,
-                        OlderContractId = await GetOlderContractWithAvailableUnitsByType(contracts.ToList(), VacancyTypesCredits.Premium, request.IDEnterpriseUser),
+                        ContractIdFinishingSoonest = await GetSoonestFinishingContractWithAvailableUnitsByType(contracts.ToList(), VacancyTypesCredits.Premium, request.IDEnterpriseUser),
                         InternationalDifusion = false,
                         NationalDifusion = true,
                         IsBlindable = true,
                         IsFeatured = true,
                         IdJobVacType = 1,
                     };
-                    if(productUnitsForPublishOffer.Credits >0 && productUnitsForPublishOffer.OlderContractId> 0)
+                    if(productUnitsForPublishOffer.Credits >0 && productUnitsForPublishOffer.ContractIdFinishingSoonest> 0)
                     {
                         creditsAvailableByTypeCompanyAndUser.ProductCredits.Add(productUnitsForPublishOffer);
                     }
@@ -158,14 +152,14 @@ namespace Application.ContractProducts.Commands
                         ProductId = 125,
                         ProductName = "Premium International",
                         Credits = sumAssigned - consumedPremiumInternational,
-                        OlderContractId = await GetOlderContractWithAvailableUnitsByType(contracts.ToList(), VacancyTypesCredits.PremiumInternational, request.IDEnterpriseUser),
+                        ContractIdFinishingSoonest = await GetSoonestFinishingContractWithAvailableUnitsByType(contracts.ToList(), VacancyTypesCredits.PremiumInternational, request.IDEnterpriseUser),
                         InternationalDifusion = true,
                         NationalDifusion = true,
                         IsBlindable = true,
                         IsFeatured = true,
                         IdJobVacType = 3,
                     };
-                    if(productUnitsForPublishOffer.Credits >0 && productUnitsForPublishOffer.OlderContractId> 0)
+                    if(productUnitsForPublishOffer.Credits >0 && productUnitsForPublishOffer.ContractIdFinishingSoonest> 0)
                     {
                         creditsAvailableByTypeCompanyAndUser.ProductCredits.Add(productUnitsForPublishOffer);
                     }
@@ -184,14 +178,14 @@ namespace Application.ContractProducts.Commands
                         ProductId = 264,
                         ProductName = "Internship",
                         Credits = sumAssigned - consumedInternship,
-                        OlderContractId = await GetOlderContractWithAvailableUnitsByType(contracts.ToList(), VacancyTypesCredits.Internship, request.IDEnterpriseUser),
+                        ContractIdFinishingSoonest = await GetSoonestFinishingContractWithAvailableUnitsByType(contracts.ToList(), VacancyTypesCredits.Internship, request.IDEnterpriseUser),
                         InternationalDifusion = false,
                         NationalDifusion = false,
                         IsBlindable = false,
                         IsFeatured = false,
                         IdJobVacType = 4
                     };
-                    if(productUnitsForPublishOffer.Credits >0 && productUnitsForPublishOffer.OlderContractId> 0)
+                    if(productUnitsForPublishOffer.Credits >0 && productUnitsForPublishOffer.ContractIdFinishingSoonest> 0)
                     {
                         creditsAvailableByTypeCompanyAndUser.ProductCredits.Add(productUnitsForPublishOffer);
                     }
@@ -210,14 +204,14 @@ namespace Application.ContractProducts.Commands
                         ProductId = 110,
                         ProductName = "Basic welcome",
                         Credits = sumAssigned - consumedStandardWelcome,
-                        OlderContractId = await GetOlderContractWithAvailableUnitsByType(contracts.ToList(), VacancyTypesCredits.StandardWelcome, request.IDEnterpriseUser),
+                        ContractIdFinishingSoonest = await GetSoonestFinishingContractWithAvailableUnitsByType(contracts.ToList(), VacancyTypesCredits.StandardWelcome, request.IDEnterpriseUser),
                         InternationalDifusion = false,
                         NationalDifusion = false,
                         IsBlindable = true,
                         IsFeatured = false,
                         IdJobVacType = 6
                     };
-                    if(productUnitsForPublishOffer.Credits >0 && productUnitsForPublishOffer.OlderContractId> 0)
+                    if(productUnitsForPublishOffer.Credits >0 && productUnitsForPublishOffer.ContractIdFinishingSoonest> 0)
                     {
                         creditsAvailableByTypeCompanyAndUser.ProductCredits.Add(productUnitsForPublishOffer);
                     }
