@@ -86,6 +86,7 @@ namespace Application.ContractProducts.Commands
                         InternationalDifusion = false,
                         NationalDifusion = false,
                         IsBlindable = false,
+                        IsFeatured = false,
                         IdJobVacType = 0
                     };
                     if(productUnitsForPublishOffer.Credits >0 && productUnitsForPublishOffer.OlderContractId> 0)
@@ -111,6 +112,7 @@ namespace Application.ContractProducts.Commands
                         InternationalDifusion = false,
                         NationalDifusion = false,
                         IsBlindable = true,
+                        IsFeatured = false,
                         IdJobVacType = 2,
                     };
                     if(productUnitsForPublishOffer.Credits >0 && productUnitsForPublishOffer.OlderContractId> 0)
@@ -135,6 +137,7 @@ namespace Application.ContractProducts.Commands
                         InternationalDifusion = false,
                         NationalDifusion = true,
                         IsBlindable = true,
+                        IsFeatured = true,
                         IdJobVacType = 1,
                     };
                     if(productUnitsForPublishOffer.Credits >0 && productUnitsForPublishOffer.OlderContractId> 0)
@@ -159,6 +162,7 @@ namespace Application.ContractProducts.Commands
                         InternationalDifusion = true,
                         NationalDifusion = true,
                         IsBlindable = true,
+                        IsFeatured = true,
                         IdJobVacType = 3,
                     };
                     if(productUnitsForPublishOffer.Credits >0 && productUnitsForPublishOffer.OlderContractId> 0)
@@ -184,6 +188,7 @@ namespace Application.ContractProducts.Commands
                         InternationalDifusion = false,
                         NationalDifusion = false,
                         IsBlindable = false,
+                        IsFeatured = false,
                         IdJobVacType = 4
                     };
                     if(productUnitsForPublishOffer.Credits >0 && productUnitsForPublishOffer.OlderContractId> 0)
@@ -209,6 +214,7 @@ namespace Application.ContractProducts.Commands
                         InternationalDifusion = false,
                         NationalDifusion = false,
                         IsBlindable = true,
+                        IsFeatured = false,
                         IdJobVacType = 6
                     };
                     if(productUnitsForPublishOffer.Credits >0 && productUnitsForPublishOffer.OlderContractId> 0)
