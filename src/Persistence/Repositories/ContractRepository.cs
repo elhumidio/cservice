@@ -3,8 +3,7 @@ using Domain.DTO.Products;
 using Domain.Entities;
 using Domain.Repositories;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Linq;
+using Contract = Domain.Entities.Contract;
 
 namespace Persistence.Repositories
 {
@@ -100,6 +99,12 @@ namespace Persistence.Repositories
         public DateTime GetStartDateByContract(int idcontract)
         {
             var date = _dataContext.Contracts.FirstOrDefault(c => c.Idcontract == idcontract)?.StartDate ?? DateTime.Now;
+            return date;
+        }
+
+        public DateTime GetFinishDateByContract(int idcontract)
+        {
+            var date = _dataContext.Contracts.FirstOrDefault(c => c.Idcontract == idcontract)?.FinishDate ?? DateTime.MaxValue;
             return date;
         }
 

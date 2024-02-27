@@ -32,7 +32,7 @@ namespace Domain.Repositories
 
         public bool DisableContract(int contractId);
 
-        public DateTime GetContractFinishDate(List<ProductUnits> productUnits, int countryId = 40);
+        public DateTime GetContractFinishDate(List<ProductUnits> productUnits, int countryId = 40);        
 
         public Task<IReadOnlyList<EnterpriseListContractsIdsDto>> GetContractsByCompaniesIds(List<int> companiesIds);
 
@@ -43,6 +43,7 @@ namespace Domain.Repositories
         public bool DeleteContractInfo(int contractId, bool IsContractPreserved);
         public Task<List<ContractsDistDto>> GetValidContractsByProduct(int companyId, int productId, int siteId, int langId);
         public DateTime GetStartDateByContract(int idcontract);
+        public DateTime GetFinishDateByContract(int contractId);
         public int GetOlderContractFromList(List<int> contracts);
         public Contract GetById(int contractId);
     }
