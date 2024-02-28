@@ -41,7 +41,7 @@ namespace Application.Contracts.Queries
                 {
                     CompanyId = request.CompanyId
                 });
-                var contracts = await _contractRepository.GetValidContracts(request.CompanyId, company.Value.SiteId, ApiUtils.GetTuriLanguageBySite(company.Value.SiteId));
+                var contracts = await _contractRepository.GetValidContracts(request.CompanyId);
         
 
                 foreach (var c in contracts)

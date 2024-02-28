@@ -55,7 +55,7 @@ namespace Application.ContractProducts.Commands
         {
             CreditsAvailableByTypeCompanyAndUser creditsAvailableByTypeCompanyAndUser = new CreditsAvailableByTypeCompanyAndUser();
 
-            var con = await _contractRepository.GetValidContracts(request.IDEnterprise, 6, 7);
+            var con = await _contractRepository.GetValidContracts(request.IDEnterprise);
             var contracts = con.Distinct();
             var contractIdsList = con.Select(c => c.ContractId).ToList();
             var alreadyAssignedCredits = await _enterpriseUserJobVacRepository.GetCreditsAssignedFromValidContracts(contractIdsList, request.IDEnterpriseUser);
