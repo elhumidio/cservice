@@ -45,7 +45,7 @@ namespace Application.ContractProducts.Queries
                 UnitsContainer unitsContainer = new UnitsContainer();
                 VacancyTypesCredits[] vacancyTypes = { VacancyTypesCredits.Basic, VacancyTypesCredits.Superior, VacancyTypesCredits.Premium, VacancyTypesCredits.PremiumInternational, VacancyTypesCredits.Internship };
                 //Get all valid contracts for the company
-                var contracts = await _contractRepository.GetValidContracts(request.CompanyId, SITE, LANGUAGE);
+                var contracts = await _contractRepository.GetValidContracts(request.CompanyId);
                 var json = JsonConvert.SerializeObject(contracts);
                 var users = _userRepository.GetCompanyValidUsers(request.CompanyId);
                 var purchasedBasic = 0;

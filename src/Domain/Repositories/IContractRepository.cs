@@ -14,7 +14,7 @@ namespace Domain.Repositories
 
         public IQueryable<ServiceTypeDto> GetServiceTypes(int contractId);
 
-        public Task<List<ContractsDistDto>> GetValidContracts(int companyId, int siteId, int langId,bool isWelcome = false);
+        public Task<List<ContractsDistDto>> GetValidContracts(int companyId, bool isWelcome = false);
 
         public Task<List<RegEnterpriseContract>> GetWithReg(int contractId);
 
