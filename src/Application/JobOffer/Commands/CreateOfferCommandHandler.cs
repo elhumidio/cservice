@@ -35,6 +35,7 @@ namespace Application.JobOffer.Commands
         private readonly IApiUtils _utils;
         private readonly IJobTitleDenominationsRepository _denominationsRepository;
         private readonly IAIService _aiService;
+        
 
         #endregion PRIVATE PROPERTIES
 
@@ -104,8 +105,10 @@ namespace Application.JobOffer.Commands
             CityValidation(offer);
             ValidateJobTitle(ref offer);
             var entity = _mapper.Map(offer, job);
+            var company = _enterpriseRepository.Get(offer.Identerprise);
+            var companyStatus = company.Idstatus;
+            entity.Idstatus = companyStatus == (int)EnterpriseStatus.Active ? (int)OfferStatus.Active : (int)OfferStatus.Pending;
             entity.IntegrationId = offer.IntegrationData.IDIntegration;
-
 
             //ADD VACANCY
             if(entity.TitleId > 0)
