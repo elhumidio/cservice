@@ -152,9 +152,7 @@ namespace Persistence.Repositories
                             && a.cp.pl.p.c.Identerprise == companyId
                             && a.cp.pl.p.c.ChkApproved
                             && a.cp.pl.p.c.FinishDate >= DateTime.Now.Date
-                            && a.cp.pl.p.c.StartDate <= DateTime.Now.Date
-                            && (a.cp.pl.p.cp.Idproduct == 110 || a.cpayment.Finished == true)
-                            && (a.cp.pl.p.cp.Idproduct == 110 || !string.IsNullOrEmpty(a.cp.pl.p.c.CheckoutSessionId))   //contract
+                            && a.cp.pl.p.c.StartDate <= DateTime.Now.Date                           
                 )
                 .Select(res => new ContractsDistDto
                 {
