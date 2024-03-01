@@ -45,6 +45,18 @@ namespace API.Controllers
             return HandleResult(ret);
         }
 
+
+        [HttpGet("{contractId}")]
+        public async Task<IActionResult> FinishPayment(int contractId)
+        {
+            var ret = await Mediator.Send(new FinishPayments.Query
+            {
+                ContractId = contractId
+                
+            });
+            return HandleResult(ret);
+        }
+
         [HttpPost]
         public async Task<IActionResult> UpdateContractAndPayment(UpdateContractPaymentCommand cmd)
         {

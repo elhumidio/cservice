@@ -28,4 +28,5 @@ namespace Application.Contracts.Queries
             }
         }
     }
+
 }
