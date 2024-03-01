@@ -32,7 +32,7 @@ namespace Application.OnlineShop.Commands
                     {
                         Idcontract = contract.Idcontract,
                         DataPayment = DateTime.Now,
-                        Payment = (Convert.ToDecimal(request.amount_subtotal)),
+                        Payment = request.amount_subtotal == 0 ? (Convert.ToDecimal(request.amount_total)) : (Convert.ToDecimal(request.amount_subtotal)) ,
                         PaymentWithoutTax = (Convert.ToDecimal(request.amount_subtotal)),
                         CouponDiscount = Convert.ToDecimal(request.amount_discount),
                         TaxAmount = Convert.ToDecimal(request.amount_tax),
