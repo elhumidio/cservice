@@ -8,5 +8,6 @@ namespace Domain.Repositories
         public Task<bool> AddPayment(ContractPayment payment);
         public Task<ContractPayment> GetPaymentByContractId(int contractId);
         public Task<bool> UpdatePayment(ContractPayment payment);
+        
     }
 }
