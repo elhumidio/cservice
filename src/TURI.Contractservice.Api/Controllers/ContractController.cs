@@ -430,7 +430,7 @@ namespace API.Controllers
                 ContractId = contractId
             });
 
-            return Ok(result);
+            return HandleResult(result);
         }
 
         [HttpPost]
