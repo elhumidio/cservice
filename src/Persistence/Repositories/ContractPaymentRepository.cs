@@ -21,8 +21,17 @@ namespace Persistence.Repositories
 
         public async Task<ContractPayment> GetPaymentByContractId(int contractId)
         {
-            var payment = await _dataContext.ContractPayments.Where(c => c.Idcontract == contractId).FirstOrDefaultAsync();
-            return payment;
+            try
+            {
+                var payment = await _dataContext.ContractPayments.Where(c => c.Idcontract == contractId).FirstOrDefaultAsync();
+                return payment;
+            }
+            catch(Exception ex)
+            {
+                var a = ex;
+                throw;
+            }
+            
         }
 
         public async  Task<bool> AddPayment(ContractPayment payment)

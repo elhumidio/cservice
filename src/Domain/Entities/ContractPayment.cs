@@ -10,7 +10,7 @@ namespace Domain.Entities
         public decimal? CouponDiscount { get; set; }
         public decimal? TaxAmount { get; set; }
         public string? Currency { get; set; }
-        public decimal ConvertRate { get; set; }
+        public decimal? ConvertRate { get; set; }
         public bool? Finished { get; set; }
     }
 }

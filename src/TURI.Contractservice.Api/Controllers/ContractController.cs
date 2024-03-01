@@ -410,6 +410,17 @@ namespace API.Controllers
             return Ok(result);
         }
 
+        [HttpGet("{contractId}")]
+        public async Task<IActionResult> GetPaymentByContract(int contractId)
+        {
+            var result = await Mediator.Send(new ListPayments.Query
+            {
+                ContractId = contractId
+            });
+
+            return Ok(result);
+        }
+
         [HttpPost]
         public async Task<IActionResult> GetCreditsInfoAvailableByCompanyAndUser(AvailableCreditsByTypeCompanyAndUserRequest cmd)
         {
