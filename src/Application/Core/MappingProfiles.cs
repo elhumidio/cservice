@@ -47,7 +47,7 @@ namespace Application.Core
             CreateMap<ProductLine, ProductLineResponse>();
             CreateMap<ContractProductShortDto, ContractProductShortDtoResponse>();
             CreateMap<ContractCreationResponse, ContractCreationResponse>();
-
+            CreateMap<ContractPayment, ContractPaymentDto>();
             CreateMap<Area, AreaDTO>();
             CreateMap<Degree, DegreeDTO>();
             CreateMap<Brand, BrandDTO>();

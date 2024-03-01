@@ -8,6 +8,7 @@ using Application.Contracts.Queries;
 using Application.EnterpriseContract.Queries;
 using Application.Managers.Queries;
 using Application.OnlineShop.Commands;
+using Domain.Entities;
 using Domain.Enums;
 using Microsoft.AspNetCore.Mvc;
 using TURI.ContractService.Contracts.Contract.Models.ContractCreationFolder;
@@ -429,8 +430,7 @@ namespace API.Controllers
             {
                 ContractId = contractId
             });
-
-            return HandleResult(result);
+            return Ok(result.Value);
         }
 
         [HttpPost]

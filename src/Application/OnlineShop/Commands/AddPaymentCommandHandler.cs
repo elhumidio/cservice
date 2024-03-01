@@ -36,7 +36,8 @@ namespace Application.OnlineShop.Commands
                         PaymentWithoutTax = (Convert.ToDecimal(request.amount_subtotal)),
                         CouponDiscount = Convert.ToDecimal(request.amount_discount),
                         TaxAmount = Convert.ToDecimal(request.amount_tax),
-                        Currency = request.Currency
+                        Currency = request.Currency,
+                        ConvertRate=0
                     };
                     try
                     {
@@ -62,11 +63,12 @@ namespace Application.OnlineShop.Commands
                     PaymentWithoutTax = (Convert.ToDecimal(request.amount_subtotal)),
                     CouponDiscount = Convert.ToDecimal(request.amount_discount),
                     TaxAmount = Convert.ToDecimal(request.amount_tax),
-                    Currency = request.Currency
+                    Currency = request.Currency,
+                    ConvertRate = 0
                 };
                 try
                 {
-                    ret = await _contractPaymentRepository.AddPayment(ent);
+                    ret = await _contractPaymentRepository. AddPayment(ent);
                 }
                 catch (Exception ex)
                 {
