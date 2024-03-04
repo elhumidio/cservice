@@ -25,6 +25,7 @@ namespace Application.Core
         {
             CreateMap<JobVacancy, JobOfferDto>();
             CreateMap<JobVacancy, JobOfferResponse>();
+            CreateMap<Contract, ContractShortDto>();
             CreateMap<EnterpriseUserJobVac, UnitsAssignmentDto>();
             CreateMap<Contract, ContractDto>();
             CreateMap<UpdateContractCommand, Contract>();

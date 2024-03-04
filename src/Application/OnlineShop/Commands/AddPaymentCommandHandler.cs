@@ -24,8 +24,10 @@ namespace Application.OnlineShop.Commands
             if(string.IsNullOrEmpty(request.SessionId))
             {
                 //get contract by id
+
                 contract = _contractRepository.Get(request.ContractId).FirstOrDefault();
-                if(contract != null)
+                contract.CheckoutSessionId = "Old_Invalid_SessionID";
+                if (contract != null)
                 {
                     _ = await _contractRepository.UpdateContract(contract);
                     var ent = new ContractPayment

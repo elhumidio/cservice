@@ -59,6 +59,13 @@ namespace API.Controllers
         }
 
         [HttpPost]
+        public async Task<IActionResult> AddDiscountToContractProduct(ProductDiscountRequest cmd)
+        {
+            var ret = await Mediator.Send(cmd);
+            return HandleResult(ret);
+        }
+
+        [HttpPost]
         public async Task<IActionResult> UpdateContractAndPayment(UpdateContractPaymentCommand cmd)
         {
             var ret = await Mediator.Send(cmd);
@@ -77,6 +84,17 @@ namespace API.Controllers
             {
                 ContractIds = info.ContractsList,
                 OwnerIds = info.OwnersList
+            });
+            return HandleResult(result);
+        }
+
+
+        [HttpGet]
+        public async Task<IActionResult> GetContractByCheckoutSessionId(string contractId)
+        {
+            var result = await Mediator.Send(new GetContractByCheckoutSessionId.Query
+            {
+                ContractId = contractId
             });
             return HandleResult(result);
         }
@@ -432,6 +450,19 @@ namespace API.Controllers
             });
             return Ok(result.Value);
         }
+
+
+        [HttpGet("{contractId}")]
+        public async Task<IActionResult> GetPaymentsByContract(int contractId)
+        {
+            var result = await Mediator.Send(new ListAllPayments.Query
+            {
+                ContractId = contractId
+            });
+            return Ok(result.Value);
+        }
+
+
 
         [HttpPost]
         public async Task<IActionResult> GetCreditsInfoAvailableByCompanyAndUser(AvailableCreditsByTypeCompanyAndUserRequest cmd)

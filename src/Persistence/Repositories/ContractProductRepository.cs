@@ -72,7 +72,15 @@ namespace Persistence.Repositories
                 return contractProduct.Idcontract;
             }
 
-            public async Task<bool> UpdateContractProductSalesforceId(UpdateContractProductSForceId items)
+        public async Task<bool> Update(ContractProduct contractProduct)
+        {
+           var ret=  _dataContext.ContractProducts.Update(contractProduct);
+            var ans = await _dataContext.SaveChangesAsync();
+            return ans > 0;
+        }
+
+
+        public async Task<bool> UpdateContractProductSalesforceId(UpdateContractProductSForceId items)
             {
                 var contractProduct = await _dataContext.ContractProducts.Where(c => c.Idcontract == items.ContractId).ToListAsync();
                 int ret = -1;

@@ -1,3 +1,4 @@
+using Domain.DTO;
 using Domain.Entities;
 using Domain.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -25,6 +26,26 @@ namespace Persistence.Repositories
                 var payment = await _dataContext.ContractPayments.Where(c => c.Idcontract == contractId).FirstOrDefaultAsync();
                 return payment;
         }
+        public async Task<List<ContractPaymentDto>> GetPaymentsByContractId(int contractId)
+        {
+
+            var payments = await _dataContext.ContractPayments.Where(c => c.Idcontract == contractId).ToListAsync();
+            var list = payments.Select(a => new ContractPaymentDto
+            {
+                 ConvertRate = a.ConvertRate,
+                 Currency = a.Currency,
+                 DataPayment = a.DataPayment,
+                 Finished = a.Finished,
+                 Idcontract = a.Idcontract,
+                 IdcontractPayment = a.IdcontractPayment,
+                 Payment = a.Payment,
+                 PaymentWithoutTax = a.PaymentWithoutTax,
+                 TaxAmount = a.TaxAmount,
+                 CouponDiscount = a.CouponDiscount
+            }).ToList();
+            return list;
+        }
+
 
         public async  Task<bool> AddPayment(ContractPayment payment)
         {
