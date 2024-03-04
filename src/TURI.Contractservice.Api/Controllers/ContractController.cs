@@ -88,6 +88,17 @@ namespace API.Controllers
             return HandleResult(result);
         }
 
+
+        [HttpGet]
+        public async Task<IActionResult> GetContractByCheckoutSessionId(string contractId)
+        {
+            var result = await Mediator.Send(new GetContractByCheckoutSessionId.Query
+            {
+                ContractId = contractId
+            });
+            return HandleResult(result);
+        }
+
         /// <summary>
         /// Gets available units, given a contract and an owner (verifies consumed units and assignments)
         /// </summary>
