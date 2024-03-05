@@ -56,14 +56,14 @@ Prod-(@= type @)(@= suffix @):
     variables:
         #! Add an additional variable
         props.AWS_ECS_CPU: 8
-        props.AWS_ECS_RAM: 768
-        props.AWS_ECS_RAM_HARD: 1024
+        props.AWS_ECS_RAM: 512
+        props.AWS_ECS_RAM_HARD: 512
 #@ end
 Prod-Apply-Infrastructure:
     variables:
         props.AWS_ECS_CPU: 8
-        props.AWS_ECS_RAM: 768
-        props.AWS_ECS_RAM_HARD: 1024
+        props.AWS_ECS_RAM: 512
+        props.AWS_ECS_RAM_HARD: 512
 #@ end
 
 #@ def release_tests_overrides():
