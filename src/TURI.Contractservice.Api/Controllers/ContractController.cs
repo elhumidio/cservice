@@ -89,12 +89,12 @@ namespace API.Controllers
         }
 
 
-        [HttpGet]
-        public async Task<IActionResult> GetContractByCheckoutSessionId(string contractId)
+        [HttpGet("{sessionId}")]
+        public async Task<IActionResult> GetContractByCheckoutSessionId(string sessionId)
         {
             var result = await Mediator.Send(new GetContractByCheckoutSessionId.Query
             {
-                ContractId = contractId
+                SessionId = sessionId
             });
             return HandleResult(result);
         }

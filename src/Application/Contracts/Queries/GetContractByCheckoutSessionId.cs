@@ -1,4 +1,4 @@
-﻿using Application.Contracts.DTO;
+using Application.Contracts.DTO;
 using Application.Core;
 using AutoMapper;
 using Domain.Repositories;
@@ -10,7 +10,7 @@ namespace Application.Contracts.Queries
     {
         public class Query : IRequest<Result<ContractShortDto>>
         {
-            public string ContractId { get; set; }
+            public string SessionId { get; set; }
         }
 
         public class Handler : IRequestHandler<Query, Result<ContractShortDto>>
@@ -26,7 +26,7 @@ namespace Application.Contracts.Queries
 
             public async Task<Result<ContractShortDto>> Handle(Query request, CancellationToken cancellationToken)
             {
-                var contract = await _contractRepo.GetContractByStripeSessionId(request.ContractId);
+                var contract = await _contractRepo.GetContractByStripeSessionId(request.SessionId);
                 var dto = _mapper.Map<ContractShortDto>(contract);
                 return Result<ContractShortDto>.Success(dto);
             }
