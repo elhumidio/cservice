@@ -32,6 +32,7 @@ namespace Persistence.Repositories
             return query;
         }
 
+
         public bool ToggleOfferStatus(int offerId)
         {
             try
@@ -75,7 +76,6 @@ namespace Persistence.Repositories
                 return false;
             }
         }
-
 
         public IQueryable<JobVacancy> GetOffersByContract(int contractId)
         {
@@ -575,7 +575,7 @@ namespace Persistence.Repositories
 
         public List<JobVacancy> GetAllOffersByCompany(int companyId)
         {
-            var allOffers = _dataContext.JobVacancies.Where(a => a.Identerprise == companyId).ToList();            
+            var allOffers = _dataContext.JobVacancies.Where(a => a.Identerprise == companyId).ToList();
             return allOffers;
         }
 
@@ -655,11 +655,12 @@ namespace Persistence.Repositories
         public async Task<bool> OfferAllowCommns(int OfferId)
         {
             var offer = await _dataContext.JobVacancies.Where(a => a.IdjobVacancy == OfferId).FirstOrDefaultAsync();
-            if(offer == null)
+            if (offer == null)
             {
                 return false;
             }
-            else {
+            else
+            {
                 return offer.AllowChat ?? false;
             }
         }
@@ -702,7 +703,5 @@ namespace Persistence.Repositories
 
             return result;
         }
-
-      
     }
 }
