@@ -10,6 +10,7 @@ namespace Domain.Repositories
         public Task<ContractPayment> GetPaymentByContractId(int contractId);
         public Task<bool> UpdatePayment(ContractPayment payment);
         public Task<List<ContractPaymentDto>> GetPaymentsByContractId(int contractId);
+        public List<int> GetWelcomeContractsDueOfferNotPayed();
 
     }
 }

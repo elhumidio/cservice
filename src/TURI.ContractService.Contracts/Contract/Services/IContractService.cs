@@ -28,4 +28,8 @@ public interface IContractService
 
     [Post("/api/contract/GetFinishDateContractClosingExpiringByCompaniesIds")]
     Task<KeyValuesDateTimeResponse[]> GetFinishDateContractClosingExpiringByCompaniesIds(ListCompaniesIdsRequest request);
+
+    [Get("/api/contract/GetWelcomeContractLost")]
+    public Task<ContractDueOfferInfoList> GetWelcomeContractLost();
+
 }

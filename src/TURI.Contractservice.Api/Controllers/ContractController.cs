@@ -297,6 +297,18 @@ namespace API.Controllers
             return HandleResult(result);
         }
 
+
+        [HttpGet]
+        public async Task<IActionResult> GetWelcomeContractLost()
+        {
+            var result = await Mediator.Send(new GetWelcomeContractLost.Get{});
+            var response = new ContractDueOfferInfoList
+            {
+                contractCreationResponses = result.Value
+            };
+            return Ok(response);
+        }
+
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ContractCreationResponse))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]

@@ -20,6 +20,23 @@ namespace Persistence.Repositories
                  
         }
 
+        public List<int> GetWelcomeContractsDueOfferNotPayed()
+        {
+            List<int> contractList = new List<int>();
+            contractList = (from c in _dataContext.Contracts
+                       join p in _dataContext.ContractPayments on c.Idcontract equals p.Idcontract
+                       join cp in _dataContext.ContractProducts on c.Idcontract equals cp.Idcontract
+                       join v in _dataContext.JobVacancies on c.Idcontract equals v.Idcontract
+                       where cp.Idproduct == 110
+                       && c.ChkApproved
+                       && (!(bool)p.Finished || p.Finished == null)
+                       && v.FinishDate.Date == DateTime.Today.AddDays(-1)
+                       select c.Idcontract).ToList();
+
+            return contractList;
+
+        }
+
         public async Task<ContractPayment> GetPaymentByContractId(int contractId)
         {
            
