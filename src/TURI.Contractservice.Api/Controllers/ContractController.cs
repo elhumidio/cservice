@@ -474,10 +474,15 @@ namespace API.Controllers
             return Ok(result.Value);
         }
 
-
-
         [HttpPost]
         public async Task<IActionResult> GetCreditsInfoAvailableByCompanyAndUser(AvailableCreditsByTypeCompanyAndUserRequest cmd)
+        {
+            var result = await Mediator.Send(cmd);
+            return HandleResult(result);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> GetCreditsInfoAvailableByCompanyAndUsers(AvailableCreditsByTypeCompanyAndUsersRequest cmd)
         {
             var result = await Mediator.Send(cmd);
             return HandleResult(result);
