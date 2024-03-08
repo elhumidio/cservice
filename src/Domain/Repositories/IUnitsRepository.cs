@@ -1,3 +1,4 @@
+using Application.ContractProducts.DTO;
 using Domain.Entities;
 using Domain.Enums;
 
@@ -16,5 +17,7 @@ namespace Domain.Repositories
         public int GetAssignedUnitsMxPtByCompany(int companyId);
 
         public Task<Dictionary<int, List<int>>> GetAssignedContractsForManagers(List<int> managers);
+
+        public List<CreditsPerProductDto> GetCreditsPerProduct(int enterpriseId);
     }
 }

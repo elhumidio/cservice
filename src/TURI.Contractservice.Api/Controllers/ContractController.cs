@@ -1,6 +1,7 @@
 using API.Converters;
 using Application.ContractCRUD.Commands;
 using Application.ContractCRUD.Query;
+using Application.ContractProducts;
 using Application.ContractProducts.Commands;
 using Application.ContractProducts.Queries;
 using Application.Contracts.DTO;
@@ -489,5 +490,13 @@ namespace API.Controllers
             var result = await Mediator.Send(cmd);
             return HandleResult(result);
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GetCreditsPerProduct(int enterpriseId)
+        {
+            var result = await Mediator.Send(new GetCreditsPerProduct.Query() { EnterpriseId = enterpriseId });
+            return HandleResult(result);
+        }
+
     }
 }
