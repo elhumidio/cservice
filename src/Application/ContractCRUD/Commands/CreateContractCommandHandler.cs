@@ -53,17 +53,18 @@ namespace Application.ContractCRUD.Commands
                 }
 
                 var prices = await _productRepository.GetPricesByQuantityAndCountry(list, request.CountryId);
+                if (prices == null)
+                {
+                    totalPrice = 0;
+                }
                 var groupedPrices = prices.GroupBy(p => p.ProductId).ToList();
                 foreach (var price in groupedPrices)
                 {
                     totalPrice += price.Sum(p => p.UnitPriceAfterDiscount);
-                    
                 }
-
 
                 if (request.IDContract <= 0)
                 {
-
                     response.Contract = await CreateContract(finishDate, request, company, totalPrice);
                 }
                 else
@@ -83,9 +84,10 @@ namespace Application.ContractCRUD.Commands
                         .Where(pl => (prodObj.ChkService ? pl.IdjobVacType == null : pl.IdjobVacType != null
                         && pl.Idslanguage == LANG)).GroupBy(g => g.Idproduct)
                         .ToList();
-                    response.ProductLines.AddRange(uow.ProductLineRepository.GetProductLinesByProductId(prod.Idproduct)
-                        .Where(pl => pl.Idsite == company.SiteId && (prodObj.ChkService ? pl.IdjobVacType == null : pl.IdjobVacType != null
-                        && pl.Idslanguage == request.IDSLanguage)).ToList());
+                    var prodlines = uow.ProductLineRepository.GetProductLinesByProductId(prod.Idproduct)
+                        .Where(pl => (prodObj.ChkService ? pl.IdjobVacType == null : pl.IdjobVacType != null
+                        && pl.Idslanguage == LANG)).ToList();
+                    response.ProductLines.AddRange(prodlines);
 
                     foreach (var pl in productLines)
                     {
@@ -94,7 +96,7 @@ namespace Application.ContractCRUD.Commands
                         {
                             Idproduct = prod.Idproduct,
                             Idcontract = response.Contract.Idcontract,
-                            Price = prices.FirstOrDefault(p => p.ProductId == pl.Key).UnitPriceAfterDiscount,   // priceObj?.Price ?? 0,
+                            Price = prices.FirstOrDefault(p => p.ProductId == pl.Key)?.UnitPriceAfterDiscount ?? uow.ProductRepository.Get(pl.Key).First().Price,   // get price from tproduct,
                             Units = request.ProductsList.Where(p => p.Idproduct == pl.Key).First().Units
                         };
                         var plineToMap = request.ProductsList.Where(p => p.Idproduct == pl.Key).First();
@@ -125,17 +127,17 @@ namespace Application.ContractCRUD.Commands
                         {
                             response.RegEnterpriseContracts.Add(await SaveRegEnterpriseContract(request, prodObj, response.Contract.Idcontract, pl.First()));
                             //Get active users by enterprise
-                            var enterpriseUsers = uow.EnterpriseUserRepository.GetCompanyAdmins(request.IDEnterprise,true);
+                            var enterpriseUsers = uow.EnterpriseUserRepository.GetCompanyAdmins(request.IDEnterprise, true);
                             foreach (var enterpriseUser in enterpriseUsers)
                             {
-                                var evac = CreateUserJobVac(request, response, prodObj, pl.First(),enterpriseUser.IsAdmin);
+                                var evac = CreateUserJobVac(request, response, prodObj, pl.First(), enterpriseUser.IsAdmin);
                                 evac.IdenterpriseUser = enterpriseUser.UserId;
                                 await uow.EnterpriseUserJobVacRepository.Add(evac);
                             }
 
                             uow.Commit();
                         }
-                            
+
                         var products = await _mediator.Send(new GetAllProductsByContract.GetProducts
                         {
                             ContractId = response.Contract.Idcontract,
@@ -195,7 +197,7 @@ namespace Application.ContractCRUD.Commands
             mapper.Map(pl, enterpriseUserJobVac);
             mapper.Map(product, enterpriseUserJobVac);
             enterpriseUserJobVac.IdjobVacType = pl.IdjobVacType ?? 0;
-      
+
             enterpriseUserJobVac.IdenterpriseUser = request.IDEnterpriseUSer;
             var productInRequest = request.ProductsList.FirstOrDefault(a => a.Idproduct == product.Idproduct);
             if (productInRequest != null)
@@ -224,7 +226,7 @@ namespace Application.ContractCRUD.Commands
             con.ChkApproved = true;
             con.Price = price;
             con.FinalPrice = price;
-            var contractId = await uow.ContractRepository.CreateContract(con);            
+            var contractId = await uow.ContractRepository.CreateContract(con);
             return con;
         }
 
