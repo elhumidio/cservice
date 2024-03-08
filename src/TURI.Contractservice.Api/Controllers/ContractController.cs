@@ -164,7 +164,7 @@ namespace API.Controllers
             return HandleResult(result);
         }
 
-        [HttpGet("{companyId}/{type}/{regionid}")]
+        [HttpGet("{companyId}/{type}/{regionId}")]
         public async Task<IActionResult> GetContract(int companyId, VacancyType type, int regionId)
         {
             var result = await Mediator.Send(new GetContract.Query
