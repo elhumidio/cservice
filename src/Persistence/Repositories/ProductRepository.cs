@@ -51,57 +51,64 @@ namespace Persistence.Repositories
                         && p.CountryId == idCountry)
                     .FirstOrDefaultAsync();
 
-
-                var firstLine = new ProductsPricesByQuantityAndCountryDto
+                if(price != null)
                 {
-                    TotalPriceAfterDiscount = pu.Units * price.UnitPrice,
-                    TotalPriceBeforeDiscount = pu.Units * priceBeforeDiscount.UnitPrice,
-                    UnitPriceBeforeDiscount = priceBeforeDiscount.UnitPrice,
-                    UnitPriceAfterDiscount = price.UnitPrice,
-                    ProductId = pu.Idproduct,
-                    CountryId = idCountry,
-                    DiscountPercentage = (int)price.DiscountPercent,
-                    Units = pu.Units,
-                    From = price.From,
-                    To = price.To,
-                    id = price.Id,
-                    StripeProductId = price.StripeProductId ?? string.Empty,
-                    SpecialPriceWelcome = price.WelcomeSpecialPrice ?? 0
-                };
-
-                prices.Add(firstLine);
-                var nextBandMinUnits = firstLine.To + 1;
-                Discount priceNext = null;
-                if(pu.Idproduct != 110)
-                {
-                    priceNext = await _dataContext.Discounts
-                  .Where(p => p.ProductId == pu.Idproduct && p.CountryId == idCountry && p.From == nextBandMinUnits)
-                  .FirstOrDefaultAsync();
-                }
-                
-                
-                if(priceNext != null)
-                {
-                    var secondLine = new ProductsPricesByQuantityAndCountryDto
+                    var firstLine = new ProductsPricesByQuantityAndCountryDto
                     {
-                        TotalPriceAfterDiscount = pu.Units * priceNext.UnitPrice,
+                        TotalPriceAfterDiscount = pu.Units * price.UnitPrice,
                         TotalPriceBeforeDiscount = pu.Units * priceBeforeDiscount.UnitPrice,
                         UnitPriceBeforeDiscount = priceBeforeDiscount.UnitPrice,
-                        UnitPriceAfterDiscount = priceNext.UnitPrice,
+                        UnitPriceAfterDiscount = price.UnitPrice,
                         ProductId = pu.Idproduct,
                         CountryId = idCountry,
-                        DiscountPercentage = (int)priceNext.DiscountPercent,
+                        DiscountPercentage = (int)price.DiscountPercent,
                         Units = pu.Units,
-                        From = priceNext.From,
-                        To = priceNext.To,
-                        id = priceNext.Id,
-                        StripeProductId = string.Empty, //Not used
+                        From = price.From,
+                        To = price.To,
+                        id = price.Id,
+                        StripeProductId = price.StripeProductId ?? string.Empty,
                         SpecialPriceWelcome = price.WelcomeSpecialPrice ?? 0
                     };
-                    prices.Add(secondLine);
-                    firstLine.UnitsNeededToGetDiscount = secondLine.From - firstLine.Units;
+
+                    prices.Add(firstLine);
+                    var nextBandMinUnits = firstLine.To + 1;
+                    Discount priceNext = null;
+                    if (pu.Idproduct != 110)
+                    {
+                        priceNext = await _dataContext.Discounts
+                      .Where(p => p.ProductId == pu.Idproduct && p.CountryId == idCountry && p.From == nextBandMinUnits)
+                      .FirstOrDefaultAsync();
+                    }
+
+
+                    if (priceNext != null)
+                    {
+                        var secondLine = new ProductsPricesByQuantityAndCountryDto
+                        {
+                            TotalPriceAfterDiscount = pu.Units * priceNext.UnitPrice,
+                            TotalPriceBeforeDiscount = pu.Units * priceBeforeDiscount.UnitPrice,
+                            UnitPriceBeforeDiscount = priceBeforeDiscount.UnitPrice,
+                            UnitPriceAfterDiscount = priceNext.UnitPrice,
+                            ProductId = pu.Idproduct,
+                            CountryId = idCountry,
+                            DiscountPercentage = (int)priceNext.DiscountPercent,
+                            Units = pu.Units,
+                            From = priceNext.From,
+                            To = priceNext.To,
+                            id = priceNext.Id,
+                            StripeProductId = string.Empty, //Not used
+                            SpecialPriceWelcome = price.WelcomeSpecialPrice ?? 0
+                        };
+                        prices.Add(secondLine);
+                        firstLine.UnitsNeededToGetDiscount = secondLine.From - firstLine.Units;
+                    }
                 }
+                else
+                {
+                    continue; };
             }
+
+
 
             return prices;
         }
