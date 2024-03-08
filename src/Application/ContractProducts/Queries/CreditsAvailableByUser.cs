@@ -92,7 +92,7 @@ namespace Application.ContractProducts.Queries
                             IsFeatured = false,
                             IdJobVacType = 0
                         };
-                        if (productUnitsForPublishOffer.Credits > 0 && productUnitsForPublishOffer.ContractIdFinishingSoonest > 0)
+                        if (productUnitsForPublishOffer.Credits > 0 && (request.MultiplesUsers || productUnitsForPublishOffer.ContractIdFinishingSoonest > 0))
                         {
                             creditsAvailableByTypeCompanyAndUser.ProductCredits.Add(productUnitsForPublishOffer);
                         }
@@ -118,7 +118,7 @@ namespace Application.ContractProducts.Queries
                             IsFeatured = false,
                             IdJobVacType = 2,
                         };
-                        if (productUnitsForPublishOffer.Credits > 0 && productUnitsForPublishOffer.ContractIdFinishingSoonest > 0)
+                        if (productUnitsForPublishOffer.Credits > 0 && (request.MultiplesUsers || productUnitsForPublishOffer.ContractIdFinishingSoonest > 0))
                         {
                             creditsAvailableByTypeCompanyAndUser.ProductCredits.Add(productUnitsForPublishOffer);
                         }
@@ -143,7 +143,7 @@ namespace Application.ContractProducts.Queries
                             IsFeatured = true,
                             IdJobVacType = 1,
                         };
-                        if (productUnitsForPublishOffer.Credits > 0 && productUnitsForPublishOffer.ContractIdFinishingSoonest > 0)
+                        if (productUnitsForPublishOffer.Credits > 0 && (request.MultiplesUsers || productUnitsForPublishOffer.ContractIdFinishingSoonest > 0))
                         {
                             creditsAvailableByTypeCompanyAndUser.ProductCredits.Add(productUnitsForPublishOffer);
                         }
@@ -168,7 +168,7 @@ namespace Application.ContractProducts.Queries
                             IsFeatured = true,
                             IdJobVacType = 3,
                         };
-                        if (productUnitsForPublishOffer.Credits > 0 && productUnitsForPublishOffer.ContractIdFinishingSoonest > 0)
+                        if (productUnitsForPublishOffer.Credits > 0 && (request.MultiplesUsers || productUnitsForPublishOffer.ContractIdFinishingSoonest > 0))
                         {
                             creditsAvailableByTypeCompanyAndUser.ProductCredits.Add(productUnitsForPublishOffer);
                         }
@@ -194,7 +194,7 @@ namespace Application.ContractProducts.Queries
                             IsFeatured = false,
                             IdJobVacType = 4
                         };
-                        if (productUnitsForPublishOffer.Credits > 0 && productUnitsForPublishOffer.ContractIdFinishingSoonest > 0)
+                        if (productUnitsForPublishOffer.Credits > 0 && (request.MultiplesUsers || productUnitsForPublishOffer.ContractIdFinishingSoonest > 0))
                         {
                             creditsAvailableByTypeCompanyAndUser.ProductCredits.Add(productUnitsForPublishOffer);
                         }
@@ -220,7 +220,7 @@ namespace Application.ContractProducts.Queries
                             IsFeatured = false,
                             IdJobVacType = 6
                         };
-                        if (productUnitsForPublishOffer.Credits > 0 && productUnitsForPublishOffer.ContractIdFinishingSoonest > 0)
+                        if (productUnitsForPublishOffer.Credits > 0 && (request.MultiplesUsers || productUnitsForPublishOffer.ContractIdFinishingSoonest > 0))
                         {
                             creditsAvailableByTypeCompanyAndUser.ProductCredits.Add(productUnitsForPublishOffer);
                         }

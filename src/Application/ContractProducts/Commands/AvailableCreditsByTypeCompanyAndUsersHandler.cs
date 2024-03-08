@@ -24,7 +24,7 @@ namespace Application.ContractProducts.Commands
             CreditsAvailableByTypeCompanyAndUsers result = new CreditsAvailableByTypeCompanyAndUsers();
             List<CreditsAvailableByTypeCompanyAndEnterpriseUser> creditsAvailableByTypeCompanyAndUsersList = new List<CreditsAvailableByTypeCompanyAndEnterpriseUser>();
 
-            if (request.IDEnterpriseUsers != null)
+            if (request.IDEnterpriseUsers?.Count > 0)
             {
                 foreach (int IDEnterpriseUsers in request.IDEnterpriseUsers)
                 {
