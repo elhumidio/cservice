@@ -496,7 +496,7 @@ namespace API.Controllers
             return HandleResult(result);
         }
 
-        [HttpGet]
+        [HttpGet("{enterpriseId}")]
         public async Task<IActionResult> GetCreditsPerProduct(int enterpriseId)
         {
             var result = await Mediator.Send(new GetCreditsPerProduct.Query() { EnterpriseId = enterpriseId });
