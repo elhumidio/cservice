@@ -1,20 +1,22 @@
+using Application.ContractProducts.DTO;
 using Domain.Entities;
-using Domain.DTO;
 using Domain.Enums;
 using Domain.Repositories;
 using Microsoft.EntityFrameworkCore;
-using Application.ContractProducts.DTO;
-using Microsoft.EntityFrameworkCore.Internal;
+using Microsoft.Extensions.Configuration;
 
 namespace Persistence.Repositories
 {
     public class UnitsRepository : IUnitsRepository
     {
         private readonly DataContext _dataContext;
+        private IConfiguration _config;
 
-        public UnitsRepository(DataContext dataContext)
+        public UnitsRepository(DataContext dataContext,
+            IConfiguration config)
         {
             _dataContext = dataContext;
+            _config = config;
         }
 
         public IQueryable<EnterpriseUserJobVac> GetAssignmentsByContract(int contractId)
@@ -88,26 +90,32 @@ namespace Persistence.Repositories
         {
 
             var contracts = _dataContext.Contracts.Where(a => a.Identerprise == enterpriseId && a.FinishDate > DateTime.Today).ToList();
-            var products = _dataContext.ContractProducts.Where(a => contracts.Select(b => b.Idcontract).Contains(a.Idcontract)).ToList();
-            var productLines = _dataContext.ProductLines.Where(a => products.Select(b => b.Idproduct).Contains(a.Idproduct)).ToList();
+            var products = _dataContext.ContractProducts
+                .Join(_dataContext.Products, p => new { p.Idproduct }, cp => new { cp.Idproduct },
+                        (cp, p) => new { cp, p })
+                .Where(a => contracts.Select(b => b.Idcontract).Contains(a.cp.Idcontract)).ToList();
+            var productLines = _dataContext.ProductLines.Where(a => products.Select(b => b.cp.Idproduct).Contains(a.Idproduct)).ToList();
             var units = _dataContext.RegEnterpriseContracts.Where(a => contracts.Select(b => b.Idcontract).Contains(a.Idcontract)).ToList();
 
             var results = new List<CreditsPerProductDto>();
-            var allowedProductIds = new List<int>() {4, 87, 125, 130, 264 };
+            List<int> allowedProductIds = _config["ConfigurationVariables:ProductsAvailable"].Split(',').Select(Int32.Parse).ToList();
 
             foreach( var contract in contracts )
             {
-                foreach( var product in products.Where(prod => prod.Idcontract == contract.Idcontract))
+                foreach( var product in products.Where(prod => prod.cp.Idcontract == contract.Idcontract))
                 {
-                    if (!allowedProductIds.Contains(product.Idproduct))
+                    if (!allowedProductIds.Contains(product.cp.Idproduct))
                         continue;
-                    var productType = productLines.First(a => a.Idproduct == product.Idproduct);
+                    var productType = productLines.First(a => a.Idproduct == product.cp.Idproduct);
                     var unitsObj = units.First( a => a.Idcontract == contract.Idcontract && a.IdjobVacType == productType.IdjobVacType);
 
                     results.Add(new CreditsPerProductDto()
                     {
                         ContractId = contract.Idcontract,
-                        ProductId = product.Idproduct,
+                        ContractStartDate = contract.StartDate ?? DateTime.MinValue,
+                        ContractFinishDate = contract.FinishDate ?? DateTime.MinValue,
+                        ProductId = product.p.Idproduct,
+                        ProductName = product.p.BaseName,
                         TotalCredits = unitsObj.Units,
                         ConsumedCredits = unitsObj.UnitsUsed,
                         RemainingCredits = unitsObj.Units - unitsObj.UnitsUsed
