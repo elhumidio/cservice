@@ -109,7 +109,7 @@ namespace Application.JobOffer.Commands
             var companyStatus = company.Idstatus;
             entity.Idstatus = companyStatus == (int)EnterpriseStatus.Active ? (int)OfferStatus.Active : (int)OfferStatus.Pending;
             entity.IntegrationId = offer.IntegrationData.IDIntegration;
-
+            entity.Idsite = company?.SiteId ?? (int)Sites.SPAIN;
             //ADD VACANCY
             if(entity.TitleId > 0)
                 entity.Idarea = _denominationsRepository.GetAreaByJobTitle((int)entity.TitleId);
