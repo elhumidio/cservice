@@ -61,7 +61,7 @@ namespace Application.OnlineShop.Commands
                 {
                     Idcontract = contract.Idcontract,
                     DataPayment = DateTime.Now,
-                    Payment = (request.amount_total / 100),
+                    Payment = (request.amount_total),
                     PaymentWithoutTax = (Convert.ToDecimal(request.amount_subtotal)),
                     CouponDiscount = Convert.ToDecimal(request.amount_discount),
                     TaxAmount = Convert.ToDecimal(request.amount_tax),
@@ -70,7 +70,7 @@ namespace Application.OnlineShop.Commands
                 };
                 try
                 {
-                    ret = await _contractPaymentRepository. AddPayment(ent);
+                    ret = await _contractPaymentRepository.AddPayment(ent);
                 }
                 catch (Exception ex)
                 {
