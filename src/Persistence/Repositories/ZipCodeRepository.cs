@@ -15,10 +15,13 @@ namespace Persistence.Repositories
         public int GetZipCodeIdByCodeAndCountry(string zipcode, int countryId)
         {
             int zipCodeId = 0;
-            var code = _dataContext.ZipCodes.Where(z => z.Zip == zipcode.Trim() && z.Idcountry == countryId).FirstOrDefault();
-            if (code != null)
+            if (!string.IsNullOrEmpty(zipcode))
             {
-                zipCodeId = code.IdzipCode;
+                var code = _dataContext.ZipCodes.Where(z => z.Zip == zipcode.Trim() && z.Idcountry == countryId && z.Idcity > 0).FirstOrDefault();
+                if (code != null)
+                {
+                    zipCodeId = code.IdzipCode;
+                }
             }
 
             return zipCodeId;
@@ -29,7 +32,7 @@ namespace Persistence.Repositories
             if (zipcode == null)
                 return null;
 
-            var zipCode = _dataContext.ZipCodes.Where(z => z.Zip == zipcode.Trim() && z.Idcountry == countryId).FirstOrDefault();
+            var zipCode = _dataContext.ZipCodes.Where(z => z.Zip == zipcode.Trim() && z.Idcountry == countryId && z.Idcity > 0).FirstOrDefault();
             return zipCode;
         }
 
@@ -42,7 +45,7 @@ namespace Persistence.Repositories
         public int GetCityIdByZip(string zipcode)
         {
             int cityId = 0;
-            var code = _dataContext.ZipCodes.Where(z => z.Zip == zipcode);
+            var code = _dataContext.ZipCodes.Where(z => z.Zip == zipcode && z.Idcity > 0);
             if (code.Any())
                 cityId = (int)code.First().Idcity;
 
@@ -81,7 +84,7 @@ namespace Persistence.Repositories
 
         public int GetIdCityByZipCodeAnCountry(string zipcode, int countryId) {
             int cityId = -1;
-            var code = _dataContext.ZipCodes.Where(z => z.Zip == zipcode && z.Idcountry == countryId).FirstOrDefault();
+            var code = _dataContext.ZipCodes.Where(z => z.Zip == zipcode && z.Idcountry == countryId && z.Idcity > 0).FirstOrDefault();
             if (code != null)
                 cityId = (int)code.Idcity;
             return cityId;
@@ -89,7 +92,7 @@ namespace Persistence.Repositories
 
         public async Task<ZipCode> GetZipCodeByZipAndCountry(string zip, int country)
         {
-            var zipcode = _dataContext.ZipCodes.FirstOrDefault(z => z.Zip == zip && z.Idcountry == country);
+            var zipcode = _dataContext.ZipCodes.FirstOrDefault(z => z.Zip == zip && z.Idcountry == country && z.Idcity > 0);
             return zipcode;
         }
 
