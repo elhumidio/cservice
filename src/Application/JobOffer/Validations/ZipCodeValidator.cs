@@ -100,7 +100,8 @@ namespace Application.JobOffer.Validations
                     {
 
                         var cityId = _zipCodeRepo.GetIdCityByZipCodeAnCountry(obj.ZipCode, obj.Idcountry);
-                        obj.Idcity = cityId;
+                        if (cityId > 0)
+                            obj.Idcity = cityId;
                     }
                 }
                 else
@@ -166,7 +167,9 @@ namespace Application.JobOffer.Validations
                 }
 
                 //Get cityId based on Postal code
-                obj.Idcity = _zipCodeRepo.GetIdCityByZipCodeAnCountry(obj.ZipCode, obj.Idcountry);
+                int newIdCity = _zipCodeRepo.GetIdCityByZipCodeAnCountry(obj.ZipCode, obj.Idcountry);
+                if(newIdCity > 0)
+                    obj.Idcity = newIdCity;
 
                 ret = true;
             }
