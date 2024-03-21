@@ -115,7 +115,10 @@ namespace Application.JobOffer.Commands
                 entity.Idarea = _denominationsRepository.GetAreaByJobTitle((int)entity.TitleId);
 
 
+            //--------******----------
             jobVacancyId = _offerRepo.Add(entity);
+            //--------******----------
+
 
             bool canSaveLanguages = jobVacancyId > 0
                  && offer.JobLanguages.Any()
@@ -179,8 +182,9 @@ namespace Application.JobOffer.Commands
                 _enterpriseRepository.UpdateATS(entity.Identerprise);
 
                 // QUESTIONNAIRE.
-                if (offer.QuestDTO != null)
+                if (offer.QuestDTO != null && offer.Idquest == null)
                 {
+                    //Create a new Questionnaire if none set.
                     int questId = await _questService.CreateQuest(offer.QuestDTO);
                     if (questId > 0)
                     {
@@ -196,9 +200,9 @@ namespace Application.JobOffer.Commands
                         RegJobVacMatching jobReg = await _regJobVacRepo.GetAtsIntegrationInfoByJobId(jobVacancyId);
                         jobReg.ExternalId = $"{jobReg.ExternalId}_OLD";
                         await _regJobVacRepo.Update(jobReg);
-                        error = "Failed to creating questionnaire";
+                        error = "Failed to create questionnaire";
                         _logger.LogError(error);
-                        return OfferModificationResult.Failure(new List<string> { error });
+                        //Not breaking error, so don't fail here.
                     }
                 }
 
