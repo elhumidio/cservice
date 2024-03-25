@@ -15,17 +15,21 @@ namespace Application.ContractProducts.Commands
 
         public async Task<Result<bool>> Handle(ProductDiscountRequest request, CancellationToken cancellationToken)
         {
-            var cp = _contractProdRepo.GetContractProducts(request.List.FirstOrDefault().ContractId);
-            foreach (var cproduct in cp)
+            try
             {
-                //add discount
-                var discount = request.List.Where(d => d.ProductId == cproduct.Idproduct).FirstOrDefault().CommercialDiscount;
-                cproduct.CommercialDiscount = discount;
-                var ret = await  _contractProdRepo.Update(cproduct);
-                return Result<bool>.Success(ret);
+                var cp = _contractProdRepo.GetContractProducts(request.List.FirstOrDefault().ContractId);
+                foreach (var cproduct in cp)
+                {                    
+                    var discount = request.List.Where(d => d.ProductId == cproduct.Idproduct).FirstOrDefault().CommercialDiscount;
+                    cproduct.CommercialDiscount = discount;
+                    var ret = await _contractProdRepo.Update(cproduct);
+                }
+                return Result<bool>.Success(true);
             }
-            return Result<bool>.Failure("Couldn't add discount");
-   
+            catch
+            {
+                return Result<bool>.Failure("Couldn't add discount");
+            }
         }
     }
 }
