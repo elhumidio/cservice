@@ -88,12 +88,20 @@ namespace Persistence.Repositories
 
         public List<CreditsPerProductDto> GetCreditsPerProduct(int enterpriseId)
         {
-
-            var contracts = _dataContext.Contracts.Where(a => a.Identerprise == enterpriseId && a.FinishDate > DateTime.Today).ToList();
+            var contracts = _dataContext.Contracts
+             .Join(_dataContext.ContractPayments,a => a.Idcontract,cp => cp.Idcontract,(a, cp) => new { Contract = a, ContractPayment = cp })
+             .Where(x => x.Contract.Identerprise == enterpriseId &&
+                         x.Contract.FinishDate > DateTime.Today &&
+                         x.ContractPayment.Finished != null &&
+                         x.ContractPayment.Finished.Value)
+             .Select(x => x.Contract)
+             .ToList();
             var products = _dataContext.ContractProducts
                 .Join(_dataContext.Products, p => new { p.Idproduct }, cp => new { cp.Idproduct },
                         (cp, p) => new { cp, p })
                 .Where(a => contracts.Select(b => b.Idcontract).Contains(a.cp.Idcontract)).ToList();
+
+
             var productLines = _dataContext.ProductLines.Where(a => products.Select(b => b.cp.Idproduct).Contains(a.Idproduct)).ToList();
             var units = _dataContext.RegEnterpriseContracts.Where(a => contracts.Select(b => b.Idcontract).Contains(a.Idcontract)).ToList();
 
