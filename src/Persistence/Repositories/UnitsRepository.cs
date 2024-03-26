@@ -5,6 +5,7 @@ using Domain.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
+
 namespace Persistence.Repositories
 {
     public class UnitsRepository : IUnitsRepository
@@ -48,14 +49,14 @@ namespace Persistence.Repositories
 
             foreach (var manager in managers)
             {
-                var res =await _dataContext.ManagersVisibilities.Where(m => m.EnterpriseUserId == manager && m.IsVisible == true).ToListAsync();
+                var res = await _dataContext.ManagersVisibilities.Where(m => m.EnterpriseUserId == manager && m.IsVisible == true).ToListAsync();
                 List<int> listContracts = new List<int>();
                 foreach (var visibilities in res)
                 {
                     if (!listContracts.Contains(visibilities.ContractId))
                         listContracts.Add(visibilities.ContractId);
                 }
-                dic.Add(manager, listContracts);                
+                dic.Add(manager, listContracts);
             }
             return dic;
         }
@@ -88,26 +89,36 @@ namespace Persistence.Repositories
 
         public List<CreditsPerProductDto> GetCreditsPerProduct(int enterpriseId)
         {
+            var contracts = (from contract in _dataContext.Contracts
+                             join cproduct in _dataContext.ContractProducts on contract.Idcontract equals cproduct.Idcontract
+                             join contractPayment in _dataContext.ContractPayments
+                             on contract.Idcontract equals contractPayment.Idcontract
+                             where contract.Identerprise == enterpriseId &&
+                                   contract.FinishDate > DateTime.Today &&
+                                   ((contractPayment.Finished != null &&
+                                   contractPayment.Finished.Value) || (cproduct.Idproduct == (int)Products.Welcome))
+                             select contract).AsNoTracking().ToList();
+                           
 
-            var contracts = _dataContext.Contracts.Where(a => a.Identerprise == enterpriseId && a.FinishDate > DateTime.Today).ToList();
             var products = _dataContext.ContractProducts
                 .Join(_dataContext.Products, p => new { p.Idproduct }, cp => new { cp.Idproduct },
                         (cp, p) => new { cp, p })
-                .Where(a => contracts.Select(b => b.Idcontract).Contains(a.cp.Idcontract)).ToList();
-            var productLines = _dataContext.ProductLines.Where(a => products.Select(b => b.cp.Idproduct).Contains(a.Idproduct)).ToList();
-            var units = _dataContext.RegEnterpriseContracts.Where(a => contracts.Select(b => b.Idcontract).Contains(a.Idcontract)).ToList();
+                .Where(a => contracts.Select(b => b.Idcontract).Contains(a.cp.Idcontract)).AsNoTracking().ToList();
+
+            var productLines = _dataContext.ProductLines.Where(a => products.Select(b => b.cp.Idproduct).Contains(a.Idproduct)).AsNoTracking().ToList();
+            var units = _dataContext.RegEnterpriseContracts.Where(a => contracts.Select(b => b.Idcontract).Contains(a.Idcontract)).AsNoTracking().ToList();
 
             var results = new List<CreditsPerProductDto>();
             List<int> allowedProductIds = _config["ConfigurationVariables:ProductsAvailable"].Split(',').Select(Int32.Parse).ToList();
 
-            foreach( var contract in contracts )
+            foreach (var contract in contracts)
             {
-                foreach( var product in products.Where(prod => prod.cp.Idcontract == contract.Idcontract))
+                foreach (var product in products.Where(prod => prod.cp.Idcontract == contract.Idcontract))
                 {
                     if (!allowedProductIds.Contains(product.cp.Idproduct))
                         continue;
                     var productType = productLines.First(a => a.Idproduct == product.cp.Idproduct);
-                    var unitsObj = units.First( a => a.Idcontract == contract.Idcontract && a.IdjobVacType == productType.IdjobVacType);
+                    var unitsObj = units.First(a => a.Idcontract == contract.Idcontract && a.IdjobVacType == productType.IdjobVacType);
 
                     results.Add(new CreditsPerProductDto()
                     {
