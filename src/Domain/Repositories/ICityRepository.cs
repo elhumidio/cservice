@@ -11,5 +11,6 @@ namespace Domain.Repositories
     {
         public string GetName(int cityId);
         public Task<int> Add(City _zip);
+        public int GetCityId(string cityName);
     }
 }

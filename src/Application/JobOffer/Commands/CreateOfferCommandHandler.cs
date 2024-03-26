@@ -273,17 +273,17 @@ namespace Application.JobOffer.Commands
         }
 
         /// <summary>
-        /// It puts city name
+        /// Fill in missing City ID or city Name using the other parameter
         /// </summary>
-        /// <param name="offer"></param>
         private void CityValidation(CreateOfferCommand offer)
         {
-            if (string.IsNullOrEmpty(offer.City.Trim()))
-            {
-                if (offer.Idcity != null && offer.Idcity > 0)
-                    offer.City = _cityRepository.GetName((int)offer.Idcity);
-                else offer.City = string.Empty;
-            }
+            //Use ID to set missing City name
+            if (offer.Idcity != null && offer.Idcity > 0 && string.IsNullOrEmpty(offer.City))
+                offer.City = _cityRepository.GetName((int)offer.Idcity);
+
+            //Use Name to set missing ID
+            if ((offer.Idcity == null || offer.Idcity <= 0) && !string.IsNullOrEmpty(offer.City))
+                offer.Idcity = _cityRepository.GetCityId(offer.City);
 
             if (!string.IsNullOrEmpty(offer.JobLocation) && !string.IsNullOrEmpty(offer.City))
             {
