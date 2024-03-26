@@ -25,6 +25,12 @@ namespace Persistence.Repositories
                 cityName = city.Name;
             return cityName;
         }
+
+        public int GetCityId(string cityName)
+        {
+            return _dataContext.Cities.FirstOrDefault(a => a.Name == cityName)?.Idcity ?? -1;
+        }
+
         public async Task<int> Add(City _city)
         {
 
