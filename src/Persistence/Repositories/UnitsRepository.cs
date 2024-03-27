@@ -97,13 +97,13 @@ namespace Persistence.Repositories
                                    contract.FinishDate > DateTime.Today &&
                                    ((contractPayment.Finished != null &&
                                    contractPayment.Finished.Value) || (cproduct.Idproduct == (int)Products.Welcome))
-                             select contract).AsNoTracking().ToList();
+                             select contract).Distinct().AsNoTracking().ToList();
                            
 
             var products = _dataContext.ContractProducts
                 .Join(_dataContext.Products, p => new { p.Idproduct }, cp => new { cp.Idproduct },
                         (cp, p) => new { cp, p })
-                .Where(a => contracts.Select(b => b.Idcontract).Contains(a.cp.Idcontract)).AsNoTracking().ToList();
+                .Where(a => contracts.Select(b => b.Idcontract).Contains(a.cp.Idcontract)).Distinct().AsNoTracking().ToList();
 
             var productLines = _dataContext.ProductLines.Where(a => products.Select(b => b.cp.Idproduct).Contains(a.Idproduct)).AsNoTracking().ToList();
             var units = _dataContext.RegEnterpriseContracts.Where(a => contracts.Select(b => b.Idcontract).Contains(a.Idcontract)).AsNoTracking().ToList();
