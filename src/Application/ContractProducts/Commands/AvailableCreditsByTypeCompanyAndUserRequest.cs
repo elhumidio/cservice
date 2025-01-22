@@ -9,6 +9,7 @@ namespace Application.ContractProducts.Commands
         
         public int IDEnterprise { get; set; } = -1;
         public int IDEnterpriseUser { get; set; } = -1;
+        public bool IsAdmin { get; set; }
         
     }
 }

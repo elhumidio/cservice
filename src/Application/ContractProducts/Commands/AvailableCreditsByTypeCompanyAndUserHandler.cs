@@ -27,7 +27,8 @@ namespace Application.ContractProducts.Commands
             {
                 IDEnterpriseUser = request.IDEnterpriseUser,
                 MultiplesUsers = false,
-                ContractsDist = con
+                ContractsDist = con,
+                IsAdmin = request.IsAdmin
             });
 
             return Result<CreditsAvailableByTypeCompanyAndUser>.Success(credits.Value);

@@ -482,12 +482,7 @@ namespace API.Controllers
             return HandleResult(result);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> GetCreditsInfoAvailableByCompanyAndUsers(AvailableCreditsByTypeCompanyAndUsersRequest cmd)
-        {
-            var result = await Mediator.Send(cmd);
-            return HandleResult(result);
-        }
+
 
         [HttpPost]
         public async Task<IActionResult> AddSubtractUnitsManager(AddSubtractCreditsManagerCommand cmd)

@@ -17,6 +17,7 @@ namespace Application.ContractProducts.Queries
             public int IDEnterpriseUser { get; set; }
             public bool MultiplesUsers { get; set; }
             public List<ContractsDistDto>? ContractsDist { get; set; }
+  
             
         }
 
